@@ -1,12 +1,31 @@
 import { describe, expect, it } from "bun:test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   Concept,
   OntologyDAG,
   OLaya,
+  DISJOINT_THRESHOLD,
+  calibrateAndProject,
   enforceSubsumptionMonotonicityInplace,
   enforceDisjointnessInplace,
   normalizedEntropyConfidence,
+  verifyAxioms,
 } from "../src/index.js";
+
+interface GoldenCase {
+  name: string;
+  logits: number[];
+  parent_edges: [number, number][];
+  disjoint_edges: [number, number][];
+  expected_probs: number[];
+  expected_confidence: number;
+  expected_axioms_verified: boolean;
+}
+
+const GOLDEN = JSON.parse(
+  readFileSync(join(import.meta.dir, "..", "..", "..", "spec", "axioms_golden.json"), "utf8")
+) as { disjoint_threshold: number; tolerance: number; cases: GoldenCase[] };
 
 function buildTestOntology(): OntologyDAG {
   const concepts: Concept[] = [
@@ -78,8 +97,24 @@ describe("O-Laya Node / TypeScript Engine", () => {
 
     // Disjointness: slot 1 (data) and slot 2 (billing)
     const disjointEdges: [number, number][] = [[1, 2]];
-    enforceDisjointnessInplace(probs, disjointEdges, 0.5);
+    enforceDisjointnessInplace(probs, disjointEdges, 0.5, parentEdges);
     expect(probs[2]).toBe(0.0); // Billing suppressed
+  });
+
+  it("matches the shared axiom golden vectors", () => {
+    expect(DISJOINT_THRESHOLD).toBe(GOLDEN.disjoint_threshold);
+    for (const c of GOLDEN.cases) {
+      const { probs, confidence } = calibrateAndProject(
+        Float32Array.from(c.logits),
+        c.parent_edges,
+        c.disjoint_edges
+      );
+      for (let i = 0; i < c.expected_probs.length; i++) {
+        expect(Math.abs(probs[i] - c.expected_probs[i]), `${c.name}: slot ${i}`).toBeLessThanOrEqual(GOLDEN.tolerance);
+      }
+      expect(Math.abs(confidence - c.expected_confidence), `${c.name}: confidence`).toBeLessThanOrEqual(GOLDEN.tolerance);
+      expect(verifyAxioms(probs, c.parent_edges, c.disjoint_edges), `${c.name}: verified`).toBe(c.expected_axioms_verified);
+    }
   });
 
   it("executes System 1 triage decision in < 1 ms", async () => {
