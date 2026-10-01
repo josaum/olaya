@@ -3,7 +3,13 @@
  * Fully compatible with Convai / Receptron's Laya and TypeSafe AI's Jev primitives.
  */
 
-import { calibrateAndProject, verifyAxioms } from "./axioms.js";
+import {
+  calibrateAndProject,
+  normalizedEntropyConfidence,
+  softmax,
+  temperatureByCardinality,
+  verifyAxioms,
+} from "./axioms.js";
 import { Concept, OntologyDAG } from "./ontology.js";
 import { CandidateRouter, tokenize } from "./router.js";
 
@@ -58,25 +64,37 @@ export class OLaya {
     for (let slot = 0; slot < m; slot++) {
       const concept = subgraph.concepts[slot];
       for (const tok of tokenize(concept.label)) {
-        if (stateTokens.has(tok)) logits[slot] += 6.0;
+        if (stateTokens.has(tok)) {
+          const idf = this.router.idfMap.get(tok) ?? 1.0;
+          logits[slot] += 6.0 * idf;
+        }
       }
       for (const syn of concept.synonyms) {
         for (const tok of tokenize(syn)) {
-          if (stateTokens.has(tok)) logits[slot] += 5.0;
+          if (stateTokens.has(tok)) {
+            const idf = this.router.idfMap.get(tok) ?? 1.0;
+            logits[slot] += 5.0 * idf;
+          }
         }
       }
       if (concept.description) {
         for (const tok of tokenize(concept.description)) {
-          if (stateTokens.has(tok)) logits[slot] += 1.0;
+          if (stateTokens.has(tok)) {
+            const idf = this.router.idfMap.get(tok) ?? 1.0;
+            logits[slot] += idf;
+          }
         }
       }
     }
 
-    const { probs, confidence } = calibrateAndProject(
-      logits,
-      subgraph.parentEdges,
-      subgraph.disjointEdges
-    );
+    const t = temperatureByCardinality(m);
+    const preProjectionProbs = softmax(logits, t);
+    // Compute confidence before monotonicity lifting: after lift, parent probs are elevated
+    // to match their best child, creating degenerate uniform distributions over ancestor chains
+    // that would register as maximum entropy (confidence=0) incorrectly.
+    const confidence = normalizedEntropyConfidence(preProjectionProbs);
+
+    const { probs } = calibrateAndProject(logits, subgraph.parentEdges, subgraph.disjointEdges, t);
 
     // Argmax selection breaking ties in favor of more specific leaf concepts
     let bestSlot = 0;
