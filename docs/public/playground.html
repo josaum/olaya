@@ -494,12 +494,21 @@
     .install-card {
       background: #161b22; border: 1px solid #30363d; border-radius: 6px;
       padding: 0.75rem 0.9rem; font-size: 0.82rem;
+      cursor: pointer; transition: all 0.15s ease;
+    }
+    .install-card:hover {
+      border-color: #58a6ff;
+      background: #1c2128;
+    }
+    .install-card .cmd-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;
     }
     .install-card .cmd {
-      color: #3fb950; font-weight: 700; font-family: monospace; margin-bottom: 0.2rem;
+      color: #3fb950; font-weight: 700; font-family: monospace;
       font-size: 0.85rem;
     }
     .install-card .cmd.api { color: #58a6ff; }
+    .install-card .copy-hint { font-size: 0.68rem; color: #8b949e; }
     .install-card .desc { color: #6e7681; font-size: 0.78rem; }
 
     /* ── Section headings ────────────────────────────────────────────────── */
@@ -735,20 +744,32 @@
   <!-- ── Quick Install Block ──────────────────────────────────────────────── -->
   <div class="section-title">⚡ Quick Install</div>
   <div class="install-grid">
-    <div class="install-card">
-      <div class="cmd">uvx olaya-mcp</div>
+    <div class="install-card" onclick="copySnippet('uvx olaya-mcp', this)">
+      <div class="cmd-header">
+        <span class="cmd">uvx olaya-mcp</span>
+        <span class="copy-hint">Copy</span>
+      </div>
       <div class="desc">Zero-install Python agent wedge</div>
     </div>
-    <div class="install-card">
-      <div class="cmd">npx @mycelia/olaya-mcp</div>
+    <div class="install-card" onclick="copySnippet('npx @mycelia/olaya-mcp', this)">
+      <div class="cmd-header">
+        <span class="cmd">npx @mycelia/olaya-mcp</span>
+        <span class="copy-hint">Copy</span>
+      </div>
       <div class="desc">Zero-install Node agent wedge</div>
     </div>
-    <div class="install-card">
-      <div class="cmd">pip install olaya</div>
+    <div class="install-card" onclick="copySnippet('pip install olaya', this)">
+      <div class="cmd-header">
+        <span class="cmd">pip install olaya</span>
+        <span class="copy-hint">Copy</span>
+      </div>
       <div class="desc">Python SDK — open weights</div>
     </div>
-    <div class="install-card">
-      <div class="cmd api">POST /api/systemone</div>
+    <div class="install-card" onclick="copySnippet('https://public-nine-jade-58.vercel.app/api/systemone', this)">
+      <div class="cmd-header">
+        <span class="cmd api">POST /api/systemone</span>
+        <span class="copy-hint">Copy</span>
+      </div>
       <div class="desc">Jev-compatible managed API</div>
     </div>
   </div>
@@ -1219,6 +1240,23 @@
 
   // Boot with GS1 domain
   switchDomain('gs1');
+
+  window.copySnippet = async function(text, el) {
+    try {
+      await navigator.clipboard.writeText(text);
+      const hint = el.querySelector('.copy-hint');
+      if (hint) {
+        hint.textContent = '✓ Copied';
+        hint.style.color = '#3fb950';
+        el.style.borderColor = '#2ea043';
+        setTimeout(() => {
+          hint.textContent = 'Copy';
+          hint.style.color = '#8b949e';
+          el.style.borderColor = '#30363d';
+        }, 1800);
+      }
+    } catch(e) {}
+  };
 
   // Copy to clipboard initializer
   function initCopyButtons() {

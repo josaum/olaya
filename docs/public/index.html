@@ -2023,22 +2023,34 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
         </a>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.65rem; max-width: 640px; margin: 0 auto;">
-        <div style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.6rem 0.75rem; font-size: 0.8rem;">
-          <div style="color: #3fb950; font-weight: 700; font-family: monospace; margin-bottom: 0.2rem;">uvx olaya-mcp</div>
-          <div style="color: #6e7681;">Zero-install Python agent wedge</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.65rem; max-width: 680px; margin: 0 auto;">
+        <div class="quick-copy-card" onclick="copySnippet('uvx olaya-mcp', this)" style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #3fb950; font-weight: 700; font-family: monospace;">uvx olaya-mcp</span>
+            <span class="copy-hint" style="font-size: 0.68rem; color: #8b949e;">Copy</span>
+          </div>
+          <div style="color: #6e7681; margin-top: 0.2rem; font-size: 0.76rem;">Zero-install Python agent wedge</div>
         </div>
-        <div style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.6rem 0.75rem; font-size: 0.8rem;">
-          <div style="color: #3fb950; font-weight: 700; font-family: monospace; margin-bottom: 0.2rem;">npx @mycelia/olaya-mcp</div>
-          <div style="color: #6e7681;">Zero-install Node agent wedge</div>
+        <div class="quick-copy-card" onclick="copySnippet('npx @mycelia/olaya-mcp', this)" style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #3fb950; font-weight: 700; font-family: monospace;">npx @mycelia/olaya-mcp</span>
+            <span class="copy-hint" style="font-size: 0.68rem; color: #8b949e;">Copy</span>
+          </div>
+          <div style="color: #6e7681; margin-top: 0.2rem; font-size: 0.76rem;">Zero-install Node agent wedge</div>
         </div>
-        <div style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.6rem 0.75rem; font-size: 0.8rem;">
-          <div style="color: #3fb950; font-weight: 700; font-family: monospace; margin-bottom: 0.2rem;">pip install olaya</div>
-          <div style="color: #6e7681;">Python SDK — open weights</div>
+        <div class="quick-copy-card" onclick="copySnippet('pip install olaya', this)" style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #3fb950; font-weight: 700; font-family: monospace;">pip install olaya</span>
+            <span class="copy-hint" style="font-size: 0.68rem; color: #8b949e;">Copy</span>
+          </div>
+          <div style="color: #6e7681; margin-top: 0.2rem; font-size: 0.76rem;">Python SDK — open weights</div>
         </div>
-        <div style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.6rem 0.75rem; font-size: 0.8rem;">
-          <div style="color: #58a6ff; font-weight: 700; font-family: monospace; margin-bottom: 0.2rem;">POST /api/systemone</div>
-          <div style="color: #6e7681;">Jev-compatible managed API</div>
+        <div class="quick-copy-card" onclick="copySnippet('https://public-nine-jade-58.vercel.app/api/systemone', this)" style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #58a6ff; font-weight: 700; font-family: monospace;">POST /api/systemone</span>
+            <span class="copy-hint" style="font-size: 0.68rem; color: #8b949e;">Copy</span>
+          </div>
+          <div style="color: #6e7681; margin-top: 0.2rem; font-size: 0.76rem;">Jev-compatible managed API</div>
         </div>
       </div>
     </div>
@@ -2724,6 +2736,24 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
     switchDomain('gs1');
 
   // Copy to clipboard initializer for all pre blocks
+  
+  window.copySnippet = async function(text, el) {
+    try {
+      await navigator.clipboard.writeText(text);
+      const hint = el.querySelector('.copy-hint');
+      if (hint) {
+        hint.textContent = '✓ Copied';
+        hint.style.color = '#3fb950';
+        el.style.borderColor = '#2ea043';
+        setTimeout(() => {
+          hint.textContent = 'Copy';
+          hint.style.color = '#8b949e';
+          el.style.borderColor = '#21262d';
+        }, 1800);
+      }
+    } catch(e) {}
+  };
+
   function initCopyButtons() {
     document.querySelectorAll('pre').forEach(pre => {
       if (pre.id === 'jsonOutput' || pre.closest('.code-wrapper') || pre.classList.contains('demo-output-pre')) return;
