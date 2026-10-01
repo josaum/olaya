@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leio Playground — Ontology-Grounded System 1 Decision Engine</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d1117'/><path d='M55 12 L22 54 L48 54 L44 88 L78 46 L52 46 Z' fill='%23388bfd'/></svg>">
   <meta name="description" content="Interactive playground for Leio: ontology-grounded System 1 decision engine. Live demo with 6 domain ontologies. Runs in-browser, &lt;1ms.">
   <style>
     *, *:before, *:after { box-sizing: border-box; }
@@ -30,6 +31,42 @@
       font-size: 0.83rem;
       line-height: 1.5;
       color: #c9d1d9;
+    }
+
+    
+    /* ── Code block copy button ── */
+    .code-wrapper {
+      position: relative;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(33, 38, 45, 0.85);
+      border: 1px solid #30363d;
+      color: #8b949e;
+      border-radius: 6px;
+      padding: 0.22rem 0.55rem;
+      font-size: 0.72rem;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+    }
+    .copy-btn:hover {
+      background: #30363d;
+      color: #c9d1d9;
+      border-color: #58a6ff;
+    }
+    .copy-btn.copied {
+      background: rgba(46, 160, 67, 0.2);
+      color: #3fb950;
+      border-color: #2ea043;
     }
 
     /* ── Navbar ─────────────────────────────────────────────────────────── */
@@ -488,12 +525,16 @@
 
 <!-- ── Fixed Navbar ──────────────────────────────────────────────────────── -->
 <nav class="navbar">
-  <a class="brand-pill" href="#">⚡ LEIO</a>
-  <a class="nav-link" href="./index.html">Article</a>
+  <a class="brand-pill" href="./playground.html" style="box-shadow: 0 0 12px rgba(31,111,235,0.4);">⚡ LEIO</a>
+  <span style="font-size:0.75rem; color:#8b949e; display:none; @media(min-width:600px){display:inline};">Playground</span>
+  <a class="nav-link" href="./index.html" style="margin-left:0.5rem;">📄 Full Article &amp; Benchmarks</a>
   <a class="nav-link" href="https://github.com/josaum/olaya" target="_blank" rel="noopener">GitHub</a>
-  <a class="nav-link" href="https://public-nine-jade-58.vercel.app/api/systemone" target="_blank" rel="noopener">API</a>
+  <a class="nav-link" href="https://public-nine-jade-58.vercel.app/api/systemone" target="_blank" rel="noopener">Live API</a>
   <span class="nav-spacer"></span>
-  <a class="nav-cta" href="#demo">▶ Try Demo</a>
+  <span style="display:inline-flex; align-items:center; gap:0.35rem; font-size:0.74rem; color:#3fb950; background:rgba(63,185,80,0.1); border:1px solid rgba(63,185,80,0.3); border-radius:20px; padding:0.15rem 0.55rem; margin-right:0.5rem;">
+    <span class="pulse-dot" style="width:6px; height:6px;"></span> System 1 Active
+  </span>
+  <a class="nav-cta" href="#demo">▶ Live Demo</a>
 </nav>
 
 <div class="page-wrap">
@@ -1154,6 +1195,36 @@
 
   // Boot with GS1 domain
   switchDomain('gs1');
+
+  // Copy to clipboard initializer
+  function initCopyButtons() {
+    document.querySelectorAll('pre').forEach(pre => {
+      if (pre.id === 'jsonOutput' || pre.closest('.code-wrapper')) return;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-wrapper';
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path></svg> <span>Copy</span>`;
+      btn.addEventListener('click', async () => {
+        const text = pre.innerText;
+        try {
+          await navigator.clipboard.writeText(text.trim());
+          btn.classList.add('copied');
+          btn.querySelector('span').textContent = '✓ Copied';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.querySelector('span').textContent = 'Copy';
+          }, 1800);
+        } catch(e) {}
+      });
+      wrapper.appendChild(btn);
+    });
+  }
+  initCopyButtons();
+
 </script>
 
 </body>
