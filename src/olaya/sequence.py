@@ -8,8 +8,9 @@ Tracks the precise positional indices of [MASK] marker tokens for the decision h
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any
 
 from olaya.ontology import Concept, Ontology
 
@@ -18,15 +19,15 @@ from olaya.ontology import Concept, Ontology
 class SequenceBundle:
     """The constructed token sequence and metadata for the decision head."""
 
-    input_ids: List[int]
-    attention_mask: List[int]
-    marker_positions: List[int]  # Position of each [MASK] token
-    candidate_curies: List[str]  # Corresponds 1:1 with marker_positions
+    input_ids: list[int]
+    attention_mask: list[int]
+    marker_positions: list[int]  # Position of each [MASK] token
+    candidate_curies: list[str]  # Corresponds 1:1 with marker_positions
     qtype: int  # See QTYPE_IDS
 
 
 # Question-type ids fed to the model's question-type embedding.
-QTYPE_IDS: Dict[str, int] = {"concept": 0, "score": 1, "subsumes": 2, "choice": 3, "noul": 4}
+QTYPE_IDS: dict[str, int] = {"concept": 0, "score": 1, "subsumes": 2, "choice": 3, "noul": 4}
 
 
 def serialize_state(state: Any) -> str:
@@ -53,11 +54,11 @@ def format_concept_option(concept: Concept, ontology: Ontology) -> str:
 
 
 def build_ontology_sequence(
-    tokenizer_encode: Callable[[str], List[int]],
-    special_ids: Dict[str, int],  # {"cls": id, "sep": id, "mask": id, "pad": id}
+    tokenizer_encode: Callable[[str], list[int]],
+    special_ids: dict[str, int],  # {"cls": id, "sep": id, "mask": id, "pad": id}
     state: Any,
     instructions: str,
-    active_concepts: List[Concept],
+    active_concepts: list[Concept],
     ontology: Ontology,
     qtype_id: int = 0,
     max_len: int = 512,
@@ -79,9 +80,9 @@ def build_ontology_sequence(
     header_text = f"{qtype_name} question: {instructions}"
     header_tokens = tokenizer_encode(header_text)[: head_max_len // 2]
 
-    seq: List[int] = [cls_id] + header_tokens + [sep_id]
-    marker_positions: List[int] = []
-    candidate_curies: List[str] = []
+    seq: list[int] = [cls_id] + header_tokens + [sep_id]
+    marker_positions: list[int] = []
+    candidate_curies: list[str] = []
 
     # 2. Options block: each option prefixed with [MASK]
     for concept in active_concepts:

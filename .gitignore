@@ -10,3 +10,4 @@ target/
 *.onnx
 *.ort
 node_modules/
+.ruff_cache/

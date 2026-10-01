@@ -169,11 +169,14 @@ fn resolve_coreml_cache_dir(model_path: &str, override_dir: Option<&Path>) -> Pa
 /// `docs/adr/2026-09-21-coreml-env-gate-parsing.md`.
 #[cfg(all(feature = "coreml", target_os = "macos"))]
 fn env_flag(name: &str, default: bool) -> bool {
-    std::env::var(name).ok().map(|raw| match raw.trim().to_ascii_lowercase().as_str() {
-        "1" | "true" | "yes" | "on" | "y" | "t" => true,
-        "0" | "false" | "no" | "off" | "n" | "f" => false,
-        _ => default,
-    }).unwrap_or(default)
+    std::env::var(name)
+        .ok()
+        .map(|raw| match raw.trim().to_ascii_lowercase().as_str() {
+            "1" | "true" | "yes" | "on" | "y" | "t" => true,
+            "0" | "false" | "no" | "off" | "n" | "f" => false,
+            _ => default,
+        })
+        .unwrap_or(default)
 }
 
 #[cfg(all(feature = "coreml", target_os = "macos"))]
@@ -391,9 +394,7 @@ pub fn probe_output_last_dim(session: &Session, output_name: Option<&str>) -> Op
 /// variable is already set.
 pub fn ensure_ort_dylib_path() {
     const ENV_KEY: &str = "ORT_DYLIB_PATH";
-    if std::env::var_os(ENV_KEY).is_some() {
-        return;
-    }
+    if std::env::var_os(ENV_KEY).is_some() {}
     #[cfg(target_os = "macos")]
     for candidate in [
         "/opt/homebrew/opt/onnxruntime/lib/libonnxruntime.dylib",
