@@ -62,21 +62,54 @@
       70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(63, 185, 80, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0); }
     }
-    .demo-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    /* Interactive Live Demo Layout - Vertical Stack */
+    .demo-container {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 2.5rem 0;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .demo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #21262d;
+      padding-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .demo-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #58a6ff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background: #3fb950;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #3fb950;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(63, 185, 80, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0); }
+    }
+    .demo-stack {
+      display: flex;
+      flex-direction: column;
       gap: 1.5rem;
       margin-top: 1rem;
     }
-    @media (max-width: 768px) {
-      .demo-grid { grid-template-columns: 1fr; }
-    }
-    .demo-input-panel, .demo-output-panel {
-      display: flex;
-      flex-direction: column;
-    }
     .panel-label {
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: #8b949e;
@@ -84,24 +117,27 @@
       font-weight: 600;
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
     .demo-textarea {
       width: 100%;
-      height: 190px;
+      min-height: 150px;
       background: #161b22;
       border: 1px solid #30363d;
       border-radius: 6px;
       color: #c9d1d9;
       font-family: inherit;
-      font-size: 0.95rem;
-      padding: 0.75rem;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      padding: 1rem;
       resize: vertical;
       box-sizing: border-box;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
     .demo-textarea:focus {
       border-color: #58a6ff;
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
     }
     .demo-presets {
       display: flex;
@@ -114,35 +150,40 @@
       color: #c9d1d9;
       border: 1px solid #30363d;
       border-radius: 4px;
-      padding: 0.25rem 0.5rem;
-      font-size: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.82rem;
+      font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
     }
     .preset-btn:hover {
       background: #30363d;
       color: #58a6ff;
+      border-color: #58a6ff;
     }
     .demo-output-pre {
       background: #161b22;
       border: 1px solid #30363d;
       border-radius: 6px;
-      padding: 0.75rem 1rem;
-      height: 250px;
+      padding: 1.25rem;
+      min-height: 380px;
+      max-height: 550px;
       overflow: auto;
-      font-size: 0.82rem;
-      line-height: 1.5;
+      font-size: 0.88rem;
+      line-height: 1.55;
       margin: 0;
       color: #7ee787;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
     }
     .metric-pill {
       background: #1f6feb22;
       color: #58a6ff;
       border: 1px solid #1f6feb55;
       border-radius: 12px;
-      padding: 0.15rem 0.5rem;
-      font-size: 0.75rem;
+      padding: 0.2rem 0.65rem;
+      font-size: 0.8rem;
       font-family: monospace;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -160,7 +201,7 @@
   </header>
 
   <article>
-    <!-- INTERACTIVE LIVE DEMO -->
+    <!-- INTERACTIVE LIVE DEMO (STACKED) -->
     <div class="demo-container">
       <div class="demo-header">
         <div class="demo-title">
@@ -169,33 +210,33 @@
         </div>
         <div id="latencyBadge" class="metric-pill">Ready in Browser</div>
       </div>
-      <p style="font-size: 0.9rem; color: #8b949e; margin-top: 0;">
-        Type or edit any warehouse scan, barcode payload, or logistics item below. The client-side O-Laya engine executes the full candidate router, active subgraph extraction, and axiom projection locally in your browser in real-time.
+      <p style="font-size: 0.95rem; color: #8b949e; margin-top: 0;">
+        Type or edit any warehouse scan, barcode payload, or logistics item below. The client-side O-Laya engine executes the full candidate router, active subgraph extraction, and axiom projection locally in your browser on every keystroke.
       </p>
       
-      <div class="demo-grid">
-        <!-- Input Panel -->
+      <div class="demo-stack">
+        <!-- Enlarged Input Panel (Top) -->
         <div class="demo-input-panel">
           <div class="panel-label">
-            <span>Input State (Warehouse Scan / Stream)</span>
-            <span id="charCount" style="font-family: monospace;">0 chars</span>
+            <span>Input State (Warehouse Scan / EPCIS Event Stream)</span>
+            <span id="charCount" style="font-family: monospace; color: #58a6ff;">0 chars</span>
           </div>
-          <textarea id="stateInput" class="demo-textarea" placeholder="Paste or type warehouse observation, barcode scan, or packing slip..."></textarea>
+          <textarea id="stateInput" class="demo-textarea" rows="4" placeholder="Paste or type warehouse observation, barcode scan, or packing slip..."></textarea>
           
           <div class="demo-presets">
-            <span style="font-size: 0.75rem; color: #8b949e; align-self: center;">Try Preset:</span>
-            <button class="preset-btn" onclick="loadPreset('milk')">Perishable Milk Jug</button>
+            <span style="font-size: 0.8rem; color: #8b949e; align-self: center; font-weight: 500;">Quick Presets:</span>
+            <button class="preset-btn" onclick="loadPreset('milk')">Perishable Whole Milk</button>
             <button class="preset-btn" onclick="loadPreset('pallet')">Returnable Euro Pallet</button>
-            <button class="preset-btn" onclick="loadPreset('meat')">Frozen Poultry Carton</button>
-            <button class="preset-btn" onclick="loadPreset('apparel')">Warehouse Steel-Toe Footwear</button>
+            <button class="preset-btn" onclick="loadPreset('meat')">Frozen Poultry Cuts</button>
+            <button class="preset-btn" onclick="loadPreset('apparel')">Safety Steel-Toe Footwear</button>
           </div>
         </div>
 
-        <!-- Output Panel -->
+        <!-- Output Panel (Below) -->
         <div class="demo-output-panel">
           <div class="panel-label">
-            <span>Grounded Decision Output (Nested JSON)</span>
-            <span id="axiomStatus" style="color: #3fb950; font-family: monospace;">axioms_verified: true</span>
+            <span>Real-Time Grounded Decision Output (Nested JSON)</span>
+            <span id="axiomStatus" style="color: #3fb950; font-family: monospace; font-size: 0.85rem;">axioms_verified: true</span>
           </div>
           <pre id="jsonOutput" class="demo-output-pre">Loading GS1 Web Vocabulary & O-Laya Engine...</pre>
         </div>
