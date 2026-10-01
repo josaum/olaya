@@ -624,15 +624,18 @@
         <span class="badge" style="background:#1f6feb; font-size: 0.78rem; padding: 0.2rem 0.6rem;">⚡ LEIO</span>
         <span class="badge" style="background:#238636;">OPEN WEIGHTS + API</span>
         <span class="badge" style="background:#6e40c9;">SYSTEM 1 DECISION ENGINE</span>
-        <span class="badge" style="background:#0d47a1;">$0.042 / 1M INPUTS</span>
+        <span class="badge" style="background:#0d47a1;">$0.042 / 1M INPUTS — OUTPUTS FREE</span>
       </div>
       <div class="meta" style="margin: 0;">
-        By <strong>Dionisio Chiuratto Agourakis</strong> (<a href="mailto:dionisio.ca@gmail.com">dionisio.ca@gmail.com</a>)
+        By <strong>Dionisio Chiuratto Agourakis</strong> &middot; <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener">GitHub</a>
       </div>
     </div>
-    <h1 style="margin: 0.5rem 0 0.25rem 0; font-size: 1.85rem; letter-spacing: -0.02em;">Leio is not a chatbot.</h1>
-    <p style="font-size: 1.05rem; color: #8b949e; margin: 0 0 0.75rem 0; line-height: 1.45;">
-      It does not write code, chat, or predict tokens one by one. Leio is a sub-millisecond <strong>System 1 decision model</strong> that evaluates state and returns mathematically proven probabilities over formal ontologies.
+    <h1 style="margin: 0.5rem 0 0.25rem 0; font-size: 2rem; letter-spacing: -0.03em; line-height: 1.1;">Leio is not a chatbot.<br><span style="color: #58a6ff; font-size: 1.4rem; font-weight: 500; letter-spacing: -0.01em;">It returns mathematically proven decisions.</span></h1>
+    <p style="font-size: 1.0rem; color: #8b949e; margin: 0.5rem 0 0.5rem 0; line-height: 1.5;">
+      Leio is an <strong>ontology-grounded System 1 decision engine</strong>. Unlike LLMs that generate tokens one by one, Leio evaluates any formal ontology in a single forward pass — returning calibrated probabilities with axiom-verified guarantees in <strong style="color:#c9d1d9;">&lt;1ms</strong>.
+    </p>
+    <p style="font-size: 0.88rem; color: #6e7681; margin: 0 0 0.75rem 0;">
+      Like Jev from TypeSafe AI and Laya from Convai &mdash; but with formal ontology grounding, P(child) &le; P(parent) subsumption monotonicity, and a disjointness kernel that makes hallucination <em>mathematically impossible</em>.
     </p>
   </header>
 
@@ -724,6 +727,7 @@
           <option value="bfo">🏛️ BFO Top-Level (ISO/IEC 21838-2)</option>
           <option value="skos">📚 SKOS Taxonomies & Thesauri</option>
           <option value="incident">🚨 IT Incident & SRE Triage</option>
+          <option value="doid">🧬 Disease Ontology (DOID)</option>
         </select>
         <div class="domain-tabs">
           <button id="tab-gs1" class="domain-tab-btn active" onclick="switchDomain('gs1')">📦 GS1 Supply Chain</button>
@@ -731,6 +735,7 @@
           <button id="tab-bfo" class="domain-tab-btn" onclick="switchDomain('bfo')">🏛️ BFO Top-Level</button>
           <button id="tab-skos" class="domain-tab-btn" onclick="switchDomain('skos')">📚 SKOS Taxonomies</button>
           <button id="tab-incident" class="domain-tab-btn" onclick="switchDomain('incident')">🚨 SRE Incident Triage</button>
+          <button id="tab-doid" class="domain-tab-btn" onclick="switchDomain('doid')">🧬 Disease Ontology</button>
         </div>
       </div>
       
@@ -839,7 +844,7 @@ flowchart TD
     </div>
 
     <!-- 4 HIGH-IMPACT REAL WORLD USE CASES -->
-    <h2 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Why This Changes Everything: 4 Real-World Use Cases</h2>
+    <h2 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Why This Changes Everything: 5 Real-World Use Cases</h2>
     <p style="color: #8b949e; margin-bottom: 1.25rem;">
       Instead of calling a 70B autoregressive LLM to generate 100 tokens of fragile JSON over 2 seconds, O-Laya delivers sub-millisecond, mathematically guaranteed decisions directly on the edge.
     </p>
@@ -875,6 +880,14 @@ flowchart TD
           Classify millions of scraped web pages into 660 Schema.org classes in real time for crawler indexing, rich results, and entity graphs.
         </p>
         <div style="font-size: 0.74rem; color: #3fb950; font-family: monospace;">✓ 100% Google Rich Results covered</div>
+      </div>
+
+      <div style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 0.85rem 1rem;">
+        <div style="font-size: 1.2rem; margin-bottom: 0.35rem;">🧬 <strong>5. Clinical Disease Classification (DOID)</strong></div>
+        <p style="font-size: 0.82rem; color: #c9d1d9; margin: 0 0 0.5rem 0;">
+          Ground free-text clinical observations into the Human Disease Ontology &mdash; routing diagnoses, triage codes, and biomarker reports into ICD-adjacent hierarchies without hallucinating disease names.
+        </p>
+        <div style="font-size: 0.74rem; color: #3fb950; font-family: monospace;">✓ 730 disease classes | Axiom-verified lineage | Zero ICD hallucination</div>
       </div>
     </div>
 
@@ -1142,6 +1155,30 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
       </div>
     </div>
 
+    <h3>⚡ Live Hosted Endpoint: Try with cURL (Exact Jev Spec)</h3>
+    <p>You can execute queries right now against our hosted edge serverless endpoint:</p>
+    <pre><code class="language-bash">curl -X POST https://public-nine-jade-58.vercel.app/api/systemone \
+  -H "Content-Type: application/json" \
+  -d '{
+    "state": "High-priority conveyor alarm: motor temperature exceeds 85C on sorter line #2.",
+    "questions": {
+      "triage": {
+        "type": "choice",
+        "instructions": "Determine line operator action",
+        "options": ["EMERGENCY_STOP", "SCHEDULE_LUBRICATION", "IGNORE"]
+      },
+      "urgency_score": {
+        "type": "score",
+        "instructions": "Rate operational hazard level 1 to 5",
+        "levels": 5
+      },
+      "requires_evacuation": {
+        "type": "noul",
+        "instructions": "Is there smoke or immediate fire danger?"
+      }
+    }
+  }'</code></pre>
+
     <h2>Direct Architecture & Positioning Comparison</h2>
     <div class="table-container">
       <table>
@@ -1313,6 +1350,23 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
           { id: "kafka", label: "Kafka Consumer Lag Surge", text: "Order processing pipeline stalled: Kafka consumer group partition lag exceeded 250,000 unread messages in topic orders-v1." }
         ]
       }
+      doid: {
+        name: "Disease Ontology (DOID)",
+        badge: "🧬 Disease Ontology (DOID)",
+        title: "Interactive Live Demo: Human Disease Ontology Grounding",
+        inputLabel: "Input Clinical Observation / Diagnosis / Symptom Description",
+        url: "./ontologies/doid_ontology.json",
+        downsetTarget: "DOID:162",
+        downsetLabel: "is_cancer",
+        presets: [
+          { id: "angiosarcoma", label: "Angiosarcoma", text: "Vascular cancer arising from blood vessel endothelium. Aggressive soft tissue sarcoma with high metastatic potential." },
+          { id: "t2dm", label: "Type 2 Diabetes", text: "Metabolic disorder characterized by insulin resistance, hyperglycemia, progressive beta-cell failure, and chronic glucose intolerance." },
+          { id: "copd", label: "COPD", text: "Chronic obstructive pulmonary disease, progressive airflow limitation, emphysema and chronic bronchitis. Smoking-related lung disease." },
+          { id: "sepsis", label: "Bacterial Sepsis", text: "Systemic inflammatory response to bacterial infection. Life-threatening organ dysfunction from dysregulated host response to infection." },
+          { id: "alzheimer", label: "Alzheimer's Disease", text: "Progressive neurodegenerative disease. Amyloid plaque accumulation, neurofibrillary tangles, cognitive decline and dementia in elderly." },
+          { id: "melanoma", label: "Cutaneous Melanoma", text: "Malignant skin cancer arising from melanocytes. UV radiation exposure risk factor. BRAF V600E mutation commonly found." }
+        ]
+      }
     };
 
     window.switchDomain = async function(domainKey) {
@@ -1326,7 +1380,7 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
         sel.value = domainKey;
       }
 
-      ['gs1', 'schemaorg', 'bfo', 'skos', 'incident'].forEach(k => {
+      ['gs1', 'schemaorg', 'bfo', 'skos', 'incident', 'doid'].forEach(k => {
         const btn = document.getElementById(`tab-${k}`);
         if (!btn) return;
         if (k === domainKey) {
