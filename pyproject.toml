@@ -27,3 +27,15 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/olaya"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+src = ["src", "tests", "scripts", "benchmarks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -3,7 +3,7 @@
  * Fully compatible with Convai / Receptron's Laya and TypeSafe AI's Jev primitives.
  */
 
-import { calibrateAndProject } from "./axioms.js";
+import { calibrateAndProject, verifyAxioms } from "./axioms.js";
 import { Concept, OntologyDAG } from "./ontology.js";
 import { CandidateRouter, tokenize } from "./router.js";
 
@@ -98,7 +98,7 @@ export class OLaya {
       selectedConcept: subgraph.concepts[bestSlot],
       confidence,
       probabilities,
-      axiomsVerified: true,
+      axiomsVerified: verifyAxioms(probs, subgraph.parentEdges, subgraph.disjointEdges),
     };
   }
 

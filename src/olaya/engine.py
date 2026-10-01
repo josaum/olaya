@@ -12,26 +12,36 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
-import numpy as np
 import torch
 from transformers import AutoTokenizer
 
-from olaya.axioms import calibrate_and_project_distribution
+from olaya.axioms import calibrate_and_project_distribution, project_hierarchical_distribution, verify_axioms
 from olaya.candidate_router import CandidateRouter
 from olaya.model import OntologyDecisionModel
 from olaya.ontology import Concept, Ontology, create_incident_ontology
-from olaya.sequence import SequenceBundle, build_ontology_sequence
+from olaya.sequence import QTYPE_IDS, SequenceBundle, build_ontology_sequence, serialize_state
+
+DEFAULT_SCORE_LEVELS = ["level 0", "level 1", "level 2", "level 3"]
 
 
 @dataclass
 class ConceptAnswer:
+    """Grounded concept decision.
+
+    ``candidate_probabilities`` is a distribution (sums to 1) over the most specific routed concepts
+    (the leaves of the active subgraph); ``curie`` is its argmax. ``probabilities`` holds hierarchical
+    marginals P(state is an instance of C) for every concept in the active subgraph, so ancestors
+    carry the summed mass of their descendants and P(parent) >= P(child) by construction.
+    """
+
     type: str = "concept"
     curie: str = ""
     label: str = ""
-    lineage: List[str] = field(default_factory=list)
-    probabilities: Dict[str, float] = field(default_factory=dict)
+    lineage: list[str] = field(default_factory=list)
+    probabilities: dict[str, float] = field(default_factory=dict)
+    candidate_probabilities: dict[str, float] = field(default_factory=dict)
     confidence: float = 0.0
     axioms_verified: bool = True
 
@@ -48,7 +58,7 @@ class SubsumesAnswer:
 class ChoiceAnswer:
     type: str = "choice"
     choice: str = ""
-    probabilities: Dict[str, float] = field(default_factory=dict)
+    probabilities: dict[str, float] = field(default_factory=dict)
     confidence: float = 0.0
 
 
@@ -56,7 +66,7 @@ class ChoiceAnswer:
 class ScoreAnswer:
     type: str = "score"
     score: float = 0.0
-    probabilities: Dict[str, float] = field(default_factory=dict)
+    probabilities: dict[str, float] = field(default_factory=dict)
     confidence: float = 0.0
 
 
@@ -69,8 +79,8 @@ class NoulAnswer:
 @dataclass
 class SystemOneResult:
     model: str
-    answers: Dict[str, Any]
-    usage: Dict[str, int]
+    answers: dict[str, Any]
+    usage: dict[str, int]
     latency_ms: float
 
 
@@ -128,27 +138,28 @@ class OLaya:
         self.model.to(self.device)
         self.model.eval()
 
-        # Special token IDs
+        # Special token IDs (``is None`` checks: 0 is a valid token id)
         self.special_ids = {
-            "cls": self.tokenizer.cls_token_id or 101,
-            "sep": self.tokenizer.sep_token_id or 102,
-            "mask": self.tokenizer.mask_token_id or 103,
-            "pad": self.tokenizer.pad_token_id or 0,
+            "cls": _token_id_or(self.tokenizer.cls_token_id, 101),
+            "sep": _token_id_or(self.tokenizer.sep_token_id, 102),
+            "mask": _token_id_or(self.tokenizer.mask_token_id, 103),
+            "pad": _token_id_or(self.tokenizer.pad_token_id, 0),
         }
 
-    def _encode_text(self, text: str) -> List[int]:
+    def _encode_text(self, text: str) -> list[int]:
         return self.tokenizer.encode(text, add_special_tokens=False)
 
-    def system_one(self, state: Any, questions: Dict[str, Dict[str, Any]]) -> SystemOneResult:
+    def system_one(self, state: Any, questions: dict[str, dict[str, Any]]) -> SystemOneResult:
         """Evaluate typed questions against input state in a single forward pass."""
         start_time = time.perf_counter()
         qids = list(questions.keys())
         if not qids:
             raise ValueError("system_one: At least one question required.")
 
-        bundles: List[SequenceBundle] = []
-        subgraphs: List[Ontology] = []
+        bundles: list[SequenceBundle] = []
+        subgraphs: list[Ontology] = []
         total_tokens = 0
+        state_text = serialize_state(state)
 
         for qid in qids:
             q = questions[qid]
@@ -157,89 +168,69 @@ class OLaya:
 
             if qtype == "concept":
                 root_curie = q.get("root")
+                if root_curie is not None and root_curie not in self.ontology.concepts:
+                    raise ValueError(f"Question {qid!r}: unknown root concept {root_curie!r}.")
                 subgraph = self.router.extract_decision_subgraph(
-                    state_text=str(state), root_curie=root_curie, max_candidates=10
+                    state_text=state_text, root_curie=root_curie, max_candidates=10
                 )
-                active_concepts = list(subgraph.concepts.values())
-                bundle = build_ontology_sequence(
-                    tokenizer_encode=self._encode_text,
-                    special_ids=self.special_ids,
-                    state=state,
-                    instructions=instructions,
-                    active_concepts=active_concepts,
-                    ontology=subgraph,
-                    qtype_id=0,
-                )
-                bundles.append(bundle)
-                subgraphs.append(subgraph)
+                if not subgraph.concepts:
+                    raise ValueError(f"Question {qid!r}: no candidate concepts (is the ontology empty?).")
+                # Only the most specific routed concepts compete; their ancestors appear as
+                # subClassOf context in the option text and receive mass through marginals.
+                active_concepts = [c for c in subgraph.concepts.values() if not c.children]
 
             elif qtype == "subsumes":
                 target_curie = q.get("concept", "")
                 concept = self.ontology.concepts.get(target_curie)
-                descendants = [self.ontology.concepts[d] for d in self.ontology.get_descendants(target_curie) if d in self.ontology.concepts]
-                active_concepts = ([concept] if concept else []) + descendants[:6]
+                if concept is None:
+                    raise ValueError(f"Question {qid!r}: unknown subsumes concept {target_curie!r}.")
+                descendants = sorted(self.ontology.get_descendants(target_curie) - {target_curie})
+                active_concepts = [concept] + [self.ontology.concepts[d] for d in descendants[:6]]
                 subgraph = self.ontology.extract_subgraph([c.curie for c in active_concepts])
-                bundle = build_ontology_sequence(
-                    tokenizer_encode=self._encode_text,
-                    special_ids=self.special_ids,
-                    state=state,
-                    instructions=instructions or f"Does state satisfy {target_curie}?",
-                    active_concepts=active_concepts,
-                    ontology=subgraph,
-                    qtype_id=2,
-                )
-                bundles.append(bundle)
-                subgraphs.append(subgraph)
+                instructions = instructions or f"Does state satisfy {target_curie}?"
 
             elif qtype == "choice":
-                criteria = q.get("criteria", {})
-                active_concepts = []
-                for k, desc in criteria.items():
-                    active_concepts.append(Concept(curie=k, label=k, description=desc or ""))
-                subgraph = Ontology("choice_subgraph")
-                for c in active_concepts:
-                    subgraph.add_concept(c)
-                bundle = build_ontology_sequence(
-                    tokenizer_encode=self._encode_text,
-                    special_ids=self.special_ids,
-                    state=state,
-                    instructions=instructions,
-                    active_concepts=active_concepts,
-                    ontology=subgraph,
-                    qtype_id=0,
-                )
-                bundles.append(bundle)
-                subgraphs.append(subgraph)
-
-            elif qtype in ("score", "noul"):
-                # Represent rubric or boolean as candidate slots
-                if qtype == "score":
-                    levels = q.get("criteria", ["level 0", "level 1", "level 2", "level 3"])
-                    active_concepts = [Concept(curie=str(i), label=str(i), description=lvl) for i, lvl in enumerate(levels)]
-                    q_id = 1
+                criteria = q.get("criteria")
+                if isinstance(criteria, dict):
+                    options = [(str(k), desc or "") for k, desc in criteria.items()]
+                elif isinstance(criteria, (list, tuple)):
+                    options = [(str(k), "") for k in dict.fromkeys(criteria)]
                 else:
-                    active_concepts = [
-                        Concept(curie="false", label="false", description="Statement does not hold"),
-                        Concept(curie="true", label="true", description="Statement holds"),
-                    ]
-                    q_id = 2
+                    raise ValueError(f"Question {qid!r}: choice criteria must be a list or dict of options.")
+                if not options:
+                    raise ValueError(f"Question {qid!r}: choice requires at least one option.")
+                active_concepts = [Concept(curie=k, label=k, description=desc) for k, desc in options]
+                subgraph = _flat_subgraph("choice_subgraph", active_concepts)
 
-                subgraph = Ontology("rubric_subgraph")
-                for c in active_concepts:
-                    subgraph.add_concept(c)
-                bundle = build_ontology_sequence(
-                    tokenizer_encode=self._encode_text,
-                    special_ids=self.special_ids,
-                    state=state,
-                    instructions=instructions,
-                    active_concepts=active_concepts,
-                    ontology=subgraph,
-                    qtype_id=q_id,
-                )
-                bundles.append(bundle)
-                subgraphs.append(subgraph)
+            elif qtype == "score":
+                levels = q.get("criteria", DEFAULT_SCORE_LEVELS)
+                if not levels:
+                    raise ValueError(f"Question {qid!r}: score requires at least one rubric level.")
+                active_concepts = [Concept(curie=str(i), label=str(i), description=lvl) for i, lvl in enumerate(levels)]
+                subgraph = _flat_subgraph("rubric_subgraph", active_concepts)
+
+            elif qtype == "noul":
+                active_concepts = [
+                    Concept(curie="false", label="false", description="Statement does not hold"),
+                    Concept(curie="true", label="true", description="Statement holds"),
+                ]
+                subgraph = _flat_subgraph("rubric_subgraph", active_concepts)
+
             else:
                 raise ValueError(f"Unknown question type: {qtype}")
+
+            bundle = build_ontology_sequence(
+                tokenizer_encode=self._encode_text,
+                special_ids=self.special_ids,
+                state=state,
+                instructions=instructions,
+                active_concepts=active_concepts,
+                ontology=subgraph,
+                qtype_id=QTYPE_IDS[qtype],
+                qtype_name=qtype,
+            )
+            bundles.append(bundle)
+            subgraphs.append(subgraph)
 
         # Batch collate
         n = len(bundles)
@@ -275,7 +266,7 @@ class OLaya:
             logits, act_probs = self.model(input_ids, attention_mask, marker_pos, marker_mask, qtypes)
 
         logits_np = logits.cpu().numpy()
-        answers: Dict[str, Any] = {}
+        answers: dict[str, Any] = {}
 
         for i, qid in enumerate(qids):
             b = bundles[i]
@@ -284,15 +275,18 @@ class OLaya:
             num_markers = len(b.marker_positions)
             raw_scores = logits_np[i, :num_markers]
 
-            prob_map, confidence = calibrate_and_project_distribution(
-                raw_logits=raw_scores,
-                candidate_curies=b.candidate_curies,
-                subgraph=subgraph,
-                enforce_axioms=True,
-            )
-
             if qtype == "concept":
-                best_curie = max(prob_map.items(), key=lambda x: x[1])[0]
+                candidate_probs, marginals, confidence = project_hierarchical_distribution(
+                    raw_logits=raw_scores,
+                    candidate_curies=b.candidate_curies,
+                    subgraph=subgraph,
+                    enforce_axioms=True,
+                )
+                # Highest mass wins; ties go to the deeper concept, then the lexicographically smaller CURIE.
+                best_curie = min(
+                    candidate_probs,
+                    key=lambda c: (-candidate_probs[c], -len(self.ontology.get_ancestors(c)), c),
+                )
                 concept_obj = self.ontology.concepts.get(best_curie)
                 label = concept_obj.label if concept_obj else best_curie
                 lineage = self.ontology.get_lineage(best_curie)
@@ -300,12 +294,21 @@ class OLaya:
                     curie=best_curie,
                     label=label,
                     lineage=lineage,
-                    probabilities={k: round(v, 4) for k, v in prob_map.items()},
+                    probabilities={k: round(v, 4) for k, v in marginals.items()},
+                    candidate_probabilities={k: round(v, 4) for k, v in candidate_probs.items()},
                     confidence=round(confidence, 4),
-                    axioms_verified=True,
+                    axioms_verified=verify_axioms(marginals, subgraph),
                 )
+                continue
 
-            elif qtype == "subsumes":
+            prob_map, confidence = calibrate_and_project_distribution(
+                raw_logits=raw_scores,
+                candidate_curies=b.candidate_curies,
+                subgraph=subgraph,
+                enforce_axioms=True,
+            )
+
+            if qtype == "subsumes":
                 # Probability of satisfying concept or descendants
                 target_curie = questions[qid].get("concept", "")
                 p_subsumes = prob_map.get(target_curie, 0.0)
@@ -343,3 +346,14 @@ class OLaya:
             usage={"input_tokens": total_tokens, "output_tokens": 0},
             latency_ms=round(latency_ms, 2),
         )
+
+
+def _token_id_or(token_id: int | None, default: int) -> int:
+    return default if token_id is None else token_id
+
+
+def _flat_subgraph(name: str, concepts: list[Concept]) -> Ontology:
+    subgraph = Ontology(name)
+    for c in concepts:
+        subgraph.add_concept(c)
+    return subgraph

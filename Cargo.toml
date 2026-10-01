@@ -1,0 +1,14 @@
+[workspace]
+members = [
+    "crates/owl-fast-core",
+    "crates/mycelia-ort-utils",
+    "crates/olaya-core",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Dionisio & Team"]
+license = "MIT"
+repository = "https://github.com/josaum/olaya"

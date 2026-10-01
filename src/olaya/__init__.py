@@ -2,7 +2,7 @@
 
 from olaya.axioms import calibrate_and_project_distribution, enforce_subsumption_monotonicity
 from olaya.candidate_router import CandidateRouter
-from olaya.engine import ConceptAnswer, ChoiceAnswer, NoulAnswer, OLaya, ScoreAnswer, SubsumesAnswer, SystemOneResult
+from olaya.engine import ChoiceAnswer, ConceptAnswer, NoulAnswer, OLaya, ScoreAnswer, SubsumesAnswer, SystemOneResult
 from olaya.model import OntologyDecisionHead, OntologyDecisionModel
 from olaya.ontology import Concept, Ontology, create_incident_ontology
 from olaya.sequence import SequenceBundle, build_ontology_sequence

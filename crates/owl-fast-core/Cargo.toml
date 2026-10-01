@@ -1,0 +1,49 @@
+[package]
+name = "owl-fast-core"
+version = "0.2.0"
+edition = "2021"
+authors = ["Mycelia Team"]
+description = "OWL/RDF/OBO/SKOS entity extraction on top of Oxigraph (centralized parser for office-parsers-rs)"
+license = "MIT"
+repository = "https://github.com/mycelia/office-parsers-rs"
+keywords = ["owl", "rdf", "ontology", "parser", "sparql"]
+categories = ["parser-implementations"]
+rust-version = "1.94"
+readme = "README.md"
+
+# Mycelia Sovereign Crate contract — see docs/architecture/publishable-crate-contract.md
+# Enforced by the `publishable-crate` leio-code doctor under `audit --strict`.
+[package.metadata.mycelia]
+tier = "sovereign"
+visibility = "internal"
+
+[lib]
+name = "owl_fast_core"
+
+# ── Features ─────────────────────────────────────────────────────────────
+#
+# `serde` is on by default because every workspace consumer round-trips
+# entities through JSON (alignment jobs, REST API, persisted bench results).
+# Disable with --no-default-features for a minimal core.
+[features]
+default = ["serde"]
+serde = ["dep:serde"]
+
+[dependencies]
+anyhow   = "1.0"
+# Phase 2.1: dropped oxigraph (81 transitive crates) in favor of the component
+# parser stack. We never use Store, SPARQL, or any of the indexed query API —
+# just the parser + Quad model. Drops 41 transitives (81 → 40): sparesults,
+# spareval, spargebra, sparopt, dashmap, storage backends, and their tails.
+# oxrdf 0.3 + oxrdfio 0.2.6 + rdf-12: same term model as oxigraph 0.5.10.
+# Pinned directly (not `workspace = true`): mycelia-align and mycelia-brains
+# consume this crate across workspace boundaries, so it must be self-contained.
+oxrdf   = { version = "0.3", features = ["rdf-12"] }
+oxrdfio = { version = "0.2.6", features = ["rdf-12"] }
+tracing  = "0.1"
+
+# Optional
+serde    = { version = "1", features = ["derive"], optional = true }
+
+[dev-dependencies]
+tempfile = "3"
