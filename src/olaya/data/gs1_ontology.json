@@ -374,10 +374,12 @@
       "parents": [],
       "children": [
         "FoodBeverageTobaccoProduct",
-        "WearableProduct"
+        "WearableProduct",
+        "PetCareProduct",
+        "ToyProduct"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": ["trade item", "consumer item", "merchandise"]
     },
     {
       "curie": "ProductYieldDetails",
@@ -533,6 +535,28 @@
       ],
       "disjoint_with": [],
       "synonyms": []
+    },
+    {
+      "curie": "PetCareProduct",
+      "label": "Pet Care and Supplies Product",
+      "description": "Products specifically designed for domestic animals and pets, including dog and cat toys, chews, pet food, grooming, and accessories.",
+      "parents": [
+        "Product"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": ["pet", "dog", "cat", "chew toy", "nylabone", "pet supplies", "dog chew"]
+    },
+    {
+      "curie": "ToyProduct",
+      "label": "Toy and Game Product",
+      "description": "Items manufactured for play, recreation, and entertainment, including pet chew toys, novelty items, and interactive toys.",
+      "parents": [
+        "Product"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": ["toy", "play item", "chew toy", "novelty"]
     }
   ]
 }
