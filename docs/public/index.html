@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What O-Laya Actually Is: An Ontology-Grounded System 1 Decision Model</title>
+  <meta name="description" content="A parallel and architectural response to Laya: why non-autoregressive decision models must be grounded in formal ontologies with guaranteed subsumption, exclusion, and microsecond routing.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  </script>
+  <style>
+    body { max-width: 860px; margin: auto; padding: 2rem 1.5rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.65; }
+    header { border-bottom: 1px solid var(--border); margin-bottom: 2rem; padding-bottom: 1rem; }
+    h1 { font-size: 2.2rem; line-height: 1.25; margin-bottom: 0.5rem; }
+    .meta { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .badge { display: inline-block; background: #1b5e20; color: #fff; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; margin-right: 0.5rem; }
+    pre { border-radius: 6px; padding: 1rem; overflow-x: auto; background: #161b22; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.9em; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th, td { padding: 0.75rem 0.85rem; border: 1px solid var(--border); }
+    th { background: rgba(255, 255, 255, 0.05); }
+    .callout { background: rgba(27, 94, 32, 0.15); border-left: 4px solid #4caf50; padding: 1rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+    .mermaid { background: #0d1117; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <span class="badge">O-LAYA</span>
+      <span class="badge" style="background:#0d47a1;">RESEARCH & SYSTEMS</span>
+      <span class="badge" style="background:#4a148c;">MCP 2024-11-05</span>
+    </div>
+    <h1>What O-Laya Actually Is: An Ontology-Grounded System 1 Decision Model</h1>
+    <div class="meta">
+      Published October 1, 2026 • 12 min read • Parallel response to <a href="https://relay.sparkrouter.com/ai--and--local-models/what-laya-actually-is" target="_blank" rel="noopener">What Laya Actually Is</a>
+    </div>
+  </header>
+
+  <article>
+    <div class="mermaid">
+flowchart TD
+    Start(["Incoming Input State<br/>(Text, Logs, Barcode, Web Observation)"]) --> Input["Structured Question Query:<br/>concept, subsumes, choice, score, noul"]
+    
+    subgraph S1["Stage 1: Microsecond Subgraph Routing (Rust Arrow)"]
+        Input --> Router["Inverted Token Index<br/>(CamelCase-aware, IDF weighting)"]
+        Onto[("Formal Ontology DAG<br/>classes, subClassOf, disjointWith")] --> Router
+        Router --> Sub["Active Candidate Subgraph<br/>(top-K leaves + complete ancestor lineage)"]
+    end
+    
+    subgraph S2["Stage 2: Non-Autoregressive Scoring"]
+        Sub --> Scorer["Cross-Attention Scorer<br/>(Rust Lexical: 4.8µs | Custom BERT: 12.7ms | ModernBERT: 199ms)"]
+    end
+    
+    subgraph S3["Stage 3: Axiom Projection Kernel"]
+        Scorer --> Proj["Axiom Projection (spec/AXIOMS.md)<br/>• Subsumption Monotonicity: P(child) ≤ P(parent)<br/>• Disjointness Exclusion: A ⊓ B = ⊥<br/>• Normalised Entropy Confidence"]
+    end
+    
+    Proj --> Out["Grounded Decision Output:<br/>• Verified CURIE + Lineage Path<br/>• Full Descendant/Ancestor Probabilities<br/>• axioms_verified: true"]
+    
+    Out --> Decision{"Where should the result go?"}
+    Decision -->|"High Confidence + Axioms Verified"| AutoAct["Act Deterministically:<br/>Route ticket, dispatch drone, execute tool"]
+    Decision -->|"Low Confidence / Novel Concept"| EscalateLLM["Escalate to LLM (System 2):<br/>Multi-step planning, code generation, prose"]
+    Decision -->|"Critical Out-of-Domain"| HumanReview["Human Reviewer & Domain Auditor"]
+    </div>
+
+    <h2>The Non-Generative Decision Paradigm</h2>
+    <p>In his recent piece, <a href="https://relay.sparkrouter.com/ai--and--local-models/what-laya-actually-is" target="_blank" rel="noopener">What Laya Actually Is</a>, the author laid out an argument for non-generative classification:</p>
+    <blockquote>
+      <em>"Laya is not a chatbot. It doesn’t write code or summarize text. It is a small local model that reads text and answers structured questions, returning probabilities instead of paragraphs."</em>
+    </blockquote>
+    <p>We agree with the fundamental premise. In modern agentic pipelines, calling an autoregressive 70B parameter LLM to emit 50 tokens of JSON just to route an incident ticket or check a binary guardrail is wasteful, slow, and non-deterministic.</p>
+
+    <div class="callout">
+      <strong>The Fatal Flaw of Flat Classifiers:</strong>
+      Unconstrained classification models treat the world as flat lists of strings. When you ask a flat classifier to route between <code>"billing"</code>, <code>"refunds"</code>, and <code>"chargeback"</code>, the model treats those options as disjoint tokens floating in an unconstrained softmax pool. It has no mathematical awareness that a <code>Refund</code> <em>is a subclass of</em> <code>BillingIssue</code>, or that <code>HardwareFailure</code> is <em>mutually exclusive with</em> <code>SoftwareBug</code>.
+    </div>
+
+    <p>In real deployments, flat classifiers frequently assign:</p>
+    <p style="text-align: center; font-size: 1.15rem; font-family: monospace;">
+      P(PostgreSQL Deadlock) = 0.85 &nbsp;&nbsp;while&nbsp;&nbsp; P(Database Issue) = 0.40
+    </p>
+    <p>This is a <strong>logical contradiction</strong>. In formal logic, if an entity is a database deadlock, it is <em>by definition</em> a database issue. When probabilities violate the axioms of the domain, downstream software breaks.</p>
+    <p><strong>O-Laya solves this by grounding decisions in formal ontology lattices.</strong></p>
+
+    <hr/>
+
+    <h2>What O-Laya Actually Is</h2>
+    <p>O-Laya is an <strong>ontology-grounded System 1 decision engine</strong>. You provide:</p>
+    <ol>
+      <li><strong>An Input State</strong>: Raw text, JSON payloads, GTIN barcodes, or error traces.</li>
+      <li><strong>A Formal Ontology DAG</strong>: Classes, <code>subClassOf</code> hierarchies, and <code>disjointWith</code> axioms (ingested from standard OWL/RDF, Turtle, GS1, Schema.org, or DOID).</li>
+      <li><strong>Structured Questions</strong>: Formulated using 5 formal primitives.</li>
+    </ol>
+    <p>In a single forward pass, O-Laya projects candidate scores through an axiom kernel (<code>spec/AXIOMS.md</code>), guaranteeing that:</p>
+    <ul>
+      <li><strong>Subsumption Monotonicity holds</strong>: <code>P(child) ≤ P(parent)</code> everywhere in the lattice.</li>
+      <li><strong>Disjointness holds</strong>: Mutually exclusive branches sum to at most 1.0.</li>
+      <li><strong>Lineage is returned</strong>: Decisions provide full explainability from the root category down to the specific leaf CURIE.</li>
+      <li><strong><code>axioms_verified</code> is computed</strong>: Verified on the output tensor at runtime, never hard-coded.</li>
+    </ul>
+
+    <hr/>
+
+    <h2>The 5 Question Primitives</h2>
+    <p>While Laya provides 3 flat questions (<code>choice</code>, <code>score</code>, <code>noul</code>), O-Laya expands the decision algebra into <strong>5 grounded primitives</strong>:</p>
+
+    <h3>1. <code>concept</code> (Hierarchical Taxonomy Grounding)</h3>
+    <p>Grounds an observation into the most specific leaf concept under a designated ontology root:</p>
+    <pre><code class="language-python">questions = {
+    "triage": {
+        "type": "concept",
+        "root": "INCIDENT:ROOT",
+        "instructions": "Classify the operational infrastructure failure."
+    }
+}</code></pre>
+    <p>What O-Laya returns:</p>
+    <pre><code class="language-json">{
+  "triage": {
+    "curie": "INCIDENT:DB_DEADLOCK",
+    "lineage": ["INCIDENT:ROOT", "INCIDENT:STORAGE", "INCIDENT:DATABASE", "INCIDENT:DB_DEADLOCK"],
+    "confidence": 0.892,
+    "candidate_probabilities": {
+      "INCIDENT:DB_DEADLOCK": 0.824,
+      "INCIDENT:CONNECTION_POOL_EXHAUSTED": 0.116,
+      "INCIDENT:DISK_FULL": 0.060
+    },
+    "probabilities": {
+      "INCIDENT:ROOT": 1.0,
+      "INCIDENT:STORAGE": 0.940,
+      "INCIDENT:DATABASE": 0.940,
+      "INCIDENT:DB_DEADLOCK": 0.824
+    },
+    "axioms_verified": true
+  }
+}</code></pre>
+    <p><em>Notice that the parent probabilities are derived directly from their descendant sum. The answer is never an illegal ancestor of a candidate, and monotonicity is preserved by construction.</em></p>
+
+    <h3>2. <code>subsumes</code> (Principal Down-Set Membership)</h3>
+    <p>Tests whether the incoming observation belongs to the sub-tree rooted at concept C (<code>↓C</code>):</p>
+    <pre><code class="language-python">questions = {
+    "is_hardware": {
+        "type": "subsumes",
+        "concept": "INCIDENT:HARDWARE",
+        "instructions": "Does this issue involve physical server hardware?"
+    }
+}</code></pre>
+    <p>Returns the calibrated Bernoulli probability <code>P(entity ∈ ↓C)</code>. If the entity is a memory ECC fault, <code>P(HARDWARE) = 0.97</code>. If it is an invalid API key, <code>P(HARDWARE) = 0.01</code>.</p>
+
+    <h3>3. <code>choice</code> (Disjoint Alternative Ranking)</h3>
+    <p>Evaluates discrete alternatives with semantic criteria descriptions and formal mutual exclusion.</p>
+
+    <h3>4. <code>score</code> (Ordered Metric Regression)</h3>
+    <p>Predicts an ordered categorical scale (urgency, priority, or severity) with normalized softmax confidence.</p>
+
+    <h3>5. <code>noul</code> (Out-of-Domain Rejection & Binary Guardrails)</h3>
+    <p>Calibrated binary gating. In Python, returns <code>P(true)</code> for zero-shot hypothesis verification; in Node/TypeScript, acts as a certified out-of-domain rejection filter.</p>
+
+    <hr/>
+
+    <h2>Solving the Scalability Bottleneck: From 20 to 100,000+ Classes</h2>
+    <p>A major limitation highlighted in the original Laya post is candidate scalability: <em>"Keep option lists short. Accuracy drops past roughly 20 options."</em></p>
+    <p>When an enterprise ontology contains 5,000 product classes (GS1), 12,000 disease phenotypes (DOID), or 100,000 organizational concepts, feeding 100,000 options into a single transformer prompt is computationally impossible.</p>
+    <p>O-Laya solves this using a <strong>Two-Tier Subgraph Routing Architecture</strong>:</p>
+    <ol>
+      <li><strong>Inverted Token Indexing with IDF Weighting (Sub-Microsecond)</strong>: Labels, synonyms, and descriptions are indexed into an Arrow-native memory buffer. Incoming state is tokenized with CamelCase awareness and scored in <strong>4.8 microseconds</strong>.</li>
+      <li><strong>Active Subgraph Extraction</strong>: Top-K candidate leaves and their complete ancestor chains are extracted into an active sub-lattice.</li>
+      <li><strong>Cross-Encoder Scoring</strong>: The neural decision model only reasons over the active subgraph, allowing O-Laya to scale to <strong>hundreds of thousands of classes</strong> without degradation.</li>
+    </ol>
+
+    <hr/>
+
+    <h2>Measured Performance & Hardware Benchmarks</h2>
+    <p>Measured on consumer hardware (Apple Silicon MPS / single CPU core) on real GS1 and Incident payloads:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Runtime / Architecture</th>
+          <th>Parameters</th>
+          <th>Dimension & Depth</th>
+          <th>Median Latency</th>
+          <th>P95 Latency</th>
+          <th>Throughput</th>
+          <th>Role / Profile</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Rust Arrow Lexical</strong> (<code>olaya-core</code>)</td>
+          <td>0 (pure index)</td>
+          <td>Arrow IPC Buffer</td>
+          <td><strong>4.8 µs</strong></td>
+          <td>5.2 µs</td>
+          <td><strong>~210,000 qps</strong></td>
+          <td>Microsecond inline routing</td>
+        </tr>
+        <tr>
+          <td><strong>Custom BERT Decision Model</strong></td>
+          <td>15.37M</td>
+          <td>4 layers, 256d</td>
+          <td><strong>12.71 ms</strong></td>
+          <td>14.52 ms</td>
+          <td><strong>231.7 qps</strong></td>
+          <td>Ultra-low latency local neural decisions</td>
+        </tr>
+        <tr>
+          <td><strong>ModernBERT-base Backbone</strong></td>
+          <td>149.91M</td>
+          <td>22 layers, 768d</td>
+          <td><strong>199.10 ms</strong></td>
+          <td>217.52 ms</td>
+          <td><strong>14.9 qps</strong></td>
+          <td>Deep semantic reasoning (100% GS1 accuracy)</td>
+        </tr>
+        <tr>
+          <td><strong>WebMCP Agent Bridge</strong> (JSON-RPC)</td>
+          <td>N/A (RPC)</td>
+          <td>Custom BERT</td>
+          <td><strong>11.57 ms</strong></td>
+          <td>12.83 ms</td>
+          <td><strong>86.3 qps</strong></td>
+          <td>Model Context Protocol tool execution</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr/>
+
+    <h2>The Zero-Install Agent Wedge: <code>olaya-mcp</code></h2>
+    <p>You don't need to write custom Python glue code to put O-Laya in front of your agents. O-Laya ships as a zero-install <strong>Model Context Protocol (MCP 2024-11-05)</strong> server.</p>
+
+    <h3>Run Instantly via uvx or npx</h3>
+    <pre><code class="language-bash"># Python runtime (PyPI / uvx)
+uvx olaya-mcp
+
+# Or zero-dependency Node/TypeScript runtime (npm / npx)
+npx @mycelia/olaya-mcp</code></pre>
+
+    <h3>Auto-Configure Claude Desktop or Cursor in 1 Second</h3>
+    <pre><code class="language-bash"># Automatically detects and configures Claude Desktop:
+uvx olaya-mcp install --client claude
+
+# Or Cursor IDE:
+uvx olaya-mcp install --client cursor</code></pre>
+
+    <h3>Instant CLI Grounding</h3>
+    <pre><code class="language-bash"># Fast sub-millisecond lexical grounding
+olaya-mcp ground "Organic whole milk carton 1 gallon barcode 0614141000036" --domain gs1 --mode fast
+
+# Neural cross-encoder grounding
+olaya-mcp ground "Type 2 diabetes mellitus with diabetic nephropathy" --domain doid --mode neural</code></pre>
+
+    <hr/>
+
+    <h2>Summary: When to Use What</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Tool</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Multi-step reasoning, coding, prose generation</strong></td>
+          <td><strong>LLM (Claude, GPT, Gemini)</strong></td>
+          <td>Expressive autoregressive generation</td>
+        </tr>
+        <tr>
+          <td><strong>Unstructured flat 3-way triage (&lt;10 classes)</strong></td>
+          <td><strong>Laya</strong></td>
+          <td>Fast local classifier</td>
+        </tr>
+        <tr>
+          <td><strong>Hierarchical decisions, taxonomy grounding, GTIN/SKU routing, formal compliance, certified guardrails</strong></td>
+          <td><strong>O-Laya</strong></td>
+          <td><strong>Axiom-verified, P(child) ≤ P(parent), scales to 100k+ concepts, 4.8µs to 12ms latency, MCP-native</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <footer style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.95rem;">
+      <p>Open Source Code & Benchmarks: <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener">github.com/josaum/olaya</a></p>
+    </footer>
+  </article>
+</body>
+</html>
