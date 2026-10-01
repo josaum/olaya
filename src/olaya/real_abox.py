@@ -25,6 +25,7 @@ ATLAS_DEFAULT_LOCATIONS = [
 @dataclass
 class RealABoxFact:
     """An empirical enterprise observation or fact grounded in an ontology concept."""
+
     text: str
     target_curie: str
     source_type: str
@@ -48,7 +49,7 @@ def harvest_sharepoint_evidence(sp_path: Path) -> list[RealABoxFact]:
     facts: list[RealABoxFact] = []
 
     # 1. Harvest pages
-    page_blocks = re.findall(r'(atlas:central_sp_page_\w+.*?)\s*\.\s*(?=atlas:|\Z)', content, re.DOTALL)
+    page_blocks = re.findall(r"(atlas:central_sp_page_\w+.*?)\s*\.\s*(?=atlas:|\Z)", content, re.DOTALL)
     for b in page_blocks:
         title_m = re.search(r'atlas:pageTitle\s+"([^"]+)"', b)
         url_m = re.search(r'atlas:sourceUrl\s+"([^"]+)"', b)
@@ -65,7 +66,7 @@ def harvest_sharepoint_evidence(sp_path: Path) -> list[RealABoxFact]:
             )
 
     # 2. Harvest facts
-    fact_blocks = re.findall(r'(atlas:central_sp_fact_\w+.*?)\s*\.\s*(?=atlas:|\Z)', content, re.DOTALL)
+    fact_blocks = re.findall(r"(atlas:central_sp_fact_\w+.*?)\s*\.\s*(?=atlas:|\Z)", content, re.DOTALL)
     for b in fact_blocks:
         text_m = re.search(r'atlas:factText\s+"([^"]+)"', b)
         url_m = re.search(r'atlas:sourceUrl\s+"([^"]+)"', b)
@@ -74,7 +75,11 @@ def harvest_sharepoint_evidence(sp_path: Path) -> list[RealABoxFact]:
             url = url_m.group(1).strip() if url_m else ""
             if len(clean) < 3:
                 continue
-            curie = "CurrencyEvidence" if any(w in clean.lower() for w in ["accounting", "finance", "billing", "invoice"]) else "EvidenceAssessment"
+            curie = (
+                "CurrencyEvidence"
+                if any(w in clean.lower() for w in ["accounting", "finance", "billing", "invoice"])
+                else "EvidenceAssessment"
+            )
             facts.append(
                 RealABoxFact(
                     text=f"SharePoint enterprise evidence: {clean} [portal: {url}]",
@@ -94,7 +99,7 @@ def harvest_web_evidence(web_path: Path) -> list[RealABoxFact]:
     content = web_path.read_text(encoding="utf-8")
     facts: list[RealABoxFact] = []
 
-    fact_blocks = re.findall(r'(atlas:central_fact_\w+.*?)\s*\.\s*(?=atlas:|\Z)', content, re.DOTALL)
+    fact_blocks = re.findall(r"(atlas:central_fact_\w+.*?)\s*\.\s*(?=atlas:|\Z)", content, re.DOTALL)
     for b in fact_blocks:
         text_m = re.search(r'atlas:factText\s+"([^"]+)"', b)
         url_m = re.search(r'atlas:sourceUrl\s+"([^"]+)"', b)
@@ -103,7 +108,11 @@ def harvest_web_evidence(web_path: Path) -> list[RealABoxFact]:
             url = url_m.group(1).strip() if url_m else ""
             if len(clean) < 3:
                 continue
-            curie = "Brand" if any(w in clean.lower() for w in ["brand", "company", "who we are", "about", "mission"]) else "EvidenceAssessment"
+            curie = (
+                "Brand"
+                if any(w in clean.lower() for w in ["brand", "company", "who we are", "about", "mission"])
+                else "EvidenceAssessment"
+            )
             facts.append(
                 RealABoxFact(
                     text=f"Public web evidence: {clean} [crawl: {url}]",
@@ -145,7 +154,7 @@ def harvest_nylabone_catalog(catalog_path: Path) -> list[RealABoxFact]:
         r'nyla:SKU_(\w+)\s+a\s+nyla:ManufacturerSKU\s*;\s*rdfs:label\s+"([^"]+)"\s*;\s*nyla:skuCode\s+"([^"]+)"',
         content,
     )
-    for sku_id, label, sku_code in sku_matches:
+    for _sku_id, label, sku_code in sku_matches:
         facts.append(
             RealABoxFact(
                 text=f"Manufacturer inventory SKU: {sku_code} ({label})",
@@ -180,10 +189,10 @@ def harvest_metric_claims(metric_path: Path) -> list[RealABoxFact]:
     content = metric_path.read_text(encoding="utf-8")
     facts: list[RealABoxFact] = []
 
-    claim_blocks = re.findall(r'(cgp:Demo_\w+.*?)\s*\.\s*(?=cgp:|\Z)', content, re.DOTALL)
+    claim_blocks = re.findall(r"(cgp:Demo_\w+.*?)\s*\.\s*(?=cgp:|\Z)", content, re.DOTALL)
     for b in claim_blocks:
-        name_m = re.search(r'cgp:Demo_(\w+)', b)
-        val_m = re.search(r'cgp:claimValue\s+([0-9.]+)', b)
+        name_m = re.search(r"cgp:Demo_(\w+)", b)
+        val_m = re.search(r"cgp:claimValue\s+([0-9.]+)", b)
         comm_m = re.search(r'rdfs:comment\s+"([^"]+)"', b)
         claim_name = name_m.group(1) if name_m else "claim"
         val_str = f" val={val_m.group(1)}" if val_m else ""

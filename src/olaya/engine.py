@@ -136,6 +136,7 @@ class OLaya:
                 self.model = OntologyDecisionModel(backbone_name_or_config=bb)
             else:
                 from transformers import BertConfig, BertModel
+
                 default_v_size = max(len(self.tokenizer), getattr(self.tokenizer, "vocab_size", 30522)) + 256
                 v_size = cfg_dict.get("vocab_size", default_v_size)
                 h_size = cfg_dict.get("hidden_size", 256)

@@ -75,7 +75,7 @@ def extract_jsonld_or_microdata(html_or_text: str) -> dict[str, Any]:
             continue
 
     # 2. Search for GTIN / barcode numbers
-    gtin_match = re.search(r'\b(gtin(?:13|14|8|12)?|upc|ean)[\s:=]+([0-9]{8,14})\b', html_or_text, re.IGNORECASE)
+    gtin_match = re.search(r"\b(gtin(?:13|14|8|12)?|upc|ean)[\s:=]+([0-9]{8,14})\b", html_or_text, re.IGNORECASE)
     gtin_val = gtin_match.group(2) if gtin_match else None
 
     # 3. Fallback: package text into state structure

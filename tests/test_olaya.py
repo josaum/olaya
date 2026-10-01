@@ -198,4 +198,3 @@ def test_subsumes_head_hierarchical_scopes(olaya):
     assert ans_root.concept == "INCIDENT:ROOT"
     assert 0.0 <= ans_root.subsumes <= 1.0
     assert 0.0 <= ans_root.confidence <= 1.0
-

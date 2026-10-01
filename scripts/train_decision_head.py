@@ -11,8 +11,9 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-from olaya.train import train_olaya
 from scripts.export_onnx_ort import export_olaya
+
+from olaya.train import train_olaya
 
 
 def main():

@@ -34,6 +34,7 @@ def export_olaya(
             model = OntologyDecisionModel(backbone_name_or_config=bb)
         else:
             from transformers import BertConfig, BertModel
+
             v_size = cfg_dict.get("vocab_size", 50624)
             h_size = cfg_dict.get("hidden_size", 256)
             n_layers = cfg_dict.get("num_hidden_layers", 4)

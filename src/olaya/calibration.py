@@ -10,7 +10,6 @@ confidence scores match empirical accuracy:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
 
 import numpy as np
 import torch
@@ -20,6 +19,7 @@ import torch.nn as nn
 @dataclass
 class CalibrationMetrics:
     """Summary metrics of model calibration."""
+
     ece: float
     mce: float
     avg_confidence: float
@@ -201,4 +201,3 @@ def pad_and_cat_logits(logits_list: list[torch.Tensor], pad_value: float = -1e4)
             t = torch.cat([t, pad_tensor], dim=1)
         padded.append(t)
     return torch.cat(padded, dim=0)
-
