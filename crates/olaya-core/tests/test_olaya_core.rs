@@ -140,3 +140,77 @@ fn test_owl_fast_core_direct_arrow_ingestion() {
     assert!(res.axioms_verified);
 }
 
+
+#[test]
+fn test_tie_break_prefers_deepest_regardless_of_row_order() {
+    // Child rows come *before* their parents, so row order cannot be relied on.
+    let mut builder = OntologyBatchBuilder::new();
+    builder.append_concept(10, "INCIDENT:DB_DEADLOCK", "Database Deadlock", "Lock waits", &[11], &[], &["deadlock"]);
+    builder.append_concept(11, "INCIDENT:DATA", "Data Incident", "Storage failures", &[12], &[], &[]);
+    builder.append_concept(12, "INCIDENT:ROOT", "Operational Incident", "Root", &[], &[], &[]);
+    let engine = OlayaEngine::new(builder.finish().unwrap()).unwrap();
+
+    let res = engine.system_one("deadlock", 4).unwrap();
+    assert_eq!(res.selected_curie, "INCIDENT:DB_DEADLOCK");
+}
+
+#[test]
+fn test_subgraph_includes_full_ancestor_chain() {
+    let mut builder = OntologyBatchBuilder::new();
+    builder.append_concept(0, "R", "Root", "", &[], &[], &[]);
+    builder.append_concept(1, "A", "Level One", "", &[0], &[], &[]);
+    builder.append_concept(2, "B", "Level Two", "", &[1], &[], &[]);
+    builder.append_concept(3, "C", "Kafka Consumer Lag", "", &[2], &[], &[]);
+    let batch = builder.finish().unwrap();
+    let router = olaya_core::ArrowCandidateRouter::build(&batch).unwrap();
+
+    let sub = router.extract_subgraph("kafka lag spike", 1);
+    assert_eq!(sub.row_indices, vec![0, 1, 2, 3]);
+    assert_eq!(sub.parent_edges.len(), 3);
+}
+
+#[test]
+fn test_acronyms_route_to_matching_concepts() {
+    let mut builder = OntologyBatchBuilder::new();
+    builder.append_concept(0, "R", "Incident", "", &[], &[], &[]);
+    builder.append_concept(1, "HTTP_5XX", "HTTP Server Error", "", &[0], &[], &[]);
+    builder.append_concept(2, "PG", "PostgreSQL Failure", "", &[0], &[], &[]);
+    let engine = OlayaEngine::new(builder.finish().unwrap()).unwrap();
+
+    assert_eq!(engine.system_one("upstream returned http 503", 4).unwrap().selected_curie, "HTTP_5XX");
+    assert_eq!(engine.system_one("POSTGRESQL replica down", 4).unwrap().selected_curie, "PG");
+}
+
+#[test]
+fn test_engine_rejects_invalid_schema() {
+    use arrow::array::{StringArray as S, UInt32Array as U};
+    use arrow::datatypes::{DataType, Field, Schema};
+    use std::sync::Arc;
+    // `curie` column typed as UInt32 instead of Utf8.
+    let schema = Arc::new(Schema::new(vec![
+        Field::new("concept_id", DataType::UInt32, false),
+        Field::new("curie", DataType::UInt32, false),
+        Field::new("label", DataType::Utf8, false),
+    ]));
+    let batch = arrow::record_batch::RecordBatch::try_new(
+        schema,
+        vec![Arc::new(U::from(vec![0])), Arc::new(U::from(vec![0])), Arc::new(S::from(vec!["x"]))],
+    )
+    .unwrap();
+    assert!(OlayaEngine::new(batch).is_err());
+}
+
+#[test]
+fn test_ubiquitous_tokens_do_not_drown_rare_matches() {
+    let n = olaya_core::MAX_QUERY_POSTINGS + 100;
+    let mut builder = OntologyBatchBuilder::new();
+    builder.append_concept(0, "R", "Root", "", &[], &[], &[]);
+    for i in 1..n {
+        builder.append_concept(i as u32, &format!("G{i}"), &format!("Generated Type {i}"), "", &[0], &[], &[]);
+    }
+    builder.append_concept(n as u32, "DL", "Database Deadlock", "", &[0], &[], &[]);
+    let engine = OlayaEngine::new(builder.finish().unwrap()).unwrap();
+
+    let res = engine.system_one("generated type deadlock", 8).unwrap();
+    assert_eq!(res.selected_curie, "DL");
+}

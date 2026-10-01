@@ -1,5 +1,6 @@
 //! High-performance O-Laya engine producing zero-copy Arrow decision outputs.
 
+use std::collections::HashSet;
 use std::sync::Arc;
 use anyhow::{Context, Result};
 use arrow::array::{Array, BooleanBuilder, Float32Builder, StringArray, StringBuilder, UInt32Array, UInt32Builder};
@@ -7,7 +8,7 @@ use arrow::record_batch::RecordBatch;
 
 use crate::arrow_schema::decision_output_schema;
 use crate::axioms::calibrate_and_project_inplace;
-use crate::router::ArrowCandidateRouter;
+use crate::router::{tokenize_text, ActiveDecisionSubgraph, ArrowCandidateRouter};
 
 /// High-level result of a single decision evaluation.
 #[derive(Debug, Clone)]
@@ -22,20 +23,49 @@ pub struct DecisionResult {
 
 /// The Arrow-native O-Laya decision engine.
 pub struct OlayaEngine {
-    ontology_batch: RecordBatch,
     router: ArrowCandidateRouter,
+    concept_ids: UInt32Array,
+    curies: StringArray,
+    labels: StringArray,
+    #[cfg_attr(not(feature = "onnx"), allow(dead_code))]
+    descriptions: Option<StringArray>,
     #[cfg(feature = "onnx")]
     neural_scorer: Option<Arc<crate::neural::NeuralScorer>>,
 }
 
+fn required_column<T: Array + Clone + 'static>(batch: &RecordBatch, name: &str) -> Result<T> {
+    batch
+        .column_by_name(name)
+        .with_context(|| format!("Missing '{name}' column"))?
+        .as_any()
+        .downcast_ref::<T>()
+        .cloned()
+        .with_context(|| format!("Invalid '{name}' column type"))
+}
+
 impl OlayaEngine {
     /// Initializes engine from an Arrow ontology RecordBatch.
+    ///
+    /// Validates the schema and caches typed column handles, so per-decision work never
+    /// re-resolves columns.
     pub fn new(ontology_batch: RecordBatch) -> Result<Self> {
         let router = ArrowCandidateRouter::build(&ontology_batch)
             .context("Failed to build router from ontology RecordBatch")?;
+        let descriptions = match ontology_batch.column_by_name("description") {
+            Some(col) => Some(
+                col.as_any()
+                    .downcast_ref::<StringArray>()
+                    .cloned()
+                    .context("Invalid 'description' column type")?,
+            ),
+            None => None,
+        };
         Ok(Self {
-            ontology_batch,
             router,
+            concept_ids: required_column(&ontology_batch, "concept_id")?,
+            curies: required_column(&ontology_batch, "curie")?,
+            labels: required_column(&ontology_batch, "label")?,
+            descriptions,
             #[cfg(feature = "onnx")]
             neural_scorer: None,
         })
@@ -48,6 +78,56 @@ impl OlayaEngine {
         self
     }
 
+    /// Lexical logits: label, synonym and description token overlap with the state.
+    fn lexical_logits(&self, state_text: &str, subgraph: &ActiveDecisionSubgraph) -> Vec<f32> {
+        let query_tokens: HashSet<String> = tokenize_text(state_text).into_iter().collect();
+        let overlap = |tokens: &[String]| tokens.iter().filter(|t| query_tokens.contains(*t)).count() as f32;
+
+        subgraph
+            .row_indices
+            .iter()
+            .map(|&row| {
+                let toks = self.router.row_tokens(row);
+                1.0 + 3.0 * overlap(&toks.label) + 2.5 * overlap(&toks.synonyms) + 1.5 * overlap(&toks.description)
+            })
+            .collect()
+    }
+
+    #[cfg(feature = "onnx")]
+    /// Candidate option text in the same format the Python sequence builder uses:
+    /// `CURIE: label (subClassOf: parent labels) - description`.
+    fn option_text(&self, row: usize, subgraph_rows: &HashSet<usize>) -> String {
+        let mut text = format!("{}: {}", self.curies.value(row), self.labels.value(row));
+        let parent_labels: Vec<&str> = self
+            .router
+            .parent_rows(row)
+            .iter()
+            .filter(|p| subgraph_rows.contains(p))
+            .map(|&p| self.labels.value(p))
+            .collect();
+        if !parent_labels.is_empty() {
+            text.push_str(&format!(" (subClassOf: {})", parent_labels.join(", ")));
+        }
+        if let Some(desc) = &self.descriptions {
+            if !desc.is_null(row) && !desc.value(row).is_empty() {
+                text.push_str(&format!(" - {}", desc.value(row)));
+            }
+        }
+        text
+    }
+
+    fn candidate_logits(&self, state_text: &str, subgraph: &ActiveDecisionSubgraph) -> Result<Vec<f32>> {
+        #[cfg(feature = "onnx")]
+        if let Some(scorer) = &self.neural_scorer {
+            let rows: HashSet<usize> = subgraph.row_indices.iter().copied().collect();
+            let candidate_texts: Vec<String> =
+                subgraph.row_indices.iter().map(|&row| self.option_text(row, &rows)).collect();
+            let mut logits = scorer.score_candidates(state_text, &candidate_texts)?;
+            logits.resize(subgraph.row_indices.len(), f32::NEG_INFINITY);
+            return Ok(logits);
+        }
+        Ok(self.lexical_logits(state_text, subgraph))
+    }
 
     /// Evaluates a decision query against an input state text.
     pub fn system_one(
@@ -55,102 +135,12 @@ impl OlayaEngine {
         state_text: &str,
         max_candidates: usize,
     ) -> Result<DecisionResult> {
-        let subgraph = self.router.extract_subgraph(&self.ontology_batch, state_text, max_candidates)?;
-        let m = subgraph.row_indices.len();
-        if m == 0 {
+        let subgraph = self.router.extract_subgraph(state_text, max_candidates);
+        if subgraph.row_indices.is_empty() {
             anyhow::bail!("Active subgraph is empty");
         }
 
-        let concept_ids = self.ontology_batch
-            .column_by_name("concept_id")
-            .unwrap()
-            .as_any()
-            .downcast_ref::<UInt32Array>()
-            .unwrap();
-
-        let curies = self.ontology_batch
-            .column_by_name("curie")
-            .unwrap()
-            .as_any()
-            .downcast_ref::<StringArray>()
-            .unwrap();
-
-        let labels = self.ontology_batch
-            .column_by_name("label")
-            .unwrap()
-            .as_any()
-            .downcast_ref::<StringArray>()
-            .unwrap();
-
-        let descriptions = self.ontology_batch
-            .column_by_name("description")
-            .and_then(|c| c.as_any().downcast_ref::<StringArray>());
-
-        #[cfg(feature = "onnx")]
-        let mut logits = if let Some(scorer) = &self.neural_scorer {
-            let candidate_texts: Vec<String> = subgraph
-                .row_indices
-                .iter()
-                .map(|&row| {
-                    if let Some(desc_arr) = descriptions {
-                        if !desc_arr.is_null(row) && !desc_arr.value(row).is_empty() {
-                            return format!("{} - {}", labels.value(row), desc_arr.value(row));
-                        }
-                    }
-                    labels.value(row).to_string()
-                })
-                .collect();
-            scorer.score_candidates(state_text, &candidate_texts)?
-        } else {
-            let state_lower = state_text.to_lowercase();
-            let query_tokens: std::collections::HashSet<String> =
-                crate::router::tokenize_text(&state_lower).into_iter().collect();
-
-            let mut l = vec![1.0f32; m];
-            for (slot, &row) in subgraph.row_indices.iter().enumerate() {
-                for tok in crate::router::tokenize_text(labels.value(row)) {
-                    if query_tokens.contains(&tok) {
-                        l[slot] += 3.0;
-                    }
-                }
-                if let Some(desc_arr) = descriptions {
-                    if !desc_arr.is_null(row) {
-                        for tok in crate::router::tokenize_text(desc_arr.value(row)) {
-                            if query_tokens.contains(&tok) {
-                                l[slot] += 1.5;
-                            }
-                        }
-                    }
-                }
-            }
-            l
-        };
-
-        #[cfg(not(feature = "onnx"))]
-        let mut logits = {
-            let state_lower = state_text.to_lowercase();
-            let query_tokens: std::collections::HashSet<String> =
-                crate::router::tokenize_text(&state_lower).into_iter().collect();
-
-            let mut l = vec![1.0f32; m];
-            for (slot, &row) in subgraph.row_indices.iter().enumerate() {
-                for tok in crate::router::tokenize_text(labels.value(row)) {
-                    if query_tokens.contains(&tok) {
-                        l[slot] += 3.0;
-                    }
-                }
-                if let Some(desc_arr) = descriptions {
-                    if !desc_arr.is_null(row) {
-                        for tok in crate::router::tokenize_text(desc_arr.value(row)) {
-                            if query_tokens.contains(&tok) {
-                                l[slot] += 1.5;
-                            }
-                        }
-                    }
-                }
-            }
-            l
-        };
+        let mut logits = self.candidate_logits(state_text, &subgraph)?;
 
         // Apply in-place temperature, subsumption monotonicity, and entropy calibration
         let confidence = calibrate_and_project_inplace(
@@ -159,35 +149,29 @@ impl OlayaEngine {
             &subgraph.disjoint_edges,
         );
 
-        // Find argmax slot, breaking ties in favor of more specific leaf descendants
-        let mut best_slot = 0;
-        let mut best_prob = -1.0f32;
-        for (slot, &p) in logits.iter().enumerate() {
-            if p > best_prob + 1e-5 {
-                best_prob = p;
-                best_slot = slot;
-            } else if (p - best_prob).abs() <= 1e-5 {
-                // If tied, check if current slot is a child of the current best_slot
-                let is_child = subgraph.parent_edges.iter().any(|&(c, parent)| c == slot && parent == best_slot);
-                if is_child {
-                    best_slot = slot;
-                }
-            }
-        }
+        // Argmax; ties (e.g. a parent lifted to its child's probability) go to the deepest
+        // concept, then to the lowest row index. Independent of row order.
+        let max_prob = logits.iter().copied().fold(f32::NEG_INFINITY, f32::max);
+        let best_slot = (0..logits.len())
+            .filter(|&slot| logits[slot] >= max_prob - 1e-5)
+            .max_by(|&a, &b| {
+                let (ra, rb) = (subgraph.row_indices[a], subgraph.row_indices[b]);
+                self.router.depth(ra).cmp(&self.router.depth(rb)).then(rb.cmp(&ra))
+            })
+            .context("No candidate slots")?;
 
         let best_row = subgraph.row_indices[best_slot];
-        let selected_concept_id = concept_ids.value(best_row);
-        let selected_curie = curies.value(best_row).to_string();
-        let selected_label = labels.value(best_row).to_string();
-
-        let probabilities = subgraph.row_indices.iter().enumerate().map(|(slot, &r)| {
-            (curies.value(r).to_string(), logits[slot])
-        }).collect();
+        let probabilities = subgraph
+            .row_indices
+            .iter()
+            .enumerate()
+            .map(|(slot, &r)| (self.curies.value(r).to_string(), logits[slot]))
+            .collect();
 
         Ok(DecisionResult {
-            selected_concept_id,
-            selected_curie,
-            selected_label,
+            selected_concept_id: self.concept_ids.value(best_row),
+            selected_curie: self.curies.value(best_row).to_string(),
+            selected_label: self.labels.value(best_row).to_string(),
             confidence,
             probabilities,
             axioms_verified: true,
