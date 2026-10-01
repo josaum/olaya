@@ -11,12 +11,18 @@ default = ["load-dynamic"]
 load-dynamic = ["ort/load-dynamic"]
 download-binaries = ["ort/download-binaries"]
 coreml = ["ort/coreml"]
+# ort rc.13 / ONNX Runtime 1.28 ships CUDA 13 binaries only (CUDA 12 is deprecated
+# upstream); with `load-dynamic` the user's own libonnxruntime decides.
 cuda = ["ort/cuda"]
+directml = ["ort/directml"]
+# rc.13 errors at link time when `download-binaries` is on and no prebuilt binary
+# bundles every requested EP; this restores the old closest-fit fallback.
+lax-feature-matching = ["ort/lax-feature-matching"]
 
 [dependencies]
 # Keep ort's defaults (api-XX bindings + ndarray + tracing); we only add
 # transport features (load-dynamic / download-binaries) via our own features.
-ort = { version = "=2.0.0-rc.12", features = ["ndarray"] }
+ort = { version = "=2.0.0-rc.13", features = ["ndarray"] }
 tracing = "0.1"
 thiserror = "1"
 

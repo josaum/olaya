@@ -18,7 +18,7 @@ anyhow = "1"
 tracing = "0.1"
 
 # Optional ONNX Runtime support
-ort = { version = "=2.0.0-rc.12", features = ["load-dynamic", "ndarray"], optional = true }
+ort = { version = "=2.0.0-rc.13", features = ["load-dynamic", "ndarray"], optional = true }
 mycelia-ort-utils = { path = "../mycelia-ort-utils", default-features = false, features = ["load-dynamic"], optional = true }
 
 [features]
