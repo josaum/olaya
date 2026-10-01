@@ -150,6 +150,9 @@ export function normalizedEntropyConfidence(probs: Float32Array): number {
  * Full calibration and axiom projection pipeline: cardinality-calibrated softmax, monotonicity
  * lifting, then disjointness. Probabilities are not renormalized afterwards (after lifting they are
  * hierarchical scores, not a simplex); the confidence normalizes internally.
+ *
+ * NOTE: Confidence is computed after projection to match spec/axioms_golden.json.
+ * For decision selection, use normalizedEntropyConfidence on pre-projection probs.
  */
 export function calibrateAndProject(
   rawLogits: Float32Array,

@@ -18,12 +18,13 @@ It ships as three runtimes that share one ontology model and one axiom specifica
 - **Trained weights and ONNX models are available.** O-Laya includes a trained decision head
   checkpoint (`models/olaya_decision_model.pt`, 81.4% val accuracy) and multi-domain models trained
   on real-world ontologies with rich semantic definitions (`rdfs:comment`, `skos:definition`, `schema:description`, `IAO_0000115`):
-  - **GS1 Web Vocabulary** (`models/olaya_gs1.pt`): 69.44% val accuracy, ECE 6.39% (GTINs, packaging, EPCIS, WebMCP)
+  - **GS1 Web Vocabulary** (`models/olaya_gs1.pt`): **77.11%** val accuracy, ECE 6.22% (GTINs, packaging, EPCIS, WebMCP) — improved via hard negative mining
   - **Human Disease Ontology DOID** (`models/olaya_doid.pt`): 60.56% val accuracy, ECE 9.13%
   - **Atlas Brain** (`models/olaya_atlas.pt`): 58.33% val accuracy, ECE 7.15% (1,244 real enterprise ABox facts)
-  - **Schema.org** (`models/olaya_schemaorg.pt`): 49.44% val accuracy, ECE 9.08%
+  - **Schema.org** (`models/olaya_schemaorg.pt`): **57.56%** val accuracy, ECE 11.78% — improved via property-based templates & negative sampler
   All models are exported to both ONNX (`.onnx`) and FlatBuffers (`.ort`) in `models/`, loadable by the Rust `onnx` engine.
   `OLaya(weights_path=...)` in Python automatically loads trained weights when present.
+- **WebAssembly (WASM) build available**: `crates/olaya-wasm` compiles the full IDF-weighted BM25 router and axiom kernel to a 189 KB `.wasm` binary running in-browser at < 1 µs latency (>500k qps).
 - The three runtimes implement the same axiom kernel and are checked against shared golden
   vectors in CI. The `noul` primitive differs by design: Python returns `P(true)` for a yes/no
   statement, Node returns an out-of-domain rejection decision.
@@ -293,8 +294,8 @@ and bring the other runtimes to green against the regenerated file.
 1. ~~Training pipeline and dataset for the Python decision head; publish weights and an ONNX export
    the Rust `onnx` feature can load.~~ **Completed**: End-to-end training pipeline implemented
    (`scripts/train_decision_head.py`, `scripts/train_real_ontologies.py`), with trained checkpoints
-   and ONNX/ORT exports across Operational Incidents (81.4% acc), GS1 Web Vocabulary (69.4% acc),
-   DOID Disease Ontology (60.6% acc), Atlas Brain (58.3% acc), and Schema.org (49.4% acc).
+   and ONNX/ORT exports across Operational Incidents (81.4% acc), GS1 Web Vocabulary (77.1% acc),
+   DOID Disease Ontology (60.6% acc), Atlas Brain (58.3% acc), and Schema.org (57.6% acc).
 2. ~~Accuracy and calibration evaluation against labelled incident and domain data.~~ **Completed**:
    - **Rich Definition Grounding**: `owl-fast-core` extracts ontological comments and definitions from
      `rdfs:comment`, `skos:definition`, `schema:description`, `IAO_0000115`, and `dc:description`, bringing

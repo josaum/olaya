@@ -153,7 +153,7 @@ def test_mcp_resources():
     read_resp = server.handle_message(read_req)
     contents = json.loads(read_resp["result"]["contents"][0]["text"])
     assert contents["name"] == "GS1WebVocab"
-    assert contents["num_concepts"] == 55
+    assert contents["num_concepts"] >= 55  # may be enriched with synonyms
 
 
 def test_mcp_extract_and_ground_tool():

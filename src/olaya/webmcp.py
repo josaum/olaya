@@ -378,16 +378,16 @@ class OLayaMCPServer:
                     "choice_task": {
                         "type": "choice",
                         "instructions": instr,
-                        "options": options,
+                        "criteria": options,  # Python engine uses 'criteria', not 'options'
                     }
                 },
             )
             ans = res.answers["choice_task"]
+            # ChoiceAnswer has .choice (the winning label)
             return {
-                "selected_choice": ans.choice if hasattr(ans, "choice") else ans.selected_option,
+                "selected_choice": ans.choice,
                 "confidence": ans.confidence,
-                "probabilities": {k: round(v, 4) for k, v in ans.candidate_probabilities.items()},
-                "axioms_verified": ans.axioms_verified,
+                "probabilities": {k: round(v, 4) for k, v in ans.probabilities.items()},
                 "latency_ms": res.latency_ms,
             }
 
