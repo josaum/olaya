@@ -327,9 +327,11 @@
       "label": "Packaging",
       "description": "Details on packaging for a product for example packaging type (bottle), materials, features, recycling, etc..",
       "parents": [],
-      "children": [],
+      "children": [
+        "ReusableTransportItem"
+      ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": ["packaging", "carton", "box", "pallet", "container", "crate"]
     },
     {
       "curie": "PackagingMaterialDetails",
@@ -376,10 +378,14 @@
         "FoodBeverageTobaccoProduct",
         "WearableProduct",
         "PetCareProduct",
-        "ToyProduct"
+        "ToyProduct",
+        "HealthcareMedicalProduct",
+        "ElectronicsBatteryProduct",
+        "ChemicalHazardousProduct",
+        "BuildingHardwareToolProduct"
       ],
       "disjoint_with": [],
-      "synonyms": ["trade item", "consumer item", "merchandise"]
+      "synonyms": ["trade item", "consumer item", "merchandise", "sku", "goods"]
     },
     {
       "curie": "ProductYieldDetails",
@@ -557,6 +563,70 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": ["toy", "play item", "chew toy", "novelty"]
+    },
+    {
+      "curie": "HealthcareMedicalProduct",
+      "label": "Healthcare and Medical Product",
+      "description": "Pharmaceuticals, medical devices, diagnostic test kits, vaccines, sterile surgical supplies, and over-the-counter medications.",
+      "parents": [
+        "Product"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": ["pharmaceutical", "medication", "medicine", "pharma", "vaccine", "sterile", "medical device", "syringe", "diagnostic kit"]
+    },
+    {
+      "curie": "ElectronicsBatteryProduct",
+      "label": "Electronics and Battery Product",
+      "description": "Consumer electronics, computers, smartphones, IoT sensors, electronic components, and lithium-ion battery assemblies requiring UN3480 / UN3481 hazardous transport compliance.",
+      "parents": [
+        "Product"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": ["electronics", "battery", "lithium ion", "un3480", "un3481", "gadget", "charger", "laptop", "phone", "circuit"]
+    },
+    {
+      "curie": "ChemicalHazardousProduct",
+      "label": "Chemical and Hazardous Material (Hazmat)",
+      "description": "Industrial chemicals, flammable liquids, corrosive cleaners, aerosols, paints, solvents, and dangerous goods requiring Safety Data Sheet (SDS) compliance.",
+      "parents": [
+        "Product"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": ["hazmat", "chemical", "flammable", "corrosive", "sds", "dangerous goods", "solvent", "acid", "toxic"]
+    },
+    {
+      "curie": "BuildingHardwareToolProduct",
+      "label": "Hardware, Tools and Building Supplies",
+      "description": "Construction supplies, power tools, hand tools, fasteners, plumbing fixtures, electrical wiring, paint, and lumber.",
+      "parents": [
+        "Product"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": ["hardware", "tools", "fasteners", "drill", "wrench", "hammer", "building materials", "plumbing"]
+    },
+    {
+      "curie": "ColdChainStorageLogistics",
+      "label": "Cold-Chain Controlled Temperature Logistics",
+      "description": "Refrigerated, frozen, deep-freeze, and temperature-controlled cross-dock handling protocols for perishable food and pharmaceuticals.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": ["cold chain", "refrigerated", "perishable", "frozen", "temperature controlled", "chilled", "reefer"]
+    },
+    {
+      "curie": "ReusableTransportItem",
+      "label": "Reusable Transport Item (RTI / Pallet / Crate)",
+      "description": "Returnable logistics assets including wooden Euro pallets, Chep pallets, plastic bulk bins, roll cages, returnable totes, and IBC liquid containers.",
+      "parents": [
+        "PackagingDetails"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": ["pallet", "euro pallet", "chep", "tote", "crate", "returnable container", "ibc", "drum"]
     }
   ]
 }
