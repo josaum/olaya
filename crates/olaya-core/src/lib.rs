@@ -16,7 +16,7 @@ pub use axioms::{
     calibrate_and_project_inplace, enforce_subsumption_monotonicity_inplace,
     enforce_disjointness_inplace, normalized_entropy_confidence,
 };
-pub use router::{ArrowCandidateRouter, ActiveDecisionSubgraph, tokenize_text};
+pub use router::{ArrowCandidateRouter, ActiveDecisionSubgraph, RowTokens, tokenize_text, MAX_QUERY_POSTINGS};
 pub use engine::{OlayaEngine, DecisionResult};
 
 #[cfg(feature = "onnx")]
