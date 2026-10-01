@@ -8,7 +8,8 @@
 //! `office-parsers-rs/gliner-core/src/ort_inference.rs`.
 //!
 //! Policy (see workspace AGENTS.md):
-//! - All Mycelia Rust crates pin `ort = "=2.0.0-rc.12"`.
+//! - All Mycelia Rust crates pin `ort = "=2.0.0-rc.13"` (ONNX Runtime 1.28 API;
+//!   EP types live in `ort::ep` and are compile-time gated by their Cargo feature).
 //! - Execution provider preference is **CoreML (macOS) → CUDA (linux/windows) →
 //!   CPU**, with a guaranteed CPU fallback when EP registration fails.
 //! - `.ort` mmap format is preferred over `.onnx` when both are present.
@@ -247,9 +248,9 @@ pub fn build_session(
             #[cfg(all(feature = "coreml", target_os = "macos"))]
             {
                 if coreml_gate_passed(cfg) {
-                    use ort::execution_providers::coreml::ModelFormat as CoreMLModelFormat;
-                    use ort::execution_providers::CoreML as CoreMLEp;
-                    use ort::execution_providers::ExecutionProviderDispatch;
+                    use ort::ep::coreml::ModelFormat as CoreMLModelFormat;
+                    use ort::ep::CoreML as CoreMLEp;
+                    use ort::ep::ExecutionProviderDispatch;
 
                     let cache_dir =
                         resolve_coreml_cache_dir(&actual, cfg.coreml_cache_dir.as_deref());
@@ -269,9 +270,8 @@ pub fn build_session(
 
             #[cfg(all(feature = "cuda", any(target_os = "linux", target_os = "windows")))]
             {
-                use ort::execution_providers::{CUDAExecutionProvider, ExecutionProviderDispatch};
-                let providers: Vec<ExecutionProviderDispatch> =
-                    vec![CUDAExecutionProvider::default().build()];
+                use ort::ep::{ExecutionProviderDispatch, CUDA};
+                let providers: Vec<ExecutionProviderDispatch> = vec![CUDA::default().build()];
                 try_register!(providers, "cuda");
             }
         }
@@ -279,9 +279,9 @@ pub fn build_session(
         EpPref::CoreML => {
             #[cfg(all(feature = "coreml", target_os = "macos"))]
             {
-                use ort::execution_providers::coreml::ModelFormat as CoreMLModelFormat;
-                use ort::execution_providers::CoreML as CoreMLEp;
-                use ort::execution_providers::ExecutionProviderDispatch;
+                use ort::ep::coreml::ModelFormat as CoreMLModelFormat;
+                use ort::ep::CoreML as CoreMLEp;
+                use ort::ep::ExecutionProviderDispatch;
 
                 let cache_dir = resolve_coreml_cache_dir(&actual, cfg.coreml_cache_dir.as_deref());
                 let _ = std::fs::create_dir_all(&cache_dir);
@@ -303,9 +303,8 @@ pub fn build_session(
         EpPref::Cuda => {
             #[cfg(all(feature = "cuda", any(target_os = "linux", target_os = "windows")))]
             {
-                use ort::execution_providers::{CUDAExecutionProvider, ExecutionProviderDispatch};
-                let providers: Vec<ExecutionProviderDispatch> =
-                    vec![CUDAExecutionProvider::default().build()];
+                use ort::ep::{ExecutionProviderDispatch, CUDA};
+                let providers: Vec<ExecutionProviderDispatch> = vec![CUDA::default().build()];
                 try_register!(providers, "cuda");
             }
             #[cfg(not(all(feature = "cuda", any(target_os = "linux", target_os = "windows"))))]
@@ -372,8 +371,7 @@ pub fn probe_output_last_dim(session: &Session, output_name: Option<&str>) -> Op
     };
     match target.dtype() {
         ValueType::Tensor { shape, .. } => {
-            // `shape` derefs to `[i64]` in ort rc.12; the last entry is the
-            // innermost dim. A non-positive value means dynamic.
+            // `shape` derefs to `[i64]`; the last entry is the innermost dim. A non-positive value means dynamic.
             let len = shape.len();
             if len == 0 {
                 return None;
@@ -394,16 +392,21 @@ pub fn probe_output_last_dim(session: &Session, output_name: Option<&str>) -> Op
 /// variable is already set.
 pub fn ensure_ort_dylib_path() {
     const ENV_KEY: &str = "ORT_DYLIB_PATH";
-    if std::env::var_os(ENV_KEY).is_some() {}
+    // An explicit setting always wins; never override it.
+    let already_set = std::env::var_os(ENV_KEY).is_some();
     #[cfg(target_os = "macos")]
-    for candidate in [
-        "/opt/homebrew/opt/onnxruntime/lib/libonnxruntime.dylib",
-        "/opt/homebrew/lib/libonnxruntime.dylib",
-        "/usr/local/lib/libonnxruntime.dylib",
-    ] {
-        if Path::new(candidate).exists() {
-            std::env::set_var(ENV_KEY, candidate);
-            return;
+    if !already_set {
+        for candidate in [
+            "/opt/homebrew/opt/onnxruntime/lib/libonnxruntime.dylib",
+            "/opt/homebrew/lib/libonnxruntime.dylib",
+            "/usr/local/lib/libonnxruntime.dylib",
+        ] {
+            if Path::new(candidate).exists() {
+                std::env::set_var(ENV_KEY, candidate);
+                break;
+            }
         }
     }
+    #[cfg(not(target_os = "macos"))]
+    let _ = already_set;
 }
