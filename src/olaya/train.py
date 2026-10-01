@@ -29,7 +29,7 @@ from olaya.data_gen import (
     generate_synthetic_incidents,
 )
 from olaya.engine import _flat_subgraph
-from olaya.model import OntologyDecisionHead, OntologyDecisionModel
+from olaya.model import OntologyDecisionModel
 from olaya.ontology import Concept, Ontology, create_incident_ontology
 from olaya.sequence import (
     QTYPE_IDS,
@@ -58,7 +58,9 @@ def build_training_samples(
     samples: list[TrainingSample] = []
 
     # Identify all candidate leaves under ROOT for concept triage
-    leaf_curies = sorted([c for c, concept in ontology.concepts.items() if not concept.children and c != "INCIDENT:ROOT"])
+    leaf_curies = sorted(
+        [c for c, concept in ontology.concepts.items() if not concept.children and c != "INCIDENT:ROOT"]
+    )
     leaf_subgraph = ontology.extract_subgraph(leaf_curies)
     leaf_concepts = [ontology.concepts[c] for c in leaf_curies]
 
@@ -289,7 +291,6 @@ def create_trainable_model(
     return OntologyDecisionModel(hidden_size=hidden_size, custom_encoder=custom_encoder)
 
 
-
 def train_olaya(
     ontology: Ontology | None = None,
     tokenizer: Any | None = None,
@@ -368,9 +369,7 @@ def train_olaya(
     model.to(dev)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-        optimizer, T_max=epochs * len(train_loader), eta_min=1e-5
-    )
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs * len(train_loader), eta_min=1e-5)
     criterion_dec = nn.CrossEntropyLoss()
     criterion_act = nn.NLLLoss()
 

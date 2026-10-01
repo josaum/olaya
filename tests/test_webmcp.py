@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+
 from olaya.webmcp import OLayaMCPServer, extract_jsonld_or_microdata
 
 
@@ -189,4 +190,3 @@ def test_mcp_extract_and_ground_tool():
     assert "gs1_grounding" in content
     assert "schemaorg_grounding" in content
     assert content["gs1_grounding"]["confidence"] > 0.0
-

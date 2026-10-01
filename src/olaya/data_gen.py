@@ -15,8 +15,6 @@ import random
 from dataclasses import dataclass
 from typing import Any
 
-from olaya.ontology import Concept, Ontology, create_incident_ontology
-
 
 @dataclass
 class IncidentInstance:

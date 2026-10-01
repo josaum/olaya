@@ -150,6 +150,7 @@ def run_e2e_benchmark():
         )
     else:
         from olaya.model import OntologyDecisionModel
+
         m_model = OntologyDecisionModel(backbone_name_or_config="answerdotai/ModernBERT-base")
         modernbert_engine = OLaya(
             ontology=gs1_onto,

@@ -11,14 +11,12 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-import numpy as np
 import torch
 from torch.utils.data import DataLoader
-from transformers import AutoTokenizer
 
-from olaya.calibration import CalibrationMetrics, compute_ece, fit_temperature, pad_and_cat_logits
+from olaya.calibration import CalibrationMetrics, fit_temperature, pad_and_cat_logits
 from olaya.engine import OLaya
-from olaya.ontology import Ontology, create_incident_ontology
+from olaya.ontology import create_incident_ontology
 from olaya.real_ontology_train import generate_real_ontology_samples, load_ontology_file
 from olaya.train import DecisionDataset, collate_decision_batch
 
@@ -30,11 +28,10 @@ DOMAIN_ONTOLOGIES = {
 }
 
 
-
 def print_reliability_diagram(metrics: CalibrationMetrics, title: str = "Reliability Diagram", num_bins: int = 10):
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f" {title.upper()} ")
-    print(f"{'='*70}")
+    print(f"{'=' * 70}")
     print(f"Overall Metrics: {metrics.summary()}")
     print("-" * 70)
     print(f"{'Bin Range':<15} | {'Count':<7} | {'Accuracy':<10} | {'Confidence':<10} | {'Gap':<8} | {'Diagram'}")
@@ -58,9 +55,7 @@ def print_reliability_diagram(metrics: CalibrationMetrics, title: str = "Reliabi
             bar[conf_marker] = "|" if bar[conf_marker] == " " else "◈"
         bar_str = "".join(bar)
 
-        print(
-            f"[{low:.2f} - {high:.2f}]   | {cnt:<7} | {acc:<9.2%} | {conf:<9.2%} | {gap:<7.4f} | [{bar_str}]"
-        )
+        print(f"[{low:.2f} - {high:.2f}]   | {cnt:<7} | {acc:<9.2%} | {conf:<9.2%} | {gap:<7.4f} | [{bar_str}]")
     print("-" * 70)
     print("Legend: [███] Accuracy, [◈] Calibration Target (Confidence), [|] Empty Conf Target\n")
 
@@ -163,7 +158,9 @@ def main():
     parser.add_argument("--domain", choices=["atlas", "doid", "schemaorg", "incident"], default="atlas")
     parser.add_argument("--samples", type=int, default=600)
     parser.add_argument("--bins", type=int, default=10)
-    parser.add_argument("--no-save", action="store_true", help="Do not overwrite checkpoint with calibrated temperature")
+    parser.add_argument(
+        "--no-save", action="store_true", help="Do not overwrite checkpoint with calibrated temperature"
+    )
     parser.add_argument("--device", default=None)
     args = parser.parse_args()
 

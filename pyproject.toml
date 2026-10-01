@@ -40,5 +40,9 @@ src = ["src", "tests", "scripts", "benchmarks"]
 select = ["E", "F", "I", "UP", "B"]
 ignore = ["E501"]
 
+[tool.ruff.lint.per-file-ignores]
+"scripts/*" = ["E402"]
+"benchmarks/*" = ["E402"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

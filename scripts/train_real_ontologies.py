@@ -13,17 +13,17 @@ sys.path.insert(0, str(ROOT))
 
 import torch
 import torch.nn as nn
+from scripts.export_onnx_ort import export_olaya
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, PreTrainedTokenizerFast
 
-from olaya.calibration import compute_ece, fit_temperature, pad_and_cat_logits
+from olaya.calibration import fit_temperature, pad_and_cat_logits
 from olaya.real_ontology_train import generate_real_ontology_samples, load_ontology_file
 from olaya.train import (
     DecisionDataset,
     collate_decision_batch,
     create_trainable_model,
 )
-from scripts.export_onnx_ort import export_olaya
 
 DATA_PATHS = {
     "atlas": ROOT / "data" / "custom_ontology.json",
@@ -31,7 +31,6 @@ DATA_PATHS = {
     "schemaorg": ROOT / "data" / "schemaorg_ontology.json",
     "gs1": ROOT / "data" / "gs1_ontology.json",
 }
-
 
 
 def train_single_domain(
@@ -50,10 +49,10 @@ def train_single_domain(
     export_onnx: bool = True,
     seed: int = 42,
 ) -> dict[str, float]:
-    print(f"\n=======================================================")
+    print("\n=======================================================")
     print(f"Training O-Laya on Domain: {domain.upper()} ({ontology_path})")
     print(f"Backbone: {backbone} | Real ABox: {use_real_abox} | Calibrate: {calibrate}")
-    print(f"=======================================================")
+    print("=======================================================")
 
     ontology = load_ontology_file(ontology_path)
     print(f"Loaded {ontology.name} with {len(ontology.concepts)} concepts.")
@@ -75,6 +74,7 @@ def train_single_domain(
             tokenizer = AutoTokenizer.from_pretrained(backbone)
         else:
             from tests.conftest import load_local_tokenizer
+
             tokenizer = load_local_tokenizer()
 
     special_ids = {
@@ -117,9 +117,7 @@ def train_single_domain(
     model.to(dev)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-        optimizer, T_max=epochs * len(train_loader), eta_min=1e-5
-    )
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs * len(train_loader), eta_min=1e-5)
     criterion_dec = nn.CrossEntropyLoss()
     criterion_act = nn.NLLLoss()
 
@@ -304,7 +302,9 @@ def main():
     print("ALL REAL ONTOLOGY TRAINING RUNS COMPLETED")
     print("=======================================================")
     for d, res in results.items():
-        print(f"Domain: {d:<12} | Validation Accuracy: {res['val_acc']:.2%} | Calibrated ECE: {res.get('ece', 0.0):.4f}")
+        print(
+            f"Domain: {d:<12} | Validation Accuracy: {res['val_acc']:.2%} | Calibrated ECE: {res.get('ece', 0.0):.4f}"
+        )
 
 
 if __name__ == "__main__":

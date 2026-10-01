@@ -11,14 +11,14 @@ from __future__ import annotations
 import json
 import random
 import subprocess
-import sys
 from pathlib import Path
 from typing import Any
 
 from olaya.engine import _flat_subgraph
 from olaya.ontology import Concept, Ontology
+from olaya.real_abox import load_custom_abox
 from olaya.sequence import QTYPE_IDS, build_ontology_sequence
-from olaya.train import DecisionDataset, TrainingSample, collate_decision_batch, create_trainable_model
+from olaya.train import TrainingSample
 
 # Domain query templates to produce diverse, realistic state queries
 DOMAIN_QUERY_TEMPLATES: dict[str, list[str]] = {
@@ -51,7 +51,6 @@ DOMAIN_QUERY_TEMPLATES: dict[str, list[str]] = {
         "Digital Link resolution: product packaging QR code redirected to verified {term} descriptor.",
     ],
 }
-
 
 
 def load_ontology_file(path_or_onto: str | Path | Ontology, name: str | None = None) -> Ontology:
@@ -91,9 +90,6 @@ def load_ontology_file(path_or_onto: str | Path | Ontology, name: str | None = N
     return Ontology.from_json(data)
 
 
-from olaya.real_abox import load_custom_abox
-
-
 def _generate_tasks_for_concept_query(
     ontology: Ontology,
     target_curie: str,
@@ -107,7 +103,6 @@ def _generate_tasks_for_concept_query(
     """Generate all 5 typed operational decision tasks for a single concept query."""
     concept = ontology.concepts[target_curie]
     ancestors = ontology.get_ancestors(target_curie)
-    descendants = ontology.get_descendants(target_curie)
     state = {
         "domain": domain,
         "query": query_text,
@@ -357,4 +352,3 @@ def generate_real_ontology_samples(
 
     rng.shuffle(samples)
     return samples[:num_samples]
-

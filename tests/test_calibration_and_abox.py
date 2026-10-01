@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import torch
 
-from olaya.calibration import CalibrationMetrics, TemperatureScaler, compute_ece, fit_temperature
+from olaya.calibration import compute_ece, fit_temperature
 from olaya.engine import OLaya
 from olaya.model import OntologyDecisionModel
 from olaya.ontology import create_incident_ontology
@@ -36,18 +36,20 @@ def test_real_abox_harvesting():
 
 def test_compute_ece_perfect_calibration():
     # Synthetic perfectly calibrated predictions
-    probs = np.array([
-        [0.9, 0.1],
-        [0.9, 0.1],
-        [0.9, 0.1],
-        [0.9, 0.1],
-        [0.9, 0.1],
-        [0.9, 0.1],
-        [0.9, 0.1],
-        [0.9, 0.1],
-        [0.9, 0.1],
-        [0.1, 0.9],
-    ])
+    probs = np.array(
+        [
+            [0.9, 0.1],
+            [0.9, 0.1],
+            [0.9, 0.1],
+            [0.9, 0.1],
+            [0.9, 0.1],
+            [0.9, 0.1],
+            [0.9, 0.1],
+            [0.9, 0.1],
+            [0.9, 0.1],
+            [0.1, 0.9],
+        ]
+    )
     # 9 out of 10 match class 0 -> accuracy in bin [0.8-1.0] is 90%, confidence is 90%
     targets = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     metrics = compute_ece(probs, targets, num_bins=10)
@@ -109,6 +111,7 @@ def test_engine_loads_calibrated_temperature(tmp_path):
 
 def test_gs1_ontology_loading_and_routing():
     from pathlib import Path
+
     from olaya.candidate_router import CandidateRouter
     from olaya.real_ontology_train import load_ontology_file
 
@@ -133,4 +136,3 @@ def test_gs1_ontology_loading_and_routing():
     candidates = router.route_candidates("Barcode GTIN scan for refrigerated beverage", top_k=3)
     curies = [c.curie for c, _ in candidates]
     assert "Beverage" in curies
-
