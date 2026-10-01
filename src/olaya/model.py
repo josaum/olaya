@@ -8,8 +8,6 @@ Matches Laya / Jev non-autoregressive architecture:
 
 from __future__ import annotations
 
-from typing import Tuple
-
 import torch
 import torch.nn as nn
 from transformers import AutoConfig, AutoModel
@@ -44,7 +42,7 @@ class OntologyDecisionHead(nn.Module):
         marker_mask: torch.Tensor,  # [B, K] (bool)
         cls_hidden_state: torch.Tensor,  # [B, H]
         qtype: torch.Tensor,  # [B]
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         B, K = marker_pos.shape
         H = sequence_hidden_states.shape[-1]
 
@@ -91,7 +89,11 @@ class OntologyDecisionModel(nn.Module):
                 self.hidden_size = self.encoder.config.hidden_size
             except Exception:
                 # Fallback to local config if offline
-                cfg = AutoConfig.from_pretrained(backbone_name_or_config) if isinstance(backbone_name_or_config, str) else backbone_name_or_config
+                cfg = (
+                    AutoConfig.from_pretrained(backbone_name_or_config)
+                    if isinstance(backbone_name_or_config, str)
+                    else backbone_name_or_config
+                )
                 self.encoder = AutoModel.from_config(cfg)
                 self.hidden_size = cfg.hidden_size
 
@@ -104,7 +106,7 @@ class OntologyDecisionModel(nn.Module):
         marker_pos: torch.Tensor,  # [B, K]
         marker_mask: torch.Tensor,  # [B, K]
         qtype: torch.Tensor,  # [B]
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         # Encode full bidirectional sequence (cross-attention across tokens)
         outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
         sequence_hidden = outputs.last_hidden_state  # [B, L, H]

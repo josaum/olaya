@@ -7,9 +7,7 @@ use std::path::Path;
 use std::sync::Arc;
 
 use anyhow::{Context, Result};
-use arrow::array::{
-    ArrayRef, ListBuilder, StringBuilder, UInt32Builder,
-};
+use arrow::array::{ArrayRef, ListBuilder, StringBuilder, UInt32Builder};
 use arrow::datatypes::{DataType, Field, Schema, SchemaRef};
 use arrow::ipc::reader::FileReader;
 use arrow::ipc::writer::FileWriter;
@@ -105,6 +103,7 @@ impl OntologyBatchBuilder {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn append_concept(
         &mut self,
         id: u32,
@@ -237,4 +236,3 @@ pub fn extract_curie(uri: &str) -> String {
     }
     local.to_string()
 }
-

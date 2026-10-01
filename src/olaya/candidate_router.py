@@ -9,12 +9,11 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
-from typing import Dict, List, Set, Tuple
 
 from olaya.ontology import Concept, Ontology
 
 
-def tokenize_normalize(text: str) -> List[str]:
+def tokenize_normalize(text: str) -> list[str]:
     """Normalize text, split CamelCase, and extract lowercased alphanumeric tokens."""
     # Split CamelCase: "DatabaseOutage" -> "Database Outage"
     s = re.sub(r"([a-z])([A-Z])", r"\1 \2", text)
@@ -29,8 +28,8 @@ class CandidateRouter:
     def __init__(self, ontology: Ontology, max_candidates: int = 12):
         self.ontology = ontology
         self.max_candidates = max_candidates
-        self.inverted_index: Dict[str, Set[str]] = defaultdict(set)
-        self.concept_tokens: Dict[str, Set[str]] = {}
+        self.inverted_index: dict[str, set[str]] = defaultdict(set)
+        self.concept_tokens: dict[str, set[str]] = {}
         self._build_index()
 
     def _build_index(self) -> None:
@@ -48,7 +47,7 @@ class CandidateRouter:
         state_text: str,
         root_curie: str | None = None,
         top_k: int | None = None,
-    ) -> List[Tuple[Concept, float]]:
+    ) -> list[tuple[Concept, float]]:
         """Score concepts against input state text and return top candidates."""
         k = top_k or self.max_candidates
         # Sorted so that float accumulation order (and therefore tie-breaking) is reproducible.
@@ -56,11 +55,11 @@ class CandidateRouter:
         query_set = set(query_tokens)
 
         # Filter candidate pool if constrained by root
-        allowed_concepts: Set[str] = (
+        allowed_concepts: set[str] = (
             self.ontology.get_descendants(root_curie) if root_curie else set(self.ontology.concepts.keys())
         )
 
-        scores: Dict[str, float] = defaultdict(float)
+        scores: dict[str, float] = defaultdict(float)
 
         for token in query_tokens:
             matching_curies = self.inverted_index.get(token, set()).intersection(allowed_concepts)
@@ -88,7 +87,7 @@ class CandidateRouter:
 
         return [(self.ontology.concepts[curie], score) for curie, score in top_results]
 
-    def _fallback_curies(self, root_curie: str | None) -> List[str]:
+    def _fallback_curies(self, root_curie: str | None) -> list[str]:
         if root_curie is not None:
             anchor = root_curie if root_curie in self.ontology.concepts else None
         else:

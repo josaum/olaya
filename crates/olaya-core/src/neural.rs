@@ -1,10 +1,10 @@
 //! Neural cross-encoder scoring backend powered by ONNX Runtime and mycelia-ort-utils.
 
-use std::path::Path;
-use std::sync::Mutex;
 use anyhow::{Context, Result};
 use mycelia_ort_utils::{build_session, ensure_ort_dylib_path, EpPref, SessionConfig};
 use ort::{session::Session, value::Tensor};
+use std::path::Path;
+use std::sync::Mutex;
 use tokenizers::Tokenizer;
 
 /// Neural cross-encoder using an ONNX or ORT model (ModernBERT / MiniLM / BGE reranker).
@@ -74,7 +74,10 @@ fn build_marker_sequence(
     seq.truncate(max_len);
 
     marker_positions.retain(|&m| m < seq.len());
-    MarkerSequence { input_ids: seq, marker_positions }
+    MarkerSequence {
+        input_ids: seq,
+        marker_positions,
+    }
 }
 
 impl NeuralScorer {
@@ -108,7 +111,10 @@ impl NeuralScorer {
             .map_err(|e| anyhow::anyhow!("Failed to load tokenizer: {e}"))?;
 
         let id = |names: &[&str], default: u32| {
-            names.iter().find_map(|n| tokenizer.token_to_id(n)).unwrap_or(default)
+            names
+                .iter()
+                .find_map(|n| tokenizer.token_to_id(n))
+                .unwrap_or(default)
         };
         let special = SpecialIds {
             cls: id(&["[CLS]", "<s>"], 50281),
@@ -149,13 +155,16 @@ impl NeuralScorer {
                     .get_ids()
                     .to_vec())
             };
-            let header = encode("concept question: Classify the state into the most specific ontology concept.")?;
+            let header = encode(
+                "concept question: Classify the state into the most specific ontology concept.",
+            )?;
             let options = candidate_labels
                 .iter()
                 .map(|c| encode(&format!(" {c}")))
                 .collect::<Result<Vec<_>>>()?;
             let state = encode(state_text)?;
-            let built = build_marker_sequence(&header, &options, &state, self.special, self.max_length);
+            let built =
+                build_marker_sequence(&header, &options, &state, self.special, self.max_length);
 
             // Candidates whose marker did not fit get no score (filled with -inf below).
             let actual_k = built.marker_positions.len();
@@ -195,7 +204,10 @@ impl NeuralScorer {
                 inputs.push(("qtype".into(), qtype_tensor.into()));
             }
 
-            let mut session = self.session.lock().map_err(|_| anyhow::anyhow!("Mutex poison"))?;
+            let mut session = self
+                .session
+                .lock()
+                .map_err(|_| anyhow::anyhow!("Mutex poison"))?;
             let outputs = session.run(inputs).context("Inference execution failed")?;
 
             let output = outputs
@@ -208,7 +220,13 @@ impl NeuralScorer {
                 .context("Failed to extract float tensor")?;
 
             let logits = (0..k)
-                .map(|i| if i < actual_k { out_data.get(i).copied().unwrap_or(0.0) } else { f32::NEG_INFINITY })
+                .map(|i| {
+                    if i < actual_k {
+                        out_data.get(i).copied().unwrap_or(0.0)
+                    } else {
+                        f32::NEG_INFINITY
+                    }
+                })
                 .collect();
             return Ok(logits);
         }
@@ -259,7 +277,10 @@ impl NeuralScorer {
             "attention_mask" => attention_mask_tensor,
         ];
 
-        let mut session = self.session.lock().map_err(|_| anyhow::anyhow!("Mutex poison"))?;
+        let mut session = self
+            .session
+            .lock()
+            .map_err(|_| anyhow::anyhow!("Mutex poison"))?;
         let outputs = session.run(inputs).context("Inference execution failed")?;
 
         let output = outputs
@@ -274,9 +295,7 @@ impl NeuralScorer {
 
         let mut logits = Vec::with_capacity(k);
         if out_shape.len() == 2 && out_shape[1] == 1 {
-            for i in 0..k {
-                logits.push(out_data[i]);
-            }
+            logits.extend_from_slice(&out_data[..k]);
         } else if out_shape.len() == 2 && out_shape[1] >= 2 {
             for i in 0..k {
                 let stride = out_shape[1] as usize;
@@ -296,12 +315,20 @@ impl NeuralScorer {
 mod tests {
     use super::*;
 
-    const SPECIAL: SpecialIds = SpecialIds { cls: 1, sep: 2, mask: 3 };
+    const SPECIAL: SpecialIds = SpecialIds {
+        cls: 1,
+        sep: 2,
+        mask: 3,
+    };
 
     #[test]
     fn marker_sequence_matches_python_layout() {
-        let built = build_marker_sequence(&[10, 11], &[vec![20], vec![30, 31]], &[40], SPECIAL, 512);
-        assert_eq!(built.input_ids, vec![1, 10, 11, 2, 3, 20, 3, 30, 31, 2, 40, 2]);
+        let built =
+            build_marker_sequence(&[10, 11], &[vec![20], vec![30, 31]], &[40], SPECIAL, 512);
+        assert_eq!(
+            built.input_ids,
+            vec![1, 10, 11, 2, 3, 20, 3, 30, 31, 2, 40, 2]
+        );
         assert_eq!(built.marker_positions, vec![4, 6]);
     }
 
@@ -312,7 +339,10 @@ mod tests {
         assert_eq!(built.input_ids.len(), 300);
         // Header capped at 128 tokens; two 48-token options fit in the 256-token head budget.
         assert_eq!(built.marker_positions, vec![130, 179]);
-        assert!(built.marker_positions.iter().all(|&m| built.input_ids[m] == SPECIAL.mask));
+        assert!(built
+            .marker_positions
+            .iter()
+            .all(|&m| built.input_ids[m] == SPECIAL.mask));
         assert_eq!(*built.input_ids.last().unwrap(), SPECIAL.sep);
     }
 }

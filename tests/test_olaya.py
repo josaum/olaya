@@ -1,16 +1,15 @@
 """Unit tests for O-Laya (Ontology-Grounded Decision Model)."""
 
-import pytest
 import numpy as np
-from olaya.ontology import Concept, Ontology, create_incident_ontology
-from olaya.candidate_router import CandidateRouter
+import pytest
+
 from olaya.axioms import (
-    enforce_subsumption_monotonicity,
     enforce_disjointness_exclusion,
+    enforce_subsumption_monotonicity,
     normalized_entropy_confidence,
-    calibrate_and_project_distribution,
 )
-from olaya.sequence import build_ontology_sequence
+from olaya.candidate_router import CandidateRouter
+from olaya.ontology import create_incident_ontology
 
 
 def test_ontology_dag():
@@ -61,7 +60,7 @@ def test_axioms_and_calibration():
 
     # Test normalized entropy
     p_certain = np.array([1.0, 0.0, 0.0])
-    p_uniform = np.array([1/3, 1/3, 1/3])
+    p_uniform = np.array([1 / 3, 1 / 3, 1 / 3])
     assert normalized_entropy_confidence(p_certain) == pytest.approx(1.0, abs=1e-3)
     assert normalized_entropy_confidence(p_uniform) == pytest.approx(0.0, abs=1e-3)
 

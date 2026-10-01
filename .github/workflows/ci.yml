@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust:
+    name: Rust (fmt, clippy, test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo clippy -p olaya-core --all-targets --features onnx -- -D warnings
+      - run: cargo test --workspace
+      - run: cargo test -p olaya-core --lib --features onnx
+
+  python:
+    name: Python (ruff, pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Install (CPU torch)
+        run: |
+          uv venv
+          uv pip install --index-url https://download.pytorch.org/whl/cpu torch
+          uv pip install -e ".[dev]"
+      - run: .venv/bin/ruff check src tests scripts benchmarks
+      - run: .venv/bin/ruff format --check src tests scripts benchmarks
+      - run: .venv/bin/python -m pytest -q
+      - name: Golden vectors are up to date
+        run: |
+          .venv/bin/python scripts/gen_axiom_golden.py
+          git diff --exit-code -- spec/axioms_golden.json
+
+  node:
+    name: Node (tsc, bun test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/olaya-node
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile || bun install
+      - run: bunx tsc --noEmit
+      - run: bun test
+      - run: bun run build

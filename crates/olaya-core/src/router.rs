@@ -4,10 +4,10 @@
 //! precomputed once in [`ArrowCandidateRouter::build`], so a query only touches the rows that
 //! share a token with the state plus their ancestors — independent of total ontology size.
 
-use std::collections::{HashMap, HashSet};
 use anyhow::{Context, Result};
 use arrow::array::{Array, ListArray, StringArray, UInt32Array};
 use arrow::record_batch::RecordBatch;
+use std::collections::{HashMap, HashSet};
 
 /// Active decision subgraph mapped to contiguous slot indices [0 .. M-1].
 #[derive(Debug, Clone)]
@@ -38,14 +38,18 @@ pub struct RowTokens {
 /// as well (`PostgreSQL` → `postgre`, `sql`, `postgresql`) so it still matches `POSTGRESQL`.
 pub fn tokenize_text(text: &str) -> Vec<String> {
     let mut tokens = Vec::new();
-    for word in text.split(|c: char| !c.is_alphanumeric()).filter(|w| !w.is_empty()) {
+    for word in text
+        .split(|c: char| !c.is_alphanumeric())
+        .filter(|w| !w.is_empty())
+    {
         let chars: Vec<char> = word.chars().collect();
         let mut start = 0;
         let mut parts = 0;
         for i in 1..chars.len() {
             let (prev, cur) = (chars[i - 1], chars[i]);
             let next_is_lower = chars.get(i + 1).is_some_and(|c| c.is_lowercase());
-            if cur.is_uppercase() && (prev.is_lowercase() || (prev.is_uppercase() && next_is_lower)) {
+            if cur.is_uppercase() && (prev.is_lowercase() || (prev.is_uppercase() && next_is_lower))
+            {
                 push_token(&chars[start..i], &mut tokens);
                 start = i;
                 parts += 1;
@@ -186,12 +190,20 @@ impl ArrowCandidateRouter {
             }
             let syn_tokens = dedup_sorted(syn_tokens);
 
-            let all: HashSet<&String> = label.iter().chain(&syn_tokens).chain(&description).collect();
+            let all: HashSet<&String> = label
+                .iter()
+                .chain(&syn_tokens)
+                .chain(&description)
+                .collect();
             for tok in all {
                 inverted_index.entry(tok.clone()).or_default().push(row);
             }
 
-            row_tokens.push(RowTokens { label, synonyms: syn_tokens, description });
+            row_tokens.push(RowTokens {
+                label,
+                synonyms: syn_tokens,
+                description,
+            });
             parent_rows.push(id_list_to_rows(parents_col, row, &id_to_row));
             disjoint_rows.push(id_list_to_rows(disjoint_col, row, &id_to_row));
         }
@@ -213,7 +225,9 @@ impl ArrowCandidateRouter {
             }
         }
 
-        let top_level_rows = (0..num_concepts).filter(|&r| parent_rows[r].is_empty()).collect();
+        let top_level_rows = (0..num_concepts)
+            .filter(|&r| parent_rows[r].is_empty())
+            .collect();
         let depth = compute_depths(&parent_rows);
 
         Ok(Self {
@@ -253,7 +267,11 @@ impl ArrowCandidateRouter {
         let mut scores: HashMap<usize, f32> = HashMap::new();
 
         for tok in &query_tokens {
-            if let Some(rows) = self.inverted_index.get(tok).filter(|r| r.len() <= MAX_QUERY_POSTINGS) {
+            if let Some(rows) = self
+                .inverted_index
+                .get(tok)
+                .filter(|r| r.len() <= MAX_QUERY_POSTINGS)
+            {
                 let idf = 1.0 / (1.0 + rows.len() as f32);
                 for &row in rows {
                     *scores.entry(row).or_default() += idf * 2.0;
@@ -263,7 +281,11 @@ impl ArrowCandidateRouter {
 
         let mut ranked: Vec<(usize, f32)> = scores.into_iter().collect();
         ranked.sort_by(|a, b| b.1.total_cmp(&a.1).then(a.0.cmp(&b.0)));
-        ranked.into_iter().take(max_candidates).map(|(row, _)| row).collect()
+        ranked
+            .into_iter()
+            .take(max_candidates)
+            .map(|(row, _)| row)
+            .collect()
     }
 
     /// Fallback for states sharing no token with the ontology: the children of the single
@@ -278,7 +300,11 @@ impl ArrowCandidateRouter {
 
     /// Extracts the active decision subgraph for incoming state text: the top `max_candidates`
     /// lexical matches plus every ancestor up to the top level.
-    pub fn extract_subgraph(&self, state_text: &str, max_candidates: usize) -> ActiveDecisionSubgraph {
+    pub fn extract_subgraph(
+        &self,
+        state_text: &str,
+        max_candidates: usize,
+    ) -> ActiveDecisionSubgraph {
         let mut seeds = self.rank_rows(state_text, max_candidates);
         if seeds.is_empty() {
             seeds = self.fallback_rows(max_candidates);
@@ -297,8 +323,11 @@ impl ArrowCandidateRouter {
 
         let mut row_indices: Vec<usize> = selected.into_iter().collect();
         row_indices.sort_unstable();
-        let row_to_slot: HashMap<usize, usize> =
-            row_indices.iter().enumerate().map(|(slot, &row)| (row, slot)).collect();
+        let row_to_slot: HashMap<usize, usize> = row_indices
+            .iter()
+            .enumerate()
+            .map(|(slot, &row)| (row, slot))
+            .collect();
 
         let mut parent_edges = Vec::new();
         let mut disjoint_edges = Vec::new();
@@ -317,7 +346,11 @@ impl ArrowCandidateRouter {
             }
         }
 
-        ActiveDecisionSubgraph { row_indices, parent_edges, disjoint_edges }
+        ActiveDecisionSubgraph {
+            row_indices,
+            parent_edges,
+            disjoint_edges,
+        }
     }
 }
 
@@ -369,13 +402,31 @@ mod tests {
     fn tokenizer_keeps_acronyms_whole() {
         assert_eq!(
             tokenize_text("PostgreSQL HTTP API key leaked"),
-            ["postgre", "sql", "postgresql", "http", "api", "key", "leaked"]
+            [
+                "postgre",
+                "sql",
+                "postgresql",
+                "http",
+                "api",
+                "key",
+                "leaked"
+            ]
         );
         assert_eq!(
             tokenize_text("HTTPServer DatabaseOutage"),
-            ["http", "server", "httpserver", "database", "outage", "databaseoutage"]
+            [
+                "http",
+                "server",
+                "httpserver",
+                "database",
+                "outage",
+                "databaseoutage"
+            ]
         );
-        assert_eq!(tokenize_text("db_lock-wait 500 a"), ["db", "lock", "wait", "500"]);
+        assert_eq!(
+            tokenize_text("db_lock-wait 500 a"),
+            ["db", "lock", "wait", "500"]
+        );
         assert_eq!(tokenize_text("deadlock"), tokenize_text("DEADLOCK"));
     }
 
