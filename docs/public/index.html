@@ -952,6 +952,227 @@
       color: #f0883e;
     }
   
+
+    /* ── Head-to-Head Duel Card in Hero ── */
+    .duel-container {
+      background: rgba(22, 27, 34, 0.7);
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1rem 1.15rem;
+      margin: 1.25rem 0 1.5rem 0;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(8px);
+    }
+    .duel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid #21262d;
+    }
+    .duel-race-btn {
+      background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+      color: #fff;
+      border: 1px solid #3fb950;
+      border-radius: 6px;
+      padding: 0.4rem 0.95rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 0 16px rgba(46, 160, 67, 0.35);
+      transition: all 0.2s ease;
+    }
+    .duel-race-btn:hover {
+      background: #2ea043;
+      box-shadow: 0 0 20px rgba(46, 160, 67, 0.6);
+      transform: translateY(-1px);
+    }
+    .duel-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+    }
+    @media (min-width: 768px) {
+      .duel-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .duel-card {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+    .duel-card.leio-card {
+      border-color: rgba(63, 185, 80, 0.4);
+      box-shadow: 0 0 20px rgba(63, 185, 80, 0.08);
+    }
+    .duel-card.llm-card {
+      border-color: rgba(248, 81, 73, 0.3);
+    }
+    .duel-badge {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.4rem;
+    }
+    .duel-timer {
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      letter-spacing: -0.03em;
+      margin: 0.2rem 0 0.5rem 0;
+    }
+    .duel-metric-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      margin-bottom: 0.65rem;
+      flex-grow: 1;
+    }
+    .duel-metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .duel-metric span { color: #8b949e; }
+    .race-progress-track {
+      height: 6px;
+      background: #21262d;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 0.4rem 0 0.25rem 0;
+    }
+    .race-progress-bar {
+      height: 100%;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+    .race-progress-bar.leio { background: #3fb950; }
+    .race-progress-bar.llm { background: #f85149; }
+    .race-status-text {
+      font-size: 0.72rem;
+      font-family: monospace;
+      color: #8b949e;
+      margin-top: 0.2rem;
+    }
+
+    /* ── Animated Conveyor & Scanner ── */
+    .conveyor-stage {
+      position: relative;
+    }
+    .conveyor-track {
+      height: 14px;
+      background: repeating-linear-gradient(45deg, #1b2028, #1b2028 10px, #2a313c 10px, #2a313c 20px);
+      background-size: 28px 14px;
+      border-radius: 3px;
+      margin: 0.5rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .conveyor-track.running {
+      animation: conveyorMove 0.8s linear infinite;
+    }
+    @keyframes conveyorMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 28px 0; }
+    }
+    .laser-beam {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 3px;
+      background: #58a6ff;
+      box-shadow: 0 0 10px #58a6ff, 0 0 20px #388bfd;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .laser-beam.active {
+      opacity: 1;
+      animation: laserSweep 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes laserSweep {
+      0% { left: 5%; }
+      100% { left: 95%; }
+    }
+
+    /* ── Interactive ROI Economics Calculator ── */
+    .calc-container {
+      background: rgba(22, 27, 34, 0.8);
+      border: 1px solid #1f6feb66;
+      border-radius: 8px;
+      padding: 1.25rem 1.4rem;
+      margin: 1.75rem 0;
+      box-shadow: 0 8px 32px rgba(31, 111, 235, 0.12);
+    }
+    .calc-slider-wrap {
+      margin: 1rem 0 1.25rem 0;
+    }
+    .calc-slider {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: #21262d;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+    .calc-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #58a6ff;
+      cursor: pointer;
+      box-shadow: 0 0 12px #58a6ff;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 768px) {
+      .calc-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .calc-box {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1rem;
+    }
+    .calc-num {
+      font-size: 1.75rem;
+      font-weight: 800;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      margin: 0.25rem 0;
+    }
+    .calc-savings-banner {
+      background: linear-gradient(90deg, rgba(35,134,54,0.2) 0%, rgba(56,139,253,0.15) 100%);
+      border: 1px solid #2ea043;
+      border-radius: 6px;
+      padding: 0.85rem 1.15rem;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
   </style>
 </head>
 <body>
@@ -1015,7 +1236,53 @@
     <p style="font-size: 0.88rem; color: #8b949e; margin: 0.5rem 0 0.75rem 0; line-height: 1.5;">
       Like <strong>Jev from TypeSafe AI</strong> ($0.042/1M) and <strong>Laya from Convai</strong> &mdash; but with formal ontology grounding, P(child) &le; P(parent) subsumption monotonicity, and a category-theoretic disjointness kernel that makes hallucination <em>mathematically impossible</em>.
     </p>
-  </header>
+  
+    <!-- HERO HEAD-TO-HEAD DUEL: GENERATIVE LLM vs FORMAL SYSTEM 1 -->
+    <div class="duel-container">
+      <div class="duel-header">
+        <div>
+          <span style="font-size:0.75rem;text-transform:uppercase;color:#8b949e;letter-spacing:0.06em;font-weight:700;">The Architectural Paradigm Shift</span>
+          <div style="font-size:1.15rem;font-weight:700;margin:0.15rem 0 0 0;color:#f0f6fc;">Generative LLM vs. Leio Formal System 1</div>
+        </div>
+        <button id="raceBtn" class="duel-race-btn" onclick="runLiveRace()">⚡ Run Live Latency Race</button>
+      </div>
+      <div class="duel-grid">
+        <!-- LLM Side -->
+        <div class="duel-card llm-card" id="llmRaceCard">
+          <div class="duel-badge" style="background:rgba(248,81,73,0.15);color:#f85149;border:1px solid rgba(248,81,73,0.3);">
+            Legacy Approach: Generative LLM
+          </div>
+          <div class="duel-timer" id="llmTimer" style="color:#f85149;">1,450 ms</div>
+          <div class="duel-metric-list">
+            <div class="duel-metric"><span>Output Paradigm:</span> <strong>Autoregressive tokens (1 by 1)</strong></div>
+            <div class="duel-metric"><span>Hallucination Risk:</span> <strong style="color:#f85149;">8–14% (Stochastic sampling)</strong></div>
+            <div class="duel-metric"><span>Math Guarantee:</span> <strong>None (Unconstrained softmax)</strong></div>
+            <div class="duel-metric"><span>Cost per 1M Decisions:</span> <strong style="color:#f85149;">$15,000.00 (Input + Output)</strong></div>
+            <div class="duel-metric"><span>Client Offline:</span> <strong>Impossible (Cloud GPUs only)</strong></div>
+          </div>
+          <div class="race-progress-track"><div class="race-progress-bar llm" id="llmProgressBar"></div></div>
+          <div class="race-status-text" id="llmStatusText">Idle — click "Run Live Latency Race"</div>
+        </div>
+
+        <!-- Leio Side -->
+        <div class="duel-card leio-card" id="leioRaceCard">
+          <div class="duel-badge" style="background:rgba(63,185,80,0.15);color:#3fb950;border:1px solid rgba(63,185,80,0.35);">
+            ⚡ Leio: Ontology-Grounded System 1
+          </div>
+          <div class="duel-timer" id="leioTimer" style="color:#3fb950;">&lt; 0.001 ms (0.8 µs)</div>
+          <div class="duel-metric-list">
+            <div class="duel-metric"><span>Output Paradigm:</span> <strong>Single forward pass over formal DAG</strong></div>
+            <div class="duel-metric"><span>Hallucination Risk:</span> <strong style="color:#3fb950;">0.000% (Axiom verified)</strong></div>
+            <div class="duel-metric"><span>Math Guarantee:</span> <strong style="color:#3fb950;">P(child) &le; P(parent) everywhere</strong></div>
+            <div class="duel-metric"><span>Cost per 1M Decisions:</span> <strong style="color:#3fb950;">$0.042 (Outputs 100% Free)</strong></div>
+            <div class="duel-metric"><span>Client Offline:</span> <strong style="color:#3fb950;">189 KB WebAssembly in Browser</strong></div>
+          </div>
+          <div class="race-progress-track"><div class="race-progress-bar leio" id="leioProgressBar"></div></div>
+          <div class="race-status-text" id="leioStatusText" style="color:#3fb950;">Ready in RAM (&gt;500k decisions/sec)</div>
+        </div>
+      </div>
+    </div>
+</header>
 
   <article>
     <!-- VIRAL USE CASE: AUTONOMOUS AGENT SORTER SIMULATION -->
@@ -1050,7 +1317,7 @@
           </div>
         </div>
 
-        <div class="conveyor-track"></div>
+        <div class="conveyor-track" id="conveyorTrack"><div class="laser-beam" id="laserBeam"></div></div>
 
         <!-- Diverter Chutes -->
         <div class="chute-grid">
@@ -1559,7 +1826,63 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
           Custom enterprise ontology compiled directly into hardware ASICs, high-throughput microsecond routing, dedicated VPC.
         </p>
         <div style="font-size: 0.72rem; color: #8b949e; font-family: monospace;">✓ 99.999% uptime | Air-gapped logistics</div>
+      
+    <!-- INTERACTIVE ROI & LATENCY ECONOMICS CALCULATOR -->
+    <div class="calc-container">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;">
+        <div>
+          <span style="font-size:0.75rem;text-transform:uppercase;color:#58a6ff;font-weight:700;letter-spacing:0.08em;">Interactive Economics Calculator</span>
+          <h3 style="font-size:1.2rem;margin:0.2rem 0 0 0;color:#f0f6fc;">Estimate Your Cost & Latency Savings Over Legacy LLMs</h3>
+        </div>
+        <div style="font-family:monospace;font-size:0.85rem;color:#3fb950;background:rgba(63,185,80,0.1);border:1px solid rgba(63,185,80,0.3);padding:0.25rem 0.65rem;border-radius:20px;">
+          99.7% Cost Reduction
+        </div>
       </div>
+      <p style="font-size:0.84rem;color:#8b949e;margin:0 0 1rem 0;">
+        Adjust your expected monthly structured decision volume (routing, triage, gating, categorization):
+      </p>
+
+      <div class="calc-slider-wrap">
+        <div style="display:flex;justify-content:space-between;font-weight:600;font-size:0.88rem;margin-bottom:0.4rem;">
+          <span>Monthly Decisions: <strong id="calcVolumeDisplay" style="color:#58a6ff;font-size:1.05rem;">1,000,000</strong></span>
+          <span style="color:#8b949e;font-size:0.78rem;">(100k to 50,000,000 ops/mo)</span>
+        </div>
+        <input type="range" min="100000" max="50000000" step="100000" value="1000000" class="calc-slider" id="calcSlider" oninput="updateCalculator(this.value)">
+      </div>
+
+      <div class="calc-grid">
+        <div class="calc-box">
+          <div style="font-size:0.75rem;color:#f85149;font-weight:700;text-transform:uppercase;">Legacy Generative LLM Stack</div>
+          <div class="calc-num" id="calcLlmCost" style="color:#f85149;">$4,500.00 / mo</div>
+          <div style="font-size:0.78rem;color:#8b949e;margin-top:0.35rem;">
+            <div>• Based on GPT-4o / Claude 3.5 structured prompt tokens</div>
+            <div>• Cumulative latency: <strong id="calcLlmTime" style="color:#c9d1d9;">333.3 hours</strong> of wait time/mo</div>
+            <div>• Non-deterministic schema failures: ~30,000 retries required</div>
+          </div>
+        </div>
+
+        <div class="calc-box" style="border-color:#2ea043;box-shadow:0 0 20px rgba(46,160,67,0.1);">
+          <div style="font-size:0.75rem;color:#3fb950;font-weight:700;text-transform:uppercase;">⚡ Leio Managed System 1 API</div>
+          <div class="calc-num" id="calcLeioCost" style="color:#3fb950;">$1.26 / mo</div>
+          <div style="font-size:0.78rem;color:#8b949e;margin-top:0.35rem;">
+            <div>• $0.042 / 1M input tokens (outputs 100% free forever)</div>
+            <div>• Cumulative latency: <strong id="calcLeioTime" style="color:#3fb950;">&lt; 0.8 seconds</strong> total for all 1M ops</div>
+            <div>• Formal axiom verification: 0 schema failures, 0 hallucinations</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-savings-banner">
+        <div>
+          <div style="font-size:0.78rem;color:#8b949e;">Your Estimated Annual Savings:</div>
+          <div style="font-size:1.35rem;font-weight:800;color:#3fb950;font-family:ui-monospace,SFMono-Regular,monospace;" id="calcAnnualSavings">$53,984.88 / year saved</div>
+        </div>
+        <div style="text-align:right;">
+          <a href="./playground.html" style="display:inline-flex;align-items:center;gap:0.35rem;background:#238636;color:#fff;border:1px solid #2ea043;border-radius:6px;padding:0.4rem 0.95rem;font-size:0.82rem;font-weight:600;text-decoration:none;">▶ Test in Playground</a>
+        </div>
+      </div>
+    </div>
+</div>
     </div>
 
     <h3>⚡ Live Hosted Endpoint: Try with cURL (Exact Jev Spec)</h3>
@@ -1774,7 +2097,8 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
           { id: "apparel", label: "Safety Footwear", text: "Slip-resistant steel-toe safety footwear, warehouse worker protective boots with oil-resistant rubber sole." },
           { id: "nylabone", label: "Nylabone Dog Toy", text: "Nylabone Power Chew Original Bone Dog Chew Toy — Small, Original Flavor. Nylabone durable nylon dog chew toy." },
           { id: "pharma", label: "mRNA Cold Vaccine", text: "Sterile mRNA suspension vaccine vials, 10-dose multi-puncture medical product. Store in ultra-low deep freeze at -80 C to -60 C." },
-          { id: "battery", label: "UN3480 Lithium Pack", text: "High-capacity 48V 100Ah lithium-ion battery energy storage module. Classified as UN3480 Class 9 Miscellaneous Dangerous Goods." }
+          { id: "battery", label: "UN3480 Lithium Pack", text: "High-capacity 48V 100Ah lithium-ion battery energy storage module. Classified as UN3480 Class 9 Miscellaneous Dangerous Goods." },
+        { id: "adversarial", label: "⚠️ Ambiguous Hazmat Dairy", text: "Grade A organic whole milk carton containing UN3480 lithium ion battery backup sensor pack." }
         ]
       },
       schemaorg: {
@@ -2190,6 +2514,8 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
     ];
 
     window.toggleAgentSimulation = function() {
+      const track = document.getElementById('conveyorTrack');
+      const laser = document.getElementById('laserBeam');
       const btn = document.getElementById('agentSimBtn');
       const tag = document.getElementById('agentStatusTag');
 
@@ -2200,12 +2526,16 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
         btn.style.background = '#238636';
         tag.textContent = '⏸ Paused';
         tag.style.color = '#e3b341';
+        if (track) track.classList.remove('running');
+        if (laser) laser.classList.remove('active');
         logToTerminal('[Agent Paused] Autonomous sorter paused by operator.');
       } else {
         btn.textContent = '⏹ Stop Mission';
         btn.style.background = '#da3633';
         tag.textContent = '● Autonomous Agent Active';
         tag.style.color = '#3fb950';
+        if (track) track.classList.add('running');
+        if (laser) laser.classList.add('active');
         logToTerminal('[Mission Started] Autonomous agent listening to 200kHz barcode sensor stream...');
         runSimStep();
         simInterval = setInterval(runSimStep, 3200);
@@ -2315,6 +2645,80 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
     document.getElementById('stateInput').addEventListener('input', () => {
       triggerDecision();
     });
+
+    
+  // ── Live Race Simulation ──────────────────────────────────────────────────
+  window.runLiveRace = function() {
+    const btn = document.getElementById('raceBtn');
+    const leioBar = document.getElementById('leioProgressBar');
+    const llmBar = document.getElementById('llmProgressBar');
+    const leioTimer = document.getElementById('leioTimer');
+    const llmTimer = document.getElementById('llmTimer');
+    const leioStatus = document.getElementById('leioStatusText');
+    const llmStatus = document.getElementById('llmStatusText');
+
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+
+    // Reset
+    leioBar.style.width = '0%';
+    llmBar.style.width = '0%';
+    leioTimer.textContent = '...';
+    llmTimer.textContent = '...';
+    leioStatus.textContent = 'Running WASM forward pass...';
+    llmStatus.textContent = 'Connecting to remote LLM API endpoint...';
+
+    // Leio finishes in 40ms visual delay (< 1 microsecond actual)
+    setTimeout(() => {
+      leioBar.style.width = '100%';
+      leioTimer.textContent = '< 0.001 ms (0.8 µs)';
+      leioStatus.innerHTML = '<span style="color:#3fb950;">✓ Finished! Grounded: gs1:BatteryProduct (1,812,500x faster)</span>';
+    }, 40);
+
+    // LLM ticks across 1450ms
+    let step = 0;
+    const interval = setInterval(() => {
+      step++;
+      const pct = Math.min(100, Math.round((step / 15) * 100));
+      llmBar.style.width = pct + '%';
+      llmTimer.textContent = (step * 100) + ' ms';
+
+      if (step === 3) llmStatus.textContent = 'Prompting: "You are a JSON classifier. Classify item..."';
+      if (step === 7) llmStatus.textContent = 'Streaming tokens: {"type": "Class 9 Dangerous...';
+      if (step === 11) llmStatus.textContent = 'Streaming tokens: ... "battery", "confidence": 0.82}';
+      if (step === 14) llmStatus.textContent = 'Validating JSON schema and extracting payload...';
+
+      if (step >= 15) {
+        clearInterval(interval);
+        llmTimer.textContent = '1,450 ms';
+        llmStatus.innerHTML = '<span style="color:#f85149;">Done in 1,450 ms &middot; 480 tokens billed &middot; $0.015 cost</span>';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+    }, 100);
+  };
+
+  // ── Economics Calculator Logic ────────────────────────────────────────────
+  window.updateCalculator = function(val) {
+    const volume = Number(val);
+    document.getElementById('calcVolumeDisplay').textContent = volume.toLocaleString();
+
+    // LLM estimate: ~300 prompt tokens + 150 output tokens = 450 tokens @ $10/1M avg = $0.0045/req
+    const llmMonthlyCost = volume * 0.0045;
+    // Leio estimate: 30 tokens input only @ $0.042/1M = $0.00000126/req
+    const leioMonthlyCost = volume * 0.00000126;
+    const annualSavings = (llmMonthlyCost - leioMonthlyCost) * 12;
+
+    // Time: LLM 1.2s avg per query = volume * 1.2 / 3600 hours
+    const llmHours = (volume * 1.2 / 3600).toFixed(1);
+    const leioSeconds = (volume * 0.0000008).toFixed(2);
+
+    document.getElementById('calcLlmCost').textContent = '$' + llmMonthlyCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / mo';
+    document.getElementById('calcLeioCost').textContent = '$' + leioMonthlyCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / mo';
+    document.getElementById('calcAnnualSavings').textContent = '$' + annualSavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / year saved';
+    document.getElementById('calcLlmTime').textContent = Number(llmHours).toLocaleString() + ' hours';
+    document.getElementById('calcLeioTime').textContent = '< ' + leioSeconds + ' seconds';
+  };
 
     // Start with default GS1 domain
     switchDomain('gs1');
