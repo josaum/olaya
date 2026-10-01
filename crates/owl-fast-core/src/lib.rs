@@ -49,6 +49,10 @@ use oxrdfio::RdfParser;
 // Re-exports so downstream consumers (mycelia-align api.rs, job_queue.rs, bins)
 // don't need a direct oxigraph dep to construct an `RdfFormat`.
 pub use oxrdfio::{JsonLdProfileSet, RdfFormat, RdfParseError, ReaderQuadParser, SliceQuadParser};
+
+/// Formal Concept Analysis (Fast FCA) module for lattice generation, Galois derivation, and implications.
+pub mod fca;
+pub use fca::{BitSet, ConceptLattice, FormalConcept, FormalContext, Implication};
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::{BufReader, Read};
@@ -58,6 +62,7 @@ use tracing::{debug, info};
 // ─── Namespace constants ─────────────────────────────────────────────────
 const RDF_TYPE: &str = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 const OWL_CLASS: &str = "http://www.w3.org/2002/07/owl#Class";
+const RDFS_CLASS: &str = "http://www.w3.org/2000/01/rdf-schema#Class";
 const OWL_OBJECT_PROPERTY: &str = "http://www.w3.org/2002/07/owl#ObjectProperty";
 const OWL_DATATYPE_PROPERTY: &str = "http://www.w3.org/2002/07/owl#DatatypeProperty";
 const OWL_ANNOTATION_PROPERTY: &str = "http://www.w3.org/2002/07/owl#AnnotationProperty";
@@ -77,6 +82,13 @@ const OBO_RELATED_SYNONYM: &str = "http://www.geneontology.org/formats/oboInOwl#
 const SKOS_PREF_LABEL: &str = "http://www.w3.org/2004/02/skos/core#prefLabel";
 const SKOS_ALT_LABEL: &str = "http://www.w3.org/2004/02/skos/core#altLabel";
 const SKOS_HIDDEN_LABEL: &str = "http://www.w3.org/2004/02/skos/core#hiddenLabel";
+const RDFS_COMMENT: &str = "http://www.w3.org/2000/01/rdf-schema#comment";
+const SKOS_DEFINITION: &str = "http://www.w3.org/2004/02/skos/core#definition";
+const SCHEMA_DESCRIPTION_HTTP: &str = "http://schema.org/description";
+const SCHEMA_DESCRIPTION_HTTPS: &str = "https://schema.org/description";
+const DC_DESCRIPTION: &str = "http://purl.org/dc/elements/1.1/description";
+const DCTERMS_DESCRIPTION: &str = "http://purl.org/dc/terms/description";
+const OBO_DEFINITION: &str = "http://purl.obolibrary.org/obo/IAO_0000115";
 
 /// An entity extracted from an ontology.
 #[derive(Debug, Clone)]
@@ -87,6 +99,10 @@ pub struct Entity {
 
     /// Primary label (rdfs:label or local name).
     pub label: String,
+
+    /// Human-readable definition, comment, or description.
+    #[cfg_attr(feature = "serde", serde(default))]
+    pub description: Option<String>,
 
     /// Synonyms (hasExactSynonym, hasRelatedSynonym, etc.).
     pub synonyms: Vec<String>,
@@ -421,7 +437,7 @@ impl OntologyParser {
                 RDF_TYPE => {
                     if let Term::NamedNode(o) = &quad.object {
                         let k = match o.as_str() {
-                            OWL_CLASS => "Class",
+                            OWL_CLASS | RDFS_CLASS => "Class",
                             OWL_OBJECT_PROPERTY => "ObjectProperty",
                             OWL_DATATYPE_PROPERTY => "DataProperty",
                             OWL_ANNOTATION_PROPERTY => "AnnotationProperty",
@@ -568,6 +584,7 @@ impl OntologyParser {
         // synonym references (e.g. `_:b1 rdfs:label "foo"`) can be resolved.
         // Rank tracks language preference so `@en` / untagged win over other langs.
         let mut all_labels: HashMap<String, String> = HashMap::new();
+        let mut all_descriptions: HashMap<String, String> = HashMap::new();
         let mut label_rank: HashMap<String, u8> = HashMap::new();
 
         // Synonym candidates captured during the pass, resolved against
@@ -594,7 +611,7 @@ impl OntologyParser {
                     {
                         let uri = s.as_str();
                         match o.as_str() {
-                            OWL_CLASS if !Self::should_skip(uri) => {
+                            OWL_CLASS | RDFS_CLASS if !Self::should_skip(uri) => {
                                 class_uris.insert(uri.to_string());
                                 entity_types.insert(uri.to_string(), EntityType::Class);
                             }
@@ -668,6 +685,28 @@ impl OntologyParser {
                 OBO_EXACT_SYNONYM | OBO_RELATED_SYNONYM | SKOS_ALT_LABEL | SKOS_HIDDEN_LABEL => {
                     if let NamedOrBlankNode::NamedNode(s) = &quad.subject {
                         syn_pending.push((s.as_str().to_string(), quad.object.clone()));
+                    }
+                }
+                RDFS_COMMENT
+                | SKOS_DEFINITION
+                | SCHEMA_DESCRIPTION_HTTP
+                | SCHEMA_DESCRIPTION_HTTPS
+                | DC_DESCRIPTION
+                | DCTERMS_DESCRIPTION
+                | OBO_DEFINITION => {
+                    if let Term::Literal(lit) = &quad.object {
+                        let key = match &quad.subject {
+                            NamedOrBlankNode::NamedNode(s) => Some(s.as_str()),
+                            NamedOrBlankNode::BlankNode(b) => Some(b.as_str()),
+                        };
+                        if let Some(k) = key {
+                            let val = lit.value().trim();
+                            if !val.is_empty() {
+                                all_descriptions
+                                    .entry(k.to_string())
+                                    .or_insert_with(|| val.to_string());
+                            }
+                        }
                     }
                 }
                 _ => {}
@@ -817,7 +856,9 @@ impl OntologyParser {
                 Entity {
                     entity_type: etype,
                     label,
+                    description: all_descriptions.get(&uri).cloned(),
                     synonyms: synonyms.get(&uri).cloned().unwrap_or_default(),
+
                     parents: parents.get(&uri).cloned().unwrap_or_default(),
                     children: children.get(&uri).cloned().unwrap_or_default(),
                     kind: Some(match etype {

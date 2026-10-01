@@ -16,6 +16,7 @@ from olaya.model import OntologyDecisionModel
 def export_olaya(
     output_dir: str = "models",
     backbone_name: str = "answerdotai/ModernBERT-base",
+    weights_path: str | Path | None = None,
     opset_version: int = 17,
 ):
     out_path = Path(output_dir)
@@ -24,14 +25,45 @@ def export_olaya(
     onnx_file = out_path / "olaya_decision_model.onnx"
     ort_file = out_path / "olaya_decision_model.ort"
 
-    print(f"Loading backbone {backbone_name} and building OntologyDecisionModel...")
-    model = OntologyDecisionModel(backbone_name_or_config=backbone_name)
+    if weights_path is not None and Path(weights_path).exists():
+        print(f"Loading trained checkpoint from {weights_path}...")
+        ckpt = torch.load(weights_path, map_location="cpu")
+        cfg_dict = ckpt.get("config", {})
+        bb = cfg_dict.get("backbone")
+        if bb and bb != "custom_bert":
+            model = OntologyDecisionModel(backbone_name_or_config=bb)
+        else:
+            from transformers import BertConfig, BertModel
+            v_size = cfg_dict.get("vocab_size", 50624)
+            h_size = cfg_dict.get("hidden_size", 256)
+            n_layers = cfg_dict.get("num_hidden_layers", 4)
+            n_heads = cfg_dict.get("num_attention_heads", 4)
+            inter_size = cfg_dict.get("intermediate_size", 512)
+            cfg = BertConfig(
+                vocab_size=v_size,
+                hidden_size=h_size,
+                num_hidden_layers=n_layers,
+                num_attention_heads=n_heads,
+                intermediate_size=inter_size,
+                max_position_embeddings=512,
+            )
+            custom_encoder = BertModel(cfg)
+            model = OntologyDecisionModel(hidden_size=h_size, custom_encoder=custom_encoder)
+        model.load_state_dict(ckpt["model_state_dict"])
+    else:
+        print(f"Loading backbone {backbone_name} and building OntologyDecisionModel...")
+        model = OntologyDecisionModel(backbone_name_or_config=backbone_name)
+
     model.eval()
 
-    tokenizer = AutoTokenizer.from_pretrained(backbone_name)
     tokenizer_file = out_path / "tokenizer.json"
-    tokenizer.backend_tokenizer.save(str(tokenizer_file))
-    print(f"Saved fast tokenizer to {tokenizer_file}")
+    if not tokenizer_file.exists():
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(backbone_name)
+            tokenizer.backend_tokenizer.save(str(tokenizer_file))
+            print(f"Saved fast tokenizer to {tokenizer_file}")
+        except Exception as e:
+            print(f"Notice: tokenizer download skipped ({e})")
 
     # Dummy inputs: Batch=1, SeqLen=32, Candidates=4
     batch_size = 1
@@ -91,5 +123,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", default="models", help="Output directory")
     parser.add_argument("--backbone", default="answerdotai/ModernBERT-base", help="Backbone model name")
+    parser.add_argument("--weights", default="models/olaya_decision_model.pt", help="Path to trained PyTorch weights")
     args = parser.parse_args()
-    export_olaya(output_dir=args.output_dir, backbone_name=args.backbone)
+    weights_path = args.weights if Path(args.weights).exists() else None
+    export_olaya(output_dir=args.output_dir, backbone_name=args.backbone, weights_path=weights_path)

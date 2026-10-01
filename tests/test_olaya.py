@@ -143,6 +143,13 @@ def test_olaya_system_one_e2e(olaya):
     assert ans.confidence >= 0.0
     assert ans.axioms_verified is True
 
+    # Verify subsumes answer structure
+    sub_ans = result.answers["is_data_issue"]
+    assert sub_ans.type == "subsumes"
+    assert sub_ans.concept == "INCIDENT:DATA"
+    assert 0.0 <= sub_ans.subsumes <= 1.0
+    assert 0.0 <= sub_ans.confidence <= 1.0
+
     # Verify usage
     assert result.usage["input_tokens"] > 0
     assert result.usage["output_tokens"] == 0
@@ -151,3 +158,44 @@ def test_olaya_system_one_e2e(olaya):
     print(f"Predicted Concept: {ans.curie} ({ans.label})")
     print(f"Lineage: {' -> '.join(ans.lineage)}")
     print(f"Confidence: {ans.confidence:.4f}")
+    print(f"Subsumes (INCIDENT:DATA): {sub_ans.subsumes:.4f} (conf: {sub_ans.confidence:.4f})")
+
+
+def test_subsumes_head_hierarchical_scopes(olaya):
+    state = {
+        "service": "database",
+        "error": "Deadlock detected on table customer_orders",
+    }
+    # Test leaf concept (no descendants)
+    leaf_res = olaya.system_one(
+        state,
+        {"deadlock": {"type": "subsumes", "concept": "INCIDENT:DB_DEADLOCK"}},
+    )
+    ans_leaf = leaf_res.answers["deadlock"]
+    assert ans_leaf.type == "subsumes"
+    assert ans_leaf.concept == "INCIDENT:DB_DEADLOCK"
+    assert 0.0 <= ans_leaf.subsumes <= 1.0
+    assert 0.0 <= ans_leaf.confidence <= 1.0
+
+    # Test intermediate concept (has descendants in its down-set)
+    data_res = olaya.system_one(
+        state,
+        {"data": {"type": "subsumes", "concept": "INCIDENT:DATA"}},
+    )
+    ans_data = data_res.answers["data"]
+    assert ans_data.type == "subsumes"
+    assert ans_data.concept == "INCIDENT:DATA"
+    assert 0.0 <= ans_data.subsumes <= 1.0
+    assert 0.0 <= ans_data.confidence <= 1.0
+
+    # Test root concept (full ontology down-set)
+    root_res = olaya.system_one(
+        state,
+        {"root": {"type": "subsumes", "concept": "INCIDENT:ROOT"}},
+    )
+    ans_root = root_res.answers["root"]
+    assert ans_root.type == "subsumes"
+    assert ans_root.concept == "INCIDENT:ROOT"
+    assert 0.0 <= ans_root.subsumes <= 1.0
+    assert 0.0 <= ans_root.confidence <= 1.0
+

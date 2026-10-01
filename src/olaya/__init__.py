@@ -6,6 +6,9 @@ from olaya.engine import ChoiceAnswer, ConceptAnswer, NoulAnswer, OLaya, ScoreAn
 from olaya.model import OntologyDecisionHead, OntologyDecisionModel
 from olaya.ontology import Concept, Ontology, create_incident_ontology
 from olaya.sequence import SequenceBundle, build_ontology_sequence
+from olaya.calibration import CalibrationMetrics, compute_ece, fit_temperature
+from olaya.real_abox import RealABoxFact, load_custom_abox
+from olaya.train import train_olaya
 
 __all__ = [
     "Ontology",
@@ -25,4 +28,11 @@ __all__ = [
     "enforce_subsumption_monotonicity",
     "build_ontology_sequence",
     "SequenceBundle",
+    "train_olaya",
+    "compute_ece",
+    "fit_temperature",
+    "CalibrationMetrics",
+    "RealABoxFact",
+    "load_custom_abox",
 ]
+
