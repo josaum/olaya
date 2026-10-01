@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>What O-Laya Actually Is: An Ontology-Grounded System 1 Decision Model</title>
-  <meta name="description" content="A parallel and architectural response to Laya: why non-autoregressive decision models must be grounded in formal ontologies with guaranteed subsumption, exclusion, and microsecond routing.">
+  <meta name="description" content="A parallel and architectural response to Laya: why modern supply chain, warehousing, and agent pipelines require ontology-grounded decision models with mathematical guarantees.">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
@@ -29,7 +29,7 @@
   <header>
     <div>
       <span class="badge">O-LAYA</span>
-      <span class="badge" style="background:#0d47a1;">RESEARCH & SYSTEMS</span>
+      <span class="badge" style="background:#0d47a1;">SUPPLY CHAIN & GS1</span>
       <span class="badge" style="background:#4a148c;">MCP 2024-11-05</span>
     </div>
     <h1>What O-Laya Actually Is: An Ontology-Grounded System 1 Decision Model</h1>
@@ -41,12 +41,12 @@
   <article>
     <div class="mermaid">
 flowchart TD
-    Start(["Incoming Input State<br/>(Text, Logs, Barcode, Web Observation)"]) --> Input["Structured Question Query:<br/>concept, subsumes, choice, score, noul"]
+    Start(["Incoming Warehouse & Supply Chain Stream<br/>(GTIN barcode, EPCIS sensor event, packing slip, ASN)"]) --> Input["Structured GS1 Decision Query:<br/>concept, subsumes, choice, score, noul"]
     
     subgraph S1["Stage 1: Microsecond Subgraph Routing (Rust Arrow)"]
         Input --> Router["Inverted Token Index<br/>(CamelCase-aware, IDF weighting)"]
-        Onto[("Formal Ontology DAG<br/>classes, subClassOf, disjointWith")] --> Router
-        Router --> Sub["Active Candidate Subgraph<br/>(top-K leaves + complete ancestor lineage)"]
+        Onto[("GS1 Web Vocabulary Standard<br/>Product, FoodBeverage, PackagingDetails, MeatPoultry, etc.")] --> Router
+        Router --> Sub["Active Candidate Subgraph<br/>(top-K leaves + complete ancestor hierarchy)"]
     end
     
     subgraph S2["Stage 2: Non-Autoregressive Scoring"]
@@ -60,119 +60,154 @@ flowchart TD
     Proj --> Out["Grounded Decision Output:<br/>• Verified CURIE + Lineage Path<br/>• Full Descendant/Ancestor Probabilities<br/>• axioms_verified: true"]
     
     Out --> Decision{"Where should the result go?"}
-    Decision -->|"High Confidence + Axioms Verified"| AutoAct["Act Deterministically:<br/>Route ticket, dispatch drone, execute tool"]
-    Decision -->|"Low Confidence / Novel Concept"| EscalateLLM["Escalate to LLM (System 2):<br/>Multi-step planning, code generation, prose"]
-    Decision -->|"Critical Out-of-Domain"| HumanReview["Human Reviewer & Domain Auditor"]
+    Decision -->|"High Confidence + Axioms Verified"| AutoAct["Act Locally & Instantly:<br/>Divert conveyer chute, route cold-chain zone, print customs label"]
+    Decision -->|"Low Confidence / Unknown SKU"| EscalateLLM["Escalate to LLM (System 2):<br/>Extract unstructured vendor invoice, parse novel packaging PDF"]
+    Decision -->|"Critical Inspection / Hazard"| HumanReview["Human QA Inspector & Dock Supervisor"]
     </div>
 
-    <h2>The Non-Generative Decision Paradigm</h2>
+    <h2>The Non-Generative Decision Paradigm in the Physical World</h2>
     <p>In his recent piece, <a href="https://relay.sparkrouter.com/ai--and--local-models/what-laya-actually-is" target="_blank" rel="noopener">What Laya Actually Is</a>, the author laid out an argument for non-generative classification:</p>
     <blockquote>
       <em>"Laya is not a chatbot. It doesn’t write code or summarize text. It is a small local model that reads text and answers structured questions, returning probabilities instead of paragraphs."</em>
     </blockquote>
-    <p>We agree with the fundamental premise. In modern agentic pipelines, calling an autoregressive 70B parameter LLM to emit 50 tokens of JSON just to route an incident ticket or check a binary guardrail is wasteful, slow, and non-deterministic.</p>
+    <p>We agree with the fundamental premise. In modern industrial operations—automated distribution centers, automated sorters, drone pickers, and supply chain control towers—calling a cloud-hosted 70B autoregressive LLM to generate 100 tokens of JSON just to decide which conveyor chute to divert a package into is disastrously slow, prohibitively expensive, and prone to hallucinations.</p>
 
     <div class="callout">
-      <strong>The Fatal Flaw of Flat Classifiers:</strong>
-      Unconstrained classification models treat the world as flat lists of strings. When you ask a flat classifier to route between <code>"billing"</code>, <code>"refunds"</code>, and <code>"chargeback"</code>, the model treats those options as disjoint tokens floating in an unconstrained softmax pool. It has no mathematical awareness that a <code>Refund</code> <em>is a subclass of</em> <code>BillingIssue</code>, or that <code>HardwareFailure</code> is <em>mutually exclusive with</em> <code>SoftwareBug</code>.
+      <strong>The Fatal Flaw of Flat Classifiers in Logistics:</strong>
+      Unconstrained classification models treat the physical world as flat lists of strings.
+      <br/><br/>
+      Consider a real logistics example at a high-speed cross-dock facility:
+      A barcode scanner reads GTIN <code>0614141000036</code> on an incoming pallet: <em>"Organic whole milk carton 1 gallon, refrigerated perishable dairy, returnable pallet."</em>
+      <br/><br/>
+      When you ask a flat classifier to route between <code>"Dairy"</code>, <code>"FoodBeverageTobaccoProduct"</code>, and <code>"Product"</code>, the model treats those options as disconnected, competing strings in an unconstrained softmax pool. It has no mathematical awareness that <strong>Dairy is a sub-class of Food & Beverage</strong>, which in turn is a <strong>sub-class of Product</strong>.
     </div>
 
-    <p>In real deployments, flat classifiers frequently assign:</p>
+    <p>In real production runs, flat classifiers frequently output:</p>
     <p style="text-align: center; font-size: 1.15rem; font-family: monospace;">
-      P(PostgreSQL Deadlock) = 0.85 &nbsp;&nbsp;while&nbsp;&nbsp; P(Database Issue) = 0.40
+      P(MilkButterCreamYogurtCheeseEggsSubstitutes) = 0.88 &nbsp;&nbsp;while&nbsp;&nbsp; P(FoodBeverageTobaccoProduct) = 0.42
     </p>
-    <p>This is a <strong>logical contradiction</strong>. In formal logic, if an entity is a database deadlock, it is <em>by definition</em> a database issue. When probabilities violate the axioms of the domain, downstream software breaks.</p>
-    <p><strong>O-Laya solves this by grounding decisions in formal ontology lattices.</strong></p>
+    <p>This is a <strong>catastrophic logical contradiction</strong>. In formal ontology and physical reality, if an item is milk, it is <em>by definition</em> a food/beverage product. If your automated warehouse software routes based on parent categories, the item will be routed to the wrong ambient storage aisle because the parent probability mysteriously collapsed.</p>
+    <p><strong>O-Laya solves this by grounding decisions in formal ontology lattices like GS1.</strong></p>
 
     <hr/>
 
     <h2>What O-Laya Actually Is</h2>
     <p>O-Laya is an <strong>ontology-grounded System 1 decision engine</strong>. You provide:</p>
     <ol>
-      <li><strong>An Input State</strong>: Raw text, JSON payloads, GTIN barcodes, or error traces.</li>
-      <li><strong>A Formal Ontology DAG</strong>: Classes, <code>subClassOf</code> hierarchies, and <code>disjointWith</code> axioms (ingested from standard OWL/RDF, Turtle, GS1, Schema.org, or DOID).</li>
-      <li><strong>Structured Questions</strong>: Formulated using 5 formal primitives.</li>
+      <li><strong>An Input State</strong>: Barcode scan, OCR text from a bill of lading, IoT temperature log, or EPCIS event stream.</li>
+      <li><strong>A Formal Ontology DAG</strong>: The <strong>GS1 Web Vocabulary Standard</strong> (<code>gs1:Product</code>, <code>gs1:FoodBeverageTobaccoProduct</code>, <code>gs1:PackagingDetails</code>, <code>gs1:MeatPoultry</code>, etc.), complete with <code>subClassOf</code> and <code>disjointWith</code> axioms.</li>
+      <li><strong>Structured Questions</strong>: Formulated using 5 formal decision primitives.</li>
     </ol>
     <p>In a single forward pass, O-Laya projects candidate scores through an axiom kernel (<code>spec/AXIOMS.md</code>), guaranteeing that:</p>
     <ul>
-      <li><strong>Subsumption Monotonicity holds</strong>: <code>P(child) ≤ P(parent)</code> everywhere in the lattice.</li>
-      <li><strong>Disjointness holds</strong>: Mutually exclusive branches sum to at most 1.0.</li>
-      <li><strong>Lineage is returned</strong>: Decisions provide full explainability from the root category down to the specific leaf CURIE.</li>
+      <li><strong>Subsumption Monotonicity holds</strong>: <code>P(child) ≤ P(parent)</code> everywhere across the supply chain hierarchy.</li>
+      <li><strong>Disjointness holds</strong>: Mutually exclusive categories (e.g. <code>FrozenColdChain ⊓ AmbientDry = ⊥</code>) sum to at most 1.0.</li>
+      <li><strong>Lineage is returned</strong>: Decisions provide full explainability from the root down to the exact GS1 CURIE.</li>
       <li><strong><code>axioms_verified</code> is computed</strong>: Verified on the output tensor at runtime, never hard-coded.</li>
     </ul>
 
     <hr/>
 
-    <h2>The 5 Question Primitives</h2>
-    <p>While Laya provides 3 flat questions (<code>choice</code>, <code>score</code>, <code>noul</code>), O-Laya expands the decision algebra into <strong>5 grounded primitives</strong>:</p>
+    <h2>The 5 Question Primitives: A Warehousing & GS1 Walkthrough</h2>
+    <p>Here is an automated warehouse receiving scanner running O-Laya against the GS1 Web Vocabulary:</p>
 
-    <h3>1. <code>concept</code> (Hierarchical Taxonomy Grounding)</h3>
-    <p>Grounds an observation into the most specific leaf concept under a designated ontology root:</p>
-    <pre><code class="language-python">questions = {
-    "triage": {
+    <pre><code class="language-python">from olaya import OLaya
+
+# Ingest standard GS1 Web Vocabulary DAG
+olaya = OLaya()
+
+state = {
+    "gtin": "0614141000036",
+    "scan_text": "Grade A pasteurized whole milk, 1 gallon jug with tamper-evident induction seal. Keep refrigerated at 34-38 F.",
+    "sensor_temp_c": 3.2,
+    "carrier": "ColdExpress Logistics",
+}
+
+questions = {
+    "taxonomy_grounding": {
         "type": "concept",
-        "root": "INCIDENT:ROOT",
-        "instructions": "Classify the operational infrastructure failure."
-    }
-}</code></pre>
-    <p>What O-Laya returns:</p>
-    <pre><code class="language-json">{
-  "triage": {
-    "curie": "INCIDENT:DB_DEADLOCK",
-    "lineage": ["INCIDENT:ROOT", "INCIDENT:STORAGE", "INCIDENT:DATABASE", "INCIDENT:DB_DEADLOCK"],
-    "confidence": 0.892,
-    "candidate_probabilities": {
-      "INCIDENT:DB_DEADLOCK": 0.824,
-      "INCIDENT:CONNECTION_POOL_EXHAUSTED": 0.116,
-      "INCIDENT:DISK_FULL": 0.060
+        "root": "Product",
+        "instructions": "Ground trade item into the specific GS1 product category."
     },
-    "probabilities": {
-      "INCIDENT:ROOT": 1.0,
-      "INCIDENT:STORAGE": 0.940,
-      "INCIDENT:DATABASE": 0.940,
-      "INCIDENT:DB_DEADLOCK": 0.824
-    },
-    "axioms_verified": true
-  }
-}</code></pre>
-    <p><em>Notice that the parent probabilities are derived directly from their descendant sum. The answer is never an illegal ancestor of a candidate, and monotonicity is preserved by construction.</em></p>
-
-    <h3>2. <code>subsumes</code> (Principal Down-Set Membership)</h3>
-    <p>Tests whether the incoming observation belongs to the sub-tree rooted at concept C (<code>↓C</code>):</p>
-    <pre><code class="language-python">questions = {
-    "is_hardware": {
+    "requires_cold_chain": {
         "type": "subsumes",
-        "concept": "INCIDENT:HARDWARE",
-        "instructions": "Does this issue involve physical server hardware?"
+        "concept": "FoodBeverageTobaccoProduct",
+        "instructions": "Does this SKU fall under perishable consumable food handling rules?"
+    },
+    "packaging_triage": {
+        "type": "choice",
+        "instructions": "Determine returnable container handling.",
+        "criteria": {
+            "pallet_return": "reusable wooden or composite pallet requiring return credit",
+            "corrugated_bale": "cardboard master carton for bulk recycling",
+            "hazardous_drum": "chemical container requiring Hazmat manifest"
+        }
+    },
+    "dock_urgency": {
+        "type": "score",
+        "instructions": "Unload and cross-dock priority.",
+        "criteria": ["ambient_low", "standard_dock", "expedited_perishable_cold_chain"]
+    },
+    "seal_breach_alert": {
+        "type": "noul",
+        "instructions": "Is there any indication of seal damage or temperature excursion?"
     }
+}
+
+result = olaya.system_one(state, questions)</code></pre>
+
+    <h3>1. <code>concept</code> (Leaf Taxonomy Grounding with Guaranteed Monotonicity)</h3>
+    <p>O-Laya identifies the exact leaf concept in the GS1 hierarchy and projects ancestral probabilities:</p>
+    <pre><code class="language-json">{
+  "curie": "gs1:MilkButterCreamYogurtCheeseEggsSubstitutes",
+  "lineage": [
+    "gs1:Product",
+    "gs1:FoodBeverageTobaccoProduct",
+    "gs1:MilkButterCreamYogurtCheeseEggsSubstitutes"
+  ],
+  "candidate_probabilities": {
+    "gs1:MilkButterCreamYogurtCheeseEggsSubstitutes": 0.894,
+    "gs1:Beverage": 0.082,
+    "gs1:MeatPoultry": 0.024
+  },
+  "probabilities": {
+    "gs1:Product": 1.0,
+    "gs1:FoodBeverageTobaccoProduct": 1.0,
+    "gs1:MilkButterCreamYogurtCheeseEggsSubstitutes": 0.894
+  },
+  "confidence": 0.841,
+  "axioms_verified": true
 }</code></pre>
-    <p>Returns the calibrated Bernoulli probability <code>P(entity ∈ ↓C)</code>. If the entity is a memory ECC fault, <code>P(HARDWARE) = 0.97</code>. If it is an invalid API key, <code>P(HARDWARE) = 0.01</code>.</p>
+    <p><em>Notice: Because O-Laya derives parent probabilities from descendant mass, <code>P(Product) ≥ P(FoodBeverage) ≥ P(Milk)</code> holds with mathematical certainty. No downstream sorting system will ever get confused by broken hierarchy math.</em></p>
 
-    <h3>3. <code>choice</code> (Disjoint Alternative Ranking)</h3>
-    <p>Evaluates discrete alternatives with semantic criteria descriptions and formal mutual exclusion.</p>
+    <h3>2. <code>subsumes</code> (Principal Down-Set Membership ↓C)</h3>
+    <p>Tests whether the item is in the principal down-set of <code>FoodBeverageTobaccoProduct</code>. Returns <code>P = 0.992</code>. The warehouse programmable logic controller (PLC) instantly diverts the pallet to <strong>Aisle 4 (Refrigerated Receiving)</strong> without querying an external LLM.</p>
 
-    <h3>4. <code>score</code> (Ordered Metric Regression)</h3>
-    <p>Predicts an ordered categorical scale (urgency, priority, or severity) with normalized softmax confidence.</p>
+    <h3>3. <code>choice</code> (Disjoint Packaging Rules)</h3>
+    <p>Evaluates container types with formal exclusion. <code>pallet_return</code> is selected with <code>P = 0.941</code>, triggering an automated credit event in the warehouse management system (WMS).</p>
 
-    <h3>5. <code>noul</code> (Out-of-Domain Rejection & Binary Guardrails)</h3>
-    <p>Calibrated binary gating. In Python, returns <code>P(true)</code> for zero-shot hypothesis verification; in Node/TypeScript, acts as a certified out-of-domain rejection filter.</p>
+    <h3>4. <code>score</code> (Ordered Unload Priority)</h3>
+    <p>Returns <code>2.0</code> on the scale (<code>expedited_perishable_cold_chain</code>) with 91.2% probability mass on level 2.</p>
+
+    <h3>5. <code>noul</code> (Out-of-Domain / Anomaly Gating)</h3>
+    <p>Binary hypothesis check on seal breach / temp anomaly. With <code>sensor_temp_c: 3.2</code> (within 34–38°F range), returns <code>P = 0.003</code> (0.3%). Clean bill of health; no quarantine needed.</p>
 
     <hr/>
 
-    <h2>Solving the Scalability Bottleneck: From 20 to 100,000+ Classes</h2>
+    <h2>Solving the Scalability Bottleneck: From 20 Options to 100,000 SKUs</h2>
     <p>A major limitation highlighted in the original Laya post is candidate scalability: <em>"Keep option lists short. Accuracy drops past roughly 20 options."</em></p>
-    <p>When an enterprise ontology contains 5,000 product classes (GS1), 12,000 disease phenotypes (DOID), or 100,000 organizational concepts, feeding 100,000 options into a single transformer prompt is computationally impossible.</p>
+    <p>In modern enterprise warehousing, a standard distribution center manages <strong>50,000 to 200,000 distinct SKUs</strong> across hundreds of GS1 GPC (Global Product Classification) brick values. Feeding 5,000 product classes into an unconstrained prompt blows past context limits and collapses model attention.</p>
     <p>O-Laya solves this using a <strong>Two-Tier Subgraph Routing Architecture</strong>:</p>
     <ol>
-      <li><strong>Inverted Token Indexing with IDF Weighting (Sub-Microsecond)</strong>: Labels, synonyms, and descriptions are indexed into an Arrow-native memory buffer. Incoming state is tokenized with CamelCase awareness and scored in <strong>4.8 microseconds</strong>.</li>
+      <li><strong>Inverted Token Indexing with IDF Weighting (Sub-Microsecond)</strong>: All GS1 labels, synonyms, GPC bricks, and semantic descriptions are indexed into an Arrow-native memory buffer. Incoming barcodes, OCR text, or shipping manifests are tokenized with CamelCase awareness and matched in <strong>4.8 microseconds</strong>.</li>
       <li><strong>Active Subgraph Extraction</strong>: Top-K candidate leaves and their complete ancestor chains are extracted into an active sub-lattice.</li>
-      <li><strong>Cross-Encoder Scoring</strong>: The neural decision model only reasons over the active subgraph, allowing O-Laya to scale to <strong>hundreds of thousands of classes</strong> without degradation.</li>
+      <li><strong>Neural Scorer</strong>: The neural decision model only reasons over the active subgraph, allowing O-Laya to scale to <strong>hundreds of thousands of products and parts</strong> without latency degradation.</li>
     </ol>
 
     <hr/>
 
     <h2>Measured Performance & Hardware Benchmarks</h2>
-    <p>Measured on consumer hardware (Apple Silicon MPS / single CPU core) on real GS1 and Incident payloads:</p>
+    <p>Measured on consumer hardware (Apple Silicon MPS / single CPU core) on operational GS1 supply chain workloads:</p>
     <table>
       <thead>
         <tr>
@@ -182,7 +217,7 @@ flowchart TD
           <th>Median Latency</th>
           <th>P95 Latency</th>
           <th>Throughput</th>
-          <th>Role / Profile</th>
+          <th>Role in Warehouse / Supply Chain</th>
         </tr>
       </thead>
       <tbody>
@@ -193,7 +228,7 @@ flowchart TD
           <td><strong>4.8 µs</strong></td>
           <td>5.2 µs</td>
           <td><strong>~210,000 qps</strong></td>
-          <td>Microsecond inline routing</td>
+          <td>Embedded PLC / Conveyor Chute Divert (&lt;1ms)</td>
         </tr>
         <tr>
           <td><strong>Custom BERT Decision Model</strong></td>
@@ -202,7 +237,7 @@ flowchart TD
           <td><strong>12.71 ms</strong></td>
           <td>14.52 ms</td>
           <td><strong>231.7 qps</strong></td>
-          <td>Ultra-low latency local neural decisions</td>
+          <td>Edge Scanner / Handheld Forklift Terminal</td>
         </tr>
         <tr>
           <td><strong>ModernBERT-base Backbone</strong></td>
@@ -211,7 +246,7 @@ flowchart TD
           <td><strong>199.10 ms</strong></td>
           <td>217.52 ms</td>
           <td><strong>14.9 qps</strong></td>
-          <td>Deep semantic reasoning (100% GS1 accuracy)</td>
+          <td>Complex ASN & Customs Document Ingestion</td>
         </tr>
         <tr>
           <td><strong>WebMCP Agent Bridge</strong> (JSON-RPC)</td>
@@ -220,7 +255,7 @@ flowchart TD
           <td><strong>11.57 ms</strong></td>
           <td>12.83 ms</td>
           <td><strong>86.3 qps</strong></td>
-          <td>Model Context Protocol tool execution</td>
+          <td>Autonomous Logistics Agent (MCP 2024-11-05)</td>
         </tr>
       </tbody>
     </table>
@@ -228,7 +263,7 @@ flowchart TD
     <hr/>
 
     <h2>The Zero-Install Agent Wedge: <code>olaya-mcp</code></h2>
-    <p>You don't need to write custom Python glue code to put O-Laya in front of your agents. O-Laya ships as a zero-install <strong>Model Context Protocol (MCP 2024-11-05)</strong> server.</p>
+    <p>If you are building supply chain agents with Claude Desktop, Cursor, LangChain, or CrewAI, you can drop O-Laya into your stack with a single command:</p>
 
     <h3>Run Instantly via uvx or npx</h3>
     <pre><code class="language-bash"># Python runtime (PyPI / uvx)
@@ -249,7 +284,7 @@ uvx olaya-mcp install --client cursor</code></pre>
 olaya-mcp ground "Organic whole milk carton 1 gallon barcode 0614141000036" --domain gs1 --mode fast
 
 # Neural cross-encoder grounding
-olaya-mcp ground "Type 2 diabetes mellitus with diabetic nephropathy" --domain doid --mode neural</code></pre>
+olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --domain gs1 --mode neural</code></pre>
 
     <hr/>
 
@@ -257,32 +292,32 @@ olaya-mcp ground "Type 2 diabetes mellitus with diabetic nephropathy" --domain d
     <table>
       <thead>
         <tr>
-          <th>Task</th>
-          <th>Tool</th>
+          <th>Operational Need</th>
+          <th>Best Tool</th>
           <th>Why</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Multi-step reasoning, coding, prose generation</strong></td>
+          <td><strong>Dispute resolution, vendor negotiation emails, custom exception letters</strong></td>
           <td><strong>LLM (Claude, GPT, Gemini)</strong></td>
-          <td>Expressive autoregressive generation</td>
+          <td>Expressive autoregressive prose generation</td>
         </tr>
         <tr>
-          <td><strong>Unstructured flat 3-way triage (&lt;10 classes)</strong></td>
+          <td><strong>Simple 3-way email inbox triage (&lt;10 flat strings)</strong></td>
           <td><strong>Laya</strong></td>
           <td>Fast local classifier</td>
         </tr>
         <tr>
-          <td><strong>Hierarchical decisions, taxonomy grounding, GTIN/SKU routing, formal compliance, certified guardrails</strong></td>
+          <td><strong>Barcode/GTIN routing, GS1 compliance, cold-chain gating, conveyor PLC control, warehouse sorters</strong></td>
           <td><strong>O-Laya</strong></td>
-          <td><strong>Axiom-verified, P(child) ≤ P(parent), scales to 100k+ concepts, 4.8µs to 12ms latency, MCP-native</strong></td>
+          <td><strong>Axiom-verified, P(child) ≤ P(parent), scales to 100k+ SKUs, 4.8µs to 12ms latency, MCP-native</strong></td>
         </tr>
       </tbody>
     </table>
 
     <footer style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.95rem;">
-      <p>Open Source Code & Benchmarks: <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener">github.com/josaum/olaya</a></p>
+      <p>Open Source Code & GS1 Datasets: <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener">github.com/josaum/olaya</a></p>
     </footer>
   </article>
 </body>
