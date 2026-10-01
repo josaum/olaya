@@ -175,25 +175,59 @@ decision.selectedConcept.label; // "Billing Incident"
 decision.axiomsVerified;        // true
 ```
 
-### WebMCP & Agent Decision Server (Model Context Protocol)
+### WebMCP & Agent Decision Server (`olaya-mcp`)
 
-O-Laya ships with a Model Context Protocol (MCP 2024-11-05) compliant stdio JSON-RPC 2.0 server (`olaya-mcp`) enabling LLM agents to ground web observations, product payloads, barcodes, and raw HTML directly into standard ontologies (GS1, Schema.org, Atlas Brain, DOID):
+O-Laya ships with a Model Context Protocol (MCP 2024-11-05) compliant server and CLI (`olaya-mcp`) enabling LLM agents (Claude Desktop, Cursor, LangChain, LlamaIndex, CrewAI) to ground observations, product payloads, barcodes, and error logs directly into formal ontologies (GS1, Schema.org, DOID, Incident).
+
+#### Zero-Install Launch
+
+Run instantly without cloning the repo:
 
 ```bash
-# Run stdio MCP server for agent integrations (Claude Desktop, Cursor, WebMCP agents)
-olaya-mcp
+# Python runtime (PyPI / uvx)
+uvx olaya-mcp
+
+# Or Node/TypeScript runtime (npm / npx)
+npx @mycelia/olaya-mcp
 ```
 
-Available tools exposed to AI agents:
+#### One-Command Client Setup
+
+Automatically configure Claude Desktop or Cursor:
+
+```bash
+# Configures Claude Desktop
+uvx olaya-mcp install --client claude
+# Or via Node
+npx @mycelia/olaya-mcp install --client claude
+
+# Configures Cursor (.cursor/mcp.json)
+uvx olaya-mcp install --client cursor
+```
+
+#### Instant CLI Grounding
+
+```bash
+# Fast sub-millisecond lexical grounding
+olaya-mcp ground "Organic whole milk carton 1 gallon barcode 0614141000036" --domain gs1 --mode fast
+
+# Neural cross-encoder grounding
+olaya-mcp ground "Type 2 diabetes mellitus with diabetic nephropathy" --domain doid --mode neural
+```
+
+#### Tools Exposed to AI Agents
+
 - `olaya_ground`: Grounds raw text, web scraping snippets, or logs into a formal ontology with calibrated confidence, lineage, and verified axiom guarantees.
-- `olaya_subsumes`: Tests membership in a principal down-set ($\downarrow C$) returning calibrated Bernoulli probability $P(\text{entity} \in \downarrow C)$.
+- `olaya_subsumes`: Tests membership in a principal down-set ($\downarrow C$) returning calibrated probability $P(\text{entity} \in \downarrow C)$.
 - `olaya_choice`: Multi-criteria decision ranking across user-specified discrete alternatives.
 - `olaya_extract_and_ground`: Ingests raw HTML/JSON-LD/GTIN barcodes and grounds simultaneously into GS1 and Schema.org entities.
 
-Available resources:
+#### Open Standard Resources Exposed
+
 - `ontology://gs1`: Full GS1 Web Vocabulary standard (classes, relations, descriptions).
 - `ontology://schemaorg`: Schema.org core classes and properties.
-- `ontology://atlas`: Atlas Brain enterprise ontology with real ABox instance claims.
+- `ontology://doid`: Human Disease Ontology (DOID) core hierarchy.
+- `ontology://incident`: Site reliability engineering and triage taxonomy.
 
 ### Fast Formal Concept Analysis (Fast FCA) Engine in Rust
 

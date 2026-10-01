@@ -16,7 +16,11 @@ models/*/*.ort
 models/*/*.onnx
 models/*/*.config
 models/*/*.json
-data/
+/data/
+*atlas*
+models/atlas/
+models/olaya_atlas.pt
 node_modules/
 .ruff_cache/
+
 
