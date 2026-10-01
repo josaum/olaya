@@ -25,6 +25,9 @@ dev = [
     "ruff>=0.3.0",
 ]
 
+[project.scripts]
+olaya-mcp = "olaya.webmcp:main"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/olaya"]
 

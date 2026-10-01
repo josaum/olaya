@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 import torch
@@ -93,6 +94,7 @@ class OLaya:
         model: OntologyDecisionModel | None = None,
         tokenizer: Any | None = None,
         device: str | None = None,
+        weights_path: str | Path | bool | None = None,
     ):
         self.ontology = ontology or create_incident_ontology()
         self.router = CandidateRouter(self.ontology, max_candidates=12)
@@ -117,21 +119,40 @@ class OLaya:
             self.tokenizer = tokenizer
 
         # Model setup
+        self.calibrated_temperature = 1.0
         if model is None:
-            # Initialize with lightweight backbone
-            from transformers import BertConfig, BertModel
+            # Check checkpoint config if available
+            ckpt = None
+            if weights_path is not False and weights_path != "":
+                ckpt_file = Path(weights_path) if weights_path is not None else Path("models/olaya_decision_model.pt")
+                if ckpt_file.is_file():
+                    ckpt = torch.load(ckpt_file, map_location=self.device)
+                    if isinstance(ckpt, dict):
+                        self.calibrated_temperature = float(ckpt.get("temperature", 1.0))
 
-            v_size = max(len(self.tokenizer), getattr(self.tokenizer, "vocab_size", 30522)) + 256
-            cfg = BertConfig(
-                vocab_size=v_size,
-                hidden_size=256,
-                num_hidden_layers=4,
-                num_attention_heads=4,
-                intermediate_size=512,
-                max_position_embeddings=512,
-            )
-            custom_encoder = BertModel(cfg)
-            self.model = OntologyDecisionModel(hidden_size=256, custom_encoder=custom_encoder)
+            cfg_dict = ckpt.get("config", {}) if isinstance(ckpt, dict) else {}
+            bb = cfg_dict.get("backbone")
+            if bb and bb != "custom_bert":
+                self.model = OntologyDecisionModel(backbone_name_or_config=bb)
+            else:
+                from transformers import BertConfig, BertModel
+                default_v_size = max(len(self.tokenizer), getattr(self.tokenizer, "vocab_size", 30522)) + 256
+                v_size = cfg_dict.get("vocab_size", default_v_size)
+                h_size = cfg_dict.get("hidden_size", 256)
+                cfg = BertConfig(
+                    vocab_size=v_size,
+                    hidden_size=h_size,
+                    num_hidden_layers=cfg_dict.get("num_hidden_layers", 4),
+                    num_attention_heads=cfg_dict.get("num_attention_heads", 4),
+                    intermediate_size=cfg_dict.get("intermediate_size", 512),
+                    max_position_embeddings=512,
+                )
+                custom_encoder = BertModel(cfg)
+                self.model = OntologyDecisionModel(hidden_size=h_size, custom_encoder=custom_encoder)
+
+            if ckpt is not None:
+                state_dict = ckpt["model_state_dict"] if isinstance(ckpt, dict) and "model_state_dict" in ckpt else ckpt
+                self.model.load_state_dict(state_dict)
         else:
             self.model = model
 
@@ -185,9 +206,22 @@ class OLaya:
                 if concept is None:
                     raise ValueError(f"Question {qid!r}: unknown subsumes concept {target_curie!r}.")
                 descendants = sorted(self.ontology.get_descendants(target_curie) - {target_curie})
-                active_concepts = [concept] + [self.ontology.concepts[d] for d in descendants[:6]]
-                subgraph = self.ontology.extract_subgraph([c.curie for c in active_concepts])
-                instructions = instructions or f"Does state satisfy {target_curie}?"
+                desc_labels = [self.ontology.concepts[d].label for d in descendants if d in self.ontology.concepts]
+                desc_str = f" or descendants ({', '.join(desc_labels[:6])})" if desc_labels else ""
+
+                false_desc = f"State is not subsumed by {concept.label} ({target_curie})"
+                true_desc = f"State is subsumed by {concept.label} ({target_curie}){desc_str}"
+                active_concepts = [
+                    Concept(curie="false", label="false", description=false_desc),
+                    Concept(curie="true", label="true", description=true_desc),
+                ]
+                subgraph = _flat_subgraph("subsumes_subgraph", active_concepts)
+                default_inst = (
+                    f"Does state satisfy {concept.label} ({target_curie}) or any of its descendants?"
+                    if desc_labels
+                    else f"Does state satisfy {concept.label} ({target_curie})?"
+                )
+                instructions = instructions or default_inst
 
             elif qtype == "choice":
                 criteria = q.get("criteria")
@@ -309,9 +343,8 @@ class OLaya:
             )
 
             if qtype == "subsumes":
-                # Probability of satisfying concept or descendants
                 target_curie = questions[qid].get("concept", "")
-                p_subsumes = prob_map.get(target_curie, 0.0)
+                p_subsumes = prob_map.get("true", 0.5)
                 answers[qid] = SubsumesAnswer(
                     concept=target_curie,
                     subsumes=round(p_subsumes, 4),

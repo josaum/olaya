@@ -9,5 +9,14 @@ target/
 .DS_Store
 *.onnx
 *.ort
+*.pt
+*.config
+models/*.pt
+models/*/*.ort
+models/*/*.onnx
+models/*/*.config
+models/*/*.json
+data/
 node_modules/
 .ruff_cache/
+

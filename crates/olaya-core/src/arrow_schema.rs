@@ -176,7 +176,11 @@ impl OntologyBatchBuilder {
 
             let synonyms: Vec<&str> = entity.synonyms.iter().map(|s| s.as_str()).collect();
             let curie = extract_curie(&entity.uri);
-            let desc = entity.kind.as_deref().unwrap_or("");
+            let desc = entity
+                .description
+                .as_deref()
+                .or(entity.kind.as_deref())
+                .unwrap_or("");
 
             builder.append_concept(
                 idx as u32,

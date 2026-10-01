@@ -1,0 +1,360 @@
+"""Multi-domain training pipeline for real-world ontologies in O-Laya.
+
+Supports training the ModernBERT / BERT decision head on real ontologies:
+- Atlas Brain Ontology (commerce, inventory, supply chain, execution)
+- Human Disease Ontology (DOID - clinical diagnosis, oncology, pathology)
+- Schema.org (web entities, products, actions, organizations, media)
+"""
+
+from __future__ import annotations
+
+import json
+import random
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+from olaya.engine import _flat_subgraph
+from olaya.ontology import Concept, Ontology
+from olaya.sequence import QTYPE_IDS, build_ontology_sequence
+from olaya.train import DecisionDataset, TrainingSample, collate_decision_batch, create_trainable_model
+
+# Domain query templates to produce diverse, realistic state queries
+DOMAIN_QUERY_TEMPLATES: dict[str, list[str]] = {
+    "atlas": [
+        "Inventory snapshot observed for SKU with {term} status at central fulfillment facility.",
+        "Operational telemetry alert: {term} detected in Databricks commerce streaming pipeline.",
+        "Catalog record update: manufacturer published new {term} specifications for retail distribution.",
+        "Fulfillment orchestration: carrier dispatched order matching {term} requirements.",
+        "Evidence analysis: verified {term} claim from SharePoint documentation and commercial feeds.",
+    ],
+    "doid": [
+        "Patient biopsy and histopathology report confirms clinical diagnosis of {term}.",
+        "Diagnostic oncology screening indicates malignant progression consistent with {term}.",
+        "Clinical summary: patient presents with symptoms and laboratory markers of {term}.",
+        "Pathology requisition: specimen analysis requested for suspected {term}.",
+        "Electronic health record: ICD-10 crosswalk mapped to clinical disease entity {term}.",
+    ],
+    "schemaorg": [
+        "Structured data payload parsed from webpage json-ld metadata representing {term}.",
+        "Search engine entity extraction identified knowledge graph node typed as {term}.",
+        "E-commerce catalog index entry conforming to standard schema specification for {term}.",
+        "API schema definition validating web application resource of type {term}.",
+        "Rich snippet preview generated for online published content classified under {term}.",
+    ],
+    "gs1": [
+        "Trade item scan: barcode GTIN payload classified under GS1 standard {term}.",
+        "Global Data Synchronization Network (GDSN) attribute update for {term}.",
+        "Supply chain logistics event: Electronic Product Code Information Services (EPCIS) record for {term}.",
+        "Retail master data management: packaging and trade specification registered for {term}.",
+        "Digital Link resolution: product packaging QR code redirected to verified {term} descriptor.",
+    ],
+}
+
+
+
+def load_ontology_file(path_or_onto: str | Path | Ontology, name: str | None = None) -> Ontology:
+    """Load an ontology from JSON, Turtle, or OWL using the Rust converter if needed."""
+    if isinstance(path_or_onto, Ontology):
+        return path_or_onto
+
+    path = Path(path_or_onto)
+    if not path.exists():
+        raise FileNotFoundError(f"Ontology file not found: {path}")
+
+    # If already a JSON ontology
+    if path.suffix.lower() == ".json":
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return Ontology.from_json(data)
+
+    # If Turtle or OWL, convert using Rust convert_ontology binary
+    json_out = path.with_suffix(".json")
+    conv_cmd = [
+        "cargo",
+        "run",
+        "--release",
+        "-p",
+        "olaya-core",
+        "--bin",
+        "convert_ontology",
+        "--",
+        str(path),
+        str(json_out),
+    ]
+    if name:
+        conv_cmd.append(name)
+
+    print(f"Running owl-fast-core converter on {path}...")
+    subprocess.check_call(conv_cmd)
+    data = json.loads(json_out.read_text(encoding="utf-8"))
+    return Ontology.from_json(data)
+
+
+from olaya.real_abox import load_atlas_real_abox
+
+
+def _generate_tasks_for_concept_query(
+    ontology: Ontology,
+    target_curie: str,
+    query_text: str,
+    domain: str,
+    pool: list[str],
+    tokenizer_encode: Any,
+    special_ids: dict[str, int],
+    rng: random.Random,
+) -> list[TrainingSample]:
+    """Generate all 5 typed operational decision tasks for a single concept query."""
+    concept = ontology.concepts[target_curie]
+    ancestors = ontology.get_ancestors(target_curie)
+    descendants = ontology.get_descendants(target_curie)
+    state = {
+        "domain": domain,
+        "query": query_text,
+        "curie": target_curie,
+    }
+    samples: list[TrainingSample] = []
+
+    # 1. Concept triage task: pick target from candidate set (target + distractors)
+    distractors = [c for c in pool if c != target_curie and c not in ancestors]
+    k_distractors = min(5, len(distractors))
+    chosen_distractors = rng.sample(distractors, k_distractors) if distractors else []
+    competing = chosen_distractors + [target_curie]
+    rng.shuffle(competing)
+    target_idx = competing.index(target_curie)
+
+    subgraph_concepts = [ontology.concepts[c] for c in competing]
+    bundle_concept = build_ontology_sequence(
+        tokenizer_encode=tokenizer_encode,
+        special_ids=special_ids,
+        state=state,
+        instructions=f"Classify the entity into the {ontology.name} domain hierarchy.",
+        active_concepts=subgraph_concepts,
+        ontology=ontology,
+        qtype_id=QTYPE_IDS["concept"],
+        qtype_name="concept",
+    )
+    samples.append(
+        TrainingSample(
+            bundle=bundle_concept,
+            target_idx=target_idx,
+            act_target=1 if len(ancestors) > 1 else 0,
+            qtype_name="concept",
+        )
+    )
+
+    # 2. Subsumes task: test membership in down-set \downarrow C
+    is_positive = rng.random() < 0.5
+    if is_positive:
+        query_curie = rng.choice(sorted(ancestors))
+        expected_label = 1  # true: target_curie in \downarrow query_curie
+    else:
+        non_ancestors = [c for c in pool if c not in ancestors]
+        query_curie = rng.choice(non_ancestors) if non_ancestors else target_curie
+        expected_label = 0 if query_curie not in ancestors else 1
+
+    query_concept = ontology.concepts[query_curie]
+    q_descendants = sorted(ontology.get_descendants(query_curie) - {query_curie})
+    q_desc_labels = [ontology.concepts[d].label for d in q_descendants if d in ontology.concepts]
+    desc_str = f" or subtypes ({', '.join(q_desc_labels[:5])})" if q_desc_labels else ""
+    query_desc_extra = f" - {query_concept.description}" if query_concept.description else ""
+
+    false_desc = f"Entity is not an instance of {query_concept.label} ({query_curie})"
+    true_desc = f"Entity is an instance of {query_concept.label} ({query_curie}){desc_str}{query_desc_extra}"
+    subsumes_options = [
+        Concept(curie="false", label="false", description=false_desc),
+        Concept(curie="true", label="true", description=true_desc),
+    ]
+    subsumes_subgraph = _flat_subgraph(f"real_subsumes_{query_curie}", subsumes_options)
+    query_desc_hint = f" ({query_concept.description})" if query_concept.description else ""
+    instructions_sub = (
+        f"Does entity satisfy {query_concept.label} ({query_curie}){query_desc_hint} or any of its subtypes?"
+        if q_desc_labels
+        else f"Does entity satisfy {query_concept.label} ({query_curie}){query_desc_hint}?"
+    )
+    bundle_subsumes = build_ontology_sequence(
+        tokenizer_encode=tokenizer_encode,
+        special_ids=special_ids,
+        state=state,
+        instructions=instructions_sub,
+        active_concepts=subsumes_options,
+        ontology=subsumes_subgraph,
+        qtype_id=QTYPE_IDS["subsumes"],
+        qtype_name="subsumes",
+    )
+    samples.append(
+        TrainingSample(
+            bundle=bundle_subsumes,
+            target_idx=expected_label,
+            act_target=expected_label,
+            qtype_name="subsumes",
+        )
+    )
+
+    # 3. Choice task: select best match among domain options with rich descriptions
+    choice_distractors = rng.sample(distractors, min(3, len(distractors))) if distractors else []
+    choice_curies = [target_curie] + choice_distractors
+    rng.shuffle(choice_curies)
+    choice_idx = choice_curies.index(target_curie)
+    choice_concepts = [ontology.concepts[c] for c in choice_curies]
+    bundle_choice = build_ontology_sequence(
+        tokenizer_encode=tokenizer_encode,
+        special_ids=special_ids,
+        state=state,
+        instructions=f"Identify the correct semantic classification in {ontology.name} for this observation.",
+        active_concepts=choice_concepts,
+        ontology=ontology,
+        qtype_id=QTYPE_IDS["choice"],
+        qtype_name="choice",
+    )
+    samples.append(
+        TrainingSample(
+            bundle=bundle_choice,
+            target_idx=choice_idx,
+            act_target=1,
+            qtype_name="choice",
+        )
+    )
+
+    # 4. Score task: relevance / hierarchy depth level (0..3)
+    score_level = min(3, max(0, len(ancestors) - 1))
+    score_criteria = [
+        "high-level category: top domain partition",
+        "domain branch: broad conceptual family",
+        "specialized class: domain-specific typed entity",
+        "leaf instance: concrete operational or clinical concept",
+    ]
+    score_concepts = [Concept(curie=str(i), label=str(i), description=c) for i, c in enumerate(score_criteria)]
+    score_subgraph = _flat_subgraph("real_score", score_concepts)
+    bundle_score = build_ontology_sequence(
+        tokenizer_encode=tokenizer_encode,
+        special_ids=special_ids,
+        state=state,
+        instructions="Determine the ontology specificity depth level for this entity.",
+        active_concepts=score_concepts,
+        ontology=score_subgraph,
+        qtype_id=QTYPE_IDS["score"],
+        qtype_name="score",
+    )
+    samples.append(
+        TrainingSample(
+            bundle=bundle_score,
+            target_idx=score_level,
+            act_target=1 if score_level >= 2 else 0,
+            qtype_name="score",
+        )
+    )
+
+    # 5. Noul task: boolean assertion holds
+    is_valid_assertion = rng.random() < 0.5
+    noul_options = [
+        Concept(curie="false", label="false", description="Assertion does not hold"),
+        Concept(curie="true", label="true", description="Assertion holds"),
+    ]
+    noul_subgraph = _flat_subgraph("real_noul", noul_options)
+    c_desc = f" ({concept.description})" if concept.description else ""
+    noul_text = (
+        f"Is this entity accurately classified as {concept.label} ({concept.curie}){c_desc}?"
+        if is_valid_assertion
+        else f"Is this entity completely unrelated to {concept.label} ({concept.curie})?"
+    )
+    bundle_noul = build_ontology_sequence(
+        tokenizer_encode=tokenizer_encode,
+        special_ids=special_ids,
+        state=state,
+        instructions=noul_text,
+        active_concepts=noul_options,
+        ontology=noul_subgraph,
+        qtype_id=QTYPE_IDS["noul"],
+        qtype_name="noul",
+    )
+    samples.append(
+        TrainingSample(
+            bundle=bundle_noul,
+            target_idx=1 if is_valid_assertion else 0,
+            act_target=1 if is_valid_assertion else 0,
+            qtype_name="noul",
+        )
+    )
+
+    return samples
+
+
+def generate_real_ontology_samples(
+    ontology: Ontology,
+    domain: str = "atlas",
+    num_samples: int = 1500,
+    tokenizer_encode: Any = None,
+    special_ids: dict[str, int] | None = None,
+    use_real_abox: bool = True,
+    seed: int = 42,
+) -> list[TrainingSample]:
+    """Generate diverse training samples across all 5 decision tasks for any real ontology."""
+    rng = random.Random(seed)
+    special = special_ids or {"cls": 50281, "sep": 50282, "mask": 50284, "pad": 50283}
+    templates = DOMAIN_QUERY_TEMPLATES.get(domain, DOMAIN_QUERY_TEMPLATES["atlas"])
+
+    # Eligible concepts with valid labels (filter out numeric identifiers like SNOMED codes)
+    all_curies = [
+        c
+        for c, concept in ontology.concepts.items()
+        if concept.label and len(concept.label.strip()) > 1 and not concept.label.strip().isdigit()
+    ]
+    if not all_curies:
+        raise ValueError(f"Ontology {ontology.name} has no concepts with labels.")
+
+    # Select candidate pool (prioritize concepts with parents/children)
+    hierarchy_curies = [c for c in all_curies if ontology.concepts[c].parents or ontology.concepts[c].children]
+    pool = hierarchy_curies if len(hierarchy_curies) >= 8 else all_curies
+
+    samples: list[TrainingSample] = []
+
+    # 1. Ingest real ABox facts when domain is atlas and use_real_abox is enabled
+    if domain == "atlas" and use_real_abox:
+        abox_facts = load_atlas_real_abox()
+        valid_abox = [f for f in abox_facts if f.target_curie in ontology.concepts]
+        print(f"Ingested {len(valid_abox)} real enterprise ABox facts for Atlas grounding.")
+        rng.shuffle(valid_abox)
+        for fact in valid_abox:
+            generated = _generate_tasks_for_concept_query(
+                ontology=ontology,
+                target_curie=fact.target_curie,
+                query_text=fact.text,
+                domain=domain,
+                pool=pool,
+                tokenizer_encode=tokenizer_encode,
+                special_ids=special,
+                rng=rng,
+            )
+            samples.extend(generated)
+            if len(samples) >= num_samples:
+                break
+
+    # 2. Complete remaining required sample volume via domain templates across full pool
+    per_concept = max(1, (num_samples - len(samples)) // len(pool) + 1)
+    for target_curie in pool:
+        if len(samples) >= num_samples * 2:
+            break
+        concept = ontology.concepts[target_curie]
+        terms = [concept.label] + concept.synonyms
+
+        for _ in range(per_concept):
+            term = rng.choice(terms)
+            tmpl = rng.choice(templates)
+            state_text = tmpl.format(term=term)
+
+            generated = _generate_tasks_for_concept_query(
+                ontology=ontology,
+                target_curie=target_curie,
+                query_text=state_text,
+                domain=domain,
+                pool=pool,
+                tokenizer_encode=tokenizer_encode,
+                special_ids=special,
+                rng=rng,
+            )
+            samples.extend(generated)
+
+    rng.shuffle(samples)
+    return samples[:num_samples]
+
