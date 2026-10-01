@@ -1,1 +1,489 @@
-class R{conceptsById=new Map;conceptsByCurie=new Map;childrenMap=new Map;ancestorsCache=new Map;constructor(N=[]){for(let H of N)this.addConcept(H)}addConcept(N){if(this.conceptsById.set(N.id,N),this.conceptsByCurie.set(N.curie,N),!this.childrenMap.has(N.id))this.childrenMap.set(N.id,new Set);for(let H of N.parents){if(!this.childrenMap.has(H))this.childrenMap.set(H,new Set);this.childrenMap.get(H).add(N.id)}this.ancestorsCache.clear()}getById(N){return this.conceptsById.get(N)}getByCurie(N){return this.conceptsByCurie.get(N)}getAll(){return Array.from(this.conceptsById.values())}size(){return this.conceptsById.size}getAncestors(N){if(this.ancestorsCache.has(N))return this.ancestorsCache.get(N);let H=new Set,F=[N];while(F.length>0){let V=F.shift(),Q=this.conceptsById.get(V);if(!Q)continue;for(let K of Q.parents)if(!H.has(K))H.add(K),F.push(K)}return this.ancestorsCache.set(N,H),H}subsumes(N,H){if(N===H)return!0;return this.getAncestors(H).has(N)}isDisjoint(N,H){if(N===H)return!1;let F=this.conceptsById.get(N);if(F&&F.disjointWith.includes(H))return!0;let V=this.conceptsById.get(H);if(V&&V.disjointWith.includes(N))return!0;let Q=this.getAncestors(N),K=this.getAncestors(H);for(let U of Q){let Z=this.conceptsById.get(U);if(Z){if(Z.disjointWith.includes(H))return!0;for(let _ of K)if(Z.disjointWith.includes(_))return!0}}for(let U of K){let Z=this.conceptsById.get(U);if(Z&&Z.disjointWith.includes(N))return!0}return!1}static fromJSON(N){let H=Array.isArray(N)?N:N.concepts||[],F=new Map;H.forEach((Q,K)=>{let U=Q.curie||Q.id||`concept_${K}`;if(F.set(U,K),U.includes(":"))F.set(U.split(":")[1],K)});let V=H.map((Q,K)=>{let U=Q.curie||Q.id||`concept_${K}`,_=(Q.parents||[]).map((X)=>typeof X==="number"?X:F.get(X)).filter((X)=>typeof X==="number"),Y=(Q.disjoint_with||Q.disjointWith||[]).map((X)=>typeof X==="number"?X:F.get(X)).filter((X)=>typeof X==="number");return{id:K,curie:U,label:Q.label||U,description:Q.description||"",parents:_,disjointWith:Y,synonyms:Q.synonyms||[]}});return new R(V)}}var j=0.6;function M(N){if(N<=2)return 0.85;if(N<=5)return 0.95;if(N<=10)return 1.1;return 1.25}function O(N,H=1){let F=N.length;if(F===0)return new Float32Array(0);let V=Math.max(0.0001,H),Q=-1/0;for(let _=0;_<F;_++)if(N[_]>Q)Q=N[_];let K=new Float32Array(F),U=0;for(let _=0;_<F;_++){let B=Math.exp((N[_]-Q)/V);K[_]=B,U+=B}let Z=new Float32Array(F);if(U>0)for(let _=0;_<F;_++)Z[_]=K[_]/U;return Z}function w(N,H,F=N.length+1){for(let V=0;V<F;V++){let Q=!1;for(let[K,U]of H)if(K<N.length&&U<N.length){if(N[K]>N[U])N[U]=N[K],Q=!0}if(!Q)break}}function A(N,H,F=0.6,V=[]){for(let[Q,K]of H)if(Q<N.length&&K<N.length&&Math.max(N[Q],N[K])>=F)D(N,V,N[Q]>=N[K]?K:Q)}function D(N,H,F){let V=new Set([F]),Q=[F];while(Q.length>0){let K=Q.pop();N[K]=0;for(let[U,Z]of H)if(Z===K&&U<N.length&&!V.has(U))V.add(U),Q.push(U)}}function P(N,H,F,V=0.6){for(let[K,U]of H)if(K<N.length&&U<N.length&&N[U]<N[K]-0.000001)return!1;for(let[K,U]of F)if(K<N.length&&U<N.length){if(Math.min(N[K],N[U])>0.000001&&Math.max(N[K],N[U])>=V)return!1}return!0}function z(N){let H=N.length;if(H<=1)return 1;let F=0;for(let U=0;U<H;U++)F+=N[U];if(F<=0)return 0;let V=0;for(let U=0;U<H;U++){let Z=N[U]/F;if(Z>0.000000000001)V-=Z*Math.log(Z)}let Q=Math.log(H),K=V/Q;return Math.max(0,Math.min(1,1-K))}function q(N,H,F,V=M(N.length)){let Q=O(N,V);w(Q,H),A(Q,F,0.6,H);let K=z(Q);return{probs:Q,confidence:K}}var v=new Set(["a","an","the","and","or","but","in","on","at","to","for","with","by","about","against","between","into","through","during","before","after","above","below","from","up","down","out","off","over","under","again","further","then","once","here","there","when","where","why","how","all","any","both","each","few","more","most","other","some","such","no","nor","not","only","own","same","so","than","too","very","can","will","just","don","should","now","is","are","was","were","be","been","being","have","has","had","having","do","does","did","doing","of","it","its","that","this","also","made"]);function f(N){return N.replace(/([a-z])([A-Z])/g,"$1 $2").toLowerCase().replace(/[^a-z0-9]+/g," ").split(/\s+/).filter((V)=>V.length>2&&!v.has(V))}class G{ontology;invertedIndex=new Map;constructor(N){this.ontology=N;this.buildIndex()}buildIndex(){for(let N of this.ontology.getAll()){let H=new Set([...f(N.label),...N.synonyms.flatMap((F)=>f(F)),...N.description?f(N.description):[]]);for(let F of H){if(!this.invertedIndex.has(F))this.invertedIndex.set(F,new Set);this.invertedIndex.get(F).add(N.id)}}}extractSubgraph(N,H=8){let F=f(N),V=new Map;for(let Y of F){let X=this.invertedIndex.get(Y);if(X)for(let $ of X){let J=this.ontology.getById($),W=1;if(J){if(f(J.label).includes(Y))W=4}V.set($,(V.get($)||0)+W)}}let Q=Array.from(V.entries()).sort((Y,X)=>X[1]-Y[1]).map(([Y])=>Y),K=new Set;for(let Y of Q.slice(0,H)){K.add(Y);let X=this.ontology.getById(Y);if(X)for(let $ of X.parents)K.add($)}if(K.size===0){for(let Y of this.ontology.getAll())if(Y.parents.length===0){if(K.add(Y.id),K.size>=H)break}}for(let Y of this.ontology.getAll()){if(K.size>=H)break;K.add(Y.id)}let U=Array.from(K).map((Y)=>this.ontology.getById(Y)).filter(Boolean),Z=new Map;U.forEach((Y,X)=>Z.set(Y.id,X));let _=[],B=[];for(let Y=0;Y<U.length;Y++){let X=U[Y];for(let $ of X.parents)if(Z.has($))_.push([Y,Z.get($)]);for(let $ of X.disjointWith)if(Z.has($)){let J=Z.get($);if(Y<J)B.push([Y,J])}}return{concepts:U,parentEdges:_,disjointEdges:B}}}class L{ontology;router;constructor(N){this.ontology=N;this.router=new G(N)}switchOntology(N){this.ontology=N,this.router=new G(N)}async systemOne(N,H=8){let F=this.router.extractSubgraph(N,H),V=F.concepts.length;if(V===0)throw Error("Active subgraph is empty");let Q=new Set(f(N)),K=new Float32Array(V);K.fill(1);for(let X=0;X<V;X++){let $=F.concepts[X];for(let J of f($.label))if(Q.has(J))K[X]+=6;for(let J of $.synonyms)for(let W of f(J))if(Q.has(W))K[X]+=5;if($.description){for(let J of f($.description))if(Q.has(J))K[X]+=1}}let{probs:U,confidence:Z}=q(K,F.parentEdges,F.disjointEdges),_=0,B=-1/0;for(let X=0;X<V;X++){let $=U[X];if($>B)B=$,_=X;else if(Math.abs($-B)<0.00001){let J=F.concepts[X].id,W=F.concepts[_].id;if(this.ontology.subsumes(W,J))_=X}}let Y=F.concepts.map((X,$)=>({curie:X.curie,label:X.label,prob:U[$]}));return{selectedConcept:F.concepts[_],confidence:Z,probabilities:Y,axiomsVerified:P(U,F.parentEdges,F.disjointEdges)}}async subsumes(N,H,F){let V=this.ontology.getByCurie(N),Q=this.ontology.getByCurie(H);if(!V||!Q)return!1;if(!this.ontology.subsumes(V.id,Q.id))return!1;let U=(await this.systemOne(F,8)).selectedConcept;return U.id===Q.id||U.id===V.id}async choice(N,H,F){let V=H.map((B,Y)=>({id:Y,curie:`OPT:${Y}`,label:B,parents:[],disjointWith:[],synonyms:[],description:F})),Q=F?`${N} ${F}`:N,K=new R(V),Z=await new L(K).systemOne(Q,H.length),_={};for(let B of Z.probabilities)_[B.label]=B.prob;return{choice:Z.selectedConcept.label,confidence:Z.confidence,probabilities:_}}async score(N,H){let F=new Set(f(N)),V=f(H);if(V.length===0)return 0.5;let Q=0;for(let Z of V)if(F.has(Z))Q++;let U=(Q/V.length-0.3)*6;return 1/(1+Math.exp(-U))}async noul(N,H,F=0.25){let V=await this.choice(N,H);if(V.confidence<F)return{accepted:!1,rejectionConfidence:1-V.confidence};return{accepted:!0,selected:V.choice,rejectionConfidence:1-V.confidence}}}export{P as verifyAxioms,f as tokenize,M as temperatureByCardinality,O as softmax,z as normalizedEntropyConfidence,w as enforceSubsumptionMonotonicityInplace,A as enforceDisjointnessInplace,q as calibrateAndProject,R as OntologyDAG,L as OLaya,j as DISJOINT_THRESHOLD,G as CandidateRouter};
+// O-Laya Browser Engine — IDF-weighted BM25 candidate router
+// Expanded/readable ESModule build (replaces minified bundle)
+
+// ── OntologyDAG ──────────────────────────────────────────────────────────────
+
+export class OntologyDAG {
+  conceptsById   = new Map();
+  conceptsByCurie = new Map();
+  childrenMap    = new Map();
+  ancestorsCache = new Map();
+
+  constructor(concepts = []) {
+    for (const c of concepts) this.addConcept(c);
+  }
+
+  addConcept(c) {
+    this.conceptsById.set(c.id, c);
+    this.conceptsByCurie.set(c.curie, c);
+    if (!this.childrenMap.has(c.id)) this.childrenMap.set(c.id, new Set());
+    for (const pid of c.parents) {
+      if (!this.childrenMap.has(pid)) this.childrenMap.set(pid, new Set());
+      this.childrenMap.get(pid).add(c.id);
+    }
+    this.ancestorsCache.clear();
+  }
+
+  getById(id)    { return this.conceptsById.get(id); }
+  getByCurie(cu) { return this.conceptsByCurie.get(cu); }
+  getAll()       { return Array.from(this.conceptsById.values()); }
+  size()         { return this.conceptsById.size; }
+
+  getAncestors(id) {
+    if (this.ancestorsCache.has(id)) return this.ancestorsCache.get(id);
+    const seen = new Set(), queue = [id];
+    while (queue.length > 0) {
+      const cur = queue.shift();
+      const c   = this.conceptsById.get(cur);
+      if (!c) continue;
+      for (const pid of c.parents) {
+        if (!seen.has(pid)) { seen.add(pid); queue.push(pid); }
+      }
+    }
+    this.ancestorsCache.set(id, seen);
+    return seen;
+  }
+
+  subsumes(ancestor, descendant) {
+    if (ancestor === descendant) return true;
+    return this.getAncestors(descendant).has(ancestor);
+  }
+
+  isDisjoint(a, b) {
+    if (a === b) return false;
+    const ca = this.conceptsById.get(a);
+    if (ca && ca.disjointWith.includes(b)) return true;
+    const cb = this.conceptsById.get(b);
+    if (cb && cb.disjointWith.includes(a)) return true;
+    const ancsA = this.getAncestors(a);
+    const ancsB = this.getAncestors(b);
+    for (const u of ancsA) {
+      const cu = this.conceptsById.get(u);
+      if (!cu) continue;
+      if (cu.disjointWith.includes(b)) return true;
+      for (const v of ancsB) if (cu.disjointWith.includes(v)) return true;
+    }
+    for (const u of ancsB) {
+      const cu = this.conceptsById.get(u);
+      if (cu && cu.disjointWith.includes(a)) return true;
+    }
+    return false;
+  }
+
+  static fromJSON(raw) {
+    const arr = Array.isArray(raw) ? raw : (raw.concepts || []);
+    const curieIdx = new Map();
+    arr.forEach((c, i) => {
+      const curie = c.curie || c.id || `concept_${i}`;
+      curieIdx.set(curie, i);
+      if (curie.includes(':')) curieIdx.set(curie.split(':')[1], i);
+    });
+    const concepts = arr.map((c, i) => {
+      const curie = c.curie || c.id || `concept_${i}`;
+      const resolve = (x) => typeof x === 'number' ? x : curieIdx.get(x);
+      const parents     = (c.parents     || []).map(resolve).filter(x => typeof x === 'number');
+      const disjointWith= (c.disjoint_with || c.disjointWith || []).map(resolve).filter(x => typeof x === 'number');
+      return {
+        id: i, curie,
+        label:      c.label       || curie,
+        description:c.description || '',
+        parents, disjointWith,
+        synonyms:   c.synonyms    || [],
+      };
+    });
+    return new OntologyDAG(concepts);
+  }
+}
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+export const DISJOINT_THRESHOLD = 0.6;
+
+// ── Utility: tokenize ─────────────────────────────────────────────────────────
+
+const STOPWORDS = new Set([
+  'a','an','the','and','or','but','in','on','at','to','for','with','by','about',
+  'against','between','into','through','during','before','after','above','below',
+  'from','up','down','out','off','over','under','again','further','then','once',
+  'here','there','when','where','why','how','all','any','both','each','few',
+  'more','most','other','some','such','no','nor','not','only','own','same','so',
+  'than','too','very','can','will','just','don','should','now','is','are','was',
+  'were','be','been','being','have','has','had','having','do','does','did',
+  'doing','of','it','its','that','this','also','made'
+]);
+
+export function tokenize(text) {
+  const split = text.replace(/([a-z])([A-Z])/g, '$1 $2');
+  return split.toLowerCase().replace(/[^a-z0-9]+/g, ' ')
+    .split(/\s+/).filter(t => t.length > 2 && !STOPWORDS.has(t));
+}
+
+// ── temperatureByCardinality ──────────────────────────────────────────────────
+
+export function temperatureByCardinality(probs) {
+  const n = probs.length;
+  if (n <= 2)  return 0.85;
+  if (n <= 5)  return 0.95;
+  if (n <= 10) return 1.1;
+  return 1.25;
+}
+
+// ── softmax ───────────────────────────────────────────────────────────────────
+
+export function softmax(scores, temp = 1) {
+  const n = scores.length;
+  if (n === 0) return new Float32Array(0);
+  const t    = Math.max(0.0001, temp);
+  let   maxS = -Infinity;
+  for (let i = 0; i < n; i++) if (scores[i] > maxS) maxS = scores[i];
+  const out = new Float32Array(n);
+  let   sum = 0;
+  for (let i = 0; i < n; i++) { const e = Math.exp((scores[i] - maxS) / t); out[i] = e; sum += e; }
+  const res = new Float32Array(n);
+  if (sum > 0) for (let i = 0; i < n; i++) res[i] = out[i] / sum;
+  return res;
+}
+
+// ── normalizedEntropyConfidence ───────────────────────────────────────────────
+
+export function normalizedEntropyConfidence(probs) {
+  const n = probs.length;
+  if (n <= 1) return 1;
+  let sum = 0;
+  for (let i = 0; i < n; i++) sum += probs[i];
+  if (sum <= 0) return 0;
+  let H = 0;
+  for (let i = 0; i < n; i++) {
+    const p = probs[i] / sum;
+    if (p > 1e-12) H -= p * Math.log(p);
+  }
+  const Hmax = Math.log(n);
+  return Math.max(0, Math.min(1, 1 - H / Hmax));
+}
+
+// ── enforceSubsumptionMonotonicityInplace ─────────────────────────────────────
+
+export function enforceSubsumptionMonotonicityInplace(probs, parentEdges, maxIter = probs.length + 1) {
+  for (let it = 0; it < maxIter; it++) {
+    let changed = false;
+    for (const [child, parent] of parentEdges) {
+      if (child < probs.length && parent < probs.length) {
+        if (probs[child] > probs[parent]) { probs[parent] = probs[child]; changed = true; }
+      }
+    }
+    if (!changed) break;
+  }
+}
+
+// ── enforceDisjointnessInplace ────────────────────────────────────────────────
+
+export function enforceDisjointnessInplace(probs, disjointEdges, threshold = 0.6, parentEdges = []) {
+  for (const [a, b] of disjointEdges) {
+    if (a < probs.length && b < probs.length && Math.max(probs[a], probs[b]) >= threshold) {
+      _zeroSubtree(probs, parentEdges, probs[a] >= probs[b] ? b : a);
+    }
+  }
+}
+
+function _zeroSubtree(probs, parentEdges, root) {
+  const visited = new Set([root]);
+  const stack   = [root];
+  while (stack.length > 0) {
+    const cur = stack.pop();
+    probs[cur] = 0;
+    for (const [child, parent] of parentEdges) {
+      if (parent === cur && child < probs.length && !visited.has(child)) {
+        visited.add(child); stack.push(child);
+      }
+    }
+  }
+}
+
+// ── verifyAxioms ──────────────────────────────────────────────────────────────
+
+export function verifyAxioms(probs, parentEdges, disjointEdges, threshold = 0.6) {
+  for (const [child, parent] of parentEdges) {
+    if (child < probs.length && parent < probs.length && probs[child] > probs[parent] + 1e-6) return false;
+  }
+  for (const [a, b] of disjointEdges) {
+    if (a < probs.length && b < probs.length &&
+        Math.min(probs[a], probs[b]) > 1e-6 &&
+        Math.max(probs[a], probs[b]) >= threshold) return false;
+  }
+  return true;
+}
+
+// ── calibrateAndProject ───────────────────────────────────────────────────────
+
+export function calibrateAndProject(scores, parentEdges, disjointEdges, temp = temperatureByCardinality(scores)) {
+  const probs = softmax(scores, temp);
+  enforceSubsumptionMonotonicityInplace(probs, parentEdges);
+  enforceDisjointnessInplace(probs, disjointEdges, 0.6, parentEdges);
+  const confidence = normalizedEntropyConfidence(probs);
+  return { probs, confidence };
+}
+
+// ── CandidateRouter (IDF-weighted BM25) ───────────────────────────────────────
+
+export class CandidateRouter {
+  invertedIndex = new Map(); // token → Set<conceptId>
+  idfMap        = new Map(); // token → IDF weight
+
+  constructor(ontology) {
+    this.ontology = ontology;
+    this.buildIndex();
+  }
+
+  /**
+   * Build inverted index and compute smooth IDF for every token.
+   * idf(t) = ln((N + 1) / (df + 1)) + 1    (add-1 / Laplace-smoothed BM25 IDF)
+   */
+  buildIndex() {
+    const concepts = this.ontology.getAll();
+    const N        = concepts.length;
+
+    // Per-concept token sets (use distinct sets so each concept contributes df=1 per token)
+    for (const concept of concepts) {
+      const labelToks = tokenize(concept.label);
+      const synToks   = concept.synonyms.flatMap(s => tokenize(s));
+      const descToks  = concept.description ? tokenize(concept.description) : [];
+
+      // Distinct tokens for this concept (for DF counting)
+      const distinctToks = new Set([...labelToks, ...synToks, ...descToks]);
+
+      for (const tok of distinctToks) {
+        // Inverted index
+        if (!this.invertedIndex.has(tok)) this.invertedIndex.set(tok, new Set());
+        this.invertedIndex.get(tok).add(concept.id);
+      }
+    }
+
+    // Compute IDF for every indexed token
+    for (const [tok, conceptSet] of this.invertedIndex) {
+      const df  = conceptSet.size;
+      const idf = Math.log((N + 1) / (df + 1)) + 1;
+      this.idfMap.set(tok, idf);
+    }
+  }
+
+  /**
+   * Route query to top-K candidate concepts and extract the closed active subgraph.
+   * Scoring (IDF-weighted BM25):
+   *   label match    → score += idf * 4
+   *   synonym match  → score += idf * 2
+   *   description match → score += idf * 1
+   */
+  extractSubgraph(queryText, maxCandidates = 8) {
+    const queryTokens = tokenize(queryText);
+    const scoreMap    = new Map(); // conceptId → accumulated score
+
+    for (const tok of queryTokens) {
+      const matches = this.invertedIndex.get(tok);
+      if (!matches) continue;
+
+      const idf = this.idfMap.get(tok) || 1.0;
+
+      for (const cid of matches) {
+        const concept = this.ontology.getById(cid);
+        if (!concept) continue;
+
+        let weight = 0;
+
+        // Label match
+        if (tokenize(concept.label).includes(tok)) {
+          weight += idf * 4;
+        }
+        // Synonym match (only if not already counted as label)
+        if (weight === 0 || !tokenize(concept.label).includes(tok)) {
+          const inSyn = concept.synonyms.some(s => tokenize(s).includes(tok));
+          if (inSyn) weight += idf * 2;
+        }
+        // Description match (additive)
+        if (concept.description && tokenize(concept.description).includes(tok)) {
+          // Avoid double-counting if weight is already from label
+          if (!tokenize(concept.label).includes(tok) &&
+              !concept.synonyms.some(s => tokenize(s).includes(tok))) {
+            weight += idf * 1;
+          }
+        }
+
+        // Fallback: token in inverted index but matched via description only
+        if (weight === 0) weight = idf * 1;
+
+        scoreMap.set(cid, (scoreMap.get(cid) || 0) + weight);
+      }
+    }
+
+    // Sort descending by score
+    const sortedCandidates = Array.from(scoreMap.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([cid]) => cid);
+
+    // Build active set: top-K candidates + their immediate parents
+    const activeSet = new Set();
+    for (const cid of sortedCandidates.slice(0, maxCandidates)) {
+      activeSet.add(cid);
+      const c = this.ontology.getById(cid);
+      if (c) for (const pid of c.parents) activeSet.add(pid);
+    }
+
+    // Seed with roots if nothing matched
+    if (activeSet.size === 0) {
+      for (const c of this.ontology.getAll()) {
+        if (c.parents.length === 0) {
+          activeSet.add(c.id);
+          if (activeSet.size >= maxCandidates) break;
+        }
+      }
+    }
+
+    // Fill remaining slots
+    for (const c of this.ontology.getAll()) {
+      if (activeSet.size >= maxCandidates) break;
+      activeSet.add(c.id);
+    }
+
+    const concepts = Array.from(activeSet)
+      .map(id => this.ontology.getById(id))
+      .filter(Boolean);
+
+    const slotMap = new Map();
+    concepts.forEach((c, idx) => slotMap.set(c.id, idx));
+
+    const parentEdges  = [];
+    const disjointEdges = [];
+
+    for (let i = 0; i < concepts.length; i++) {
+      const c = concepts[i];
+      for (const pid of c.parents) {
+        if (slotMap.has(pid)) parentEdges.push([i, slotMap.get(pid)]);
+      }
+      for (const did of c.disjointWith) {
+        if (slotMap.has(did)) {
+          const j = slotMap.get(did);
+          if (i < j) disjointEdges.push([i, j]);
+        }
+      }
+    }
+
+    return { concepts, parentEdges, disjointEdges };
+  }
+}
+
+// ── OLaya Engine ─────────────────────────────────────────────────────────────
+
+export class OLaya {
+  constructor(ontology) {
+    this.ontology = ontology;
+    this.router   = new CandidateRouter(ontology);
+  }
+
+  switchOntology(ontology) {
+    this.ontology = ontology;
+    this.router   = new CandidateRouter(ontology);
+  }
+
+  async systemOne(queryText, k = 8) {
+    const sub = this.router.extractSubgraph(queryText, k);
+    const V   = sub.concepts.length;
+    if (V === 0) throw new Error('Active subgraph is empty');
+
+    const queryToks = new Set(tokenize(queryText));
+    const rawScores = new Float32Array(V);
+    rawScores.fill(1);
+
+    for (let i = 0; i < V; i++) {
+      const c = sub.concepts[i];
+
+      // IDF-weighted label scoring
+      for (const tok of tokenize(c.label)) {
+        if (queryToks.has(tok)) {
+          const idf = this.router.idfMap.get(tok) || 1.0;
+          rawScores[i] += 6 * idf;
+        }
+      }
+
+      // IDF-weighted synonym scoring
+      for (const syn of c.synonyms) {
+        for (const tok of tokenize(syn)) {
+          if (queryToks.has(tok)) {
+            const idf = this.router.idfMap.get(tok) || 1.0;
+            rawScores[i] += 5 * idf;
+          }
+        }
+      }
+
+      // IDF-weighted description scoring
+      if (c.description) {
+        for (const tok of tokenize(c.description)) {
+          if (queryToks.has(tok)) {
+            const idf = this.router.idfMap.get(tok) || 1.0;
+            rawScores[i] += idf;
+          }
+        }
+      }
+    }
+
+    const { probs, confidence } = calibrateAndProject(rawScores, sub.parentEdges, sub.disjointEdges);
+
+    // Select best concept (prefer deeper descendant on tie)
+    let bestIdx = 0, bestProb = -Infinity;
+    for (let i = 0; i < V; i++) {
+      const p = probs[i];
+      if (p > bestProb) {
+        bestProb = p; bestIdx = i;
+      } else if (Math.abs(p - bestProb) < 1e-5) {
+        const curId  = sub.concepts[i].id;
+        const bestId = sub.concepts[bestIdx].id;
+        if (this.ontology.subsumes(bestId, curId)) bestIdx = i;
+      }
+    }
+
+    const probabilities = sub.concepts.map((c, i) => ({ curie: c.curie, label: c.label, prob: probs[i] }));
+
+    return {
+      selectedConcept:  sub.concepts[bestIdx],
+      confidence,
+      probabilities,
+      axiomsVerified:   verifyAxioms(probs, sub.parentEdges, sub.disjointEdges),
+    };
+  }
+
+  async subsumes(ancestorCurie, descendantCurie, queryText) {
+    const a = this.ontology.getByCurie(ancestorCurie);
+    const d = this.ontology.getByCurie(descendantCurie);
+    if (!a || !d) return false;
+    if (!this.ontology.subsumes(a.id, d.id)) return false;
+    const result = await this.systemOne(queryText, 8);
+    return result.selectedConcept.id === d.id || result.selectedConcept.id === a.id;
+  }
+
+  async choice(query, options, description) {
+    const concepts = options.map((label, i) => ({
+      id: i, curie: `OPT:${i}`, label,
+      parents: [], disjointWith: [], synonyms: [], description: description || '',
+    }));
+    const combined = description ? `${query} ${description}` : query;
+    const dag      = new OntologyDAG(concepts);
+    const result   = await new OLaya(dag).systemOne(combined, options.length);
+    const probs    = {};
+    for (const p of result.probabilities) probs[p.label] = p.prob;
+    return { choice: result.selectedConcept.label, confidence: result.confidence, probabilities: probs };
+  }
+
+  async score(query, criterion) {
+    const qToks  = new Set(tokenize(query));
+    const cToks  = tokenize(criterion);
+    if (cToks.length === 0) return 0.5;
+    let matches = 0;
+    for (const t of cToks) if (qToks.has(t)) matches++;
+    const logit = (matches / cToks.length - 0.3) * 6;
+    return 1 / (1 + Math.exp(-logit));
+  }
+
+  async noul(query, options, threshold = 0.25) {
+    const result = await this.choice(query, options);
+    if (result.confidence < threshold) return { accepted: false, rejectionConfidence: 1 - result.confidence };
+    return { accepted: true, selected: result.choice, rejectionConfidence: 1 - result.confidence };
+  }
+}

@@ -15,12 +15,16 @@ from pathlib import Path
 from typing import Any
 
 from olaya.engine import _flat_subgraph
+from olaya.hard_negative_sampler import HardNegativeSampler
 from olaya.ontology import Concept, Ontology
 from olaya.real_abox import load_atlas_real_abox
 from olaya.sequence import QTYPE_IDS, build_ontology_sequence
 from olaya.train import TrainingSample
 
-# Domain query templates to produce diverse, realistic state queries
+# Domain query templates to produce diverse, realistic state queries.
+# Templates marked with {term} use the concept label (with optional synonym augmentation).
+# Property-based templates (no {term}) describe observable characteristics directly,
+# forcing the model to learn discriminative features rather than label memorisation.
 DOMAIN_QUERY_TEMPLATES: dict[str, list[str]] = {
     "atlas": [
         "Inventory snapshot observed for SKU with {term} status at central fulfillment facility.",
@@ -28,6 +32,11 @@ DOMAIN_QUERY_TEMPLATES: dict[str, list[str]] = {
         "Catalog record update: manufacturer published new {term} specifications for retail distribution.",
         "Fulfillment orchestration: carrier dispatched order matching {term} requirements.",
         "Evidence analysis: verified {term} claim from SharePoint documentation and commercial feeds.",
+        "Commerce event stream recorded state transition consistent with {term} entity classification.",
+        "Master data registry flagged product record as conforming to {term} trade item category.",
+        "Warehouse management system generated pick-list referencing {term} location assignment.",
+        "Cross-dock routing decision triggered by detection of {term} classification on inbound shipment.",
+        "Supplier portal sync: vendor catalogue entry categorised under {term} attribute hierarchy.",
     ],
     "doid": [
         "Patient biopsy and histopathology report confirms clinical diagnosis of {term}.",
@@ -35,6 +44,19 @@ DOMAIN_QUERY_TEMPLATES: dict[str, list[str]] = {
         "Clinical summary: patient presents with symptoms and laboratory markers of {term}.",
         "Pathology requisition: specimen analysis requested for suspected {term}.",
         "Electronic health record: ICD-10 crosswalk mapped to clinical disease entity {term}.",
+        # Property-based templates (no {term}) — describe by observable clinical characteristics
+        "Malignant neoplasm arising from epithelial tissue lining, rapid local invasion, lymph node metastasis staging.",
+        "Autoimmune condition, elevated inflammatory markers CRP/ESR, joint synovitis, morning stiffness characteristic.",
+        "Infectious agent transmitted by respiratory droplets, incubation 2-14 days, fever and myalgia prodrome.",
+        "Genetic chromosomal disorder, trisomy pattern, developmental delay, characteristic dysmorphic features.",
+        "Neurodegenerative condition, progressive cognitive decline, amyloid plaques confirmed on PET imaging.",
+        "Metabolic dysfunction, insulin resistance pathway, fasting glucose elevated, HbA1c above 6.5%.",
+        "Cardiac muscle disease, ejection fraction reduced, breathlessness on exertion, peripheral edema.",
+        "Primary CNS tumor, WHO grade classification, contrast enhancement on MRI, neurological deficits.",
+        "Chronic autoimmune hepatitis, elevated transaminases, interface hepatitis on biopsy, IgG elevation.",
+        "Viral hemorrhagic fever, thrombocytopenia, coagulation cascade disruption, hemorrhagic manifestations.",
+        "Haematological malignancy, bone marrow infiltration by blast cells, pancytopenia on CBC.",
+        "Lysosomal storage disorder, enzymatic deficiency confirmed, substrate accumulation in macrophages.",
     ],
     "schemaorg": [
         "Structured data payload parsed from webpage json-ld metadata representing {term}.",
@@ -42,6 +64,21 @@ DOMAIN_QUERY_TEMPLATES: dict[str, list[str]] = {
         "E-commerce catalog index entry conforming to standard schema specification for {term}.",
         "API schema definition validating web application resource of type {term}.",
         "Rich snippet preview generated for online published content classified under {term}.",
+        # Property-based templates — describe by observable web-entity characteristics
+        "Step-by-step instructions with numbered list format, requires specific equipment, user-submitted tutorial.",
+        "Business listing with hours, address, phone number, accepts online reservations and walk-ins.",
+        "Academic research publication, peer-reviewed journal, DOI identifier, abstract and methodology sections.",
+        "E-commerce product listing with price, availability, seller rating, delivery estimate and return policy.",
+        "Employment opportunity posting, full-time position, location and remote options, salary range disclosed.",
+        "User-submitted question awaiting expert answers, vote counts, accepted answer marked, tagged with topics.",
+        "Audio recording file, podcast episode, MP3 format, duration listed, hosted on distribution platform.",
+        "Geographic location coordinates, administrative region boundary, points of interest density.",
+        "Video content with runtime, director credit, genre tags, age rating, streaming availability noted.",
+        "News article with byline, publication date, headline, lead paragraph summary and related topics.",
+        "Medical drug entity: active ingredient, dosage form, prescribing indications, contraindications listed.",
+        "Real estate listing: square footage, bedrooms, neighbourhood, asking price, open house schedule.",
+        "Sports event: competing teams, venue, start time, current score or final result, league classification.",
+        "Review entity with star rating, reviewer name, product target, pros and cons sections.",
     ],
     "gs1": [
         "Trade item scan: barcode GTIN payload classified under GS1 standard {term}.",
@@ -49,6 +86,21 @@ DOMAIN_QUERY_TEMPLATES: dict[str, list[str]] = {
         "Supply chain logistics event: Electronic Product Code Information Services (EPCIS) record for {term}.",
         "Retail master data management: packaging and trade specification registered for {term}.",
         "Digital Link resolution: product packaging QR code redirected to verified {term} descriptor.",
+        # Property-based templates — describe by physical/logistical observable attributes
+        "Perishable dairy product, refrigerated at 34-38°F, tamper-evident induction seal, GTIN prefix 0614141.",
+        "Frozen poultry protein, blast-frozen below -18°C, vacuum sealed corrugated master case, cross-dock routing required.",
+        "Class 9 dangerous goods UN3480 placard, lithium-ion chemistry, watt-hour rating exceeds 100Wh per battery.",
+        "Non-perishable consumer product, ambient storage conditions, retail barcode GS1-128 compliant, standard shelf life.",
+        "Medical device sterile packaging, single-use disposable, class II FDA classification, hospital supply chain.",
+        "Returnable transport packaging, RFID tag enabled, tare weight documented, deposit credit system eligible.",
+        "High-value electronics, serialized inventory, SGTIN encoding, anti-tamper label with EPC memory bank.",
+        "Chemical compound, GHS hazard pictograms, SDS documentation required, segregation from food products.",
+        "Fresh produce with variable weight, price-embedded barcode, traceability lot code, cold chain monitored.",
+        "Apparel item, size and colour variant matrix, UPC-A scan on hang tag, retailer-specific PLU code.",
+        "Pharmaceutical blister pack, NDC number encoded, expiry date attribute mandatory, unit-dose dispensing.",
+        "Bulk commodity, net weight declared in kg, loose or bagged format, pallet quantity in SSCC label.",
+        "Beverage can, volume 330ml, aluminium substrate, deposit-refund scheme eligible, multipak shrink-wrapped.",
+        "Luxury fragrance bottle, serialised item-level RFID, brand authentication seal, duty-free eligible flag.",
     ],
 }
 
@@ -99,8 +151,14 @@ def _generate_tasks_for_concept_query(
     tokenizer_encode: Any,
     special_ids: dict[str, int],
     rng: random.Random,
+    sampler: HardNegativeSampler | None = None,
 ) -> list[TrainingSample]:
-    """Generate all 5 typed operational decision tasks for a single concept query."""
+    """Generate all 5 typed operational decision tasks for a single concept query.
+
+    Args:
+        sampler: Optional :class:`HardNegativeSampler` for structured hard-negative
+            distractor selection.  When *None* the legacy random sampling is used.
+    """
     concept = ontology.concepts[target_curie]
     ancestors = ontology.get_ancestors(target_curie)
     state = {
@@ -111,9 +169,12 @@ def _generate_tasks_for_concept_query(
     samples: list[TrainingSample] = []
 
     # 1. Concept triage task: pick target from candidate set (target + distractors)
-    distractors = [c for c in pool if c != target_curie and c not in ancestors]
-    k_distractors = min(5, len(distractors))
-    chosen_distractors = rng.sample(distractors, k_distractors) if distractors else []
+    if sampler is not None:
+        chosen_distractors = sampler.sample_distractors(target_curie, k=5, rng=rng)
+    else:
+        distractors = [c for c in pool if c != target_curie and c not in ancestors]
+        k_distractors = min(5, len(distractors))
+        chosen_distractors = rng.sample(distractors, k_distractors) if distractors else []
     competing = chosen_distractors + [target_curie]
     rng.shuffle(competing)
     target_idx = competing.index(target_curie)
@@ -187,7 +248,11 @@ def _generate_tasks_for_concept_query(
     )
 
     # 3. Choice task: select best match among domain options with rich descriptions
-    choice_distractors = rng.sample(distractors, min(3, len(distractors))) if distractors else []
+    if sampler is not None:
+        choice_distractors = sampler.sample_distractors(target_curie, k=3, rng=rng)
+    else:
+        _choice_pool = [c for c in pool if c != target_curie and c not in ancestors]
+        choice_distractors = rng.sample(_choice_pool, min(3, len(_choice_pool))) if _choice_pool else []
     choice_curies = [target_curie] + choice_distractors
     rng.shuffle(choice_curies)
     choice_idx = choice_curies.index(target_curie)
@@ -283,8 +348,14 @@ def generate_real_ontology_samples(
     special_ids: dict[str, int] | None = None,
     use_real_abox: bool = True,
     seed: int = 42,
+    synonym_aug_prob: float = 0.3,
 ) -> list[TrainingSample]:
-    """Generate diverse training samples across all 5 decision tasks for any real ontology."""
+    """Generate diverse training samples across all 5 decision tasks for any real ontology.
+
+    Args:
+        synonym_aug_prob: Probability (0–1) of substituting a concept's canonical label with
+            one of its synonyms when building a ``{term}``-template query.  Set to 0 to disable.
+    """
     rng = random.Random(seed)
     special = special_ids or {"cls": 50281, "sep": 50282, "mask": 50284, "pad": 50283}
     templates = DOMAIN_QUERY_TEMPLATES.get(domain, DOMAIN_QUERY_TEMPLATES["atlas"])
@@ -301,6 +372,9 @@ def generate_real_ontology_samples(
     # Select candidate pool (prioritize concepts with parents/children)
     hierarchy_curies = [c for c in all_curies if ontology.concepts[c].parents or ontology.concepts[c].children]
     pool = hierarchy_curies if len(hierarchy_curies) >= 8 else all_curies
+
+    # Build hard-negative sampler once so the children map is shared across all calls
+    sampler = HardNegativeSampler(ontology)
 
     samples: list[TrainingSample] = []
 
@@ -320,6 +394,7 @@ def generate_real_ontology_samples(
                 tokenizer_encode=tokenizer_encode,
                 special_ids=special,
                 rng=rng,
+                sampler=sampler,
             )
             samples.extend(generated)
             if len(samples) >= num_samples:
@@ -331,12 +406,21 @@ def generate_real_ontology_samples(
         if len(samples) >= num_samples * 2:
             break
         concept = ontology.concepts[target_curie]
-        terms = [concept.label] + concept.synonyms
 
         for _ in range(per_concept):
-            term = rng.choice(terms)
             tmpl = rng.choice(templates)
-            state_text = tmpl.format(term=term)
+
+            # Build query text: property-based templates have no {term} placeholder
+            if "{term}" in tmpl:
+                # Synonym augmentation: with some probability use a synonym instead of the label
+                if synonym_aug_prob > 0 and concept.synonyms and rng.random() < synonym_aug_prob:
+                    term = rng.choice(concept.synonyms)
+                else:
+                    term = concept.label
+                state_text = tmpl.format(term=term)
+            else:
+                # Property-based template — use directly; it already encodes observable attributes
+                state_text = tmpl
 
             generated = _generate_tasks_for_concept_query(
                 ontology=ontology,
@@ -347,8 +431,10 @@ def generate_real_ontology_samples(
                 tokenizer_encode=tokenizer_encode,
                 special_ids=special,
                 rng=rng,
+                sampler=sampler,
             )
             samples.extend(generated)
 
     rng.shuffle(samples)
     return samples[:num_samples]
+
