@@ -164,13 +164,19 @@ class Ontology:
     def extract_subgraph(self, target_curies: List[str], include_parents: bool = True) -> Ontology:
         """Extract a self-contained sub-ontology containing target curies and their lineage."""
         sub = Ontology(name=f"{self.name}_subgraph")
-        to_include: Set[str] = set()
+        # Ordered set: targets keep their given order, ancestors follow sorted, so the subgraph's
+        # concept order never depends on set iteration (and hence on PYTHONHASHSEED).
+        to_include: Dict[str, None] = {}
 
         for c in target_curies:
             if c in self.concepts:
-                to_include.add(c)
-                if include_parents:
-                    to_include.update(self.get_ancestors(c))
+                to_include[c] = None
+        if include_parents:
+            ancestors: Set[str] = set()
+            for c in to_include:
+                ancestors.update(self.get_ancestors(c))
+            for c in sorted(ancestors):
+                to_include.setdefault(c, None)
 
         # Add concepts
         for c in to_include:

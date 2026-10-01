@@ -105,20 +105,85 @@ def enforce_disjointness_exclusion(
     return adjusted
 
 
+def _temperature_softmax(raw_logits: np.ndarray, k: int) -> np.ndarray:
+    """Softmax over the first ``k`` logits with cardinality-calibrated temperature."""
+    if k == 0:
+        raise ValueError("Cannot calibrate a distribution over zero candidates.")
+    logits = np.asarray(raw_logits, dtype=np.float64)[:k]
+    scaled_logits = logits / temperature_by_cardinality(k)
+    exp_logits = np.exp(scaled_logits - np.max(scaled_logits))
+    return exp_logits / np.sum(exp_logits)
+
+
+def hierarchical_marginals(candidate_probs: Dict[str, float], subgraph: Ontology) -> Dict[str, float]:
+    """Lift a distribution over candidate concepts to marginals over every subgraph concept.
+
+    P(concept) = sum of candidate mass at or below the concept. Because a child's descendant set is a
+    subset of its parent's, P(parent) >= P(child) holds by construction.
+    """
+    marginals = {curie: 0.0 for curie in subgraph.concepts}
+    for candidate, mass in candidate_probs.items():
+        for ancestor in subgraph.get_ancestors(candidate):
+            marginals[ancestor] += mass
+    return marginals
+
+
+def project_hierarchical_distribution(
+    raw_logits: np.ndarray,
+    candidate_curies: List[str],
+    subgraph: Ontology,
+    enforce_axioms: bool = True,
+    disjoint_threshold: float = 0.6,
+) -> Tuple[Dict[str, float], Dict[str, float], float]:
+    """Calibrate candidate logits and project them onto the ontology.
+
+    Returns ``(candidate_probs, marginals, confidence)``:
+    - ``candidate_probs``: a proper distribution (sums to 1) over the candidate concepts.
+    - ``marginals``: P(state is an instance of C) for every concept C in the subgraph; monotone
+      under subsumption by construction.
+    - ``confidence``: normalized entropy confidence of ``candidate_probs``.
+
+    With ``enforce_axioms``, any concept whose marginal reaches ``disjoint_threshold`` (> 0.5, so at
+    most one side of a disjoint pair can trigger) removes the mass of every candidate under its
+    disjoint peers, and the candidate distribution is renormalized.
+    """
+    base_probs = _temperature_softmax(raw_logits, len(candidate_curies))
+    candidate_probs = {curie: float(base_probs[i]) for i, curie in enumerate(candidate_curies)}
+
+    if enforce_axioms:
+        marginals = hierarchical_marginals(candidate_probs, subgraph)
+        suppressed: Set[str] = set()
+        for curie_a, p_a in marginals.items():
+            if p_a < disjoint_threshold:
+                continue
+            under_a = subgraph.get_descendants(curie_a)
+            for curie_b in subgraph.concepts[curie_a].disjoint_with:
+                suppressed.update(subgraph.get_descendants(curie_b) - under_a)
+        if suppressed:
+            for curie in suppressed.intersection(candidate_probs):
+                candidate_probs[curie] = 0.0
+            total = sum(candidate_probs.values())
+            if total > 0:
+                candidate_probs = {c: p / total for c, p in candidate_probs.items()}
+
+    marginals = hierarchical_marginals(candidate_probs, subgraph)
+    conf = normalized_entropy_confidence(np.array(list(candidate_probs.values()), dtype=np.float64))
+    return candidate_probs, marginals, conf
+
+
 def calibrate_and_project_distribution(
     raw_logits: np.ndarray,
     candidate_curies: List[str],
     subgraph: Ontology,
     enforce_axioms: bool = True,
 ) -> Tuple[Dict[str, float], float]:
-    """Apply temperature scaling, softmax, ontological projection, and compute confidence."""
-    k = len(candidate_curies)
-    temp = temperature_by_cardinality(k)
+    """Apply temperature scaling, softmax, ontological projection, and compute confidence.
 
-    # Softmax with temperature
-    scaled_logits = raw_logits / temp
-    exp_logits = np.exp(scaled_logits - np.max(scaled_logits))
-    base_probs = exp_logits / np.sum(exp_logits)
+    Used for flat questions (choice, score, noul, subsumes). Monotonicity is enforced by lifting
+    parents, so when the candidates include a hierarchy the returned values are no longer a simplex.
+    Concept questions use :func:`project_hierarchical_distribution` instead.
+    """
+    base_probs = _temperature_softmax(raw_logits, len(candidate_curies))
 
     prob_map = {curie: float(base_probs[i]) for i, curie in enumerate(candidate_curies)}
 
