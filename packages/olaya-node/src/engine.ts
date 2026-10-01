@@ -50,16 +50,16 @@ export class OLaya {
     for (let slot = 0; slot < m; slot++) {
       const concept = subgraph.concepts[slot];
       for (const tok of tokenize(concept.label)) {
-        if (stateTokens.has(tok)) logits[slot] += 3.0;
+        if (stateTokens.has(tok)) logits[slot] += 6.0;
       }
       for (const syn of concept.synonyms) {
         for (const tok of tokenize(syn)) {
-          if (stateTokens.has(tok)) logits[slot] += 2.5;
+          if (stateTokens.has(tok)) logits[slot] += 5.0;
         }
       }
       if (concept.description) {
         for (const tok of tokenize(concept.description)) {
-          if (stateTokens.has(tok)) logits[slot] += 1.5;
+          if (stateTokens.has(tok)) logits[slot] += 1.0;
         }
       }
     }
