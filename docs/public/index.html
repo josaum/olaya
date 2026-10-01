@@ -11,18 +11,46 @@
     mermaid.initialize({ startOnLoad: true, theme: 'dark' });
   </script>
   <style>
-    body { max-width: 980px; margin: auto; padding: 1rem 1.25rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; }
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+    body {
+      max-width: 980px;
+      margin: auto;
+      padding: 1rem 1.25rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
     header { border-bottom: 1px solid var(--border); margin-bottom: 1rem; padding-bottom: 0.5rem; }
-    h1 { font-size: 1.65rem; line-height: 1.2; margin: 0.35rem 0; }
+    h1 { font-size: 1.65rem; line-height: 1.2; margin: 0.35rem 0; word-break: break-word; }
     .meta { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 0.25rem; }
-    .badge { display: inline-block; background: #1b5e20; color: #fff; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; margin-right: 0.4rem; }
-    pre { border-radius: 6px; padding: 0.75rem; overflow-x: auto; background: #161b22; }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.88em; }
-    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
-    th, td { padding: 0.6rem 0.75rem; border: 1px solid var(--border); }
+    .badge { display: inline-block; background: #1b5e20; color: #fff; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; margin-right: 0.4rem; margin-bottom: 0.25rem; }
+    pre { border-radius: 6px; padding: 0.75rem; max-width: 100%; background: #161b22; white-space: pre-wrap; word-break: break-word; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.88em; word-break: break-word; }
+    
+    /* Table Responsive Flow (No Page Blowout) */
+    .table-container {
+      width: 100%;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    table { width: 100%; border-collapse: collapse; margin: 0; }
+    th, td { padding: 0.6rem 0.75rem; border: 1px solid var(--border); font-size: 0.88rem; }
     th { background: rgba(255, 255, 255, 0.05); }
     .callout { background: rgba(27, 94, 32, 0.15); border-left: 4px solid #4caf50; padding: 0.85rem 1rem; margin: 1.25rem 0; border-radius: 0 6px 6px 0; }
-    .mermaid { background: #0d1117; padding: 1.25rem; border-radius: 8px; margin: 1.5rem 0; text-align: center; }
+    .mermaid { background: #0d1117; padding: 1rem 0.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: center; max-width: 100%; overflow-x: auto; }
+    .mermaid svg { max-width: 100% !important; height: auto !important; }
 
     /* SOTA Dual-View Live Decision Workbench */
     .demo-container {
@@ -32,6 +60,7 @@
       padding: 0.85rem 1rem;
       margin: 1rem 0 1.75rem 0;
       box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+      max-width: 100%;
     }
     .demo-header {
       display: flex;
@@ -65,21 +94,36 @@
       70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(63, 185, 80, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0); }
     }
+    .domain-switcher-wrap {
+      width: 100%;
+      margin-bottom: 0.65rem;
+    }
+    .domain-mobile-select {
+      display: none;
+      width: 100%;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #58a6ff;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.55rem 0.75rem;
+      outline: none;
+      cursor: pointer;
+      margin-bottom: 0.25rem;
+    }
+    .domain-mobile-select:focus {
+      border-color: #58a6ff;
+    }
     .domain-tabs {
       display: flex;
       gap: 0.35rem;
-      margin-bottom: 0.65rem;
+      flex-wrap: wrap;
       background: #161b22;
-      padding: 0.3rem 0.4rem;
+      padding: 0.35rem;
       border-radius: 6px;
       border: 1px solid #30363d;
-      overflow-x: auto;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .domain-tabs::-webkit-scrollbar {
-      display: none;
+      width: 100%;
     }
     .domain-tab-btn {
       background: transparent;
@@ -91,9 +135,11 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.15s ease-in-out;
-      flex-shrink: 0;
+      flex: 1 1 auto;
+      text-align: center;
       min-height: 32px;
       touch-action: manipulation;
+      white-space: normal;
     }
     .domain-tab-btn:hover {
       color: #c9d1d9;
@@ -164,12 +210,9 @@
       display: flex;
       gap: 0.35rem;
       margin-top: 0.45rem;
-      overflow-x: auto;
-      white-space: nowrap;
-      padding-bottom: 0.25rem;
+      flex-wrap: wrap;
       align-items: center;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: thin;
+      width: 100%;
     }
     .preset-btn {
       background: #21262d;
@@ -181,7 +224,6 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.15s;
-      flex-shrink: 0;
       min-height: 28px;
       touch-action: manipulation;
     }
@@ -196,6 +238,7 @@
       margin-top: 0.65rem;
       border-top: 1px solid #21262d;
       padding-top: 0.5rem;
+      width: 100%;
     }
     .prob-row {
       display: flex;
@@ -203,11 +246,12 @@
       gap: 0.4rem;
       margin-bottom: 0.35rem;
       font-size: 0.76rem;
+      width: 100%;
     }
     .prob-curie {
-      width: 135px;
-      min-width: 100px;
-      max-width: 145px;
+      width: 120px;
+      min-width: 90px;
+      max-width: 140px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -217,12 +261,12 @@
       flex-shrink: 0;
     }
     .prob-bar-track {
-      flex: 1;
+      flex: 1 1 auto;
       height: 8px;
       background: #21262d;
       border-radius: 4px;
       overflow: hidden;
-      min-width: 50px;
+      min-width: 40px;
     }
     .prob-bar-fill {
       height: 100%;
@@ -250,6 +294,7 @@
       border-radius: 6px;
       padding: 0.55rem 0.75rem;
       margin-bottom: 0.55rem;
+      width: 100%;
     }
     .decision-banner-top {
       display: flex;
@@ -284,6 +329,7 @@
       align-items: center;
       gap: 0.25rem;
       line-height: 1.4;
+      width: 100%;
     }
     .lineage-step {
       background: #21262d;
@@ -305,6 +351,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 0.4rem;
       margin-bottom: 0.55rem;
+      width: 100%;
     }
     .proof-item {
       background: #0d1117;
@@ -318,6 +365,7 @@
       display: block;
       font-family: monospace;
       font-size: 0.73rem;
+      word-break: break-word;
     }
     .proof-item span {
       color: #8b949e;
@@ -330,15 +378,18 @@
       border: 1px solid #30363d;
       border-radius: 6px;
       padding: 0.5rem 0.75rem;
-      height: 120px;
-      max-height: 160px;
-      overflow: auto;
+      height: 130px;
+      max-height: 180px;
+      overflow-y: auto;
+      overflow-x: hidden;
       font-size: 0.75rem;
       line-height: 1.35;
       margin: 0;
       color: #7ee787;
       box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
-      -webkit-overflow-scrolling: touch;
+      white-space: pre-wrap;
+      word-break: break-word;
+      width: 100%;
     }
     .metric-pill {
       background: #1f6feb22;
@@ -352,8 +403,8 @@
       white-space: nowrap;
     }
 
-    /* Mobile First Media Queries (< 600px) */
-    @media (max-width: 600px) {
+    /* Responsive Mobile Media Queries (< 700px) */
+    @media (max-width: 700px) {
       body {
         padding: 0.5rem 0.65rem;
       }
@@ -373,32 +424,40 @@
       .demo-title {
         font-size: 0.92rem;
       }
+      .domain-mobile-select {
+        display: block;
+      }
+      .domain-tabs {
+        display: none;
+      }
       .proof-grid {
         grid-template-columns: 1fr;
         gap: 0.35rem;
       }
       .prob-curie {
-        width: 105px;
-        font-size: 0.7rem;
+        width: 95px;
+        min-width: 80px;
+        font-size: 0.68rem;
       }
       .prob-value {
-        width: 38px;
-        font-size: 0.7rem;
+        width: 36px;
+        font-size: 0.68rem;
       }
       .decision-banner {
         padding: 0.45rem 0.55rem;
       }
       .curie-title {
-        font-size: 0.88rem;
+        font-size: 0.85rem;
       }
       .demo-output-pre {
-        height: 110px;
+        height: 120px;
         font-size: 0.72rem;
       }
       table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+        font-size: 0.75rem;
+      }
+      th, td {
+        padding: 0.4rem 0.45rem;
       }
     }
   </style>
@@ -432,13 +491,22 @@
         </div>
       </div>
 
-      <!-- DOMAIN SWITCHER TABS -->
-      <div class="domain-tabs">
-        <button id="tab-gs1" class="domain-tab-btn active" onclick="switchDomain('gs1')">📦 GS1 Supply Chain</button>
-        <button id="tab-schemaorg" class="domain-tab-btn" onclick="switchDomain('schemaorg')">🌐 Schema.org (Google SEO)</button>
-        <button id="tab-bfo" class="domain-tab-btn" onclick="switchDomain('bfo')">🏛️ BFO Top-Level</button>
-        <button id="tab-skos" class="domain-tab-btn" onclick="switchDomain('skos')">📚 SKOS Taxonomies</button>
-        <button id="tab-incident" class="domain-tab-btn" onclick="switchDomain('incident')">🚨 SRE Incident Triage</button>
+      <!-- DOMAIN SWITCHER (RESPONSIVE SELECT ON MOBILE, TABS ON DESKTOP) -->
+      <div class="domain-switcher-wrap">
+        <select id="domainSelect" class="domain-mobile-select" onchange="switchDomain(this.value)">
+          <option value="gs1" selected>📦 GS1 Supply Chain (Trade Items)</option>
+          <option value="schemaorg">🌐 Schema.org (Google SEO & Rich Snippets)</option>
+          <option value="bfo">🏛️ BFO Top-Level (ISO/IEC 21838-2)</option>
+          <option value="skos">📚 SKOS Taxonomies & Thesauri</option>
+          <option value="incident">🚨 IT Incident & SRE Triage</option>
+        </select>
+        <div class="domain-tabs">
+          <button id="tab-gs1" class="domain-tab-btn active" onclick="switchDomain('gs1')">📦 GS1 Supply Chain</button>
+          <button id="tab-schemaorg" class="domain-tab-btn" onclick="switchDomain('schemaorg')">🌐 Schema.org (Google SEO)</button>
+          <button id="tab-bfo" class="domain-tab-btn" onclick="switchDomain('bfo')">🏛️ BFO Top-Level</button>
+          <button id="tab-skos" class="domain-tab-btn" onclick="switchDomain('skos')">📚 SKOS Taxonomies</button>
+          <button id="tab-incident" class="domain-tab-btn" onclick="switchDomain('incident')">🚨 SRE Incident Triage</button>
+        </div>
       </div>
       
       <!-- 2-COLUMN SPLIT WORKBENCH -->
@@ -688,57 +756,59 @@ result = olaya.system_one(state, questions)</code></pre>
 
     <h2>Measured Performance & Hardware Benchmarks</h2>
     <p>Measured on consumer hardware (Apple Silicon MPS / single CPU core) on operational GS1 supply chain workloads:</p>
-    <table>
-      <thead>
-        <tr>
-          <th>Runtime / Architecture</th>
-          <th>Parameters</th>
-          <th>Dimension & Depth</th>
-          <th>Median Latency</th>
-          <th>P95 Latency</th>
-          <th>Throughput</th>
-          <th>Role in Warehouse / Supply Chain</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Rust Arrow Lexical</strong> (<code>olaya-core</code>)</td>
-          <td>0 (pure index)</td>
-          <td>Arrow IPC Buffer</td>
-          <td><strong>4.8 µs</strong></td>
-          <td>5.2 µs</td>
-          <td><strong>~210,000 qps</strong></td>
-          <td>Embedded PLC / Conveyor Chute Divert (&lt;1ms)</td>
-        </tr>
-        <tr>
-          <td><strong>Custom BERT Decision Model</strong></td>
-          <td>15.37M</td>
-          <td>4 layers, 256d</td>
-          <td><strong>12.71 ms</strong></td>
-          <td>14.52 ms</td>
-          <td><strong>231.7 qps</strong></td>
-          <td>Edge Scanner / Handheld Forklift Terminal</td>
-        </tr>
-        <tr>
-          <td><strong>ModernBERT-base Backbone</strong></td>
-          <td>149.91M</td>
-          <td>22 layers, 768d</td>
-          <td><strong>199.10 ms</strong></td>
-          <td>217.52 ms</td>
-          <td><strong>14.9 qps</strong></td>
-          <td>Complex ASN & Customs Document Ingestion</td>
-        </tr>
-        <tr>
-          <td><strong>WebMCP Agent Bridge</strong> (JSON-RPC)</td>
-          <td>N/A (RPC)</td>
-          <td>Custom BERT</td>
-          <td><strong>11.57 ms</strong></td>
-          <td>12.83 ms</td>
-          <td><strong>86.3 qps</strong></td>
-          <td>Autonomous Logistics Agent (MCP 2024-11-05)</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Runtime / Architecture</th>
+            <th>Parameters</th>
+            <th>Dimension & Depth</th>
+            <th>Median Latency</th>
+            <th>P95 Latency</th>
+            <th>Throughput</th>
+            <th>Role in Warehouse / Supply Chain</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Rust Arrow Lexical</strong> (<code>olaya-core</code>)</td>
+            <td>0 (pure index)</td>
+            <td>Arrow IPC Buffer</td>
+            <td><strong>4.8 µs</strong></td>
+            <td>5.2 µs</td>
+            <td><strong>~210,000 qps</strong></td>
+            <td>Embedded PLC / Conveyor Chute Divert (&lt;1ms)</td>
+          </tr>
+          <tr>
+            <td><strong>Custom BERT Decision Model</strong></td>
+            <td>15.37M</td>
+            <td>4 layers, 256d</td>
+            <td><strong>12.71 ms</strong></td>
+            <td>14.52 ms</td>
+            <td><strong>231.7 qps</strong></td>
+            <td>Edge Scanner / Handheld Forklift Terminal</td>
+          </tr>
+          <tr>
+            <td><strong>ModernBERT-base Backbone</strong></td>
+            <td>149.91M</td>
+            <td>22 layers, 768d</td>
+            <td><strong>199.10 ms</strong></td>
+            <td>217.52 ms</td>
+            <td><strong>14.9 qps</strong></td>
+            <td>Complex ASN & Customs Document Ingestion</td>
+          </tr>
+          <tr>
+            <td><strong>WebMCP Agent Bridge</strong> (JSON-RPC)</td>
+            <td>N/A (RPC)</td>
+            <td>Custom BERT</td>
+            <td><strong>11.57 ms</strong></td>
+            <td>12.83 ms</td>
+            <td><strong>86.3 qps</strong></td>
+            <td>Autonomous Logistics Agent (MCP 2024-11-05)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <hr/>
 
@@ -769,32 +839,34 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
     <hr/>
 
     <h2>Summary: When to Use What</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Operational Need</th>
-          <th>Best Tool</th>
-          <th>Why</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Dispute resolution, vendor negotiation emails, custom exception letters</strong></td>
-          <td><strong>LLM (Claude, GPT, Gemini)</strong></td>
-          <td>Expressive autoregressive prose generation</td>
-        </tr>
-        <tr>
-          <td><strong>Simple 3-way email inbox triage (&lt;10 flat strings)</strong></td>
-          <td><strong>Laya</strong></td>
-          <td>Fast local classifier</td>
-        </tr>
-        <tr>
-          <td><strong>Barcode/GTIN routing, GS1 compliance, cold-chain gating, conveyor PLC control, warehouse sorters</strong></td>
-          <td><strong>O-Laya</strong></td>
-          <td><strong>Axiom-verified, P(child) ≤ P(parent), scales to 100k+ SKUs, 4.8µs to 12ms latency, MCP-native</strong></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Operational Need</th>
+            <th>Best Tool</th>
+            <th>Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Dispute resolution, vendor negotiation emails, custom exception letters</strong></td>
+            <td><strong>LLM (Claude, GPT, Gemini)</strong></td>
+            <td>Expressive autoregressive prose generation</td>
+          </tr>
+          <tr>
+            <td><strong>Simple 3-way email inbox triage (&lt;10 flat strings)</strong></td>
+            <td><strong>Laya</strong></td>
+            <td>Fast local classifier</td>
+          </tr>
+          <tr>
+            <td><strong>Barcode/GTIN routing, GS1 compliance, cold-chain gating, conveyor PLC control, warehouse sorters</strong></td>
+            <td><strong>O-Laya</strong></td>
+            <td><strong>Axiom-verified, P(child) ≤ P(parent), scales to 100k+ SKUs, 4.8µs to 12ms latency, MCP-native</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <footer style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.95rem;">
       <p>Open Source Code & GS1 Datasets: <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener">github.com/josaum/olaya</a></p>
@@ -896,7 +968,12 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
       currentDomain = domainKey;
       const cfg = DOMAIN_CONFIG[domainKey];
 
-      // Update UI Tabs
+      // Update UI Tabs & Select Element
+      const sel = document.getElementById('domainSelect');
+      if (sel && sel.value !== domainKey) {
+        sel.value = domainKey;
+      }
+
       ['gs1', 'schemaorg', 'bfo', 'skos', 'incident'].forEach(k => {
         const btn = document.getElementById(`tab-${k}`);
         if (!btn) return;
