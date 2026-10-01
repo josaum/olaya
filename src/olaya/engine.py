@@ -12,13 +12,12 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
-import numpy as np
 import torch
 from transformers import AutoTokenizer
 
-from olaya.axioms import calibrate_and_project_distribution, project_hierarchical_distribution
+from olaya.axioms import calibrate_and_project_distribution, project_hierarchical_distribution, verify_axioms
 from olaya.candidate_router import CandidateRouter
 from olaya.model import OntologyDecisionModel
 from olaya.ontology import Concept, Ontology, create_incident_ontology
@@ -40,9 +39,9 @@ class ConceptAnswer:
     type: str = "concept"
     curie: str = ""
     label: str = ""
-    lineage: List[str] = field(default_factory=list)
-    probabilities: Dict[str, float] = field(default_factory=dict)
-    candidate_probabilities: Dict[str, float] = field(default_factory=dict)
+    lineage: list[str] = field(default_factory=list)
+    probabilities: dict[str, float] = field(default_factory=dict)
+    candidate_probabilities: dict[str, float] = field(default_factory=dict)
     confidence: float = 0.0
     axioms_verified: bool = True
 
@@ -59,7 +58,7 @@ class SubsumesAnswer:
 class ChoiceAnswer:
     type: str = "choice"
     choice: str = ""
-    probabilities: Dict[str, float] = field(default_factory=dict)
+    probabilities: dict[str, float] = field(default_factory=dict)
     confidence: float = 0.0
 
 
@@ -67,7 +66,7 @@ class ChoiceAnswer:
 class ScoreAnswer:
     type: str = "score"
     score: float = 0.0
-    probabilities: Dict[str, float] = field(default_factory=dict)
+    probabilities: dict[str, float] = field(default_factory=dict)
     confidence: float = 0.0
 
 
@@ -80,8 +79,8 @@ class NoulAnswer:
 @dataclass
 class SystemOneResult:
     model: str
-    answers: Dict[str, Any]
-    usage: Dict[str, int]
+    answers: dict[str, Any]
+    usage: dict[str, int]
     latency_ms: float
 
 
@@ -147,18 +146,18 @@ class OLaya:
             "pad": _token_id_or(self.tokenizer.pad_token_id, 0),
         }
 
-    def _encode_text(self, text: str) -> List[int]:
+    def _encode_text(self, text: str) -> list[int]:
         return self.tokenizer.encode(text, add_special_tokens=False)
 
-    def system_one(self, state: Any, questions: Dict[str, Dict[str, Any]]) -> SystemOneResult:
+    def system_one(self, state: Any, questions: dict[str, dict[str, Any]]) -> SystemOneResult:
         """Evaluate typed questions against input state in a single forward pass."""
         start_time = time.perf_counter()
         qids = list(questions.keys())
         if not qids:
             raise ValueError("system_one: At least one question required.")
 
-        bundles: List[SequenceBundle] = []
-        subgraphs: List[Ontology] = []
+        bundles: list[SequenceBundle] = []
+        subgraphs: list[Ontology] = []
         total_tokens = 0
         state_text = serialize_state(state)
 
@@ -267,7 +266,7 @@ class OLaya:
             logits, act_probs = self.model(input_ids, attention_mask, marker_pos, marker_mask, qtypes)
 
         logits_np = logits.cpu().numpy()
-        answers: Dict[str, Any] = {}
+        answers: dict[str, Any] = {}
 
         for i, qid in enumerate(qids):
             b = bundles[i]
@@ -298,7 +297,7 @@ class OLaya:
                     probabilities={k: round(v, 4) for k, v in marginals.items()},
                     candidate_probabilities={k: round(v, 4) for k, v in candidate_probs.items()},
                     confidence=round(confidence, 4),
-                    axioms_verified=True,
+                    axioms_verified=verify_axioms(marginals, subgraph),
                 )
                 continue
 
@@ -349,11 +348,11 @@ class OLaya:
         )
 
 
-def _token_id_or(token_id: Optional[int], default: int) -> int:
+def _token_id_or(token_id: int | None, default: int) -> int:
     return default if token_id is None else token_id
 
 
-def _flat_subgraph(name: str, concepts: List[Concept]) -> Ontology:
+def _flat_subgraph(name: str, concepts: list[Concept]) -> Ontology:
     subgraph = Ontology(name)
     for c in concepts:
         subgraph.add_concept(c)

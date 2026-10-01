@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-import math
-from typing import Dict, List, Set, Tuple
-
 import numpy as np
 
 from olaya.ontology import Ontology
+
+# Disjointness threshold shared by all runtimes (see spec/AXIOMS.md).
+DISJOINT_THRESHOLD = 0.6
 
 
 def temperature_by_cardinality(k: int) -> float:
@@ -44,9 +44,9 @@ def normalized_entropy_confidence(probs: np.ndarray) -> float:
 
 
 def enforce_subsumption_monotonicity(
-    probs: Dict[str, float],
+    probs: dict[str, float],
     subgraph: Ontology,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """Ensure that for every subsumption relation A subClassOf B:
 
     P(B) >= P(A).
@@ -83,26 +83,62 @@ def enforce_subsumption_monotonicity(
 
 
 def enforce_disjointness_exclusion(
-    probs: Dict[str, float],
+    probs: dict[str, float],
     subgraph: Ontology,
-    threshold: float = 0.5,
-) -> Dict[str, float]:
-    """Enforce that if concept A has high confidence (>= threshold),
+    threshold: float = 0.6,
+) -> dict[str, float]:
+    """Mutual exclusion for disjoint pairs (shared spec, see ``spec/AXIOMS.md``).
 
-    any concept B disjoint with A has its probability suppressed to zero.
+    Pairs (a, b) are visited in candidate order (a before b). If max(P(a), P(b)) >= threshold, the
+    smaller side and all of its descendants are set to zero (keeping monotonicity); on a tie, b loses.
     """
     adjusted = dict(probs)
-    for c_a, p_a in list(adjusted.items()):
-        if p_a >= threshold:
-            concept_a = subgraph.concepts.get(c_a)
-            if not concept_a:
-                continue
-            for c_b in concept_a.disjoint_with:
-                if c_b in adjusted and c_b != c_a:
-                    # Suppress disjoint peer
-                    adjusted[c_b] = 0.0
-
+    for a, b in disjoint_pairs(list(adjusted), subgraph):
+        p_a, p_b = adjusted[a], adjusted[b]
+        if max(p_a, p_b) >= threshold:
+            loser = b if p_a >= p_b else a
+            for curie in subgraph.get_descendants(loser):
+                if curie in adjusted:
+                    adjusted[curie] = 0.0
     return adjusted
+
+
+def disjoint_pairs(curies: list[str], subgraph: Ontology) -> list[tuple[str, str]]:
+    """Disjoint pairs among ``curies`` as (earlier, later) in list order."""
+    position = {c: i for i, c in enumerate(curies)}
+    pairs = []
+    for i, a in enumerate(curies):
+        concept = subgraph.concepts.get(a)
+        if concept is None:
+            continue
+        for b in sorted(concept.disjoint_with, key=lambda c: position.get(c, -1)):
+            if position.get(b, -1) > i:
+                pairs.append((a, b))
+    return pairs
+
+
+def verify_axioms(
+    probs: dict[str, float],
+    subgraph: Ontology,
+    threshold: float = 0.6,
+    tol: float = 1e-6,
+) -> bool:
+    """Check the guarantees the projection is meant to provide.
+
+    - Monotonicity: P(parent) >= P(child) for every subsumption edge among ``probs``.
+    - Exclusion: for every disjoint pair, either one side is zero or both are below ``threshold``.
+    """
+    for curie, p in probs.items():
+        concept = subgraph.concepts.get(curie)
+        if concept is None:
+            continue
+        for parent in concept.parents:
+            if parent in probs and probs[parent] < p - tol:
+                return False
+    for a, b in disjoint_pairs(list(probs), subgraph):
+        if min(probs[a], probs[b]) > tol and max(probs[a], probs[b]) >= threshold:
+            return False
+    return True
 
 
 def _temperature_softmax(raw_logits: np.ndarray, k: int) -> np.ndarray:
@@ -115,7 +151,7 @@ def _temperature_softmax(raw_logits: np.ndarray, k: int) -> np.ndarray:
     return exp_logits / np.sum(exp_logits)
 
 
-def hierarchical_marginals(candidate_probs: Dict[str, float], subgraph: Ontology) -> Dict[str, float]:
+def hierarchical_marginals(candidate_probs: dict[str, float], subgraph: Ontology) -> dict[str, float]:
     """Lift a distribution over candidate concepts to marginals over every subgraph concept.
 
     P(concept) = sum of candidate mass at or below the concept. Because a child's descendant set is a
@@ -130,11 +166,11 @@ def hierarchical_marginals(candidate_probs: Dict[str, float], subgraph: Ontology
 
 def project_hierarchical_distribution(
     raw_logits: np.ndarray,
-    candidate_curies: List[str],
+    candidate_curies: list[str],
     subgraph: Ontology,
     enforce_axioms: bool = True,
-    disjoint_threshold: float = 0.6,
-) -> Tuple[Dict[str, float], Dict[str, float], float]:
+    disjoint_threshold: float = DISJOINT_THRESHOLD,
+) -> tuple[dict[str, float], dict[str, float], float]:
     """Calibrate candidate logits and project them onto the ontology.
 
     Returns ``(candidate_probs, marginals, confidence)``:
@@ -151,20 +187,26 @@ def project_hierarchical_distribution(
     candidate_probs = {curie: float(base_probs[i]) for i, curie in enumerate(candidate_curies)}
 
     if enforce_axioms:
-        marginals = hierarchical_marginals(candidate_probs, subgraph)
-        suppressed: Set[str] = set()
-        for curie_a, p_a in marginals.items():
-            if p_a < disjoint_threshold:
-                continue
-            under_a = subgraph.get_descendants(curie_a)
-            for curie_b in subgraph.concepts[curie_a].disjoint_with:
-                suppressed.update(subgraph.get_descendants(curie_b) - under_a)
-        if suppressed:
-            for curie in suppressed.intersection(candidate_probs):
+        # Renormalizing can lift another concept over the threshold, so repeat to a fixpoint.
+        # Each round only zeroes candidates, so this terminates within len(candidates) rounds.
+        while True:
+            marginals = hierarchical_marginals(candidate_probs, subgraph)
+            suppressed: set[str] = set()
+            for curie_a, p_a in marginals.items():
+                if p_a < disjoint_threshold:
+                    continue
+                under_a = subgraph.get_descendants(curie_a)
+                for curie_b in subgraph.concepts[curie_a].disjoint_with:
+                    suppressed.update(subgraph.get_descendants(curie_b) - under_a)
+            newly_zeroed = [c for c in suppressed.intersection(candidate_probs) if candidate_probs[c] > 0.0]
+            if not newly_zeroed:
+                break
+            for curie in newly_zeroed:
                 candidate_probs[curie] = 0.0
             total = sum(candidate_probs.values())
-            if total > 0:
-                candidate_probs = {c: p / total for c, p in candidate_probs.items()}
+            if total <= 0:
+                break
+            candidate_probs = {c: p / total for c, p in candidate_probs.items()}
 
     marginals = hierarchical_marginals(candidate_probs, subgraph)
     conf = normalized_entropy_confidence(np.array(list(candidate_probs.values()), dtype=np.float64))
@@ -173,10 +215,10 @@ def project_hierarchical_distribution(
 
 def calibrate_and_project_distribution(
     raw_logits: np.ndarray,
-    candidate_curies: List[str],
+    candidate_curies: list[str],
     subgraph: Ontology,
     enforce_axioms: bool = True,
-) -> Tuple[Dict[str, float], float]:
+) -> tuple[dict[str, float], float]:
     """Apply temperature scaling, softmax, ontological projection, and compute confidence.
 
     Used for flat questions (choice, score, noul, subsumes). Monotonicity is enforced by lifting
@@ -191,7 +233,7 @@ def calibrate_and_project_distribution(
         # Enforce subsumption monotonicity
         prob_map = enforce_subsumption_monotonicity(prob_map, subgraph)
         # Enforce disjointness
-        prob_map = enforce_disjointness_exclusion(prob_map, subgraph, threshold=0.6)
+        prob_map = enforce_disjointness_exclusion(prob_map, subgraph, threshold=DISJOINT_THRESHOLD)
 
     # Compute normalized entropy confidence
     prob_values = np.array(list(prob_map.values()), dtype=np.float32)

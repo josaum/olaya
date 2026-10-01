@@ -1,13 +1,15 @@
 //! High-performance O-Laya engine producing zero-copy Arrow decision outputs.
 
+use anyhow::{Context, Result};
+use arrow::array::{
+    Array, BooleanBuilder, Float32Builder, StringArray, StringBuilder, UInt32Array, UInt32Builder,
+};
+use arrow::record_batch::RecordBatch;
 use std::collections::HashSet;
 use std::sync::Arc;
-use anyhow::{Context, Result};
-use arrow::array::{Array, BooleanBuilder, Float32Builder, StringArray, StringBuilder, UInt32Array, UInt32Builder};
-use arrow::record_batch::RecordBatch;
 
 use crate::arrow_schema::decision_output_schema;
-use crate::axioms::calibrate_and_project_inplace;
+use crate::axioms::{calibrate_and_project_inplace, verify_axioms, DISJOINT_THRESHOLD};
 use crate::router::{tokenize_text, ActiveDecisionSubgraph, ArrowCandidateRouter};
 
 /// High-level result of a single decision evaluation.
@@ -81,14 +83,17 @@ impl OlayaEngine {
     /// Lexical logits: label, synonym and description token overlap with the state.
     fn lexical_logits(&self, state_text: &str, subgraph: &ActiveDecisionSubgraph) -> Vec<f32> {
         let query_tokens: HashSet<String> = tokenize_text(state_text).into_iter().collect();
-        let overlap = |tokens: &[String]| tokens.iter().filter(|t| query_tokens.contains(*t)).count() as f32;
+        let overlap =
+            |tokens: &[String]| tokens.iter().filter(|t| query_tokens.contains(*t)).count() as f32;
 
         subgraph
             .row_indices
             .iter()
             .map(|&row| {
                 let toks = self.router.row_tokens(row);
-                1.0 + 3.0 * overlap(&toks.label) + 2.5 * overlap(&toks.synonyms) + 1.5 * overlap(&toks.description)
+                1.0 + 3.0 * overlap(&toks.label)
+                    + 2.5 * overlap(&toks.synonyms)
+                    + 1.5 * overlap(&toks.description)
             })
             .collect()
     }
@@ -116,12 +121,19 @@ impl OlayaEngine {
         text
     }
 
-    fn candidate_logits(&self, state_text: &str, subgraph: &ActiveDecisionSubgraph) -> Result<Vec<f32>> {
+    fn candidate_logits(
+        &self,
+        state_text: &str,
+        subgraph: &ActiveDecisionSubgraph,
+    ) -> Result<Vec<f32>> {
         #[cfg(feature = "onnx")]
         if let Some(scorer) = &self.neural_scorer {
             let rows: HashSet<usize> = subgraph.row_indices.iter().copied().collect();
-            let candidate_texts: Vec<String> =
-                subgraph.row_indices.iter().map(|&row| self.option_text(row, &rows)).collect();
+            let candidate_texts: Vec<String> = subgraph
+                .row_indices
+                .iter()
+                .map(|&row| self.option_text(row, &rows))
+                .collect();
             let mut logits = scorer.score_candidates(state_text, &candidate_texts)?;
             logits.resize(subgraph.row_indices.len(), f32::NEG_INFINITY);
             return Ok(logits);
@@ -130,11 +142,7 @@ impl OlayaEngine {
     }
 
     /// Evaluates a decision query against an input state text.
-    pub fn system_one(
-        &self,
-        state_text: &str,
-        max_candidates: usize,
-    ) -> Result<DecisionResult> {
+    pub fn system_one(&self, state_text: &str, max_candidates: usize) -> Result<DecisionResult> {
         let subgraph = self.router.extract_subgraph(state_text, max_candidates);
         if subgraph.row_indices.is_empty() {
             anyhow::bail!("Active subgraph is empty");
@@ -156,11 +164,20 @@ impl OlayaEngine {
             .filter(|&slot| logits[slot] >= max_prob - 1e-5)
             .max_by(|&a, &b| {
                 let (ra, rb) = (subgraph.row_indices[a], subgraph.row_indices[b]);
-                self.router.depth(ra).cmp(&self.router.depth(rb)).then(rb.cmp(&ra))
+                self.router
+                    .depth(ra)
+                    .cmp(&self.router.depth(rb))
+                    .then(rb.cmp(&ra))
             })
             .context("No candidate slots")?;
 
         let best_row = subgraph.row_indices[best_slot];
+        let axioms_ok = verify_axioms(
+            &logits,
+            &subgraph.parent_edges,
+            &subgraph.disjoint_edges,
+            DISJOINT_THRESHOLD,
+        );
         let probabilities = subgraph
             .row_indices
             .iter()
@@ -174,7 +191,7 @@ impl OlayaEngine {
             selected_label: self.labels.value(best_row).to_string(),
             confidence,
             probabilities,
-            axioms_verified: true,
+            axioms_verified: axioms_ok,
         })
     }
 
@@ -215,6 +232,7 @@ impl OlayaEngine {
                 Arc::new(confidence_builder.finish()),
                 Arc::new(axioms_builder.finish()),
             ],
-        ).context("Failed to construct decision output RecordBatch")
+        )
+        .context("Failed to construct decision output RecordBatch")
     }
 }

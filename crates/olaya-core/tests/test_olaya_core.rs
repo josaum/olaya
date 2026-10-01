@@ -1,25 +1,57 @@
-use tempfile::NamedTempFile;
 use arrow::array::{Array, StringArray};
 use olaya_core::{
-    OntologyBatchBuilder, OlayaEngine,
-    write_ontology_ipc, read_ontology_ipc,
-    enforce_subsumption_monotonicity_inplace,
-    enforce_disjointness_inplace,
+    enforce_disjointness_inplace, enforce_subsumption_monotonicity_inplace, read_ontology_ipc,
+    write_ontology_ipc, OlayaEngine, OntologyBatchBuilder,
 };
+use tempfile::NamedTempFile;
 
 fn create_sample_arrow_ontology() -> arrow::record_batch::RecordBatch {
     let mut builder = OntologyBatchBuilder::new();
 
     // 0: Root
-    builder.append_concept(0, "INCIDENT:ROOT", "Operational Incident", "Root incident class", &[], &[], &["incident"]);
+    builder.append_concept(
+        0,
+        "INCIDENT:ROOT",
+        "Operational Incident",
+        "Root incident class",
+        &[],
+        &[],
+        &["incident"],
+    );
     // 1: Data (parent: 0)
-    builder.append_concept(1, "INCIDENT:DATA", "Data & Storage Incident", "Storage and database failures", &[0], &[2], &["database", "db", "storage"]);
+    builder.append_concept(
+        1,
+        "INCIDENT:DATA",
+        "Data & Storage Incident",
+        "Storage and database failures",
+        &[0],
+        &[2],
+        &["database", "db", "storage"],
+    );
     // 2: Billing (parent: 0, disjoint: 1)
-    builder.append_concept(2, "INCIDENT:BILLING", "Billing Incident", "Payment and subscription errors", &[0], &[1], &["billing", "payment", "invoice"]);
+    builder.append_concept(
+        2,
+        "INCIDENT:BILLING",
+        "Billing Incident",
+        "Payment and subscription errors",
+        &[0],
+        &[1],
+        &["billing", "payment", "invoice"],
+    );
     // 3: Deadlock (parent: 1)
-    builder.append_concept(3, "INCIDENT:DB_DEADLOCK", "Database Deadlock", "Lock wait timeouts on SQL queries", &[1], &[], &["deadlock", "postgres lock"]);
+    builder.append_concept(
+        3,
+        "INCIDENT:DB_DEADLOCK",
+        "Database Deadlock",
+        "Lock wait timeouts on SQL queries",
+        &[1],
+        &[],
+        &["deadlock", "postgres lock"],
+    );
 
-    builder.finish().expect("Failed to build ontology RecordBatch")
+    builder
+        .finish()
+        .expect("Failed to build ontology RecordBatch")
 }
 
 #[test]
@@ -55,7 +87,7 @@ fn test_inplace_axioms() {
 
     // Disjointness test: slot 1 (data) and slot 2 (billing) are disjoint
     let disjoint_edges = vec![(1, 2)];
-    enforce_disjointness_inplace(&mut probs, &disjoint_edges, 0.5);
+    enforce_disjointness_inplace(&mut probs, &parent_edges, &disjoint_edges, 0.5);
     assert_eq!(probs[2], 0.0); // Billing must be suppressed to 0.0
 }
 
@@ -127,7 +159,10 @@ fn test_owl_fast_core_direct_arrow_ingestion() {
 
     let engine = OlayaEngine::new(batch).expect("Failed to construct OlayaEngine from parsed TTL");
     let res = engine
-        .system_one("High latency and severe packet loss on core backbone router", 4)
+        .system_one(
+            "High latency and severe packet loss on core backbone router",
+            4,
+        )
         .unwrap();
 
     println!("\nTTL Ingested Query Result:");
@@ -140,14 +175,37 @@ fn test_owl_fast_core_direct_arrow_ingestion() {
     assert!(res.axioms_verified);
 }
 
-
 #[test]
 fn test_tie_break_prefers_deepest_regardless_of_row_order() {
     // Child rows come *before* their parents, so row order cannot be relied on.
     let mut builder = OntologyBatchBuilder::new();
-    builder.append_concept(10, "INCIDENT:DB_DEADLOCK", "Database Deadlock", "Lock waits", &[11], &[], &["deadlock"]);
-    builder.append_concept(11, "INCIDENT:DATA", "Data Incident", "Storage failures", &[12], &[], &[]);
-    builder.append_concept(12, "INCIDENT:ROOT", "Operational Incident", "Root", &[], &[], &[]);
+    builder.append_concept(
+        10,
+        "INCIDENT:DB_DEADLOCK",
+        "Database Deadlock",
+        "Lock waits",
+        &[11],
+        &[],
+        &["deadlock"],
+    );
+    builder.append_concept(
+        11,
+        "INCIDENT:DATA",
+        "Data Incident",
+        "Storage failures",
+        &[12],
+        &[],
+        &[],
+    );
+    builder.append_concept(
+        12,
+        "INCIDENT:ROOT",
+        "Operational Incident",
+        "Root",
+        &[],
+        &[],
+        &[],
+    );
     let engine = OlayaEngine::new(builder.finish().unwrap()).unwrap();
 
     let res = engine.system_one("deadlock", 4).unwrap();
@@ -177,8 +235,20 @@ fn test_acronyms_route_to_matching_concepts() {
     builder.append_concept(2, "PG", "PostgreSQL Failure", "", &[0], &[], &[]);
     let engine = OlayaEngine::new(builder.finish().unwrap()).unwrap();
 
-    assert_eq!(engine.system_one("upstream returned http 503", 4).unwrap().selected_curie, "HTTP_5XX");
-    assert_eq!(engine.system_one("POSTGRESQL replica down", 4).unwrap().selected_curie, "PG");
+    assert_eq!(
+        engine
+            .system_one("upstream returned http 503", 4)
+            .unwrap()
+            .selected_curie,
+        "HTTP_5XX"
+    );
+    assert_eq!(
+        engine
+            .system_one("POSTGRESQL replica down", 4)
+            .unwrap()
+            .selected_curie,
+        "PG"
+    );
 }
 
 #[test]
@@ -194,7 +264,11 @@ fn test_engine_rejects_invalid_schema() {
     ]));
     let batch = arrow::record_batch::RecordBatch::try_new(
         schema,
-        vec![Arc::new(U::from(vec![0])), Arc::new(U::from(vec![0])), Arc::new(S::from(vec!["x"]))],
+        vec![
+            Arc::new(U::from(vec![0])),
+            Arc::new(U::from(vec![0])),
+            Arc::new(S::from(vec!["x"])),
+        ],
     )
     .unwrap();
     assert!(OlayaEngine::new(batch).is_err());
@@ -206,11 +280,77 @@ fn test_ubiquitous_tokens_do_not_drown_rare_matches() {
     let mut builder = OntologyBatchBuilder::new();
     builder.append_concept(0, "R", "Root", "", &[], &[], &[]);
     for i in 1..n {
-        builder.append_concept(i as u32, &format!("G{i}"), &format!("Generated Type {i}"), "", &[0], &[], &[]);
+        builder.append_concept(
+            i as u32,
+            &format!("G{i}"),
+            &format!("Generated Type {i}"),
+            "",
+            &[0],
+            &[],
+            &[],
+        );
     }
     builder.append_concept(n as u32, "DL", "Database Deadlock", "", &[0], &[], &[]);
     let engine = OlayaEngine::new(builder.finish().unwrap()).unwrap();
 
     let res = engine.system_one("generated type deadlock", 8).unwrap();
     assert_eq!(res.selected_curie, "DL");
+}
+
+#[test]
+fn test_axiom_kernel_matches_shared_golden_vectors() {
+    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../spec/axioms_golden.json");
+    let golden: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+    let tol = golden["tolerance"].as_f64().unwrap() as f32;
+    let edges = |v: &serde_json::Value| -> Vec<(usize, usize)> {
+        v.as_array()
+            .unwrap()
+            .iter()
+            .map(|e| {
+                (
+                    e[0].as_u64().unwrap() as usize,
+                    e[1].as_u64().unwrap() as usize,
+                )
+            })
+            .collect()
+    };
+
+    for case in golden["cases"].as_array().unwrap() {
+        let name = case["name"].as_str().unwrap();
+        let mut probs: Vec<f32> = case["logits"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|x| x.as_f64().unwrap() as f32)
+            .collect();
+        let parent_edges = edges(&case["parent_edges"]);
+        let disjoint_edges = edges(&case["disjoint_edges"]);
+        let conf =
+            olaya_core::calibrate_and_project_inplace(&mut probs, &parent_edges, &disjoint_edges);
+
+        for (got, want) in probs.iter().zip(case["expected_probs"].as_array().unwrap()) {
+            let want = want.as_f64().unwrap() as f32;
+            assert!(
+                (got - want).abs() <= tol,
+                "{name}: probs {probs:?} vs expected {want}"
+            );
+        }
+        let want_conf = case["expected_confidence"].as_f64().unwrap() as f32;
+        assert!(
+            (conf - want_conf).abs() <= tol,
+            "{name}: confidence {conf} vs {want_conf}"
+        );
+        let verified = olaya_core::verify_axioms(
+            &probs,
+            &parent_edges,
+            &disjoint_edges,
+            olaya_core::DISJOINT_THRESHOLD,
+        );
+        assert_eq!(
+            verified,
+            case["expected_axioms_verified"].as_bool().unwrap(),
+            "{name}: axioms_verified"
+        );
+    }
 }
