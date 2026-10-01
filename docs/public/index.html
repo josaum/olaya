@@ -11,87 +11,49 @@
     mermaid.initialize({ startOnLoad: true, theme: 'dark' });
   </script>
   <style>
-    body { max-width: 960px; margin: auto; padding: 2rem 1.5rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.65; }
-    header { border-bottom: 1px solid var(--border); margin-bottom: 2rem; padding-bottom: 1rem; }
-    h1 { font-size: 2.2rem; line-height: 1.25; margin-bottom: 0.5rem; }
-    .meta { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
-    .badge { display: inline-block; background: #1b5e20; color: #fff; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; margin-right: 0.5rem; }
-    pre { border-radius: 6px; padding: 1rem; overflow-x: auto; background: #161b22; }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.9em; }
+    body { max-width: 980px; margin: auto; padding: 1rem 1.25rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; }
+    header { border-bottom: 1px solid var(--border); margin-bottom: 1rem; padding-bottom: 0.5rem; }
+    h1 { font-size: 1.65rem; line-height: 1.2; margin: 0.35rem 0; }
+    .meta { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 0.25rem; }
+    .badge { display: inline-block; background: #1b5e20; color: #fff; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; margin-right: 0.4rem; }
+    pre { border-radius: 6px; padding: 0.75rem; overflow-x: auto; background: #161b22; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.88em; }
     table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
-    th, td { padding: 0.75rem 0.85rem; border: 1px solid var(--border); }
+    th, td { padding: 0.6rem 0.75rem; border: 1px solid var(--border); }
     th { background: rgba(255, 255, 255, 0.05); }
-    .callout { background: rgba(27, 94, 32, 0.15); border-left: 4px solid #4caf50; padding: 1rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
-    .mermaid { background: #0d1117; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: center; }
+    .callout { background: rgba(27, 94, 32, 0.15); border-left: 4px solid #4caf50; padding: 0.85rem 1rem; margin: 1.25rem 0; border-radius: 0 6px 6px 0; }
+    .mermaid { background: #0d1117; padding: 1.25rem; border-radius: 8px; margin: 1.5rem 0; text-align: center; }
 
-    /* Interactive Live Demo Layout */
+    /* Single-Fold Optimized Live Demo Container */
     .demo-container {
       background: #0d1117;
       border: 1px solid #30363d;
       border-radius: 8px;
-      padding: 1.5rem;
-      margin: 2.5rem 0;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0 2rem 0;
       box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
     .demo-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: 0.6rem;
       border-bottom: 1px solid #21262d;
-      padding-bottom: 0.75rem;
-    }
-    .demo-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #58a6ff;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .pulse-dot {
-      width: 10px;
-      height: 10px;
-      background: #3fb950;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #3fb950;
-      animation: pulse 1.8s infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.7); }
-      70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(63, 185, 80, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0); }
-    }
-    /* Interactive Live Demo Layout - Vertical Stack */
-    .demo-container {
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 2.5rem 0;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    }
-    .demo-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid #21262d;
-      padding-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
       flex-wrap: wrap;
       gap: 0.5rem;
     }
     .demo-title {
-      font-size: 1.25rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: #58a6ff;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.45rem;
     }
     .pulse-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       background: #3fb950;
       border-radius: 50%;
       box-shadow: 0 0 8px #3fb950;
@@ -99,21 +61,20 @@
     }
     @keyframes pulse {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.7); }
-      70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(63, 185, 80, 0); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(63, 185, 80, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0); }
     }
     .demo-stack {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-      margin-top: 1rem;
+      gap: 0.65rem;
     }
     .panel-label {
-      font-size: 0.88rem;
+      font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: #8b949e;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.35rem;
       font-weight: 600;
       display: flex;
       justify-content: space-between;
@@ -121,15 +82,16 @@
     }
     .demo-textarea {
       width: 100%;
-      min-height: 150px;
+      height: 72px;
+      min-height: 60px;
       background: #161b22;
       border: 1px solid #30363d;
       border-radius: 6px;
       color: #c9d1d9;
       font-family: inherit;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      padding: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      padding: 0.6rem 0.75rem;
       resize: vertical;
       box-sizing: border-box;
       outline: none;
@@ -137,21 +99,22 @@
     }
     .demo-textarea:focus {
       border-color: #58a6ff;
-      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+      box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
     }
     .demo-presets {
       display: flex;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
+      gap: 0.4rem;
+      margin-top: 0.4rem;
       flex-wrap: wrap;
+      align-items: center;
     }
     .preset-btn {
       background: #21262d;
       color: #c9d1d9;
       border: 1px solid #30363d;
       border-radius: 4px;
-      padding: 0.35rem 0.75rem;
-      font-size: 0.82rem;
+      padding: 0.2rem 0.55rem;
+      font-size: 0.75rem;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
@@ -165,12 +128,12 @@
       background: #161b22;
       border: 1px solid #30363d;
       border-radius: 6px;
-      padding: 1.25rem;
-      min-height: 380px;
-      max-height: 550px;
+      padding: 0.75rem 1rem;
+      height: 250px;
+      max-height: 290px;
       overflow: auto;
-      font-size: 0.88rem;
-      line-height: 1.55;
+      font-size: 0.82rem;
+      line-height: 1.45;
       margin: 0;
       color: #7ee787;
       box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
@@ -180,8 +143,8 @@
       color: #58a6ff;
       border: 1px solid #1f6feb55;
       border-radius: 12px;
-      padding: 0.2rem 0.65rem;
-      font-size: 0.8rem;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.75rem;
       font-family: monospace;
       font-weight: 600;
     }
@@ -189,19 +152,21 @@
 </head>
 <body>
   <header>
-    <div>
-      <span class="badge">O-LAYA</span>
-      <span class="badge" style="background:#0d47a1;">SUPPLY CHAIN & GS1</span>
-      <span class="badge" style="background:#4a148c;">MCP 2024-11-05</span>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <div>
+        <span class="badge">O-LAYA</span>
+        <span class="badge" style="background:#0d47a1;">SUPPLY CHAIN & GS1</span>
+        <span class="badge" style="background:#4a148c;">MCP 2024-11-05</span>
+      </div>
+      <div class="meta" style="margin: 0;">
+        By <strong>Dionisio Chiuratto Agourakis</strong> (<a href="mailto:dionisio.ca@gmail.com">dionisio.ca@gmail.com</a>)
+      </div>
     </div>
     <h1>What O-Laya Actually Is: An Ontology-Grounded System 1 Decision Model</h1>
-    <div class="meta">
-      By <strong>Dionisio Chiuratto Agourakis</strong> (<a href="mailto:dionisio.ca@gmail.com">dionisio.ca@gmail.com</a>) • Published October 1, 2026 • 12 min read • Parallel response to <a href="https://relay.sparkrouter.com/ai--and--local-models/what-laya-actually-is" target="_blank" rel="noopener">What Laya Actually Is</a>
-    </div>
   </header>
 
   <article>
-    <!-- INTERACTIVE LIVE DEMO (STACKED) -->
+    <!-- INTERACTIVE LIVE DEMO (FITS IN ONE FOLD) -->
     <div class="demo-container">
       <div class="demo-header">
         <div class="demo-title">
@@ -210,21 +175,20 @@
         </div>
         <div id="latencyBadge" class="metric-pill">Ready in Browser</div>
       </div>
-      <p style="font-size: 0.95rem; color: #8b949e; margin-top: 0;">
-        Type or edit any warehouse scan, barcode payload, or logistics item below. The client-side O-Laya engine executes the full candidate router, active subgraph extraction, and axiom projection locally in your browser on every keystroke.
-      </p>
       
       <div class="demo-stack">
-        <!-- Enlarged Input Panel (Top) -->
+        <!-- Input Panel (Top) -->
         <div class="demo-input-panel">
           <div class="panel-label">
             <span>Input State (Warehouse Scan / EPCIS Event Stream)</span>
-            <span id="charCount" style="font-family: monospace; color: #58a6ff;">0 chars</span>
+            <div style="display: flex; gap: 0.6rem; align-items: center;">
+              <span id="charCount" style="font-family: monospace; color: #58a6ff;">0 chars</span>
+            </div>
           </div>
-          <textarea id="stateInput" class="demo-textarea" rows="4" placeholder="Paste or type warehouse observation, barcode scan, or packing slip..."></textarea>
+          <textarea id="stateInput" class="demo-textarea" placeholder="Paste or type warehouse observation, barcode scan, or packing slip..."></textarea>
           
           <div class="demo-presets">
-            <span style="font-size: 0.8rem; color: #8b949e; align-self: center; font-weight: 500;">Quick Presets:</span>
+            <span style="font-size: 0.75rem; color: #8b949e; font-weight: 500;">Presets:</span>
             <button class="preset-btn" onclick="loadPreset('milk')">Perishable Whole Milk</button>
             <button class="preset-btn" onclick="loadPreset('pallet')">Returnable Euro Pallet</button>
             <button class="preset-btn" onclick="loadPreset('meat')">Frozen Poultry Cuts</button>
@@ -236,7 +200,7 @@
         <div class="demo-output-panel">
           <div class="panel-label">
             <span>Real-Time Grounded Decision Output (Nested JSON)</span>
-            <span id="axiomStatus" style="color: #3fb950; font-family: monospace; font-size: 0.85rem;">axioms_verified: true</span>
+            <span id="axiomStatus" style="color: #3fb950; font-family: monospace; font-size: 0.8rem;">axioms_verified: true</span>
           </div>
           <pre id="jsonOutput" class="demo-output-pre">Loading GS1 Web Vocabulary & O-Laya Engine...</pre>
         </div>
