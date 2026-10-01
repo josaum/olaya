@@ -34,8 +34,10 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install (CPU torch)
+        # setup-uv with python-version already creates and activates .venv; --clear
+        # makes this step work whether or not that happens.
         run: |
-          uv venv
+          uv venv --clear
           uv pip install --index-url https://download.pytorch.org/whl/cpu torch
           uv pip install -e ".[dev]"
       - run: .venv/bin/ruff check src tests scripts benchmarks
