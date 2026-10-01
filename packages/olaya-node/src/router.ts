@@ -4,11 +4,23 @@
 
 import { Concept, OntologyDAG } from "./ontology.js";
 
+const STOPWORDS = new Set([
+  "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for", "with",
+  "by", "about", "against", "between", "into", "through", "during", "before",
+  "after", "above", "below", "from", "up", "down", "out", "off", "over", "under",
+  "again", "further", "then", "once", "here", "there", "when", "where", "why",
+  "how", "all", "any", "both", "each", "few", "more", "most", "other", "some",
+  "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very",
+  "can", "will", "just", "don", "should", "now", "is", "are", "was",
+  "were", "be", "been", "being", "have", "has", "had", "having", "do", "does",
+  "did", "doing", "of", "it", "its", "that", "this", "also", "made"
+]);
+
 export function tokenize(text: string): string[] {
   // Split camelCase: "DatabaseDeadlock" -> "Database Deadlock"
   const splitCamel = text.replace(/([a-z])([A-Z])/g, "$1 $2");
   const clean = splitCamel.toLowerCase().replace(/[^a-z0-9]+/g, " ");
-  return clean.split(/\s+/).filter((t) => t.length > 0);
+  return clean.split(/\s+/).filter((t) => t.length > 2 && !STOPWORDS.has(t));
 }
 
 export interface ActiveSubgraph {

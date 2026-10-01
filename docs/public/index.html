@@ -605,11 +605,15 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
             subsumes: isPerishable,
             cold_chain_divert_required: isPerishable
           },
-          active_subgraph_probabilities: decision.probabilities.slice(0, 5).map(p => ({
-            curie: p.curie,
-            label: p.label,
-            probability: Number(p.prob.toFixed(4))
-          }))
+          active_subgraph_probabilities: decision.probabilities
+            .slice()
+            .sort((a, b) => b.prob - a.prob)
+            .slice(0, 5)
+            .map(p => ({
+              curie: p.curie,
+              label: p.label,
+              probability: Number(p.prob.toFixed(4))
+            }))
         },
         runtime_telemetry: {
           engine: "O-Laya Browser WebAssembly / ESModule",
