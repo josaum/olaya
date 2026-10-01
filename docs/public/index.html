@@ -1160,21 +1160,21 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
     <pre><code class="language-bash">curl -X POST https://public-nine-jade-58.vercel.app/api/systemone \
   -H "Content-Type: application/json" \
   -d '{
-    "state": "High-priority conveyor alarm: motor temperature exceeds 85C on sorter line #2.",
+    "state": "Critical overheating emergency: motor temperature exceeds 85C on conveyor sorter line #2.",
     "questions": {
       "triage": {
         "type": "choice",
-        "instructions": "Determine line operator action",
+        "instructions": "emergency stop lubricate ignore operator action",
         "options": ["EMERGENCY_STOP", "SCHEDULE_LUBRICATION", "IGNORE"]
       },
       "urgency_score": {
         "type": "score",
-        "instructions": "Rate operational hazard level 1 to 5",
-        "levels": 5
+        "instructions": "operational hazard severity level",
+        "criteria": ["negligible", "low", "medium", "high", "critical"]
       },
       "requires_evacuation": {
         "type": "noul",
-        "instructions": "Is there smoke or immediate fire danger?"
+        "instructions": "smoke fire explosion evacuation required"
       }
     }
   }'</code></pre>
@@ -1221,6 +1221,18 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
             <td>Python PyTorch (~13ms–33ms)</td>
             <td><strong>Browser WebAssembly / ESModule (&lt;1ms client-side) &amp; MCP</strong></td>
           </tr>
+          <tr>
+            <td><strong>Ontology Primitives</strong></td>
+            <td>choice, score, noul</td>
+            <td>choice, score, noul</td>
+            <td><strong>+ concept (leaf taxonomy grounding with full lineage path)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Scale Guarantee</strong></td>
+            <td>None (re-query API per request)</td>
+            <td>None (re-encode per request)</td>
+            <td><strong>Inverted index routes 100k+ SKUs in 4.8µs; single DAG in RAM</strong></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -1257,8 +1269,62 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
       </table>
     </div>
 
+    <!-- ── WAITLIST CTA ─────────────────────────────────────────────────── -->
+    <div style="background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid #1f6feb55; border-radius: 10px; padding: 2rem 1.75rem; margin: 2.5rem 0; text-align: center; box-shadow: 0 0 40px rgba(31,111,235,0.1);">
+      <div style="font-size: 0.75rem; text-transform: uppercase; color: #58a6ff; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 0.5rem;">⚡ Managed API — Now Available</div>
+      <h2 style="margin: 0.25rem 0 0.75rem 0; font-size: 1.65rem; letter-spacing: -0.02em;">Start grounding decisions in <span style="color: #58a6ff;">&lt;1ms</span> today.</h2>
+      <p style="color: #8b949e; font-size: 0.95rem; margin: 0 auto 1.25rem auto; max-width: 520px; line-height: 1.55;">
+        Drop-in replacement for <code style="color:#c9d1d9;">api.typesafe.ai/v1/systemone</code>. Same Jev pricing at <strong style="color:#c9d1d9;">$0.042&thinsp;/&thinsp;1M input tokens</strong> — output tokens always free.
+      </p>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; align-items: center; margin-bottom: 1.5rem;">
+        <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener"
+           style="display: inline-flex; align-items: center; gap: 0.45rem; background: #238636; color: #fff; border: 1px solid #2ea043; border-radius: 6px; padding: 0.55rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: background 0.15s;">
+          ⭐ Star on GitHub
+        </a>
+        <a href="mailto:dionisio.ca@gmail.com?subject=Leio%20Managed%20API%20Access&body=Hi%2C%20I%27d%20like%20early%20access%20to%20the%20Leio%20managed%20API%20(Jev-compatible%20hosted%20endpoint)."
+           style="display: inline-flex; align-items: center; gap: 0.45rem; background: #1f6feb; color: #fff; border: 1px solid #388bfd; border-radius: 6px; padding: 0.55rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none;">
+          📬 Get API Access
+        </a>
+        <a href="https://public-nine-jade-58.vercel.app/api/systemone"
+           target="_blank" rel="noopener"
+           style="display: inline-flex; align-items: center; gap: 0.45rem; background: transparent; color: #8b949e; border: 1px solid #30363d; border-radius: 6px; padding: 0.55rem 1.25rem; font-size: 0.9rem; font-weight: 500; text-decoration: none;">
+          🔗 Live API Status
+        </a>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.65rem; max-width: 640px; margin: 0 auto;">
+        <div style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.6rem 0.75rem; font-size: 0.8rem;">
+          <div style="color: #3fb950; font-weight: 700; font-family: monospace; margin-bottom: 0.2rem;">uvx olaya-mcp</div>
+          <div style="color: #6e7681;">Zero-install Python agent wedge</div>
+        </div>
+        <div style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.6rem 0.75rem; font-size: 0.8rem;">
+          <div style="color: #3fb950; font-weight: 700; font-family: monospace; margin-bottom: 0.2rem;">npx @mycelia/olaya-mcp</div>
+          <div style="color: #6e7681;">Zero-install Node agent wedge</div>
+        </div>
+        <div style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.6rem 0.75rem; font-size: 0.8rem;">
+          <div style="color: #3fb950; font-weight: 700; font-family: monospace; margin-bottom: 0.2rem;">pip install olaya</div>
+          <div style="color: #6e7681;">Python SDK — open weights</div>
+        </div>
+        <div style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.6rem 0.75rem; font-size: 0.8rem;">
+          <div style="color: #58a6ff; font-weight: 700; font-family: monospace; margin-bottom: 0.2rem;">POST /api/systemone</div>
+          <div style="color: #6e7681;">Jev-compatible managed API</div>
+        </div>
+      </div>
+    </div>
+
     <footer style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.95rem;">
-      <p>Open Source Code & GS1 Datasets: <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener">github.com/josaum/olaya</a></p>
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <strong>Leio</strong> &mdash; Ontology-Grounded System 1 Decision Engine<br>
+          <span style="color: var(--text-muted); font-size: 0.82rem;">Open weights &middot; Apache 2.0 &middot; <a href="mailto:dionisio.ca@gmail.com">dionisio.ca@gmail.com</a></span>
+        </div>
+        <div style="display: flex; gap: 1rem; font-size: 0.88rem;">
+          <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener">GitHub</a>
+          <a href="mailto:dionisio.ca@gmail.com?subject=Leio%20Managed%20API%20Access">API Access</a>
+          <a href="https://public-nine-jade-58.vercel.app/api/systemone" target="_blank" rel="noopener">Live API</a>
+        </div>
+      </div>
     </footer>
   </article>
 
