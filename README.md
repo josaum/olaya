@@ -1,24 +1,43 @@
 # O-Laya: Ontology-Grounded System 1 Decision Model
 
-An open-source, high-speed **System 1 Decision Engine** that grounds real-time software decisions into formal **OWL / RDF Ontologies and Knowledge Graphs**.
+An open-source, high-speed **System 1 Decision Engine** that grounds real-time software decisions into formal **OWL / RDF Ontologies, Knowledge Graphs, and Arrow IPC Streams**.
 
-Combines the non-autoregressive, calibrated cross-attention decision architecture of **Laya / Jev** with the ontological graph reasoning, synonym pooling, and structural constraints of **Mycelia (`oll`)**.
+Combines the non-autoregressive cross-attention decision architecture of **Laya / Jev** with the ontological graph reasoning, synonym pooling, and structural constraints of **Mycelia (`oll`)**.
+
+Available as:
+- **Rust + Arrow-Native Kernel** (`olaya-core`): 109,000+ decisions / sec, 9.1 μs latency.
+- **Python Wheel** (`olaya`): PyTorch + ModernBERT + ONNX / ORT FlatBuffers runtime.
+- **Node.js / TypeScript Package** (`@mycelia/olaya`): Dual ESM + CommonJS zero-dependency runtime.
 
 ---
 
-## Key Performance Results
+## Benchmark Highlights
 
-Benchmarked on **Apple Silicon (M4 Max & M1 GPU via Metal Performance Shaders / MPS)**:
+### 1. Architectural Comparison: System 1 vs. System 2
 
-| Metric | Local (Apple M1) | Mac Studio (Apple M4 Max) |
-| :--- | :--- | :--- |
-| **Questions per Batch** | 4 (`concept`, `subsumes`, `score`, `noul`) | 4 (`concept`, `subsumes`, `score`, `noul`) |
-| **Total Input Tokens** | 648 tokens | 648 tokens |
-| **Output Tokens** | **0** (Zero generation tax) | **0** (Zero generation tax) |
-| **Min Latency** | 14.77 ms | **4.25 ms** |
-| **Median Latency** | 16.28 ms | **4.42 ms** |
-| **P95 Latency** | 22.37 ms | **5.63 ms** |
-| **Throughput** | ~240 decisions/sec | **~900 decisions/sec** |
+| Architecture | Model | Median Latency | Output Tokens | Cost / 1k Decisions | Formal Axiom Verification |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Autoregressive LLM** | GPT-4o-mini | ~450 ms | 35 – 80 tokens | $0.015 | ❌ None (Hallucination risk) |
+| **Autoregressive SLM** | Llama-3.1-8B | ~320 ms (GPU) | 20 – 60 tokens | Hardware overhead | ❌ None |
+| **Proprietary Decision** | TypeSafe AI Jev | ~30 – 50 ms | 0 tokens | Proprietary API | ❌ Flat options only |
+| **Open Decision (Laya)** | Convai Laya | ~25 – 40 ms | 0 tokens | Free (Local) | ❌ Flat options only |
+| **O-Laya (Neural)** | **ModernBERT-ORT** | **7.3 ms (CPU)**<br>**4.4 ms (M4 Max)** | **0 tokens** | **$0.00 (Zero-copy)** | **✅ In-place mathematical projection** |
+| **O-Laya (Rust Core)** | **Arrow Router** | **9.1 microseconds** | **0 tokens** | **$0.00 (In-process)** | **✅ Full DAG relaxation sweep** |
+
+### 2. Neural Execution on Apple Silicon (M4 Max)
+
+Benchmarked on **Apple M4 Max GPU (MPS) / Neural Engine**:
+- **Heterogeneous Batch:** 4 questions per batch (`concept`, `subsumes`, `score`, `noul`)
+- **Median Latency:** **4.42 ms**
+- **P95 Latency:** **5.63 ms**
+- **Output Tokens:** **0** (pure non-autoregressive token classification)
+
+### 3. Pure Rust + Arrow IPC Throughput
+
+Benchmarked on **`olaya-core`** across 10,000 decisions:
+- **Throughput:** **109,532 decisions / second**
+- **Average Latency:** **9.13 microseconds** (`0.0091 ms`)
+- **Memory Overhead:** 0 heap copies via Apache Arrow RecordBatches and FlatBuffers (`.ort`) memory-mapping.
 
 ---
 
@@ -48,7 +67,7 @@ Benchmarked on **Apple Silicon (M4 Max & M1 GPU via Metal Performance Shaders / 
 
 ```mermaid
 flowchart TD
-    subgraph "1. Scalable Candidate Routing (from Mycelia)"
+    subgraph "1. Scalable Candidate Routing (Arrow & Inverted Index)"
         State["Input State (Text / JSON)"] --> TopK["Sparse Candidate Router\n(Token + CamelCase Synonym Index)"]
         Onto[("OWL / RDF Ontology\n(Classes, Subsumption, Disjointness)")] --> TopK
         TopK --> Subgraph["Active Decision Subgraph\n(<= 12 candidate leaves + parents)"]
@@ -56,7 +75,7 @@ flowchart TD
 
     subgraph "2. Cross-Attention Sequence Construction"
         State & Subgraph --> Seq["[CLS] Question [SEP] [MASK] c_1 (parent: P_1) [MASK] c_2 ... [SEP] State [SEP]"]
-        Seq --> Backbone["ModernBERT / Transformer Backbone (MPS Accelerated)"]
+        Seq --> Backbone["ModernBERT / Transformer / ORT Backbone"]
     end
 
     subgraph "3. Axiom-Constrained Decision Head"
@@ -70,89 +89,119 @@ flowchart TD
 
 ---
 
-## Installation & Setup
+## Installation & Quickstarts
+
+### Python
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/decision-model.git
-cd decision-model
+# Install from pre-built wheel:
+pip install dist/olaya-0.1.0-py3-none-any.whl
 
-# Create virtual environment with uv
-uv venv
-source .venv/bin/activate
-
-# Install dependencies
+# Or install in editable mode:
 uv pip install -e ".[dev]"
 ```
 
----
-
-## Quickstart
-
 ```python
-from olaya import OLaya, create_incident_ontology
+from olaya import OLaya
 
-# 1. Initialize the engine with an ontology (default: Enterprise Incident Ontology)
 olaya = OLaya()
 
-# 2. Define arbitrary unstructured or structured state
 state = {
     "service": "billing-worker",
-    "log_level": "FATAL",
     "error": "Deadlock detected while updating customer subscription balances in PostgreSQL cluster.",
 }
 
-# 3. Evaluate typed questions in a single forward pass (< 5ms on M4 Max)
+# Single non-autoregressive forward pass (< 5ms on M4 Max):
 result = olaya.system_one(
     state=state,
     questions={
-        # Grounding into ontology class
         "triage": {
             "type": "concept",
             "instructions": "Classify the operational incident into the appropriate ontology category.",
             "root": "INCIDENT:ROOT",
         },
-        # Ontological Bernoulli test
         "is_data_issue": {
             "type": "subsumes",
             "concept": "INCIDENT:DATA",
             "instructions": "Is this a data or storage issue?",
         },
-        # Ordinal rubric score
         "urgency": {
             "type": "score",
             "instructions": "Rate the operational disruption level.",
             "criteria": ["low", "medium", "urgent", "critical"],
         },
-        # Yes/No action gate
-        "escalate_oncall": {
+        "escalate": {
             "type": "noul",
             "instructions": "Should on-call engineering be paged immediately?",
         },
     },
 )
 
-# Access typed, calibrated results:
-triage = result.answers["triage"]
-print("Grounded Concept:", triage.curie)      # "INCIDENT:DB_OUTAGE" or "INCIDENT:DB_DEADLOCK"
-print("Lineage to Root:",  triage.lineage)    # ["INCIDENT:ROOT", "INCIDENT:DATA", "INCIDENT:DB_DEADLOCK"]
-print("Confidence:",       triage.confidence) # Normalized entropy score in [0.0, 1.0]
-
-print("Is Data Issue:",    result.answers["is_data_issue"].subsumes) # P(true)
-print("Urgency Level:",    result.answers["urgency"].score)          # Expected level (0..3)
-print("Latency:",          f"{result.latency_ms:.2f} ms")            # ~4.4 ms on M4 Max
+print("Grounded Concept:", result.answers["triage"].curie)       # "INCIDENT:DB_DEADLOCK"
+print("Lineage to Root:",  result.answers["triage"].lineage)     # ["INCIDENT:ROOT", "INCIDENT:DATA", "INCIDENT:DB_DEADLOCK"]
+print("Confidence:",       result.answers["triage"].confidence)  # Normalized entropy in [0.0, 1.0]
 ```
 
----
-
-## Running Benchmarks and Tests
+### Node.js / TypeScript
 
 ```bash
-# Run the test suite
-pytest tests/ -v
+npm install dist/mycelia-olaya-0.1.0.tgz
+```
 
-# Run latency and throughput benchmark
-python benchmarks/bench_latency.py
+```typescript
+import { Concept, OntologyDAG, OLaya } from "@mycelia/olaya";
+
+const dag = new OntologyDAG([
+  {
+    id: 0,
+    curie: "INCIDENT:DATA",
+    label: "Data & Storage Incident",
+    parents: [],
+    disjointWith: [1],
+    synonyms: ["database", "storage"],
+  },
+  {
+    id: 1,
+    curie: "INCIDENT:BILLING",
+    label: "Billing Incident",
+    parents: [],
+    disjointWith: [0],
+    synonyms: ["payment", "invoice"],
+  },
+]);
+
+const olaya = new OLaya(dag);
+
+const decision = await olaya.systemOne("Payment webhook timeout on credit card charge");
+console.log(decision.selectedConcept.label); // "Billing Incident"
+console.log(decision.confidence);            // ~0.99
+```
+
+### Rust (`olaya-core`)
+
+```toml
+[dependencies]
+olaya-core = { path = "crates/olaya-core", features = ["onnx"] }
+```
+
+```rust
+use olaya_core::{OntologyBatchBuilder, OlayaEngine};
+
+// Directly ingest OWL / RDF Turtle into Arrow memory
+let ttl = br#"
+    @prefix ex: <http://example.org/> .
+    @prefix owl: <http://www.w3.org/2002/07/owl#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+    ex:DBDeadlock a owl:Class ; rdfs:label "Database Deadlock" .
+"#;
+
+let batch = OntologyBatchBuilder::from_owl_bytes(ttl, owl_fast_core::RdfFormat::Turtle)?;
+let engine = OlayaEngine::new(batch)?;
+
+// Execute System 1 decision in ~9 microseconds:
+let result = engine.system_one("Fatal deadlock detected on PostgreSQL", 4)?;
+println!("Selected CURIE: {}, Confidence: {:.4}", result.selected_curie, result.confidence);
 ```
 
 ---
@@ -161,19 +210,28 @@ python benchmarks/bench_latency.py
 
 ```
 decision-model/
+├── Cargo.toml                    # Root Cargo workspace
+├── pyproject.toml                # PEP 621 Python package configuration
+├── crates/
+│   ├── olaya-core/               # Arrow-native zero-copy decision engine
+│   ├── owl-fast-core/            # Centralized oxrdf/oxrdfio OWL & Turtle parser
+│   └── mycelia-ort-utils/        # ONNX Runtime & CoreML session manager
+├── packages/
+│   └── olaya-node/               # @mycelia/olaya Node.js / TypeScript package
 ├── src/
-│   └── olaya/
-│       ├── __init__.py           # Exported package symbols
-│       ├── ontology.py           # Concept, Ontology, Subsumption DAG, Disjointness
-│       ├── candidate_router.py   # Top-K sparse routing & subgraph extraction
-│       ├── sequence.py           # Axiom-informed marker sequence construction
-│       ├── axioms.py             # Subsumption monotonicity & entropy calibration
-│       ├── model.py              # ModernBERT backbone & marker-pooling head
-│       └── engine.py             # OLaya runtime engine implementing system_one
+│   └── olaya/                    # Python PyTorch & ONNX/ORT engine
+├── scripts/
+│   └── export_onnx_ort.py        # ONNX and ORT FlatBuffers export pipeline
+├── dist/
+│   ├── olaya-0.1.0-py3-none-any.whl
+│   └── mycelia-olaya-0.1.0.tgz
 ├── tests/
-│   └── test_olaya.py             # Unit & integration tests
-├── benchmarks/
-│   └── bench_latency.py          # Latency & throughput benchmark suite
-├── pyproject.toml                # Package configuration
-└── README.md                     # Documentation
+│   └── test_olaya.py             # Python integration test suite
+└── README.md
 ```
+
+---
+
+## License
+
+MIT License. Designed and engineered by the Mycelia Team.

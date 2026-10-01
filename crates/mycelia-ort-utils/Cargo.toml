@@ -1,0 +1,22 @@
+[package]
+name = "mycelia-ort-utils"
+version = "0.1.0"
+edition = "2021"
+description = "Shared ONNX Runtime session helpers (EP fallback chain, dylib discovery, dim probing) for Mycelia Rust crates."
+license = "MIT"
+
+[features]
+# Default mirrors mycelia-gateway: load-dynamic on top of ort defaults.
+default = ["load-dynamic"]
+load-dynamic = ["ort/load-dynamic"]
+download-binaries = ["ort/download-binaries"]
+coreml = ["ort/coreml"]
+cuda = ["ort/cuda"]
+
+[dependencies]
+# Keep ort's defaults (api-XX bindings + ndarray + tracing); we only add
+# transport features (load-dynamic / download-binaries) via our own features.
+ort = { version = "=2.0.0-rc.12", features = ["ndarray"] }
+tracing = "0.1"
+thiserror = "1"
+
