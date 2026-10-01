@@ -58,6 +58,7 @@
       border-radius: 50%;
       box-shadow: 0 0 8px #3fb950;
       animation: pulse 1.8s infinite;
+      flex-shrink: 0;
     }
     @keyframes pulse {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.7); }
@@ -68,22 +69,31 @@
       display: flex;
       gap: 0.35rem;
       margin-bottom: 0.65rem;
-      flex-wrap: wrap;
       background: #161b22;
       padding: 0.3rem 0.4rem;
       border-radius: 6px;
       border: 1px solid #30363d;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .domain-tabs::-webkit-scrollbar {
+      display: none;
     }
     .domain-tab-btn {
       background: transparent;
       color: #8b949e;
       border: 1px solid transparent;
       border-radius: 4px;
-      padding: 0.25rem 0.6rem;
+      padding: 0.35rem 0.65rem;
       font-size: 0.76rem;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.15s ease-in-out;
+      flex-shrink: 0;
+      min-height: 32px;
+      touch-action: manipulation;
     }
     .domain-tab-btn:hover {
       color: #c9d1d9;
@@ -127,6 +137,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 0.4rem;
     }
     .demo-textarea {
       width: 100%;
@@ -153,19 +164,26 @@
       display: flex;
       gap: 0.35rem;
       margin-top: 0.45rem;
-      flex-wrap: wrap;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding-bottom: 0.25rem;
       align-items: center;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
     }
     .preset-btn {
       background: #21262d;
       color: #c9d1d9;
       border: 1px solid #30363d;
       border-radius: 4px;
-      padding: 0.15rem 0.45rem;
+      padding: 0.25rem 0.55rem;
       font-size: 0.72rem;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.15s;
+      flex-shrink: 0;
+      min-height: 28px;
+      touch-action: manipulation;
     }
     .preset-btn:hover {
       background: #30363d;
@@ -182,18 +200,21 @@
     .prob-row {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
       margin-bottom: 0.35rem;
       font-size: 0.76rem;
     }
     .prob-curie {
-      width: 145px;
+      width: 135px;
+      min-width: 100px;
+      max-width: 145px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       color: #c9d1d9;
       font-family: monospace;
       font-size: 0.73rem;
+      flex-shrink: 0;
     }
     .prob-bar-track {
       flex: 1;
@@ -201,6 +222,7 @@
       background: #21262d;
       border-radius: 4px;
       overflow: hidden;
+      min-width: 50px;
     }
     .prob-bar-fill {
       height: 100%;
@@ -212,12 +234,13 @@
       background: linear-gradient(90deg, #238636, #3fb950);
     }
     .prob-value {
-      width: 48px;
+      width: 44px;
       text-align: right;
       font-family: monospace;
       color: #7ee787;
       font-weight: 600;
       font-size: 0.74rem;
+      flex-shrink: 0;
     }
 
     /* Inspector Card (Right Column) */
@@ -233,21 +256,25 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 0.25rem;
+      gap: 0.4rem;
     }
     .curie-title {
       font-size: 0.95rem;
       font-weight: 700;
       color: #79c0ff;
       font-family: monospace;
+      word-break: break-all;
     }
     .conf-badge {
       background: #238636;
       color: #fff;
       font-size: 0.72rem;
-      padding: 0.1rem 0.45rem;
+      padding: 0.12rem 0.5rem;
       border-radius: 10px;
       font-weight: 600;
       font-family: monospace;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .lineage-breadcrumbs {
       font-size: 0.74rem;
@@ -256,15 +283,16 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 0.25rem;
-      line-height: 1.35;
+      line-height: 1.4;
     }
     .lineage-step {
       background: #21262d;
-      padding: 0.05rem 0.35rem;
+      padding: 0.08rem 0.35rem;
       border-radius: 3px;
       color: #c9d1d9;
       font-family: monospace;
       font-size: 0.71rem;
+      word-break: break-all;
     }
     .lineage-sep {
       color: #58a6ff;
@@ -303,13 +331,14 @@
       border-radius: 6px;
       padding: 0.5rem 0.75rem;
       height: 120px;
-      max-height: 140px;
+      max-height: 160px;
       overflow: auto;
       font-size: 0.75rem;
       line-height: 1.35;
       margin: 0;
       color: #7ee787;
       box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+      -webkit-overflow-scrolling: touch;
     }
     .metric-pill {
       background: #1f6feb22;
@@ -320,6 +349,57 @@
       font-size: 0.72rem;
       font-family: monospace;
       font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Mobile First Media Queries (< 600px) */
+    @media (max-width: 600px) {
+      body {
+        padding: 0.5rem 0.65rem;
+      }
+      h1 {
+        font-size: 1.35rem;
+      }
+      .demo-container {
+        padding: 0.65rem 0.65rem;
+        margin: 0.6rem 0 1.25rem 0;
+        border-radius: 6px;
+      }
+      .demo-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.35rem;
+      }
+      .demo-title {
+        font-size: 0.92rem;
+      }
+      .proof-grid {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+      }
+      .prob-curie {
+        width: 105px;
+        font-size: 0.7rem;
+      }
+      .prob-value {
+        width: 38px;
+        font-size: 0.7rem;
+      }
+      .decision-banner {
+        padding: 0.45rem 0.55rem;
+      }
+      .curie-title {
+        font-size: 0.88rem;
+      }
+      .demo-output-pre {
+        height: 110px;
+        font-size: 0.72rem;
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
     }
   </style>
 </head>
