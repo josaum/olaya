@@ -13,7 +13,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "hemangiosarcoma"
+        "hemangiosarcoma",
+        "vascular cancer",
+        "blood vessel cancer",
+        "endothelial sarcoma"
       ]
     },
     {
@@ -25,7 +28,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "myelodysplastic myeloproliferative neoplasm",
+        "myeloproliferative neoplasm that",
+        "myeloproliferative neoplasm"
+      ]
     },
     {
       "curie": "DOID:0050523",
@@ -71,7 +78,10 @@
       "disjoint_with": [],
       "synonyms": [
         "NK-T cell lymphoma",
-        "mature T-cell and natural killer cell lymphoma"
+        "mature T-cell and natural killer cell lymphoma",
+        "t-cell non-hodgkin lymphoma",
+        "non-hodgkin lymphoma that",
+        "non-hodgkin lymphoma"
       ]
     },
     {
@@ -83,7 +93,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "non-hodgkin lymphoma involving",
+        "non-hodgkin lymphoma",
+        "lymphoma involving aberrant"
+      ]
     },
     {
       "curie": "DOID:0050745",
@@ -105,7 +119,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "DLBCL"
+        "DLBCL",
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
       ]
     },
     {
@@ -117,7 +134,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "b-cell lymphocytic neoplasm",
+        "lymphocytic neoplasm due",
+        "lymphocytic neoplasm"
+      ]
     },
     {
       "curie": "DOID:0050748",
@@ -131,7 +152,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "marginal zone B-cell lymphoma"
+        "marginal zone B-cell lymphoma",
+        "b-cell lymphoma arising",
+        "b-cell lymphoma",
+        "lymphoma arising from"
       ]
     },
     {
@@ -147,7 +171,11 @@
         "DOID:8691"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "and nk-cell lymphoma",
+        "nk-cell lymphoma includes",
+        "nk-cell lymphoma"
+      ]
     },
     {
       "curie": "DOID:0050751",
@@ -174,7 +202,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "phaeochromocytoma"
+        "phaeochromocytoma",
+        "an endocrine organ",
+        "an endocrine",
+        "endocrine organ benign"
       ]
     },
     {
@@ -198,7 +229,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "gastrointestinal system disease",
+        "system disease that",
+        "system disease"
+      ]
     },
     {
       "curie": "DOID:0050804",
@@ -220,7 +255,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "colorectal carcinoma that",
+        "colorectal carcinoma",
+        "carcinoma that epithelial"
+      ]
     },
     {
       "curie": "DOID:0050866",
@@ -232,7 +271,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "mouth squamous cell carcinoma"
+        "mouth squamous cell carcinoma",
+        "oral cavity cancer",
+        "cavity cancer that",
+        "cavity cancer"
       ]
     },
     {
@@ -242,7 +284,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "connective tissue benign",
+        "tissue benign neoplasm",
+        "tissue benign"
+      ]
     },
     {
       "curie": "DOID:0050873",
@@ -254,7 +300,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "BCL2 Apoptosis regulator"
+        "BCL2 Apoptosis regulator",
+        "b-cell lymphoma that",
+        "b-cell lymphoma",
+        "lymphoma that is"
       ]
     },
     {
@@ -268,7 +317,10 @@
         "DOID:0070325"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "malignant pheochromocytoma that",
+        "malignant pheochromocytoma"
+      ]
     },
     {
       "curie": "DOID:0050894",
@@ -277,7 +329,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "cell type benign",
+        "type benign neoplasm",
+        "type benign"
+      ]
     },
     {
       "curie": "DOID:0050896",
@@ -288,7 +344,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "bone carcinoma that",
+        "bone carcinoma",
+        "carcinoma that squamous"
+      ]
     },
     {
       "curie": "DOID:0050897",
@@ -310,7 +370,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "brain stem cancer",
+        "stem cancer that",
+        "stem cancer"
+      ]
     },
     {
       "curie": "DOID:0050900",
@@ -369,7 +433,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "parietal lobe neoplasm",
+        "lobe neoplasm that",
+        "lobe neoplasm"
+      ]
     },
     {
       "curie": "DOID:0050904",
@@ -384,7 +452,11 @@
         "DOID:4866"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "salivary gland cancer",
+        "gland cancer that",
+        "gland cancer"
+      ]
     },
     {
       "curie": "DOID:0050905",
@@ -397,7 +469,11 @@
         "DOID:0080372"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "mesenchymal cell neoplasm",
+        "cell neoplasm that",
+        "neoplasm that has"
+      ]
     },
     {
       "curie": "DOID:0050907",
@@ -408,7 +484,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "germ cell cancer",
+        "cell cancer that",
+        "cancer that is"
+      ]
     },
     {
       "curie": "DOID:0050908",
@@ -419,7 +499,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "bone marrow cancer",
+        "marrow cancer that",
+        "marrow cancer"
+      ]
     },
     {
       "curie": "DOID:0050909",
@@ -446,7 +530,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "appendix carcinoid endocrine tumour"
+        "appendix carcinoid endocrine tumour",
+        "an appendix cancer",
+        "appendix cancer that",
+        "appendix cancer"
       ]
     },
     {
@@ -458,7 +545,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "large intestine cancer",
+        "intestine cancer that",
+        "intestine cancer"
+      ]
     },
     {
       "curie": "DOID:0050916",
@@ -469,7 +560,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "mucoepidermoid carcinoma the",
+        "mucoepidermoid carcinoma",
+        "carcinoma the bronchus"
+      ]
     },
     {
       "curie": "DOID:0050917",
@@ -480,7 +575,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "small cell carcinoma",
+        "cell carcinoma that",
+        "carcinoma that has"
+      ]
     },
     {
       "curie": "DOID:0050918",
@@ -491,7 +590,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "vaginal cancer that",
+        "vaginal cancer",
+        "cancer that has"
+      ]
     },
     {
       "curie": "DOID:0050919",
@@ -502,7 +605,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "mucoepidermoid carcinoma the",
+        "mucoepidermoid carcinoma",
+        "carcinoma the trachea"
+      ]
     },
     {
       "curie": "DOID:0050920",
@@ -513,7 +620,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "tonsil cancer that",
+        "tonsil cancer",
+        "cancer that has"
+      ]
     },
     {
       "curie": "DOID:0050921",
@@ -524,7 +635,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "pharynx cancer that",
+        "pharynx cancer",
+        "cancer that has"
+      ]
     },
     {
       "curie": "DOID:0050922",
@@ -535,7 +650,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "gastrointestinal system cancer",
+        "system cancer that",
+        "system cancer"
+      ]
     },
     {
       "curie": "DOID:0050923",
@@ -561,7 +680,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "muscle cancer that",
+        "muscle cancer",
+        "cancer that is"
+      ]
     },
     {
       "curie": "DOID:0050925",
@@ -572,7 +695,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "neuroendocrine tumor that",
+        "neuroendocrine tumor",
+        "tumor that has"
+      ]
     },
     {
       "curie": "DOID:0050926",
@@ -583,7 +710,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "jejunal cancer that",
+        "jejunal cancer",
+        "cancer that is"
+      ]
     },
     {
       "curie": "DOID:0050928",
@@ -594,7 +725,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an ovarian cancer",
+        "ovarian cancer that",
+        "ovarian cancer"
+      ]
     },
     {
       "curie": "DOID:0050929",
@@ -616,7 +751,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "sublingual gland cancer",
+        "gland cancer that",
+        "gland cancer"
+      ]
     },
     {
       "curie": "DOID:0050931",
@@ -627,7 +766,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "parotid gland cancer",
+        "gland cancer that",
+        "gland cancer"
+      ]
     },
     {
       "curie": "DOID:0050932",
@@ -638,7 +781,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "lung carcinoma that",
+        "lung carcinoma",
+        "carcinoma that has"
+      ]
     },
     {
       "curie": "DOID:0050933",
@@ -649,7 +796,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an ovarian carcinoma",
+        "ovarian carcinoma that",
+        "ovarian carcinoma"
+      ]
     },
     {
       "curie": "DOID:0050934",
@@ -661,7 +812,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "clear-cell ovarian carcinoma"
+        "clear-cell ovarian carcinoma",
+        "an ovarian carcinoma",
+        "ovarian carcinoma that",
+        "ovarian carcinoma"
       ]
     },
     {
@@ -684,7 +838,10 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "malignant pheochromocytoma that",
+        "malignant pheochromocytoma"
+      ]
     },
     {
       "curie": "DOID:0050937",
@@ -695,7 +852,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "retroperitoneal cancer that",
+        "retroperitoneal cancer",
+        "cancer that has"
+      ]
     },
     {
       "curie": "DOID:0050938",
@@ -706,7 +867,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "breast carcinoma that",
+        "breast carcinoma",
+        "carcinoma that breast"
+      ]
     },
     {
       "curie": "DOID:0050939",
@@ -717,7 +882,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "uterine corpus cancer",
+        "corpus cancer that",
+        "corpus cancer"
+      ]
     },
     {
       "curie": "DOID:0050940",
@@ -728,7 +897,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an endocervical carcinoma",
+        "endocervical carcinoma that",
+        "endocervical carcinoma"
+      ]
     },
     {
       "curie": "DOID:0060058",
@@ -745,7 +918,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "lymphoid cancer"
+        "lymphoid cancer",
+        "hematologic cancer that",
+        "hematologic cancer",
+        "cancer that affects"
       ]
     },
     {
@@ -761,7 +937,11 @@
         "DOID:707"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "lymphoma that is",
+        "lymphoma that",
+        "kind of lymphoma"
+      ]
     },
     {
       "curie": "DOID:0060075",
@@ -772,7 +952,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "receptor-positive breast cancer",
+        "breast cancer that",
+        "breast cancer"
+      ]
     },
     {
       "curie": "DOID:0060076",
@@ -783,7 +967,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "receptor-negative breast cancer",
+        "breast cancer that",
+        "breast cancer"
+      ]
     },
     {
       "curie": "DOID:0060079",
@@ -857,7 +1045,11 @@
         "DOID:3284"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "organ system cancer",
+        "system cancer the",
+        "system cancer"
+      ]
     },
     {
       "curie": "DOID:0060098",
@@ -866,7 +1058,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "bone benign neoplasm",
+        "bone benign",
+        "benign neoplasm of"
+      ]
     },
     {
       "curie": "DOID:0060103",
@@ -884,7 +1080,10 @@
       "disjoint_with": [],
       "synonyms": [
         "CNS embryonal tumour, NEC/NOS",
-        "central nervous system primitive neuroectodermal neoplasm"
+        "central nervous system primitive neuroectodermal neoplasm",
+        "nervous system cancer",
+        "system cancer of",
+        "system cancer"
       ]
     },
     {
@@ -896,7 +1095,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "cerebellum cancer that",
+        "cerebellum cancer",
+        "cancer that begins"
+      ]
     },
     {
       "curie": "DOID:0060108",
@@ -911,7 +1114,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "lower grade glioma"
+        "lower grade glioma",
+        "brain cancer that",
+        "brain cancer",
+        "cancer that has"
       ]
     },
     {
@@ -924,7 +1130,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "lymph node adenoid cystic cancer"
+        "lymph node adenoid cystic cancer",
+        "lymph node carcinoma",
+        "node carcinoma that",
+        "node carcinoma"
       ]
     },
     {
@@ -956,7 +1165,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "nuclear protein in testis midline carcinoma"
+        "nuclear protein in testis midline carcinoma",
+        "carcinoma that is",
+        "carcinoma that",
+        "the bromodomain-containing protein"
       ]
     },
     {
@@ -1060,7 +1272,11 @@
         "DOID:9538"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "bone marrow cancer",
+        "marrow cancer that",
+        "marrow cancer"
+      ]
     },
     {
       "curie": "DOID:0070322",
@@ -1072,7 +1288,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "pediatric hepatocellular carcinoma"
+        "pediatric hepatocellular carcinoma",
+        "hepatocellular carcinoma that",
+        "hepatocellular carcinoma",
+        "carcinoma that occurs"
       ]
     },
     {
@@ -1101,7 +1320,10 @@
       "disjoint_with": [],
       "synonyms": [
         "EBV-positive T-cell lymphoproliferative disorder of childhood",
-        "systemic EBV-positive T-cell lymphoma of childhood"
+        "systemic EBV-positive T-cell lymphoma of childhood",
+        "childhood lymphoma that",
+        "childhood lymphoma",
+        "lymphoma that is"
       ]
     },
     {
@@ -1114,7 +1336,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "malignant pediatric adrenal gland pheochromocytoma"
+        "malignant pediatric adrenal gland pheochromocytoma",
+        "prevalence of hereditary",
+        "of hereditary factors",
+        "of hereditary"
       ]
     },
     {
@@ -1127,7 +1352,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "atypical spitz nevus"
+        "atypical spitz nevus",
+        "than cm lesion",
+        "cm lesion with",
+        "cm lesion"
       ]
     },
     {
@@ -1141,7 +1369,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Malignant melanoma in congenital melanocytic nevus",
-        "melanocytic nevi"
+        "melanocytic nevi",
+        "arises from congenital",
+        "from congenital melanocytic",
+        "from congenital"
       ]
     },
     {
@@ -1168,7 +1399,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "bone remodeling disease",
+        "remodeling disease that",
+        "remodeling disease"
+      ]
     },
     {
       "curie": "DOID:0080144",
@@ -1183,7 +1418,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "Childhood Acute Lymphoblastic Leukemia"
+        "Childhood Acute Lymphoblastic Leukemia",
+        "an acute lymphocytic",
+        "an acute",
+        "acute lymphocytic leukemia"
       ]
     },
     {
@@ -1197,7 +1435,10 @@
       "disjoint_with": [],
       "synonyms": [
         "T-cell childhood acute lymphocytic leukemia",
-        "childhood precursor T-lymphoblastic lymphoma/leukemia"
+        "childhood precursor T-lymphoblastic lymphoma/leukemia",
+        "childhood acute lymphoblastic",
+        "childhood acute",
+        "acute lymphoblastic leukemia"
       ]
     },
     {
@@ -1209,7 +1450,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "childhood acute lymphoblastic",
+        "childhood acute",
+        "acute lymphoblastic leukemia"
+      ]
     },
     {
       "curie": "DOID:0080148",
@@ -1221,7 +1466,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Childhood T lymphoblastic lymphoma"
+        "Childhood T lymphoblastic lymphoma",
+        "lymphoblastic lymphoma that",
+        "lymphoblastic lymphoma",
+        "lymphoma that has"
       ]
     },
     {
@@ -1235,7 +1483,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Myeloid and Lymphoid Neoplasms with Eosinophilia and Rearrangement of PDGFRA, PDGFRB, or FGFR1, or with PCM1-JAK2",
-        "Myeloid and lymphoid neoplasms with eosinophilia and abnormalities of platelet-derived growth factor receptor alpha (PDGFRA), platelet-derived growth factor receptor beta (PDGFRB), and fibroblast growth factor receptor-1 (FGFR1) are a group of hematologic neoplasms"
+        "Myeloid and lymphoid neoplasms with eosinophilia and abnormalities of platelet-derived growth factor receptor alpha (PDGFRA), platelet-derived growth factor receptor beta (PDGFRB), and fibroblast growth factor receptor-1 (FGFR1) are a group of hematologic neoplasms",
+        "myeloid neoplasm that",
+        "myeloid neoplasm",
+        "neoplasm that is"
       ]
     },
     {
@@ -1247,7 +1498,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "fibrolamellar carcinoma that",
+        "fibrolamellar carcinoma",
+        "carcinoma that is"
+      ]
     },
     {
       "curie": "DOID:0080187",
@@ -1258,7 +1513,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "chronic leukemia characterized",
+        "chronic leukemia",
+        "leukemia characterized by"
+      ]
     },
     {
       "curie": "DOID:0080188",
@@ -1269,7 +1528,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "chronic leukemia characterized",
+        "chronic leukemia",
+        "leukemia characterized by"
+      ]
     },
     {
       "curie": "DOID:0080190",
@@ -1280,7 +1543,10 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "malignant hemangioma characterized",
+        "malignant hemangioma"
+      ]
     },
     {
       "curie": "DOID:0080191",
@@ -1290,7 +1556,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "PHTS"
+        "PHTS",
+        "syndrome comprised of",
+        "syndrome comprised",
+        "predisposition to cancer"
       ]
     },
     {
@@ -1302,7 +1571,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "large b-cell lymphoma",
+        "b-cell lymphoma characterized",
+        "b-cell lymphoma"
+      ]
     },
     {
       "curie": "DOID:0080210",
@@ -1332,7 +1605,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "Pheochromocytoma, malignant"
+        "Pheochromocytoma, malignant",
+        "adrenal medulla cancer",
+        "medulla cancer that",
+        "medulla cancer"
       ]
     },
     {
@@ -1342,7 +1618,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an uterine benign",
+        "uterine benign neoplasm",
+        "uterine benign"
+      ]
     },
     {
       "curie": "DOID:0080366",
@@ -1351,7 +1631,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "connective tissue benign",
+        "tissue benign neoplasm",
+        "tissue benign"
+      ]
     },
     {
       "curie": "DOID:0080367",
@@ -1362,7 +1646,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "chronic leukemia characterized",
+        "chronic leukemia",
+        "leukemia characterized by"
+      ]
     },
     {
       "curie": "DOID:0080369",
@@ -1373,7 +1661,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "cord-gonadal stromal tumor",
+        "stromal tumor that",
+        "stromal tumor"
+      ]
     },
     {
       "curie": "DOID:0080372",
@@ -1384,7 +1676,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an inflammatory myofibroblastic",
+        "an inflammatory",
+        "inflammatory myofibroblastic tumor"
+      ]
     },
     {
       "curie": "DOID:0080522",
@@ -1396,7 +1692,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "thyroid gland anaplastic carcinoma"
+        "thyroid gland anaplastic carcinoma",
+        "thyroid gland carcinoma",
+        "gland carcinoma that",
+        "gland carcinoma"
       ]
     },
     {
@@ -1410,7 +1709,11 @@
         "DOID:0080525"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "thyroid gland carcinoma",
+        "gland carcinoma that",
+        "gland carcinoma"
+      ]
     },
     {
       "curie": "DOID:0080525",
@@ -1437,7 +1740,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "as high-grade tumor",
+        "high-grade tumor that",
+        "high-grade tumor"
+      ]
     },
     {
       "curie": "DOID:0080534",
@@ -1449,7 +1756,9 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "fibromyxoid sarcoma"
+        "fibromyxoid sarcoma",
+        "sarcoma that arises",
+        "sarcoma that"
       ]
     },
     {
@@ -1461,7 +1770,11 @@
         "DOID:2658"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "germ cell benign",
+        "benign neoplasm that",
+        "neoplasm that mature"
+      ]
     },
     {
       "curie": "DOID:0080630",
@@ -1503,7 +1816,10 @@
       "disjoint_with": [],
       "synonyms": [
         "B acute lymphoblastic leukemia",
-        "B-cell acute lymphocytic leukemia"
+        "B-cell acute lymphocytic leukemia",
+        "an acute lymphocytic",
+        "an acute",
+        "acute lymphocytic leukemia"
       ]
     },
     {
@@ -1517,7 +1833,10 @@
       "disjoint_with": [],
       "synonyms": [
         "B-ALL with BCR-ABL1",
-        "B-lymphoblastic leukemia/lymphoma with t(9;22)(q34.1;q11.2);BCR-ABL1"
+        "B-lymphoblastic leukemia/lymphoma with t(9;22)(q34.1;q11.2);BCR-ABL1",
+        "b-lymphoblastic leukemia lymphoma",
+        "b-lymphoblastic leukemia",
+        "leukemia lymphoma that"
       ]
     },
     {
@@ -1547,7 +1866,10 @@
       "disjoint_with": [],
       "synonyms": [
         "B-ALL with ETV6-RUNX1",
-        "B-lymphoblastic leukemia/lymphoma with t(12;21)(p13.2;q22.1); ETV6-RUNX1"
+        "B-lymphoblastic leukemia/lymphoma with t(12;21)(p13.2;q22.1); ETV6-RUNX1",
+        "b-lymphoblastic leukemia lymphoma",
+        "b-lymphoblastic leukemia",
+        "leukemia lymphoma that"
       ]
     },
     {
@@ -1560,7 +1882,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "B-ALL with hyperdiploidy"
+        "B-ALL with hyperdiploidy",
+        "b-lymphoblastic leukemia lymphoma",
+        "b-lymphoblastic leukemia",
+        "leukemia lymphoma that"
       ]
     },
     {
@@ -1573,7 +1898,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "B-ALL with hypodiploidy"
+        "B-ALL with hypodiploidy",
+        "b-lymphoblastic leukemia lymphoma",
+        "b-lymphoblastic leukemia",
+        "leukemia lymphoma that"
       ]
     },
     {
@@ -1608,7 +1936,7 @@
     },
     {
       "curie": "DOID:0080650",
-      "label": "B-lymphoblastic leukemia/lymphoma, BCR-ABL1\u2013like",
+      "label": "B-lymphoblastic leukemia/lymphoma, BCR-ABL1–like",
       "description": "A B-lymphoblastic leukemia/lymphoma that has a gene expression profile similar to that of B-ALL with t(9;22)(q34.1;q11.2) BCR-ABL1, but lacks that gene fusion.",
       "parents": [
         "DOID:0080630"
@@ -1617,7 +1945,10 @@
       "disjoint_with": [],
       "synonyms": [
         "B lymphoblastic leukemia/lymphoma, BCR-ABL1-like",
-        "B-ALL BCR-ABL1\u2013like"
+        "B-ALL BCR-ABL1–like",
+        "b-lymphoblastic leukemia lymphoma",
+        "b-lymphoblastic leukemia",
+        "leukemia lymphoma that"
       ]
     },
     {
@@ -1631,7 +1962,10 @@
       "disjoint_with": [],
       "synonyms": [
         "B-ALL with iAMP21",
-        "Intrachromosomal amplification of chromosome 21 (iAMP21)"
+        "Intrachromosomal amplification of chromosome 21 (iAMP21)",
+        "b-lymphoblastic leukemia lymphoma",
+        "b-lymphoblastic leukemia",
+        "leukemia lymphoma that"
       ]
     },
     {
@@ -1644,7 +1978,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "diffuse intrinsic pontine glioma"
+        "diffuse intrinsic pontine glioma",
+        "histone mutated tumor",
+        "mutated tumor that",
+        "mutated tumor"
       ]
     },
     {
@@ -1656,7 +1993,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "the wnt pathway",
+        "wnt pathway and",
+        "wnt pathway"
+      ]
     },
     {
       "curie": "DOID:0080703",
@@ -1670,7 +2011,11 @@
         "DOID:0080705"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "hedgehog shh pathway",
+        "shh pathway and",
+        "shh pathway"
+      ]
     },
     {
       "curie": "DOID:0080704",
@@ -1681,7 +2026,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "hedgehog shh pathway",
+        "shh pathway and",
+        "shh pathway"
+      ]
     },
     {
       "curie": "DOID:0080705",
@@ -1693,7 +2042,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Medulloblastoma SHH-Activated TP53-Wildtype"
+        "Medulloblastoma SHH-Activated TP53-Wildtype",
+        "hedgehog shh pathway",
+        "shh pathway and",
+        "shh pathway"
       ]
     },
     {
@@ -1708,7 +2060,11 @@
         "DOID:0080708"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "the wnt pathway",
+        "wnt pathway or",
+        "wnt pathway"
+      ]
     },
     {
       "curie": "DOID:0080707",
@@ -1741,7 +2097,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
+      ]
     },
     {
       "curie": "DOID:0080794",
@@ -1753,7 +2113,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "pediatric non-Down syndrome acute megakaryoblastic leukemia"
+        "pediatric non-Down syndrome acute megakaryoblastic leukemia",
+        "an acute megakaryocytic",
+        "an acute",
+        "acute megakaryocytic leukemia"
       ]
     },
     {
@@ -1765,7 +2128,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
+      ]
     },
     {
       "curie": "DOID:0080796",
@@ -1776,7 +2143,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
+      ]
     },
     {
       "curie": "DOID:0080797",
@@ -1787,7 +2158,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "and nk-cell lymphoma",
+        "nk-cell lymphoma that",
+        "nk-cell lymphoma"
+      ]
     },
     {
       "curie": "DOID:0080798",
@@ -1798,7 +2173,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an acute megakaryocytic",
+        "an acute",
+        "acute megakaryocytic leukemia"
+      ]
     },
     {
       "curie": "DOID:0080799",
@@ -1809,7 +2188,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "nasal cavity carcinoma",
+        "cavity carcinoma that",
+        "cavity carcinoma"
+      ]
     },
     {
       "curie": "DOID:0080800",
@@ -1820,7 +2203,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "salivary gland carcinoma",
+        "gland carcinoma that",
+        "gland carcinoma"
+      ]
     },
     {
       "curie": "DOID:0080808",
@@ -1831,7 +2218,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "salivary gland carcinoma",
+        "gland carcinoma that",
+        "gland carcinoma"
+      ]
     },
     {
       "curie": "DOID:0080829",
@@ -1850,7 +2241,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "benign glioma"
+        "benign glioma",
+        "cell type benign",
+        "type benign neoplasm",
+        "type benign"
       ]
     },
     {
@@ -1877,7 +2271,10 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "malignant astrocytoma that",
+        "malignant astrocytoma"
+      ]
     },
     {
       "curie": "DOID:0080875",
@@ -1951,7 +2348,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "histone mutated tumor",
+        "mutated tumor that",
+        "mutated tumor"
+      ]
     },
     {
       "curie": "DOID:0080882",
@@ -1967,7 +2368,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Oligodendroglioma, IDH-mutant and 1p/19q-codeleted",
-        "anaplastic oligodendroglioma, IDH-mutant and 1p/19q-codeleted"
+        "anaplastic oligodendroglioma, IDH-mutant and 1p/19q-codeleted",
+        "gene family mutation",
+        "family mutation and",
+        "family mutation"
       ]
     },
     {
@@ -2048,7 +2452,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "perivascular tumor that",
+        "perivascular tumor",
+        "tumor that is"
+      ]
     },
     {
       "curie": "DOID:0080897",
@@ -2059,7 +2467,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "connective tissue cancer",
+        "tissue cancer that",
+        "tissue cancer"
+      ]
     },
     {
       "curie": "DOID:0080903",
@@ -2074,7 +2486,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "ependymoblastoma"
+        "ependymoblastoma",
+        "an embryonal tumor",
+        "embryonal tumor with",
+        "embryonal tumor"
       ]
     },
     {
@@ -2114,7 +2529,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "dendritic cell cancer",
+        "cell cancer that",
+        "cancer that is"
+      ]
     },
     {
       "curie": "DOID:0080956",
@@ -2125,7 +2544,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "childhood embryonal tumor",
+        "embryonal tumor with",
+        "embryonal tumor"
+      ]
     },
     {
       "curie": "DOID:0080996",
@@ -2137,7 +2560,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "DLBCL ABC type"
+        "DLBCL ABC type",
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
       ]
     },
     {
@@ -2149,7 +2575,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
+      ]
     },
     {
       "curie": "DOID:0081063",
@@ -2175,7 +2605,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "BN2 DLBCL"
+        "BN2 DLBCL",
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
       ]
     },
     {
@@ -2191,7 +2624,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "EZB DLBCL"
+        "EZB DLBCL",
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
       ]
     },
     {
@@ -2204,7 +2640,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "MCD DLBCL"
+        "MCD DLBCL",
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
       ]
     },
     {
@@ -2217,7 +2656,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "N1 DLBCL"
+        "N1 DLBCL",
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
       ]
     },
     {
@@ -2230,7 +2672,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "ST2 DLBCL"
+        "ST2 DLBCL",
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
       ]
     },
     {
@@ -2243,7 +2688,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "A53 DLBCL"
+        "A53 DLBCL",
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
       ]
     },
     {
@@ -2256,7 +2704,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "EZB-MYC+ DLBCL"
+        "EZB-MYC+ DLBCL",
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
       ]
     },
     {
@@ -2269,7 +2720,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "EZB-MYC- DLBCL"
+        "EZB-MYC- DLBCL",
+        "large b-cell lymphoma",
+        "b-cell lymphoma that",
+        "b-cell lymphoma"
       ]
     },
     {
@@ -2297,7 +2751,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "acute promyelocytic leukemia, t(15;17)(q22;q11-12)"
+        "acute promyelocytic leukemia, t(15;17)(q22;q11-12)",
+        "an acute promyelocytic",
+        "an acute",
+        "acute promyelocytic leukemia"
       ]
     },
     {
@@ -2309,7 +2766,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
+      ]
     },
     {
       "curie": "DOID:0081083",
@@ -2322,7 +2783,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Acute Myeloid Leukemia with inv(3) (q21.3;q26.2) or t(3;3) (q21.3;q26.2); GATA2, MECOM",
-        "Acute myeloid leukemia with inv(3)(q21;q26.2) or t(3;3)(q21;q26.2); RPN1-EVI1"
+        "Acute myeloid leukemia with inv(3)(q21;q26.2) or t(3;3)(q21;q26.2); RPN1-EVI1",
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
       ]
     },
     {
@@ -2336,7 +2800,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Acute Myeloid Leukemia with inv(16)(p13.1q22) or t(16;16)(p13.1;q22); CBFB-MYH11",
-        "acute myeloid leukemia with abnormal marrow eosinophils"
+        "acute myeloid leukemia with abnormal marrow eosinophils",
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
       ]
     },
     {
@@ -2350,7 +2817,10 @@
       "disjoint_with": [],
       "synonyms": [
         "AML-M0",
-        "Acute myeloid leukemia, minimal differentiation"
+        "Acute myeloid leukemia, minimal differentiation",
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
       ]
     },
     {
@@ -2362,7 +2832,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
+      ]
     },
     {
       "curie": "DOID:0081087",
@@ -2373,7 +2847,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
+      ]
     },
     {
       "curie": "DOID:0081088",
@@ -2385,7 +2863,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Chronic myelogenous leukemia, BCR/ABL positive"
+        "Chronic myelogenous leukemia, BCR/ABL positive",
+        "chronic myeloid leukemia",
+        "chronic myeloid",
+        "myeloid leukemia that"
       ]
     },
     {
@@ -2397,7 +2878,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
+      ]
     },
     {
       "curie": "DOID:0081090",
@@ -2408,7 +2893,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
+      ]
     },
     {
       "curie": "DOID:0081091",
@@ -2419,7 +2908,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
+      ]
     },
     {
       "curie": "DOID:0081092",
@@ -2430,7 +2923,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
+      ]
     },
     {
       "curie": "DOID:0081093",
@@ -2443,7 +2940,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Acute Myeloid Leukemia with t(8;21); (q22; q22.1); RUNX1-RUNX1T1",
-        "acute myeloid leukemia, t(8;21)(q22;q22)"
+        "acute myeloid leukemia, t(8;21)(q22;q22)",
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
       ]
     },
     {
@@ -2457,7 +2957,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Acute Myeloid Leukemia with KMT2A/MLL Rearrangement",
-        "acute myeloid leukemia, 11q23 abnormalities"
+        "acute myeloid leukemia, 11q23 abnormalities",
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
       ]
     },
     {
@@ -2469,7 +2972,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
+      ]
     },
     {
       "curie": "DOID:0081096",
@@ -2481,7 +2988,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Acute Myeloid Leukemia (Megakaryoblastic) with t(1;22)(p13.3;q13.1); RBM15-MKL1"
+        "Acute Myeloid Leukemia (Megakaryoblastic) with t(1;22)(p13.3;q13.1); RBM15-MKL1",
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
       ]
     },
     {
@@ -2494,7 +3004,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Pituitary Gland Blastoma"
+        "Pituitary Gland Blastoma",
+        "pituitary cancer that",
+        "pituitary cancer",
+        "cancer that is"
       ]
     },
     {
@@ -2508,7 +3021,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Cauda equina neuroendocrine tumour",
-        "Spinal neuroendocrine tumors"
+        "Spinal neuroendocrine tumors",
+        "cauda equina neoplasm",
+        "equina neoplasm that",
+        "equina neoplasm"
       ]
     },
     {
@@ -2542,7 +3058,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Pinealocytoma",
-        "Pinealoma"
+        "Pinealoma",
+        "an endocrine organ",
+        "an endocrine",
+        "endocrine organ benign"
       ]
     },
     {
@@ -2557,7 +3076,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "EWSR1-Negative Small Blue Round Cell Tumor"
+        "EWSR1-Negative Small Blue Round Cell Tumor",
+        "small cell sarcoma",
+        "cell sarcoma that",
+        "cell sarcoma"
       ]
     },
     {
@@ -2570,7 +3092,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Capicua transcriptional repressor (CIC)-rearranged sarcoma"
+        "Capicua transcriptional repressor (CIC)-rearranged sarcoma",
+        "round cell tumor",
+        "cell tumor that",
+        "tumor that is"
       ]
     },
     {
@@ -2583,12 +3108,15 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Papillary tumour of the pineal region"
+        "Papillary tumour of the pineal region",
+        "pineal gland cancer",
+        "gland cancer that",
+        "gland cancer"
       ]
     },
     {
       "curie": "DOID:0081252",
-      "label": "supratentorial ependymoma, ZFTA fusion\u2013positive",
+      "label": "supratentorial ependymoma, ZFTA fusion–positive",
       "description": "A suptratentorial ependymoma that is characterized by the presence of a fusion gene involving ZFTA gene.",
       "parents": [
         "DOID:0080890"
@@ -2599,7 +3127,7 @@
     },
     {
       "curie": "DOID:0081253",
-      "label": "supratentorial ependymoma, YAP1 fusion\u2013positive",
+      "label": "supratentorial ependymoma, YAP1 fusion–positive",
       "description": "A supratentorial ependymoma that is characterized by the presence of a fusion gene involving YAP1 gene.",
       "parents": [
         "DOID:0080890"
@@ -2675,14 +3203,18 @@
     },
     {
       "curie": "DOID:0081260",
-      "label": "diffuse low-grade glioma, MAPK pathway\u2013altered",
+      "label": "diffuse low-grade glioma, MAPK pathway–altered",
       "description": "A low grade glioma that is characterized by a gene alteration that results in a MAPK pathway abnormality, with morphological features of astrocytoma or oligodendroglioma.",
       "parents": [
         "DOID:0080829"
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "in mapk pathway",
+        "mapk pathway abnormality",
+        "mapk pathway"
+      ]
     },
     {
       "curie": "DOID:0081261",
@@ -2717,7 +3249,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "infiltrative astroglial neoplasm",
+        "astroglial neoplasm composed",
+        "astroglial neoplasm"
+      ]
     },
     {
       "curie": "DOID:0081280",
@@ -2726,7 +3262,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "pituitary gland neoplasm",
+        "gland neoplasm that",
+        "gland neoplasm"
+      ]
     },
     {
       "curie": "DOID:0081281",
@@ -2737,7 +3277,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "well differentiated tumor",
+        "differentiated tumor lacking",
+        "differentiated tumor"
+      ]
     },
     {
       "curie": "DOID:0081282",
@@ -2758,7 +3302,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Papillary glioneuronal tumour"
+        "Papillary glioneuronal tumour",
+        "nervous system benign",
+        "system benign neoplasm",
+        "system benign"
       ]
     },
     {
@@ -2770,7 +3317,10 @@
       "disjoint_with": [],
       "synonyms": [
         "RGNT",
-        "Rosette-forming glioneuronal tumour"
+        "Rosette-forming glioneuronal tumour",
+        "nervous system benign",
+        "system benign neoplasm",
+        "system benign"
       ]
     },
     {
@@ -2781,7 +3331,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Myxoid glioneuronal tumour"
+        "Myxoid glioneuronal tumour",
+        "nervous system benign",
+        "system benign neoplasm",
+        "system benign"
       ]
     },
     {
@@ -2796,7 +3349,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "Embryonal tumour with multilayered rosettes"
+        "Embryonal tumour with multilayered rosettes",
+        "system embryonal tumor",
+        "embryonal tumor that",
+        "embryonal tumor"
       ]
     },
     {
@@ -2808,7 +3364,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "mucoepidermoid carcinoma the",
+        "mucoepidermoid carcinoma",
+        "carcinoma the salivary"
+      ]
     },
     {
       "curie": "DOID:0081302",
@@ -2818,7 +3378,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Diffuse leptomeningeal glioneuronal tumour"
+        "Diffuse leptomeningeal glioneuronal tumour",
+        "nervous system benign",
+        "system benign neoplasm",
+        "system benign"
       ]
     },
     {
@@ -2828,7 +3391,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "nervous system benign",
+        "system benign neoplasm",
+        "system benign"
+      ]
     },
     {
       "curie": "DOID:0081304",
@@ -2848,7 +3415,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "posterior pituitary benign",
+        "pituitary benign neoplasm",
+        "pituitary benign"
+      ]
     },
     {
       "curie": "DOID:0081307",
@@ -2857,7 +3428,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "lymphoproliferative syndrome that",
+        "lymphoproliferative syndrome",
+        "syndrome that is"
+      ]
     },
     {
       "curie": "DOID:0081312",
@@ -2870,7 +3445,11 @@
         "DOID:0050743"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "non-hodgkin lymphoma of",
+        "non-hodgkin lymphoma",
+        "lymphoma of t-cell"
+      ]
     },
     {
       "curie": "DOID:0081314",
@@ -2881,7 +3460,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "cerebral ventricle cancer",
+        "ventricle cancer that",
+        "ventricle cancer"
+      ]
     },
     {
       "curie": "DOID:0081315",
@@ -2893,7 +3476,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "CNS tumour with BCOR internal tandem duplication"
+        "CNS tumour with BCOR internal tandem duplication",
+        "system embryonal tumor",
+        "embryonal tumor that",
+        "embryonal tumor"
       ]
     },
     {
@@ -2905,7 +3491,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "brain sarcoma that",
+        "brain sarcoma",
+        "sarcoma that is"
+      ]
     },
     {
       "curie": "DOID:0081402",
@@ -2921,7 +3511,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "BCOR-Rearranged Sarcoma"
+        "BCOR-Rearranged Sarcoma",
+        "small cell sarcoma",
+        "cell sarcoma that",
+        "cell sarcoma"
       ]
     },
     {
@@ -2933,7 +3526,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "sarcoma with bcor",
+        "sarcoma with",
+        "with bcor genetic"
+      ]
     },
     {
       "curie": "DOID:0081404",
@@ -2944,7 +3541,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "sarcoma with bcor",
+        "sarcoma with",
+        "with bcor genetic"
+      ]
     },
     {
       "curie": "DOID:0081405",
@@ -2955,7 +3556,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "sarcoma with bcor",
+        "sarcoma with",
+        "with bcor genetic"
+      ]
     },
     {
       "curie": "DOID:0081406",
@@ -2973,7 +3578,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Ewing-Like Sarcoma or Round Cell Sarcoma",
-        "Round Cell Sarcoma with EWSR1::non-ETS Fusion"
+        "Round Cell Sarcoma with EWSR1::non-ETS Fusion",
+        "small cell sarcoma",
+        "cell sarcoma that",
+        "cell sarcoma"
       ]
     },
     {
@@ -2985,7 +3593,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "round cell sarcoma",
+        "cell sarcoma with",
+        "cell sarcoma"
+      ]
     },
     {
       "curie": "DOID:0081408",
@@ -2996,7 +3608,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "round cell sarcoma",
+        "cell sarcoma with",
+        "cell sarcoma"
+      ]
     },
     {
       "curie": "DOID:0081409",
@@ -3007,7 +3623,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "round cell sarcoma",
+        "cell sarcoma with",
+        "cell sarcoma"
+      ]
     },
     {
       "curie": "DOID:0081410",
@@ -3018,7 +3638,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "round cell sarcoma",
+        "cell sarcoma with",
+        "cell sarcoma"
+      ]
     },
     {
       "curie": "DOID:0081411",
@@ -3046,7 +3670,10 @@
       "disjoint_with": [],
       "synonyms": [
         "B acute lymphoblastic leukemia with DUX4 rearrangement",
-        "B-lymphoblastic leukaemia with DUX4 rearrangement"
+        "B-lymphoblastic leukaemia with DUX4 rearrangement",
+        "lymphoblastic leukemia lymphoma",
+        "lymphoblastic leukemia",
+        "leukemia lymphoma that"
       ]
     },
     {
@@ -3064,7 +3691,10 @@
       "disjoint_with": [],
       "synonyms": [
         "MiT Family Translocation-Associated Renal Cell Carcinoma",
-        "MiT family translocation renal cell carcinoma"
+        "MiT family translocation renal cell carcinoma",
+        "renal cell carcinoma",
+        "renal cell",
+        "cell carcinoma that"
       ]
     },
     {
@@ -3094,7 +3724,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Renal Cell Carcinoma Associated with Xp11.2 Translocations/TFE3 Gene Fusions",
-        "Xp11 Translocation Renal Cell Carcinoma"
+        "Xp11 Translocation Renal Cell Carcinoma",
+        "renal cell carcinoma",
+        "renal cell",
+        "cell carcinoma with"
       ]
     },
     {
@@ -3106,7 +3739,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "renal cell carcinoma",
+        "renal cell",
+        "cell carcinoma with"
+      ]
     },
     {
       "curie": "DOID:0081417",
@@ -3117,7 +3754,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "nests of malignant",
+        "of malignant epithelioid",
+        "of malignant"
+      ]
     },
     {
       "curie": "DOID:0081418",
@@ -3128,7 +3769,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "kidney sarcoma that",
+        "kidney sarcoma",
+        "sarcoma that is"
+      ]
     },
     {
       "curie": "DOID:0111147",
@@ -3139,7 +3784,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "peripheral t-cell lymphoma",
+        "t-cell lymphoma characterized",
+        "t-cell lymphoma"
+      ]
     },
     {
       "curie": "DOID:10047",
@@ -3163,7 +3812,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "slow-growing subcutaneous tumor",
+        "subcutaneous tumor that",
+        "subcutaneous tumor"
+      ]
     },
     {
       "curie": "DOID:10192",
@@ -3222,7 +3875,10 @@
       "disjoint_with": [],
       "synonyms": [
         "cancer of prostate",
-        "carcinoma of prostate"
+        "carcinoma of prostate",
+        "prostate cancer that",
+        "prostate cancer",
+        "cancer that has"
       ]
     },
     {
@@ -3273,7 +3929,10 @@
       "disjoint_with": [],
       "synonyms": [
         "PLL",
-        "Prolymphocytic leukaemia"
+        "Prolymphocytic leukaemia",
+        "chronic lymphocytic leukemia",
+        "chronic lymphocytic",
+        "lymphocytic leukemia that"
       ]
     },
     {
@@ -3315,7 +3974,10 @@
       "disjoint_with": [],
       "synonyms": [
         "gastric cancer",
-        "gastric neoplasm"
+        "gastric neoplasm",
+        "gastrointestinal system cancer",
+        "system cancer that",
+        "system cancer"
       ]
     },
     {
@@ -3328,7 +3990,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "neuroblastoma of mediastinum"
+        "neuroblastoma of mediastinum",
+        "malignant mediastinal neurogenic",
+        "malignant mediastinal",
+        "mediastinal neurogenic neoplasm"
       ]
     },
     {
@@ -3344,7 +4009,10 @@
       "disjoint_with": [],
       "synonyms": [
         "bladder cancer",
-        "tumor of the bladder"
+        "tumor of the bladder",
+        "urinary system cancer",
+        "system cancer that",
+        "system cancer"
       ]
     },
     {
@@ -3384,7 +4052,10 @@
       "disjoint_with": [],
       "synonyms": [
         "connective and soft tissue neoplasm",
-        "tumor of soft tissue and skeleton"
+        "tumor of soft tissue and skeleton",
+        "cell type cancer",
+        "type cancer that",
+        "type cancer"
       ]
     },
     {
@@ -3465,7 +4136,10 @@
         "DOID:9254"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "cancer that affects",
+        "cancer that"
+      ]
     },
     {
       "curie": "DOID:12603",
@@ -3481,7 +4155,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Stem cell Leukemia",
-        "Stem cell leukaemia"
+        "Stem cell leukaemia",
+        "lymphoid leukemia that",
+        "lymphoid leukemia",
+        "leukemia that occurs"
       ]
     },
     {
@@ -3511,7 +4188,10 @@
       "disjoint_with": [],
       "synonyms": [
         "leiomyomatous neoplasm",
-        "leiomyomatous tumor"
+        "leiomyomatous tumor",
+        "cell type benign",
+        "type benign neoplasm",
+        "type benign"
       ]
     },
     {
@@ -3578,7 +4258,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "lung neoplasm"
+        "lung neoplasm",
+        "respiratory system cancer",
+        "system cancer that",
+        "system cancer"
       ]
     },
     {
@@ -3604,7 +4287,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an uterine benign",
+        "uterine benign neoplasm",
+        "uterine benign"
+      ]
     },
     {
       "curie": "DOID:1380",
@@ -3666,7 +4353,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Congenital lymphangioma",
-        "benign lymphangioma"
+        "benign lymphangioma",
+        "benign vascular tumor",
+        "benign vascular",
+        "vascular tumor that"
       ]
     },
     {
@@ -3682,7 +4372,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Colonic carcinoma",
-        "carcinoma of colon"
+        "carcinoma of colon",
+        "colon cancer that",
+        "colon cancer",
+        "cancer that has"
       ]
     },
     {
@@ -3698,7 +4391,10 @@
       "disjoint_with": [],
       "synonyms": [
         "carcinoma of the neck",
-        "carcinoma of neck"
+        "carcinoma of neck",
+        "and neck cancer",
+        "neck cancer that",
+        "neck cancer"
       ]
     },
     {
@@ -3725,7 +4421,9 @@
         "mammary cancer",
         "mammary tumor",
         "primary breast cancer",
-        "mammary neoplasm"
+        "mammary neoplasm",
+        "breast cancer",
+        "breast carcinoma"
       ]
     },
     {
@@ -3843,7 +4541,8 @@
       "synonyms": [
         "malignant neoplasm",
         "malignant tumor",
-        "primary cancer"
+        "primary cancer",
+        "cancer"
       ]
     },
     {
@@ -3873,7 +4572,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "Pineal PNET"
+        "Pineal PNET",
+        "pineal gland neoplasm",
+        "gland neoplasm the",
+        "gland neoplasm"
       ]
     },
     {
@@ -3888,7 +4590,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "neuroendocrine neoplasm"
+        "neuroendocrine neoplasm",
+        "an endocrine gland",
+        "an endocrine",
+        "endocrine gland cancer"
       ]
     },
     {
@@ -4056,7 +4761,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Fibro-osteoma",
-        "peripheral ossifying fibroma"
+        "peripheral ossifying fibroma",
+        "bone benign neoplasm",
+        "bone benign",
+        "benign neoplasm that"
       ]
     },
     {
@@ -4071,7 +4779,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "sarcoma of the vagina"
+        "sarcoma of the vagina",
+        "vaginal cancer that",
+        "vaginal cancer",
+        "cancer that has"
       ]
     },
     {
@@ -4103,7 +4814,11 @@
       "disjoint_with": [],
       "synonyms": [
         "Naevocarcinoma",
-        "malignant melanoma"
+        "malignant melanoma",
+        "melanoma",
+        "skin cancer",
+        "BRAF mutation",
+        "UV radiation cancer"
       ]
     },
     {
@@ -4139,7 +4854,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "Leiomyosarcomas"
+        "Leiomyosarcomas",
+        "smooth muscle cancer",
+        "muscle cancer that",
+        "muscle cancer"
       ]
     },
     {
@@ -4153,7 +4871,10 @@
       "disjoint_with": [],
       "synonyms": [
         "fallopian tube malignant mixed Mullerian tumor",
-        "fallopian tube malignant mixed mesodermal (mullerian) tumor"
+        "fallopian tube malignant mixed mesodermal (mullerian) tumor",
+        "fallopian tube cancer",
+        "tube cancer that",
+        "tube cancer"
       ]
     },
     {
@@ -4201,7 +4922,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Rectal adenocarcinoma"
+        "Rectal adenocarcinoma",
+        "rectum cancer that",
+        "rectum cancer",
+        "cancer that epithelial"
       ]
     },
     {
@@ -4213,7 +4937,11 @@
         "DOID:3192"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "nervous system benign",
+        "system benign neoplasm",
+        "system benign"
+      ]
     },
     {
       "curie": "DOID:2101",
@@ -4262,7 +4990,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "Ovarian Surface epithelial-Stromal tumor"
+        "Ovarian Surface epithelial-Stromal tumor",
+        "an ovarian cancer",
+        "ovarian cancer that",
+        "ovarian cancer"
       ]
     },
     {
@@ -4278,7 +5009,10 @@
       "disjoint_with": [],
       "synonyms": [
         "adult nephroblastoma",
-        "Wilms' tumor"
+        "Wilms' tumor",
+        "kidney cancer that",
+        "kidney cancer",
+        "cancer that affects"
       ]
     },
     {
@@ -4292,7 +5026,11 @@
         "DOID:1520"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "colorectal cancer that",
+        "colorectal cancer",
+        "cancer that is"
+      ]
     },
     {
       "curie": "DOID:2224",
@@ -4386,7 +5124,9 @@
         "ovarian neoplasm",
         "ovary neoplasm",
         "primary ovarian cancer",
-        "tumor of the Ovary"
+        "tumor of the Ovary",
+        "ovarian cancer",
+        "ovarian carcinoma"
       ]
     },
     {
@@ -4408,7 +5148,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "gangliocytoma of central nervous system"
+        "gangliocytoma of central nervous system",
+        "nervous system benign",
+        "system benign neoplasm",
+        "system benign"
       ]
     },
     {
@@ -4424,7 +5167,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Glomus neoplasm",
-        "Glomus tumour"
+        "Glomus tumour",
+        "hemangiopericytic tumor that",
+        "hemangiopericytic tumor",
+        "tumor that is"
       ]
     },
     {
@@ -4435,7 +5181,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Glomuvenous Malformation"
+        "Glomuvenous Malformation",
+        "benign perivascular tumor",
+        "benign perivascular",
+        "perivascular tumor that"
       ]
     },
     {
@@ -4467,7 +5216,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "prostate carcinoma that",
+        "prostate carcinoma",
+        "carcinoma that epithelial"
+      ]
     },
     {
       "curie": "DOID:2531",
@@ -4506,7 +5259,11 @@
         "DOID:5241"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "cardiovascular organ benign",
+        "organ benign neoplasm",
+        "organ benign"
+      ]
     },
     {
       "curie": "DOID:2571",
@@ -4556,7 +5313,10 @@
       "disjoint_with": [],
       "synonyms": [
         "cancer of larynx",
-        "carcinoma of larynx"
+        "carcinoma of larynx",
+        "larynx cancer that",
+        "larynx cancer",
+        "cancer that has"
       ]
     },
     {
@@ -4567,7 +5327,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "central Chondroma"
+        "central Chondroma",
+        "cell type benign",
+        "type benign neoplasm",
+        "type benign"
       ]
     },
     {
@@ -4577,7 +5340,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "cell type benign",
+        "type benign neoplasm",
+        "type benign"
+      ]
     },
     {
       "curie": "DOID:2626",
@@ -4639,7 +5406,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "benign struma ovarii"
+        "benign struma ovarii",
+        "an ovarian benign",
+        "ovarian benign neoplasm",
+        "ovarian benign"
       ]
     },
     {
@@ -4666,7 +5436,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "benign tumor of Mesothelium"
+        "benign tumor of Mesothelium",
+        "cell type benign",
+        "type benign neoplasm",
+        "type benign"
       ]
     },
     {
@@ -4688,7 +5461,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Chondroblastoma of bone"
+        "Chondroblastoma of bone",
+        "connective tissue benign",
+        "tissue benign neoplasm",
+        "tissue benign"
       ]
     },
     {
@@ -4784,7 +5560,11 @@
         "DOID:2700"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "cell type benign",
+        "type benign neoplasm",
+        "type benign"
+      ]
     },
     {
       "curie": "DOID:2685",
@@ -4824,7 +5604,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "benign neoplasm of the Muscle"
+        "benign neoplasm of the Muscle",
+        "muscle benign neoplasm",
+        "muscle benign",
+        "benign neoplasm that"
       ]
     },
     {
@@ -4868,7 +5651,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "chronic lymphocytic leukemia",
+        "chronic lymphocytic",
+        "lymphocytic leukemia that"
+      ]
     },
     {
       "curie": "DOID:2870",
@@ -4919,7 +5706,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Epidermoid carcinoma of the Larynx",
-        "squamous cell carcinoma of larynx"
+        "squamous cell carcinoma of larynx",
+        "laryngeal carcinoma that",
+        "laryngeal carcinoma",
+        "carcinoma that has"
       ]
     },
     {
@@ -4951,7 +5741,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "cord-gonadal stromal tumor",
+        "stromal tumor characterized",
+        "stromal tumor"
+      ]
     },
     {
       "curie": "DOID:2999",
@@ -4979,7 +5773,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "duct carcinoma"
+        "duct carcinoma",
+        "breast carcinoma that",
+        "breast carcinoma",
+        "carcinoma that the"
       ]
     },
     {
@@ -5035,7 +5832,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Cecal adenocarcinoma"
+        "Cecal adenocarcinoma",
+        "cecum carcinoma that",
+        "cecum carcinoma",
+        "carcinoma that epithelial"
       ]
     },
     {
@@ -5162,7 +5962,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Glioblastoma multiforme of brain",
-        "brain Glioblastoma"
+        "brain Glioblastoma",
+        "and localized neurological",
+        "localized neurological problems",
+        "localized neurological"
       ]
     },
     {
@@ -5193,7 +5996,9 @@
       "disjoint_with": [],
       "synonyms": [
         "grade III Astrocytic tumor",
-        "grade III astrocytoma"
+        "grade III astrocytoma",
+        "malignant astrocytoma that",
+        "malignant astrocytoma"
       ]
     },
     {
@@ -5223,7 +6028,11 @@
         "DOID:6785"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "sarcoma characterized by",
+        "sarcoma characterized",
+        "or elongated malignant"
+      ]
     },
     {
       "curie": "DOID:3112",
@@ -5368,7 +6177,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Psammomatous schwannoma",
-        "schwannoma"
+        "schwannoma",
+        "characterized as benign",
+        "as benign nerve",
+        "as benign"
       ]
     },
     {
@@ -5386,7 +6198,10 @@
       "disjoint_with": [],
       "synonyms": [
         "neoplasm of the nerve Sheath",
-        "nerve sheath tumour"
+        "nerve sheath tumour",
+        "nervous system neoplasm",
+        "system neoplasm that",
+        "system neoplasm"
       ]
     },
     {
@@ -5414,7 +6229,11 @@
         "DOID:6787"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "the mesenchymally-derived malignant",
+        "mesenchymally-derived malignant cells",
+        "mesenchymally-derived malignant"
+      ]
     },
     {
       "curie": "DOID:3247",
@@ -5431,7 +6250,11 @@
         "DOID:4065"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "skeletal muscle cancer",
+        "muscle cancer that",
+        "muscle cancer"
+      ]
     },
     {
       "curie": "DOID:3250",
@@ -5474,7 +6297,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "thymus cancer that",
+        "thymus cancer",
+        "cancer that epithelial"
+      ]
     },
     {
       "curie": "DOID:3284",
@@ -5489,7 +6316,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Thymoma, malignant",
-        "malignant Thymoma"
+        "malignant Thymoma",
+        "thymus cancer that",
+        "thymus cancer",
+        "cancer that epithelial"
       ]
     },
     {
@@ -5499,7 +6329,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "cell type benign",
+        "type benign neoplasm",
+        "type benign"
+      ]
     },
     {
       "curie": "DOID:3302",
@@ -5514,7 +6348,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "notochordoma"
+        "notochordoma",
+        "notochordal cancer that",
+        "notochordal cancer",
+        "cancer that cellular"
       ]
     },
     {
@@ -5526,7 +6363,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "germ cell cancer",
+        "cell cancer that",
+        "cancer that lacks"
+      ]
     },
     {
       "curie": "DOID:3305",
@@ -5538,7 +6379,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "mixed Embryonal carcinoma and teratoma"
+        "mixed Embryonal carcinoma and teratoma",
+        "germ cell tumor",
+        "cell tumor that",
+        "tumor that is"
       ]
     },
     {
@@ -5571,7 +6415,11 @@
         "DOID:5563"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "and embryonal cancer",
+        "embryonal cancer that",
+        "embryonal cancer"
+      ]
     },
     {
       "curie": "DOID:3308",
@@ -5583,7 +6431,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "primary extragonadal embryonal carcinoma"
+        "primary extragonadal embryonal carcinoma",
+        "an embryonal cancer",
+        "embryonal cancer that",
+        "embryonal cancer"
       ]
     },
     {
@@ -5593,7 +6444,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "cell type benign",
+        "type benign neoplasm",
+        "type benign"
+      ]
     },
     {
       "curie": "DOID:3315",
@@ -5792,7 +6647,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Osteosarcoma of bone",
-        "primary Osteosarcoma of bone"
+        "primary Osteosarcoma of bone",
+        "usually aggressive malignant",
+        "aggressive malignant bone-forming",
+        "aggressive malignant"
       ]
     },
     {
@@ -5812,7 +6670,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "lipomatous cancer"
+        "lipomatous cancer",
+        "connective tissue cancer",
+        "tissue cancer that",
+        "tissue cancer"
       ]
     },
     {
@@ -5840,7 +6701,10 @@
       "disjoint_with": [],
       "synonyms": [
         "adenocarcinoma of anus",
-        "adenocarcinoma of the anus"
+        "adenocarcinoma of the anus",
+        "an anal carcinoma",
+        "anal carcinoma that",
+        "anal carcinoma"
       ]
     },
     {
@@ -5856,7 +6720,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Penile carcinoma",
-        "carcinoma of penis"
+        "carcinoma of penis",
+        "penile cancer that",
+        "penile cancer",
+        "cancer that is"
       ]
     },
     {
@@ -5874,7 +6741,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Mammary adenocarcinoma",
-        "adenocarcinoma of breast"
+        "adenocarcinoma of breast",
+        "breast carcinoma that",
+        "breast carcinoma",
+        "carcinoma that originates"
       ]
     },
     {
@@ -5893,7 +6763,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Mammary carcinoma",
-        "carcinoma of breast"
+        "carcinoma of breast",
+        "breast cancer that",
+        "breast cancer",
+        "cancer that has"
       ]
     },
     {
@@ -5921,7 +6794,10 @@
       "disjoint_with": [],
       "synonyms": [
         "PDAC",
-        "ductal adenocarcinoma of the pancreas"
+        "ductal adenocarcinoma of the pancreas",
+        "pancreatic adenocarcinoma that",
+        "pancreatic adenocarcinoma",
+        "adenocarcinoma that pancreatic"
       ]
     },
     {
@@ -5982,7 +6858,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "mucinous Ascites"
+        "mucinous Ascites",
+        "an appendix cancer",
+        "appendix cancer that",
+        "appendix cancer"
       ]
     },
     {
@@ -6037,7 +6916,9 @@
         "non-resectable primary hepatic malignant neoplasm",
         "primary liver cancer",
         "primary malignant neoplasm of liver",
-        "resectable malignant neoplasm of the liver"
+        "resectable malignant neoplasm of the liver",
+        "liver cancer",
+        "hepatic malignancy"
       ]
     },
     {
@@ -6051,7 +6932,10 @@
       "disjoint_with": [],
       "synonyms": [
         "malignant neoplasm of duct of Wirsung",
-        "pancreatic duct cancer"
+        "pancreatic duct cancer",
+        "pancreatic carcinoma the",
+        "pancreatic carcinoma",
+        "carcinoma the pancreatic"
       ]
     },
     {
@@ -6068,7 +6952,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "Chorioepithelioma"
+        "Chorioepithelioma",
+        "placenta cancer that",
+        "placenta cancer",
+        "cancer that has"
       ]
     },
     {
@@ -6238,7 +7125,10 @@
       "disjoint_with": [],
       "synonyms": [
         "adenocarcinoma of stomach",
-        "stomach adenocarcinoma"
+        "stomach adenocarcinoma",
+        "stomach carcinoma that",
+        "stomach carcinoma",
+        "carcinoma that epithelial"
       ]
     },
     {
@@ -6268,7 +7158,10 @@
       "disjoint_with": [],
       "synonyms": [
         "squamous cell carcinoma of cervix",
-        "squamous cell carcinoma of the Cervix Uteri"
+        "squamous cell carcinoma of the Cervix Uteri",
+        "cervix carcinoma that",
+        "cervix carcinoma",
+        "carcinoma that has"
       ]
     },
     {
@@ -6391,7 +7284,10 @@
       "disjoint_with": [],
       "synonyms": [
         "childhood central nervous system primitive neuroectodermal neoplasm",
-        "pediatric CNS PNET"
+        "pediatric CNS PNET",
+        "system embryonal tumor",
+        "embryonal tumor that",
+        "embryonal tumor"
       ]
     },
     {
@@ -6419,7 +7315,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "BC - Bronchogenic carcinoma"
+        "BC - Bronchogenic carcinoma",
+        "bronchus cancer that",
+        "bronchus cancer",
+        "cancer that has"
       ]
     },
     {
@@ -6437,7 +7336,10 @@
       "disjoint_with": [],
       "synonyms": [
         "cancer of lung",
-        "carcinoma of lung"
+        "carcinoma of lung",
+        "lung cancer that",
+        "lung cancer",
+        "cancer that has"
       ]
     },
     {
@@ -6451,7 +7353,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Epidermoid cell carcinoma of the lung",
-        "squamous cell carcinoma of lung"
+        "squamous cell carcinoma of lung",
+        "cell lung carcinoma",
+        "lung carcinoma that",
+        "lung carcinoma"
       ]
     },
     {
@@ -6470,7 +7375,10 @@
       "synonyms": [
         "NSCLC",
         "Non-small cell lung cancer",
-        "non-small cell lung carcinoma"
+        "non-small cell lung carcinoma",
+        "lung cancer",
+        "pulmonary carcinoma",
+        "bronchogenic carcinoma"
       ]
     },
     {
@@ -6502,7 +7410,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Adrenal cortical carcinoma",
-        "carcinoma of the Adrenal cortex"
+        "carcinoma of the Adrenal cortex",
+        "adrenal cortex cancer",
+        "cortex cancer that",
+        "cortex cancer"
       ]
     },
     {
@@ -6515,7 +7426,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "carcinoma of the Adrenal gland"
+        "carcinoma of the Adrenal gland",
+        "an adrenal cancer",
+        "adrenal cancer that",
+        "adrenal cancer"
       ]
     },
     {
@@ -6553,7 +7467,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Thyroid carcinoma",
-        "head and neck cancer, Thyroid"
+        "head and neck cancer, Thyroid",
+        "thyroid gland cancer",
+        "gland cancer that",
+        "gland cancer"
       ]
     },
     {
@@ -6567,7 +7484,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Trabecular adenocarcinoma",
-        "trabecular carcinoma"
+        "trabecular carcinoma",
+        "skin carcinoma that",
+        "skin carcinoma",
+        "carcinoma that is"
       ]
     },
     {
@@ -6619,7 +7539,11 @@
         "DOID:6179"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an ovarian cancer",
+        "ovarian cancer that",
+        "ovarian cancer"
+      ]
     },
     {
       "curie": "DOID:4006",
@@ -6652,7 +7576,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "carcinoma of urinary bladder"
+        "carcinoma of urinary bladder",
+        "urinary bladder cancer",
+        "bladder cancer that",
+        "bladder cancer"
       ]
     },
     {
@@ -6665,7 +7592,9 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "spindle cell carcinoma"
+        "spindle cell carcinoma",
+        "carcinoma that is",
+        "carcinoma that"
       ]
     },
     {
@@ -6721,7 +7650,10 @@
       "disjoint_with": [],
       "synonyms": [
         "pancreas adenocarcinoma",
-        "adenocarcinoma of the pancreas"
+        "adenocarcinoma of the pancreas",
+        "pancreatic carcinoma that",
+        "pancreatic carcinoma",
+        "carcinoma that epithelial"
       ]
     },
     {
@@ -6758,7 +7690,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "pediatric tumor of Brainstem"
+        "pediatric tumor of Brainstem",
+        "brain stem cancer",
+        "stem cancer characterized",
+        "stem cancer"
       ]
     },
     {
@@ -6773,7 +7708,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "pediatric Infratentorial tumor"
+        "pediatric Infratentorial tumor",
+        "brain stem cancer",
+        "stem cancer in",
+        "stem cancer"
       ]
     },
     {
@@ -6812,7 +7750,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "uterine corpus endometrial stromal tumor"
+        "uterine corpus endometrial stromal tumor",
+        "uterine corpus sarcoma",
+        "corpus sarcoma that",
+        "corpus sarcoma"
       ]
     },
     {
@@ -6850,7 +7791,10 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "sarcoma that results",
+        "sarcoma that"
+      ]
     },
     {
       "curie": "DOID:4236",
@@ -6881,7 +7825,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "soft tissue cancer",
+        "tissue cancer that",
+        "tissue cancer"
+      ]
     },
     {
       "curie": "DOID:4305",
@@ -6906,7 +7854,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "bones and failure",
+        "and failure of",
+        "and failure"
+      ]
     },
     {
       "curie": "DOID:4359",
@@ -6999,7 +7951,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "germ cell cancer",
+        "cell cancer that",
+        "cancer that cells"
+      ]
     },
     {
       "curie": "DOID:4450",
@@ -7037,7 +7993,10 @@
       "disjoint_with": [],
       "synonyms": [
         "carcinoma of kidney",
-        "kidney carcinoma"
+        "kidney carcinoma",
+        "kidney cancer that",
+        "kidney cancer",
+        "cancer that the"
       ]
     },
     {
@@ -7139,7 +8098,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "hemangiosarcoma of the breast"
+        "hemangiosarcoma of the breast",
+        "angiosarcoma and sarcoma",
+        "and sarcoma of",
+        "and sarcoma"
       ]
     },
     {
@@ -7150,7 +8112,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "mixed tumor of the Salivary gland"
+        "mixed tumor of the Salivary gland",
+        "gastrointestinal system benign",
+        "system benign neoplasm",
+        "system benign"
       ]
     },
     {
@@ -7163,7 +8128,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "endometrial stromal sarcoma of the cervix"
+        "endometrial stromal sarcoma of the cervix",
+        "endometrical stromal tumor",
+        "stromal tumor that",
+        "stromal tumor"
       ]
     },
     {
@@ -7245,7 +8213,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "malignant tumour of biliary tract"
+        "malignant tumour of biliary tract",
+        "hepatobiliary system cancer",
+        "system cancer that",
+        "system cancer"
       ]
     },
     {
@@ -7347,7 +8318,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "Blastoma of lung"
+        "Blastoma of lung",
+        "lung cancer that",
+        "lung cancer",
+        "cancer that has"
       ]
     },
     {
@@ -7359,7 +8333,10 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "pulmonary blastoma that",
+        "pulmonary blastoma"
+      ]
     },
     {
       "curie": "DOID:4773",
@@ -7370,7 +8347,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "kidney cancer that",
+        "kidney cancer",
+        "cancer that is"
+      ]
     },
     {
       "curie": "DOID:479",
@@ -7406,7 +8387,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "nervous system benign",
+        "system benign neoplasm",
+        "system benign"
+      ]
     },
     {
       "curie": "DOID:4829",
@@ -7417,7 +8402,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an adenosquamous carcinoma",
+        "adenosquamous carcinoma lung",
+        "adenosquamous carcinoma"
+      ]
     },
     {
       "curie": "DOID:483",
@@ -7440,7 +8429,10 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "carcinoma that myoepithelial",
+        "carcinoma that"
+      ]
     },
     {
       "curie": "DOID:4843",
@@ -7537,7 +8529,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Cylindroma"
+        "Cylindroma",
+        "salivary gland carcinoma",
+        "gland carcinoma that",
+        "gland carcinoma"
       ]
     },
     {
@@ -7566,7 +8561,11 @@
         "DOID:4947"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "bile duct carcinoma",
+        "duct carcinoma that",
+        "duct carcinoma"
+      ]
     },
     {
       "curie": "DOID:4905",
@@ -7601,7 +8600,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "Oesophageal adenocarcinoma"
+        "Oesophageal adenocarcinoma",
+        "an esophageal carcinoma",
+        "esophageal carcinoma that",
+        "esophageal carcinoma"
       ]
     },
     {
@@ -7688,7 +8690,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "ureteral carcinoma"
+        "ureteral carcinoma",
+        "an ureter cancer",
+        "ureter cancer that",
+        "ureter cancer"
       ]
     },
     {
@@ -7945,7 +8950,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "vagina sarcoma that",
+        "vagina sarcoma",
+        "sarcoma that has"
+      ]
     },
     {
       "curie": "DOID:5176",
@@ -8064,7 +9073,11 @@
         "DOID:0050917"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "lung carcinoma that",
+        "lung carcinoma",
+        "carcinoma that has"
+      ]
     },
     {
       "curie": "DOID:5485",
@@ -8075,7 +9088,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "synovium cancer which",
+        "synovium cancer",
+        "cancer which develops"
+      ]
     },
     {
       "curie": "DOID:5503",
@@ -8127,7 +9144,10 @@
       "disjoint_with": [],
       "synonyms": [
         "squamous cell carcinoma of the nasal cavity",
-        "squamous cell carcinoma of nasal cavity"
+        "squamous cell carcinoma of nasal cavity",
+        "nasal cavity carcinoma",
+        "cavity carcinoma that",
+        "cavity carcinoma"
       ]
     },
     {
@@ -8159,7 +9179,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Epidermoid cell carcinoma of penis",
-        "squamous cell carcinoma of penis"
+        "squamous cell carcinoma of penis",
+        "penis carcinoma that",
+        "penis carcinoma",
+        "carcinoma that has"
       ]
     },
     {
@@ -8188,7 +9211,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Epidermoid carcinoma of the middle ear",
-        "squamous cell carcinoma of middle ear"
+        "squamous cell carcinoma of middle ear",
+        "middle ear carcinoma",
+        "ear carcinoma that",
+        "ear carcinoma"
       ]
     },
     {
@@ -8201,7 +9227,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Epidermoid Thymic carcinoma"
+        "Epidermoid Thymic carcinoma",
+        "squamous cell carcinoma",
+        "cell carcinoma that",
+        "carcinoma that is"
       ]
     },
     {
@@ -8218,7 +9247,10 @@
       "disjoint_with": [],
       "synonyms": [
         "germ cell tumor of testis",
-        "testicular germ cell neoplasm"
+        "testicular germ cell neoplasm",
+        "testicular cancer that",
+        "testicular cancer",
+        "cancer that has"
       ]
     },
     {
@@ -8285,7 +9317,10 @@
       "disjoint_with": [],
       "synonyms": [
         "adult ALL",
-        "adult acute lymphoid Leukemia"
+        "adult acute lymphoid Leukemia",
+        "an acute lymphocytic",
+        "an acute",
+        "acute lymphocytic leukemia"
       ]
     },
     {
@@ -8303,7 +9338,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "histiocytic and dendritic cell"
+        "histiocytic and dendritic cell",
+        "sarcoma and hematologic",
+        "sarcoma and",
+        "and hematologic cancer"
       ]
     },
     {
@@ -8341,7 +9379,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "choroid plexus cancer",
+        "plexus cancer that",
+        "plexus cancer"
+      ]
     },
     {
       "curie": "DOID:5695",
@@ -8401,7 +9443,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "neuroblastoma of Adrenal gland"
+        "neuroblastoma of Adrenal gland",
+        "adrenal gland cancer",
+        "gland cancer that",
+        "gland cancer"
       ]
     },
     {
@@ -8414,7 +9459,9 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "pancreatic acinar cell carcinoma"
+        "pancreatic acinar cell carcinoma",
+        "pancreatic adenocarcinoma that",
+        "pancreatic adenocarcinoma"
       ]
     },
     {
@@ -8569,7 +9616,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Leptomeningeal melanocytoma",
-        "melanocytoma of meninges"
+        "melanocytoma of meninges",
+        "nervous system benign",
+        "system benign neoplasm",
+        "system benign"
       ]
     },
     {
@@ -8623,7 +9673,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "melanoma of Uvea"
+        "melanoma of Uvea",
+        "uveal cancer that",
+        "uveal cancer",
+        "cancer that has"
       ]
     },
     {
@@ -8773,7 +9826,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Astrocytosis cerebri"
+        "Astrocytosis cerebri",
+        "brain cancer that",
+        "brain cancer",
+        "cancer that is"
       ]
     },
     {
@@ -8817,7 +9873,10 @@
       "disjoint_with": [],
       "synonyms": [
         "pediatric testicular Embryonal carcinoma",
-        "childhood embryonal carcinoma of the testis"
+        "childhood embryonal carcinoma of the testis",
+        "embryonal testis carcinoma",
+        "testis carcinoma that",
+        "testis carcinoma"
       ]
     },
     {
@@ -8830,7 +9889,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "mixed mullerian sarcoma of uterus"
+        "mixed mullerian sarcoma of uterus",
+        "body mixed cancer",
+        "mixed cancer that",
+        "mixed cancer"
       ]
     },
     {
@@ -8844,7 +9906,11 @@
         "DOID:7651"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "an ovarian carcinoma",
+        "ovarian carcinoma that",
+        "ovarian carcinoma"
+      ]
     },
     {
       "curie": "DOID:6193",
@@ -8858,7 +9924,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "epithelioid cell sarcoma"
+        "epithelioid cell sarcoma",
+        "connective tissue cancer",
+        "tissue cancer that",
+        "tissue cancer"
       ]
     },
     {
@@ -8911,7 +9980,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Follicular Dendritic cell sarcoma",
-        "Follicular dendritic cell tumour"
+        "Follicular dendritic cell tumour",
+        "dendritic cell sarcoma",
+        "cell sarcoma cancer",
+        "cell sarcoma"
       ]
     },
     {
@@ -8925,7 +9997,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Inflammatory carcinoma of breast",
-        "Mastitis carcinomatosa"
+        "Mastitis carcinomatosa",
+        "appearance of inflammation",
+        "of inflammation with",
+        "of inflammation"
       ]
     },
     {
@@ -8952,7 +10027,10 @@
       "disjoint_with": [],
       "synonyms": [
         "B-cell lymphocytic leukemia/small lymphocytic lymphoma",
-        "CLL/SLL"
+        "CLL/SLL",
+        "chronic lymphocytic leukemia",
+        "chronic lymphocytic",
+        "lymphocytic leukemia that"
       ]
     },
     {
@@ -9004,7 +10082,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Cowden disease",
-        "multiple hamartoma syndrome"
+        "multiple hamartoma syndrome",
+        "hamartoma syndrome characterized",
+        "hamartoma syndrome",
+        "syndrome characterized by"
       ]
     },
     {
@@ -9017,7 +10098,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Lipomatous Medulloblastoma"
+        "Lipomatous Medulloblastoma",
+        "cerebellum cancer that",
+        "cerebellum cancer",
+        "cancer that is"
       ]
     },
     {
@@ -9081,7 +10165,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "endodermal sinus tumor",
+        "sinus tumor that",
+        "sinus tumor"
+      ]
     },
     {
       "curie": "DOID:6548",
@@ -9186,7 +10274,9 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Fibrillary Astrocytic tumors"
+        "Fibrillary Astrocytic tumors",
+        "malignant astrocytoma that",
+        "malignant astrocytoma"
       ]
     },
     {
@@ -9199,7 +10289,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "desmoplastic small round-cell neoplasm"
+        "desmoplastic small round-cell neoplasm",
+        "small cell sarcoma",
+        "cell sarcoma that",
+        "cell sarcoma"
       ]
     },
     {
@@ -9274,7 +10367,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "pancreatic carcinoma that",
+        "pancreatic carcinoma",
+        "carcinoma that is"
+      ]
     },
     {
       "curie": "DOID:684",
@@ -9289,7 +10386,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "Hepatoma"
+        "Hepatoma",
+        "liver carcinoma that",
+        "liver carcinoma",
+        "carcinoma that has"
       ]
     },
     {
@@ -9323,7 +10423,11 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "benign perivascular tumor",
+        "benign perivascular",
+        "perivascular tumor that"
+      ]
     },
     {
       "curie": "DOID:6938",
@@ -9348,7 +10452,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "pediatric meningioma of brain"
+        "pediatric meningioma of brain",
+        "by brain tumor",
+        "brain tumor which",
+        "brain tumor"
       ]
     },
     {
@@ -9452,7 +10559,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "B-cell lymphocytic neoplasm"
+        "B-cell lymphocytic neoplasm",
+        "non-hodgkin lymphoma that",
+        "non-hodgkin lymphoma",
+        "lymphoma that has"
       ]
     },
     {
@@ -9477,7 +10587,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "dendritic cell cancer",
+        "cell cancer that",
+        "cancer that derives"
+      ]
     },
     {
       "curie": "DOID:7154",
@@ -9490,7 +10604,11 @@
         "DOID:0080882"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "or diffuse malignant",
+        "diffuse malignant morphologic",
+        "diffuse malignant"
+      ]
     },
     {
       "curie": "DOID:7210",
@@ -9583,7 +10701,11 @@
         "DOID:0080904"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "malignant astrocytoma that",
+        "malignant astrocytoma",
+        "characterized by tumor"
+      ]
     },
     {
       "curie": "DOID:7340",
@@ -9595,7 +10717,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "pediatric ovarian dysgerminoma"
+        "pediatric ovarian dysgerminoma",
+        "germ cell tumor",
+        "cell tumor that",
+        "tumor that cells"
       ]
     },
     {
@@ -9608,7 +10733,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "germinoma of the pediatric brain"
+        "germinoma of the pediatric brain",
+        "characterized by tumor",
+        "by tumor of",
+        "by tumor"
       ]
     },
     {
@@ -9664,7 +10792,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "malignant mesothelioma of pleura"
+        "malignant mesothelioma of pleura",
+        "pleural cancer that",
+        "pleural cancer",
+        "cancer that has"
       ]
     },
     {
@@ -9707,7 +10838,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "germ cell tumor",
+        "cell tumor of",
+        "tumor of childhood"
+      ]
     },
     {
       "curie": "DOID:7522",
@@ -9721,7 +10856,10 @@
       "disjoint_with": [],
       "synonyms": [
         "childhood infratentorial ependymoblastoma",
-        "pediatric infratentorial ependymoblastoma"
+        "pediatric infratentorial ependymoblastoma",
+        "childhood embryonal tumor",
+        "embryonal tumor with",
+        "embryonal tumor"
       ]
     },
     {
@@ -9775,7 +10913,10 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "sarcoma that results",
+        "sarcoma that"
+      ]
     },
     {
       "curie": "DOID:7631",
@@ -9787,7 +10928,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "adult ependymoblastoma"
+        "adult ependymoblastoma",
+        "an embryonal tumor",
+        "embryonal tumor with",
+        "embryonal tumor"
       ]
     },
     {
@@ -9811,7 +10955,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "hypercalcemic type ovarian small cell carcinoma"
+        "hypercalcemic type ovarian small cell carcinoma",
+        "small cell carcinoma",
+        "cell carcinoma that",
+        "carcinoma that is"
       ]
     },
     {
@@ -9844,7 +10991,11 @@
         "DOID:4163"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "nervous system neoplasm",
+        "system neoplasm that",
+        "system neoplasm"
+      ]
     },
     {
       "curie": "DOID:771",
@@ -9857,7 +11008,11 @@
         "DOID:768"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "malignant neoplasm that",
+        "neoplasm that the",
+        "neoplasm that"
+      ]
     },
     {
       "curie": "DOID:7731",
@@ -9907,7 +11062,10 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "leukemia that occurs",
+        "leukemia that"
+      ]
     },
     {
       "curie": "DOID:7762",
@@ -9947,7 +11105,10 @@
       "disjoint_with": [],
       "synonyms": [
         "childhood cerebral ependymoblastoma",
-        "pediatric cerebral ependymoblastoma"
+        "pediatric cerebral ependymoblastoma",
+        "an embryonal tumor",
+        "embryonal tumor with",
+        "embryonal tumor"
       ]
     },
     {
@@ -9960,7 +11121,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Interdigitating cell sarcoma"
+        "Interdigitating cell sarcoma",
+        "dendritic cell cancer",
+        "cell cancer that",
+        "cancer that effect"
       ]
     },
     {
@@ -9986,7 +11150,11 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "nipple carcinoma that",
+        "nipple carcinoma",
+        "carcinoma that is"
+      ]
     },
     {
       "curie": "DOID:8020",
@@ -10008,7 +11176,10 @@
       "disjoint_with": [],
       "synonyms": [
         "pediatric Embryonal carcinoma of Ovary",
-        "childhood embryonal carcinoma of the ovary"
+        "childhood embryonal carcinoma of the ovary",
+        "ovarian embryonal carcinoma",
+        "embryonal carcinoma that",
+        "embryonal carcinoma"
       ]
     },
     {
@@ -10073,7 +11244,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "Leptomeningeal melanomatosis"
+        "Leptomeningeal melanomatosis",
+        "system melanocytic neoplasm",
+        "melanocytic neoplasm that",
+        "melanocytic neoplasm"
       ]
     },
     {
@@ -10261,7 +11435,10 @@
       "disjoint_with": [],
       "synonyms": [
         "Megakaryocytic myelosis",
-        "Thrombocytic leukaemia"
+        "Thrombocytic leukaemia",
+        "an acute myeloid",
+        "an acute",
+        "acute myeloid leukemia"
       ]
     },
     {
@@ -10278,7 +11455,10 @@
       ],
       "disjoint_with": [],
       "synonyms": [
-        "malignant neoplasm of salivary gland"
+        "malignant neoplasm of salivary gland",
+        "oral cavity cancer",
+        "cavity cancer that",
+        "cavity cancer"
       ]
     },
     {
@@ -10393,7 +11573,10 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "leukemia that results",
+        "leukemia that"
+      ]
     },
     {
       "curie": "DOID:9256",
@@ -10408,7 +11591,11 @@
         "DOID:219"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "large intestine cancer",
+        "intestine cancer that",
+        "intestine cancer"
+      ]
     },
     {
       "curie": "DOID:9261",
@@ -10452,7 +11639,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "myeloma"
+        "myeloma",
+        "myeloid neoplasm that",
+        "myeloid neoplasm",
+        "neoplasm that is"
       ]
     },
     {
@@ -10500,7 +11690,10 @@
       "children": [],
       "disjoint_with": [],
       "synonyms": [
-        "mixed phenotype acute leukemia"
+        "mixed phenotype acute leukemia",
+        "an acute leukemia",
+        "an acute",
+        "acute leukemia that"
       ]
     }
   ]

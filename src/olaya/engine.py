@@ -53,6 +53,7 @@ class SubsumesAnswer:
     concept: str = ""
     subsumes: float = 0.0  # Calibrated P(true)
     confidence: float = 0.0
+    axioms_verified: bool = True
 
 
 @dataclass

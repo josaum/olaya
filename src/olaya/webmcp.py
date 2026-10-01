@@ -119,6 +119,14 @@ def extract_jsonld_or_microdata(html_or_text: str) -> dict[str, Any]:
     clean_text = re.sub(r"\s+", " ", clean_text).strip()
     extracted["raw_text_clean"] = clean_text[:1000]
 
+    # Flatten the first JSON-LD entity into the root dict for convenient direct access
+    # (multi-block pages keep the full list in extracted["jsonld"])
+    if extracted["jsonld"] and isinstance(extracted["jsonld"][0], dict):
+        first = extracted["jsonld"][0]
+        for k, v in first.items():
+            if k not in extracted:
+                extracted[k] = v
+
     return extracted
 
 
@@ -352,7 +360,7 @@ class OLayaMCPServer:
                 "domain": domain,
                 "target_concept": matched_curie,
                 "subsumes": ans.subsumes,
-                "probability": ans.probability,
+                "probability": ans.subsumes,  # alias for compatibility
                 "confidence": ans.confidence,
                 "axioms_verified": ans.axioms_verified,
                 "latency_ms": res.latency_ms,
@@ -376,7 +384,7 @@ class OLayaMCPServer:
             )
             ans = res.answers["choice_task"]
             return {
-                "selected_option": ans.selected_option,
+                "selected_choice": ans.choice if hasattr(ans, "choice") else ans.selected_option,
                 "confidence": ans.confidence,
                 "probabilities": {k: round(v, 4) for k, v in ans.candidate_probabilities.items()},
                 "axioms_verified": ans.axioms_verified,
@@ -567,6 +575,7 @@ class OLayaMCPServer:
             summary = {
                 "uri": uri,
                 "domain": domain,
+                "name": engine.ontology.name,
                 "num_concepts": len(engine.ontology.concepts),
                 "sample_concepts": [
                     {"curie": c.curie, "label": c.label, "description": c.description}

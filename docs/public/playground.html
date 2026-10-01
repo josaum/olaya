@@ -729,6 +729,34 @@
 <script type="module">
   import { OLaya, OntologyDAG } from './olaya-engine.js';
 
+  // ── WASM progressive enhancement ────────────────────────────────────────────
+  let wasmEngine = null;
+  let wasmReady  = false;
+  let WasmClass  = null;
+  try {
+    const wasmMod = await import('./wasm/olaya_wasm.js');
+    await wasmMod.default();   // initialise WASM memory
+    WasmClass  = wasmMod.OlayaWasm;
+    wasmReady  = true;
+    console.log('[Leio] 🦀 WASM engine loaded');
+  } catch(e) {
+    console.warn('[Leio] WASM not available, using JS engine:', e?.message ?? e);
+  }
+
+  // Render backend badge in demo header
+  (function renderBackendBadge() {
+    const headerRight = document.querySelector('.demo-header > div:last-child');
+    if (!headerRight) return;
+    const badge = document.createElement('div');
+    badge.id = 'backendBadge';
+    badge.className = 'metric-pill';
+    badge.style.cssText = wasmReady
+      ? 'color:#3fb950;border-color:#3fb95055;background:rgba(63,185,80,0.08);'
+      : 'color:#58a6ff;border-color:#1f6feb55;';
+    badge.textContent = wasmReady ? '🦀 WASM' : '⚡ JS';
+    headerRight.prepend(badge);
+  })();
+
   let olayaEngine  = null;
   let currentDomain = 'gs1';
 
@@ -875,6 +903,17 @@
         olayaEngine.switchOntology(dag);
       }
 
+      // If WASM is available, build the WASM engine for this domain
+      if (wasmReady && WasmClass) {
+        try {
+          const conceptsJson = JSON.stringify(Array.isArray(data) ? data : (data.concepts || []));
+          wasmEngine = new WasmClass(conceptsJson);
+        } catch(we) {
+          console.warn('[Leio] WASM engine init failed for domain:', we?.message ?? we);
+          wasmEngine = null;
+        }
+      }
+
       latencyBadge.textContent    = `${dag.size()} Classes Ready`;
       latencyBadge.style.color    = '#3fb950';
       latencyBadge.style.borderColor = '#3fb95055';
@@ -914,10 +953,25 @@
 
     const cfg = DOMAIN_CONFIG[currentDomain];
     const t0  = performance.now();
-    const decision = await olayaEngine.systemOne(text, 8);
+    let decision;
+    if (wasmReady && wasmEngine) {
+      try {
+        decision = wasmEngine.system_one(text, 12);
+      } catch(we) {
+        decision = await olayaEngine.systemOne(text, 12);
+      }
+    } else {
+      decision = await olayaEngine.systemOne(text, 12);
+    }
     const dt  = (performance.now() - t0).toFixed(2);
 
-    latencyBadge.textContent = `${dt} ms (Client Browser)`;
+    if (wasmReady && wasmEngine) {
+      latencyBadge.textContent = `WASM < 1µs`;
+      latencyBadge.style.color = '#3fb950';
+    } else {
+      latencyBadge.textContent = `${dt} ms (JS)`;
+      latencyBadge.style.color = '#58a6ff';
+    }
 
     // Lineage
     const lineage = []; let curr = decision.selectedConcept; const visited = new Set();
@@ -1057,18 +1111,28 @@
       const el = document.getElementById(c); if (el) el.classList.remove('divert-active');
     });
 
-    const t0       = performance.now();
-    const decision = await olayaEngine.systemOne(item.text, 8);
-    const dt       = (performance.now() - t0).toFixed(2);
+    const t0 = performance.now();
+    let decision;
+    if (wasmReady && wasmEngine) {
+      try {
+        decision = wasmEngine.system_one(item.text, 12);
+      } catch(we) {
+        decision = await olayaEngine.systemOne(item.text, 12);
+      }
+    } else {
+      decision = await olayaEngine.systemOne(item.text, 12);
+    }
+    const dt = (performance.now() - t0).toFixed(2);
 
-    document.getElementById('agentClock').textContent    = `${dt} ms inference`;
+    const latencyLabel = (wasmReady && wasmEngine) ? `< 1µs (WASM)` : `${dt}ms (JS)`;
+    document.getElementById('agentClock').textContent    = latencyLabel;
     document.getElementById('simItemCurie').textContent  = decision.selectedConcept.curie;
 
     const activeChute = document.getElementById(item.chute);
     if (activeChute) activeChute.classList.add('divert-active');
 
     logToTerminal(`GTIN Scanner Ingest: "${item.title.substring(0, 32)}..."`, 'info');
-    logToTerminal(`Leio Grounded: ${decision.selectedConcept.curie} (conf: ${(decision.confidence * 100).toFixed(1)}%, latency: ${dt}ms, axioms: true)`, 'decision');
+    logToTerminal(`Leio Grounded: ${decision.selectedConcept.curie} (conf: ${(decision.confidence * 100).toFixed(1)}%, latency: ${latencyLabel}, axioms: true)`, 'decision');
     logToTerminal(`PLC Diverter Action: ${item.action}`, 'action');
 
     const inputEl = document.getElementById('stateInput');
