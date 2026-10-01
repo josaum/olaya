@@ -29,8 +29,16 @@ export interface NoulResult {
 export class OLaya {
   private router: CandidateRouter;
 
-  constructor(public readonly ontology: OntologyDAG) {
+  constructor(public ontology: OntologyDAG) {
     this.router = new CandidateRouter(ontology);
+  }
+
+  /**
+   * Switch domain ontology instantaneously in-flight.
+   */
+  public switchOntology(newOntology: OntologyDAG): void {
+    this.ontology = newOntology;
+    this.router = new CandidateRouter(newOntology);
   }
 
   /**

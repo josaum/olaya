@@ -1,0 +1,527 @@
+{
+  "name": "BasicFormalOntology_ISO21838",
+  "description": "BFO Top-Level Upper Ontology: Continuant, Occurrent, Spatial/Temporal Regions, and Realizable Entities.",
+  "concepts": [
+    {
+      "curie": "bfo:BFO_0000001",
+      "label": "entity",
+      "description": "",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "entity",
+        "bfo_0000001"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000002",
+      "label": "continuant",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000001"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000003"
+      ],
+      "synonyms": [
+        "continuant",
+        "bfo_0000002"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000003",
+      "label": "occurrent",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000001"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "occurrent",
+        "bfo_0000003"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000004",
+      "label": "independent continuant",
+      "description": "b is an independent continuant = Def. b is a continuant which is such that there is no c and no t such that b s-depends_on c at t. (axiom label in BFO2 Reference: [017-002])",
+      "parents": [
+        "bfo:BFO_0000002"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000020",
+        "bfo:BFO_0000031"
+      ],
+      "synonyms": [
+        "independent continuant",
+        "bfo_0000004"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000006",
+      "label": "spatial region",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000141"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000029",
+        "bfo:BFO_0000140"
+      ],
+      "synonyms": [
+        "spatial region",
+        "bfo_0000006"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000008",
+      "label": "temporal region",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000003"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000011",
+        "bfo:BFO_0000015",
+        "bfo:BFO_0000035"
+      ],
+      "synonyms": [
+        "temporal region",
+        "bfo_0000008"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000009",
+      "label": "two-dimensional spatial region",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000006"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000028"
+      ],
+      "synonyms": [
+        "two-dimensional spatial region",
+        "bfo_0000009"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000011",
+      "label": "spatiotemporal region",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000003"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "spatiotemporal region",
+        "bfo_0000011"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000015",
+      "label": "process",
+      "description": "p is a process = Def. p is an occurrent that has temporal proper parts and for some time t, p s-depends_on some material entity at t. (axiom label in BFO2 Reference: [083-003])",
+      "parents": [
+        "bfo:BFO_0000003"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "process",
+        "bfo_0000015"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000016",
+      "label": "disposition",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000017"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000023"
+      ],
+      "synonyms": [
+        "disposition",
+        "bfo_0000016"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000017",
+      "label": "realizable entity",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000020"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000019"
+      ],
+      "synonyms": [
+        "realizable entity",
+        "bfo_0000017"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000018",
+      "label": "zero-dimensional spatial region",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000006"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000028"
+      ],
+      "synonyms": [
+        "zero-dimensional spatial region",
+        "bfo_0000018"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000019",
+      "label": "quality",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000020"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "quality",
+        "bfo_0000019"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000020",
+      "label": "specifically dependent continuant",
+      "description": "b is a specifically dependent continuant = Def. b is a continuant & there is some independent continuant c which is not a spatial region and which is such that b s-depends_on c at every time t during the course of b\u2019s existence. (axiom label in BFO2 Reference: [050-003])",
+      "parents": [
+        "bfo:BFO_0000002"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000031"
+      ],
+      "synonyms": [
+        "specifically dependent continuant",
+        "bfo_0000020"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000023",
+      "label": "role",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000017"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "role",
+        "bfo_0000023"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000024",
+      "label": "fiat object part",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000040"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "fiat object part",
+        "bfo_0000024"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000026",
+      "label": "one-dimensional spatial region",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000006"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000028"
+      ],
+      "synonyms": [
+        "one-dimensional spatial region",
+        "bfo_0000026"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000027",
+      "label": "object aggregate",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000040"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "object aggregate",
+        "bfo_0000027"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000028",
+      "label": "three-dimensional spatial region",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000006"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "three-dimensional spatial region",
+        "bfo_0000028"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000029",
+      "label": "site",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000141"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "site",
+        "bfo_0000029"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000030",
+      "label": "object",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000040"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "object",
+        "bfo_0000030"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000031",
+      "label": "generically dependent continuant",
+      "description": "b is a generically dependent continuant = Def. b is a continuant that g-depends_on one or more other entities. (axiom label in BFO2 Reference: [074-001])",
+      "parents": [
+        "bfo:BFO_0000002"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "generically dependent continuant",
+        "bfo_0000031"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000034",
+      "label": "function",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000016"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "function",
+        "bfo_0000034"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000035",
+      "label": "process boundary",
+      "description": "p is a process boundary =Def. p is a temporal part of a process & p has no proper temporal parts. (axiom label in BFO2 Reference: [084-001])",
+      "parents": [
+        "bfo:BFO_0000003"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "process boundary",
+        "bfo_0000035"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000038",
+      "label": "one-dimensional temporal region",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000008"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000148"
+      ],
+      "synonyms": [
+        "one-dimensional temporal region",
+        "bfo_0000038"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000040",
+      "label": "material entity",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000004"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000141"
+      ],
+      "synonyms": [
+        "material entity",
+        "bfo_0000040"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000140",
+      "label": "continuant fiat boundary",
+      "description": "b is a continuant fiat boundary = Def. b is an immaterial entity that is of zero, one or two dimensions and does not include a spatial region as part. (axiom label in BFO2 Reference: [029-001])",
+      "parents": [
+        "bfo:BFO_0000141"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "continuant fiat boundary",
+        "bfo_0000140"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000141",
+      "label": "immaterial entity",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000004"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "immaterial entity",
+        "bfo_0000141"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000142",
+      "label": "one-dimensional continuant fiat boundary",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000140"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000146",
+        "bfo:BFO_0000147"
+      ],
+      "synonyms": [
+        "one-dimensional continuant fiat boundary",
+        "bfo_0000142"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000144",
+      "label": "process profile",
+      "description": "b is a process_profile =Def. there is some process c such that b process_profile_of c (axiom label in BFO2 Reference: [093-002])",
+      "parents": [
+        "bfo:BFO_0000015"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "bfo:BFO_0000182"
+      ],
+      "synonyms": [
+        "process profile",
+        "bfo_0000144"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000145",
+      "label": "relational quality",
+      "description": "b is a relational quality = Def. for some independent continuants c, d and for some time t: b quality_of c at t & b quality_of d at t. (axiom label in BFO2 Reference: [057-001])",
+      "parents": [
+        "bfo:BFO_0000019"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "relational quality",
+        "bfo_0000145"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000146",
+      "label": "two-dimensional continuant fiat boundary",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000140"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "two-dimensional continuant fiat boundary",
+        "bfo_0000146"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000147",
+      "label": "zero-dimensional continuant fiat boundary",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000140"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "zero-dimensional continuant fiat boundary",
+        "bfo_0000147"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000148",
+      "label": "zero-dimensional temporal region",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000008"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "zero-dimensional temporal region",
+        "bfo_0000148"
+      ]
+    },
+    {
+      "curie": "bfo:BFO_0000182",
+      "label": "history",
+      "description": "",
+      "parents": [
+        "bfo:BFO_0000015"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "history",
+        "bfo_0000182"
+      ]
+    }
+  ]
+}

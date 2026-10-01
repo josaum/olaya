@@ -64,7 +64,13 @@ export class CandidateRouter {
       const matches = this.invertedIndex.get(tok);
       if (matches) {
         for (const cid of matches) {
-          scoreMap.set(cid, (scoreMap.get(cid) || 0) + 1);
+          const concept = this.ontology.getById(cid);
+          let weight = 1.0;
+          if (concept) {
+            const labelToks = tokenize(concept.label);
+            if (labelToks.includes(tok)) weight = 4.0;
+          }
+          scoreMap.set(cid, (scoreMap.get(cid) || 0) + weight);
         }
       }
     }
@@ -86,11 +92,22 @@ export class CandidateRouter {
       }
     }
 
-    // Fill remaining slots with peers / disjoint concepts up to maxCandidates
+    // If activeSet is empty (no tokens matched query), seed with root concepts
+    if (activeSet.size === 0) {
+      for (const c of this.ontology.getAll()) {
+        if (c.parents.length === 0) {
+          activeSet.add(c.id);
+          if (activeSet.size >= maxCandidates) break;
+        }
+      }
+    }
+
+    // Fill remaining slots up to maxCandidates if needed
     for (const c of this.ontology.getAll()) {
       if (activeSet.size >= maxCandidates) break;
       activeSet.add(c.id);
     }
+
 
     const concepts = Array.from(activeSet)
       .map((id) => this.ontology.getById(id)!)

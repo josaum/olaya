@@ -127,4 +127,48 @@ export class OntologyDAG {
 
     return false;
   }
+
+  /**
+   * Load any domain ontology from standard JSON format:
+   * { name?: string, concepts: [{ curie, label, description?, parents?, disjoint_with?, synonyms? }] }
+   */
+  public static fromJSON(jsonData: any): OntologyDAG {
+    const rawConcepts = Array.isArray(jsonData) ? jsonData : (jsonData.concepts || []);
+    const curieToId = new Map<string, number>();
+
+    rawConcepts.forEach((c: any, idx: number) => {
+      const curie = c.curie || c.id || `concept_${idx}`;
+      curieToId.set(curie, idx);
+      // Also map prefix-stripped curie
+      if (curie.includes(":")) {
+        curieToId.set(curie.split(":")[1], idx);
+      }
+    });
+
+    const parsedConcepts: Concept[] = rawConcepts.map((c: any, idx: number) => {
+      const curie = c.curie || c.id || `concept_${idx}`;
+      const parentsRaw = c.parents || [];
+      const parents: number[] = parentsRaw
+        .map((p: any) => typeof p === "number" ? p : curieToId.get(p))
+        .filter((p: any) => typeof p === "number");
+
+      const disjointRaw = c.disjoint_with || c.disjointWith || [];
+      const disjointWith: number[] = disjointRaw
+        .map((d: any) => typeof d === "number" ? d : curieToId.get(d))
+        .filter((d: any) => typeof d === "number");
+
+      return {
+        id: idx,
+        curie,
+        label: c.label || curie,
+        description: c.description || "",
+        parents,
+        disjointWith,
+        synonyms: c.synonyms || []
+      };
+    });
+
+    return new OntologyDAG(parsedConcepts);
+  }
 }
+

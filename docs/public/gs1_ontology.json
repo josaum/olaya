@@ -331,7 +331,14 @@
         "ReusableTransportItem"
       ],
       "disjoint_with": [],
-      "synonyms": ["packaging", "carton", "box", "pallet", "container", "crate"]
+      "synonyms": [
+        "packaging",
+        "carton",
+        "box",
+        "pallet",
+        "container",
+        "crate"
+      ]
     },
     {
       "curie": "PackagingMaterialDetails",
@@ -385,7 +392,13 @@
         "BuildingHardwareToolProduct"
       ],
       "disjoint_with": [],
-      "synonyms": ["trade item", "consumer item", "merchandise", "sku", "goods"]
+      "synonyms": [
+        "trade item",
+        "consumer item",
+        "merchandise",
+        "sku",
+        "goods"
+      ]
     },
     {
       "curie": "ProductYieldDetails",
@@ -551,7 +564,15 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": ["pet", "dog", "cat", "chew toy", "nylabone", "pet supplies", "dog chew"]
+      "synonyms": [
+        "pet",
+        "dog",
+        "cat",
+        "chew toy",
+        "nylabone",
+        "pet supplies",
+        "dog chew"
+      ]
     },
     {
       "curie": "ToyProduct",
@@ -562,7 +583,12 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": ["toy", "play item", "chew toy", "novelty"]
+      "synonyms": [
+        "toy",
+        "play item",
+        "chew toy",
+        "novelty"
+      ]
     },
     {
       "curie": "HealthcareMedicalProduct",
@@ -573,7 +599,17 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": ["pharmaceutical", "medication", "medicine", "pharma", "vaccine", "sterile", "medical device", "syringe", "diagnostic kit"]
+      "synonyms": [
+        "pharmaceutical",
+        "medication",
+        "medicine",
+        "pharma",
+        "vaccine",
+        "sterile",
+        "medical device",
+        "syringe",
+        "diagnostic kit"
+      ]
     },
     {
       "curie": "ElectronicsBatteryProduct",
@@ -584,7 +620,18 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": ["electronics", "battery", "lithium ion", "un3480", "un3481", "gadget", "charger", "laptop", "phone", "circuit"]
+      "synonyms": [
+        "electronics",
+        "battery",
+        "lithium ion",
+        "un3480",
+        "un3481",
+        "gadget",
+        "charger",
+        "laptop",
+        "phone",
+        "circuit"
+      ]
     },
     {
       "curie": "ChemicalHazardousProduct",
@@ -595,7 +642,17 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": ["hazmat", "chemical", "flammable", "corrosive", "sds", "dangerous goods", "solvent", "acid", "toxic"]
+      "synonyms": [
+        "hazmat",
+        "chemical",
+        "flammable",
+        "corrosive",
+        "sds",
+        "dangerous goods",
+        "solvent",
+        "acid",
+        "toxic"
+      ]
     },
     {
       "curie": "BuildingHardwareToolProduct",
@@ -606,7 +663,16 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": ["hardware", "tools", "fasteners", "drill", "wrench", "hammer", "building materials", "plumbing"]
+      "synonyms": [
+        "hardware",
+        "tools",
+        "fasteners",
+        "drill",
+        "wrench",
+        "hammer",
+        "building materials",
+        "plumbing"
+      ]
     },
     {
       "curie": "ColdChainStorageLogistics",
@@ -615,7 +681,15 @@
       "parents": [],
       "children": [],
       "disjoint_with": [],
-      "synonyms": ["cold chain", "refrigerated", "perishable", "frozen", "temperature controlled", "chilled", "reefer"]
+      "synonyms": [
+        "cold chain",
+        "refrigerated",
+        "perishable",
+        "frozen",
+        "temperature controlled",
+        "chilled",
+        "reefer"
+      ]
     },
     {
       "curie": "ReusableTransportItem",
@@ -626,7 +700,16 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": ["pallet", "euro pallet", "chep", "tote", "crate", "returnable container", "ibc", "drum"]
+      "synonyms": [
+        "pallet",
+        "euro pallet",
+        "chep",
+        "tote",
+        "crate",
+        "returnable container",
+        "ibc",
+        "drum"
+      ]
     }
   ]
 }

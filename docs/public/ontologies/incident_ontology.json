@@ -1,0 +1,179 @@
+{
+  "name": "EnterpriseIncidentOntology",
+  "concepts": [
+    {
+      "curie": "INCIDENT:ROOT",
+      "label": "Operational Incident",
+      "description": "Any anomalous operational event.",
+      "synonyms": [],
+      "parents": [],
+      "disjoint_with": [],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:INFRA",
+      "label": "Infrastructure Incident",
+      "description": "Hardware, compute, hypervisor, or OS issues.",
+      "synonyms": [],
+      "parents": [
+        "INCIDENT:ROOT"
+      ],
+      "disjoint_with": [
+        "INCIDENT:BILLING"
+      ],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:DATA",
+      "label": "Data & Storage Incident",
+      "description": "Database, cache, message broker, or pipeline issues.",
+      "synonyms": [],
+      "parents": [
+        "INCIDENT:ROOT"
+      ],
+      "disjoint_with": [],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:SECURITY",
+      "label": "Security & Access Incident",
+      "description": "Unauthorized access, breach, credential leak, or policy violation.",
+      "synonyms": [],
+      "parents": [
+        "INCIDENT:ROOT"
+      ],
+      "disjoint_with": [
+        "INCIDENT:BILLING"
+      ],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:BILLING",
+      "label": "Billing & Commercial Incident",
+      "description": "Invoicing, payment processing, subscription, or checkout errors.",
+      "synonyms": [],
+      "parents": [
+        "INCIDENT:ROOT"
+      ],
+      "disjoint_with": [
+        "INCIDENT:INFRA",
+        "INCIDENT:SECURITY"
+      ],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:APPLICATION",
+      "label": "Application Error",
+      "description": "Client UI glitches, 5xx server exceptions, or logic bugs.",
+      "synonyms": [],
+      "parents": [
+        "INCIDENT:ROOT"
+      ],
+      "disjoint_with": [],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:DB_OUTAGE",
+      "label": "Database Outage",
+      "description": "Complete loss of primary DB or replica cluster connectivity.",
+      "synonyms": [
+        "db down",
+        "postgres unreachable",
+        "mysql connection refused"
+      ],
+      "parents": [
+        "INCIDENT:DATA"
+      ],
+      "disjoint_with": [
+        "INCIDENT:INVOICE_MISCALC"
+      ],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:DB_DEADLOCK",
+      "label": "Database Deadlock",
+      "description": "Concurrent transactions blocked waiting for conflicting locks.",
+      "synonyms": [
+        "lock wait timeout",
+        "deadlock detected"
+      ],
+      "parents": [
+        "INCIDENT:DATA"
+      ],
+      "disjoint_with": [],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:DATA_PIPELINE",
+      "label": "Data Pipeline Stall",
+      "description": "Kafka lag, Celery/Airflow failure, or consumer crash.",
+      "synonyms": [
+        "kafka lag",
+        "dag failed"
+      ],
+      "parents": [
+        "INCIDENT:DATA"
+      ],
+      "disjoint_with": [],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:AUTH_BREACH",
+      "label": "Authentication Breach",
+      "description": "Compromised credentials, unauthorized token issuance, or brute-force attack.",
+      "synonyms": [
+        "api key leaked",
+        "unauthorized login"
+      ],
+      "parents": [
+        "INCIDENT:SECURITY"
+      ],
+      "disjoint_with": [],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:DDOS",
+      "label": "DDoS Attack",
+      "description": "High-volume distributed traffic overwhelming ingress points.",
+      "synonyms": [
+        "dos attack",
+        "syn flood"
+      ],
+      "parents": [
+        "INCIDENT:SECURITY"
+      ],
+      "disjoint_with": [],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:PAYMENT_GATEWAY",
+      "label": "Payment Gateway Failure",
+      "description": "Stripe/Adyen/banking webhook failures or payment processing errors.",
+      "synonyms": [
+        "stripe 500",
+        "payment decline storm"
+      ],
+      "parents": [
+        "INCIDENT:BILLING"
+      ],
+      "disjoint_with": [],
+      "metadata": {}
+    },
+    {
+      "curie": "INCIDENT:INVOICE_MISCALC",
+      "label": "Invoice Calculation Error",
+      "description": "Incorrect tax, discount, or pricing tier billing error.",
+      "synonyms": [
+        "overcharged",
+        "wrong tax"
+      ],
+      "parents": [
+        "INCIDENT:BILLING"
+      ],
+      "disjoint_with": [
+        "INCIDENT:DB_OUTAGE"
+      ],
+      "metadata": {}
+    }
+  ]
+}
