@@ -1,0 +1,41 @@
+{
+  "name": "@mycelia/olaya",
+  "version": "0.1.0",
+  "description": "Ontology-Grounded System 1 Decision Model runtime for Node.js and TypeScript",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "bun build src/index.ts --outfile ./dist/index.mjs --format esm && bun build src/index.ts --outfile ./dist/index.cjs --format cjs && bunx tsc --emitDeclarationOnly",
+    "test": "bun test",
+    "pack:dist": "npm pack --pack-destination ../../dist"
+  },
+  "keywords": [
+    "decision-model",
+    "laya",
+    "jev",
+    "ontology",
+    "system-1",
+    "arrow",
+    "ai",
+    "non-autoregressive"
+  ],
+  "author": "Dionisio & Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0"
+  }
+}
