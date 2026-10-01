@@ -10,7 +10,7 @@ import * as os from "node:os";
 import { OLaya, OntologyDAG } from "./index.js";
 
 // Standard embedded GS1 & Incident ontologies for instant zero-install execution
-const DEFAULT_INCIDENT_CLASSES = [
+export const DEFAULT_INCIDENT_CLASSES = [
   { id: 0, curie: "INCIDENT:ROOT", label: "Operational Incident", parents: [], disjointWith: [], synonyms: ["incident", "outage"] },
   { id: 1, curie: "INCIDENT:DATA", label: "Data Incident", parents: [0], disjointWith: [2], synonyms: ["database", "storage", "postgres", "sql"] },
   { id: 2, curie: "INCIDENT:BILLING", label: "Billing Incident", parents: [0], disjointWith: [1], synonyms: ["payment", "invoice", "stripe", "credit"] },
@@ -18,7 +18,7 @@ const DEFAULT_INCIDENT_CLASSES = [
   { id: 4, curie: "INCIDENT:AUTH_BREACH", label: "Security Breach", parents: [0], disjointWith: [], synonyms: ["breach", "token", "auth", "unauthorized"] },
 ];
 
-const DEFAULT_GS1_CLASSES = [
+export const DEFAULT_GS1_CLASSES = [
   { id: 0, curie: "gs1:Product", label: "Trade Item Product", parents: [], disjointWith: [], synonyms: ["product", "item", "gtin", "trade item"] },
   { id: 1, curie: "gs1:FoodBeverageTobaccoProduct", label: "Food and Beverage Product", parents: [0], disjointWith: [], synonyms: ["food", "beverage", "dairy", "milk", "edible"] },
   { id: 2, curie: "gs1:PackagingDetails", label: "Packaging Details", parents: [], disjointWith: [], synonyms: ["packaging", "carton", "box", "pallet", "bottle"] },
@@ -36,7 +36,7 @@ export class OLayaNodeMCPServer {
   }
 
   public async executeTool(name: string, args: Record<string, any>): Promise<Record<string, any>> {
-    if (name === "olaya_ground") {
+    if (name === "olaya_ground" || name === "leio_ground") {
       const state = String(args.state ?? "");
       const domain = String(args.domain ?? "gs1").toLowerCase();
       const engine = domain === "incident" ? this.incidentEngine : this.gs1Engine;
@@ -52,7 +52,7 @@ export class OLayaNodeMCPServer {
       };
     }
 
-    if (name === "olaya_subsumes") {
+    if (name === "olaya_subsumes" || name === "leio_subsumes") {
       const state = String(args.state ?? "");
       const targetConcept = String(args.target_concept ?? "");
       const domain = String(args.domain ?? "gs1").toLowerCase();
@@ -71,7 +71,7 @@ export class OLayaNodeMCPServer {
       };
     }
 
-    if (name === "olaya_choice") {
+    if (name === "olaya_choice" || name === "leio_choice") {
       const state = String(args.state ?? "");
       const options = Array.isArray(args.options) ? args.options : [];
       const res = await this.incidentEngine.choice(state, options);
@@ -82,7 +82,7 @@ export class OLayaNodeMCPServer {
       };
     }
 
-    if (name === "olaya_score") {
+    if (name === "olaya_score" || name === "leio_score") {
       const state = String(args.state ?? "");
       const criteria = Array.isArray(args.criteria) ? args.criteria : ["low", "medium", "urgent", "critical"];
       const score = await this.incidentEngine.score(state, criteria.join(" "));
@@ -101,18 +101,23 @@ export class OLayaNodeMCPServer {
     const params = req.params ?? {};
 
     if (method === "initialize") {
+      const requestedVersion = params.protocolVersion || "2026-07-28";
+      // Support 2026-07-28 latest spec while keeping backward compatibility with 2024-11-05
+      const protocolVersion = requestedVersion.startsWith("2024") ? requestedVersion : "2026-07-28";
       return {
         jsonrpc: "2.0",
         id: reqId,
         result: {
-          protocolVersion: "2024-11-05",
+          protocolVersion,
           serverInfo: {
-            name: "olaya-mcp-node",
-            version: "0.2.0",
+            name: "leio-mcp-engine",
+            version: "2026.1.0",
           },
           capabilities: {
+            stateless: true,
             tools: { listChanged: false },
             resources: { subscribe: false, listChanged: false },
+            tasks: { enabled: true },
           },
         },
       };
@@ -163,6 +168,55 @@ export class OLayaNodeMCPServer {
             },
             {
               name: "olaya_score",
+              description: "Rate an observation on an ordered rating/severity scale.",
+              inputSchema: {
+                type: "object",
+                properties: {
+                  state: { type: "string", description: "Context state" },
+                  criteria: { type: "array", items: { type: "string" }, description: "Ordered scale levels" },
+                },
+                required: ["state", "criteria"],
+              },
+            },
+            {
+              name: "leio_ground",
+              description: "Ground raw text or barcode observations into formal ontology classes with calibrated confidence.",
+              inputSchema: {
+                type: "object",
+                properties: {
+                  state: { type: "string", description: "Observation text" },
+                  domain: { type: "string", enum: ["gs1", "incident"], default: "gs1" },
+                },
+                required: ["state"],
+              },
+            },
+            {
+              name: "leio_subsumes",
+              description: "Test if an observation belongs to a target ontology class or its down-set subclasses.",
+              inputSchema: {
+                type: "object",
+                properties: {
+                  state: { type: "string", description: "Observation text" },
+                  target_concept: { type: "string", description: "Target concept CURIE or label" },
+                  domain: { type: "string", enum: ["gs1", "incident"], default: "gs1" },
+                },
+                required: ["state", "target_concept"],
+              },
+            },
+            {
+              name: "leio_choice",
+              description: "Multi-criteria ranking across discrete options with calibrated probabilities.",
+              inputSchema: {
+                type: "object",
+                properties: {
+                  state: { type: "string", description: "Context state" },
+                  options: { type: "array", items: { type: "string" }, description: "Option labels" },
+                },
+                required: ["state", "options"],
+              },
+            },
+            {
+              name: "leio_score",
               description: "Rate an observation on an ordered rating/severity scale.",
               inputSchema: {
                 type: "object",

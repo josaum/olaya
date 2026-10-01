@@ -129,7 +129,7 @@ export class OLaya {
   /**
    * Laya / Jev primitive: discrete choice over options.
    */
-  public async choice(stateText: string, options: string[]): Promise<ChoiceResult> {
+  public async choice(stateText: string, options: string[], instructions?: string): Promise<ChoiceResult> {
     const tempConcepts: Concept[] = options.map((opt, idx) => ({
       id: idx,
       curie: `OPT:${idx}`,
@@ -137,11 +137,13 @@ export class OLaya {
       parents: [],
       disjointWith: [],
       synonyms: [],
+      description: instructions,
     }));
 
+    const query = instructions ? `${stateText} ${instructions}` : stateText;
     const tempDAG = new OntologyDAG(tempConcepts);
     const tempEngine = new OLaya(tempDAG);
-    const res = await tempEngine.systemOne(stateText, options.length);
+    const res = await tempEngine.systemOne(query, options.length);
 
     const probabilities: Record<string, number> = {};
     for (const p of res.probabilities) {

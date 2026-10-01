@@ -21,7 +21,7 @@
     "olaya-mcp": "./dist/cli.mjs"
   },
   "scripts": {
-    "build": "bun build src/index.ts --outfile ./dist/index.mjs --format esm && bun build src/index.ts --outfile ./dist/index.cjs --format cjs && bun build src/cli.ts --outfile ./dist/cli.mjs --format esm && bunx tsc --emitDeclarationOnly",
+    "build": "bun build src/index.ts --outfile ./dist/index.mjs --target node --format esm && bun build src/index.ts --outfile ./dist/index.cjs --target node --format cjs && bun build src/cli.ts --outfile ./dist/cli.mjs --target node --format esm && bunx tsc --emitDeclarationOnly",
     "test": "bun test",
     "pack:dist": "npm pack --pack-destination ../../dist",
     "typecheck": "bunx tsc --noEmit"

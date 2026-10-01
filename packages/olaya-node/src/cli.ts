@@ -5,15 +5,17 @@
  */
 
 import { OLayaNodeMCPServer, installNodeMCPConfig } from "./mcp.js";
+import { LeioServer } from "./server.js";
 
 const args = process.argv.slice(2);
 
 function printHelp(): void {
   console.log(`
-O-Laya Model Context Protocol (MCP) Server for Node.js
+Leio Model Context Protocol (MCP) & System 1 Decision Server
 
 Usage:
-  npx @mycelia/olaya-mcp                     Start stdio MCP server
+  npx @mycelia/olaya-mcp                     Start stdio MCP server (MCP 2026-07-28)
+  npx @mycelia/olaya-mcp serve [--port 8080] Start HTTP server (Jev /v1/systemone + MCP 2026)
   npx @mycelia/olaya-mcp ground "<text>"     Ground observation from CLI
   npx @mycelia/olaya-mcp install --client claude  Configure Claude Desktop
   npx @mycelia/olaya-mcp install --client cursor  Configure Cursor IDE
@@ -34,6 +36,14 @@ async function run(): Promise<void> {
     const dryRun = args.includes("--dry-run");
     const msg = installNodeMCPConfig(client, dryRun);
     console.log(msg);
+    return;
+  }
+
+  if (command === "serve") {
+    const portIdx = args.indexOf("--port");
+    const port = portIdx !== -1 && args[portIdx + 1] ? parseInt(args[portIdx + 1], 10) : 8080;
+    const server = new LeioServer(port);
+    await server.start();
     return;
   }
 

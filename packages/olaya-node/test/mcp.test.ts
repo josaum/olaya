@@ -9,13 +9,26 @@ describe("OLayaNodeMCPServer (MCP Protocol)", () => {
       jsonrpc: "2.0",
       id: 1,
       method: "initialize",
+      params: { protocolVersion: "2026-07-28" },
+    });
+
+    expect(res).not.toBeNull();
+    expect(res?.result.protocolVersion).toBe("2026-07-28");
+    expect(res?.result.serverInfo.name).toBe("leio-mcp-engine");
+    expect(res?.result.capabilities.tools).toBeDefined();
+    expect(res?.result.capabilities.stateless).toBe(true);
+  });
+
+  it("handles legacy 2024-11-05 client handshake", async () => {
+    const res = await server.handleMessage({
+      jsonrpc: "2.0",
+      id: 11,
+      method: "initialize",
       params: { protocolVersion: "2024-11-05" },
     });
 
     expect(res).not.toBeNull();
     expect(res?.result.protocolVersion).toBe("2024-11-05");
-    expect(res?.result.serverInfo.name).toBe("olaya-mcp-node");
-    expect(res?.result.capabilities.tools).toBeDefined();
   });
 
   it("lists all decision tools via tools/list", async () => {
