@@ -47,7 +47,7 @@ def test_mcp_initialize_and_tools_list():
     }
     resp = server.handle_message(init_req)
     assert resp["id"] == 1
-    assert resp["result"]["serverInfo"]["name"] == "olaya-webmcp"
+    assert resp["result"]["serverInfo"]["name"] == "olaya-mcp"
 
     list_req = {
         "jsonrpc": "2.0",

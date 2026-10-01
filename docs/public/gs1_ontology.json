@@ -173,7 +173,14 @@
         "Seafood"
       ],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "food",
+        "beverage",
+        "grocery",
+        "consumable",
+        "edible",
+        "FMCG"
+      ]
     },
     {
       "curie": "Footwear",
@@ -264,7 +271,15 @@
       ],
       "children": [],
       "disjoint_with": [],
-      "synonyms": []
+      "synonyms": [
+        "dairy",
+        "dairy product",
+        "perishable dairy",
+        "refrigerated dairy",
+        "milk product",
+        "cheese product",
+        "yogurt"
+      ]
     },
     {
       "curie": "NutritionMeasurementType",

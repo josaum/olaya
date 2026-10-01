@@ -1,5 +1,8 @@
 /**
  * Candidate routing and active subgraph extraction for O-Laya.
+ *
+ * Upgraded to use smooth IDF-weighted BM25 scoring with OWL property stripping,
+ * description-first fallback, and default k=12.
  */
 
 import { Concept, OntologyDAG } from "./ontology.js";
@@ -16,11 +19,18 @@ const STOPWORDS = new Set([
   "did", "doing", "of", "it", "its", "that", "this", "also", "made"
 ]);
 
+/** OWL object property expressions to strip from descriptions before indexing */
+const OWL_PROPS_RE = /\b(derives_from|is_a|part_of|located_in|has_part|participates_in|preceded_by|regulates|negatively_regulates|positively_regulates|has_quality|inheres_in|bearer_of|realized_in|causally_upstream_of|part_of_developmental_process)\b/g;
+
 export function tokenize(text: string): string[] {
   // Split camelCase: "DatabaseDeadlock" -> "Database Deadlock"
   const splitCamel = text.replace(/([a-z])([A-Z])/g, "$1 $2");
   const clean = splitCamel.toLowerCase().replace(/[^a-z0-9]+/g, " ");
   return clean.split(/\s+/).filter((t) => t.length > 2 && !STOPWORDS.has(t));
+}
+
+function stripOwlProps(text: string): string {
+  return text.replace(OWL_PROPS_RE, " ").replace(/\s+/g, " ").trim();
 }
 
 export interface ActiveSubgraph {
@@ -29,48 +39,92 @@ export interface ActiveSubgraph {
   disjointEdges: [number, number][]; // [slotA, slotB]
 }
 
+export const DEFAULT_K = 12;
+
 export class CandidateRouter {
   private invertedIndex = new Map<string, Set<number>>();
+  /** Public IDF map — used by engine.ts for direct scoring */
+  public idfMap = new Map<string, number>();
+  /** Per-concept token sets by field (label, synonyms, description) */
+  private conceptTokens = new Map<
+    number,
+    { label: Set<string>; synonyms: Set<string>; description: Set<string> }
+  >();
 
   constructor(private ontology: OntologyDAG) {
     this.buildIndex();
   }
 
   private buildIndex(): void {
-    for (const concept of this.ontology.getAll()) {
-      const tokens = new Set<string>([
-        ...tokenize(concept.label),
-        ...concept.synonyms.flatMap((s) => tokenize(s)),
-        ...(concept.description ? tokenize(concept.description) : []),
-      ]);
+    const allConcepts = this.ontology.getAll();
+    const N = allConcepts.length;
 
-      for (const tok of tokens) {
+    // Pass 1: collect token sets per field and build inverted index
+    const docFreq = new Map<string, number>();
+
+    for (const concept of allConcepts) {
+      const labelToks = new Set(tokenize(concept.label));
+      const synToks = new Set(concept.synonyms.flatMap((s) => tokenize(s)));
+      const descToks = new Set(
+        tokenize(stripOwlProps(concept.description ?? ""))
+      );
+
+      this.conceptTokens.set(concept.id, {
+        label: labelToks,
+        synonyms: synToks,
+        description: descToks,
+      });
+
+      // All distinct tokens for this concept (for DF counting and inverted index)
+      const allToks = new Set([...labelToks, ...synToks, ...descToks]);
+      for (const tok of allToks) {
+        docFreq.set(tok, (docFreq.get(tok) ?? 0) + 1);
         if (!this.invertedIndex.has(tok)) {
           this.invertedIndex.set(tok, new Set());
         }
         this.invertedIndex.get(tok)!.add(concept.id);
       }
     }
+
+    // Pass 2: compute smooth IDF for every indexed token
+    for (const [tok, df] of docFreq) {
+      this.idfMap.set(tok, Math.log((N + 1) / (df + 1)) + 1);
+    }
   }
 
   /**
-   * Routes query to top-K candidate concepts and extracts the closed active subgraph.
+   * Routes query to top-K candidate concepts using IDF-weighted BM25 scoring.
+   * Extracts the closed active subgraph including all ancestors.
    */
-  public extractSubgraph(query: string, maxCandidates = 8): ActiveSubgraph {
+  public extractSubgraph(query: string, maxCandidates = DEFAULT_K): ActiveSubgraph {
     const queryTokens = tokenize(query);
+    const queryTokSet = new Set(queryTokens);
     const scoreMap = new Map<number, number>();
 
     for (const tok of queryTokens) {
+      const idf = this.idfMap.get(tok) ?? 1.0;
       const matches = this.invertedIndex.get(tok);
-      if (matches) {
-        for (const cid of matches) {
-          const concept = this.ontology.getById(cid);
-          let weight = 1.0;
-          if (concept) {
-            const labelToks = tokenize(concept.label);
-            if (labelToks.includes(tok)) weight = 4.0;
-          }
-          scoreMap.set(cid, (scoreMap.get(cid) || 0) + weight);
+      if (!matches) continue;
+
+      for (const cid of matches) {
+        const fields = this.conceptTokens.get(cid);
+        if (!fields) continue;
+
+        const labelHit = fields.label.has(tok);
+        const synHit = fields.synonyms.has(tok);
+        const descHit = fields.description.has(tok);
+
+        // Description boost: if label has no query token overlap, description becomes primary
+        const labelOverlap = [...fields.label].some((t) => queryTokSet.has(t));
+        const descBoost = labelOverlap ? 1.0 : 2.0;
+
+        const score =
+          (labelHit ? idf * 4.0 : 0) +
+          (synHit ? idf * 2.0 : 0) +
+          (descHit ? idf * 1.0 * descBoost : 0);
+
+        if (score > 0) {
+          scoreMap.set(cid, (scoreMap.get(cid) ?? 0) + score);
         }
       }
     }
@@ -80,19 +134,27 @@ export class CandidateRouter {
       .sort((a, b) => b[1] - a[1])
       .map(([cid]) => cid);
 
+    // Build active set: top-k leaves + all their ancestors
     const activeSet = new Set<number>();
     for (const cid of sortedCandidates.slice(0, maxCandidates)) {
       activeSet.add(cid);
-      // Include immediate parents to ground subsumption
-      const concept = this.ontology.getById(cid);
-      if (concept) {
-        for (const pid of concept.parents) {
-          activeSet.add(pid);
+      // Include full ancestor chain for monotonicity edges
+      let queue = [cid];
+      while (queue.length > 0) {
+        const cur = queue.shift()!;
+        const concept = this.ontology.getById(cur);
+        if (concept) {
+          for (const pid of concept.parents) {
+            if (!activeSet.has(pid)) {
+              activeSet.add(pid);
+              queue.push(pid);
+            }
+          }
         }
       }
     }
 
-    // If activeSet is empty (no tokens matched query), seed with root concepts
+    // Fallback: seed with root concepts if nothing matched
     if (activeSet.size === 0) {
       for (const c of this.ontology.getAll()) {
         if (c.parents.length === 0) {
@@ -101,13 +163,6 @@ export class CandidateRouter {
         }
       }
     }
-
-    // Fill remaining slots up to maxCandidates if needed
-    for (const c of this.ontology.getAll()) {
-      if (activeSet.size >= maxCandidates) break;
-      activeSet.add(c.id);
-    }
-
 
     const concepts = Array.from(activeSet)
       .map((id) => this.ontology.getById(id)!)

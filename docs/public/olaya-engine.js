@@ -98,6 +98,7 @@ export class OntologyDAG {
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 export const DISJOINT_THRESHOLD = 0.6;
+export const DEFAULT_K = 12;
 
 // ── Utility: tokenize ─────────────────────────────────────────────────────────
 
@@ -242,11 +243,16 @@ export class CandidateRouter {
     const concepts = this.ontology.getAll();
     const N        = concepts.length;
 
+    // OWL property expression patterns to strip from descriptions before indexing
+    const OWL_PROPS_RE = /\b(derives_from|is_a|part_of|located_in|has_part|participates_in|preceded_by)\b/g;
+
     // Per-concept token sets (use distinct sets so each concept contributes df=1 per token)
     for (const concept of concepts) {
       const labelToks = tokenize(concept.label);
       const synToks   = concept.synonyms.flatMap(s => tokenize(s));
-      const descToks  = concept.description ? tokenize(concept.description) : [];
+      // Strip OWL property expressions from description before indexing
+      const cleanDesc = concept.description ? concept.description.replace(OWL_PROPS_RE, ' ') : '';
+      const descToks  = cleanDesc ? tokenize(cleanDesc) : [];
 
       // Distinct tokens for this concept (for DF counting)
       const distinctToks = new Set([...labelToks, ...synToks, ...descToks]);
@@ -271,10 +277,11 @@ export class CandidateRouter {
    * Scoring (IDF-weighted BM25):
    *   label match    → score += idf * 4
    *   synonym match  → score += idf * 2
-   *   description match → score += idf * 1
+   *   description match → score += idf * 1 (or 2x boost when label has zero query token overlap)
    */
-  extractSubgraph(queryText, maxCandidates = 8) {
+  extractSubgraph(queryText, maxCandidates = 12) {
     const queryTokens = tokenize(queryText);
+    const queryTokSet = new Set(queryTokens);
     const scoreMap    = new Map(); // conceptId → accumulated score
 
     for (const tok of queryTokens) {
@@ -287,23 +294,27 @@ export class CandidateRouter {
         const concept = this.ontology.getById(cid);
         if (!concept) continue;
 
+        const labelTokens = tokenize(concept.label);
         let weight = 0;
 
         // Label match
-        if (tokenize(concept.label).includes(tok)) {
+        if (labelTokens.includes(tok)) {
           weight += idf * 4;
         }
         // Synonym match (only if not already counted as label)
-        if (weight === 0 || !tokenize(concept.label).includes(tok)) {
+        if (weight === 0 || !labelTokens.includes(tok)) {
           const inSyn = concept.synonyms.some(s => tokenize(s).includes(tok));
           if (inSyn) weight += idf * 2;
         }
-        // Description match (additive)
+        // Description match (additive) — with 2x boost when label has zero query token overlap
         if (concept.description && tokenize(concept.description).includes(tok)) {
           // Avoid double-counting if weight is already from label
-          if (!tokenize(concept.label).includes(tok) &&
+          if (!labelTokens.includes(tok) &&
               !concept.synonyms.some(s => tokenize(s).includes(tok))) {
-            weight += idf * 1;
+            // 2x boost when label has ZERO query token overlap (description is primary signal)
+            const labelHit = labelTokens.some(t => queryTokSet.has(t));
+            const descBoost = labelHit ? 1.0 : 2.0;
+            weight += idf * descBoost;
           }
         }
 
@@ -383,7 +394,7 @@ export class OLaya {
     this.router   = new CandidateRouter(ontology);
   }
 
-  async systemOne(queryText, k = 8) {
+  async systemOne(queryText, k = 12) {
     const sub = this.router.extractSubgraph(queryText, k);
     const V   = sub.concepts.length;
     if (V === 0) throw new Error('Active subgraph is empty');
@@ -394,31 +405,45 @@ export class OLaya {
 
     for (let i = 0; i < V; i++) {
       const c = sub.concepts[i];
+      const labelTokens = tokenize(c.label);
+      const labelHit    = labelTokens.some(t => queryToks.has(t));
 
       // IDF-weighted label scoring
-      for (const tok of tokenize(c.label)) {
+      for (const tok of labelTokens) {
         if (queryToks.has(tok)) {
           const idf = this.router.idfMap.get(tok) || 1.0;
           rawScores[i] += 6 * idf;
         }
       }
 
-      // IDF-weighted synonym scoring
+      // Per-synonym scoring: score each synonym as a unit to prevent
+      // high-synonym-count concepts from accumulating unfair advantages.
+      // A synonym scores: sum-of-IDF-of-matching-tokens × 5 × matchFraction
+      // where matchFraction = matchingTokens / totalSynTokens (length normalisation).
       for (const syn of c.synonyms) {
-        for (const tok of tokenize(syn)) {
+        const synToks = tokenize(syn);
+        if (synToks.length === 0) continue;
+        let matchIdfSum = 0;
+        let matchCount  = 0;
+        for (const tok of synToks) {
           if (queryToks.has(tok)) {
-            const idf = this.router.idfMap.get(tok) || 1.0;
-            rawScores[i] += 5 * idf;
+            matchIdfSum += this.router.idfMap.get(tok) || 1.0;
+            matchCount++;
           }
         }
+        if (matchCount === 0) continue;
+        // Length-normalised: multiply by fraction of syn tokens that match
+        const matchFrac = matchCount / synToks.length;
+        rawScores[i] += 5 * matchIdfSum * matchFrac;
       }
 
-      // IDF-weighted description scoring
+      // IDF-weighted description scoring — 2x boost when label has zero query overlap
       if (c.description) {
+        const descBoost = labelHit ? 1.0 : 2.0;
         for (const tok of tokenize(c.description)) {
           if (queryToks.has(tok)) {
             const idf = this.router.idfMap.get(tok) || 1.0;
-            rawScores[i] += idf;
+            rawScores[i] += descBoost * idf;
           }
         }
       }
