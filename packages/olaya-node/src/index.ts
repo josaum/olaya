@@ -7,3 +7,4 @@ export * from "./ontology.js";
 export * from "./axioms.js";
 export * from "./router.js";
 export * from "./engine.js";
+export * from "./mcp.js";
