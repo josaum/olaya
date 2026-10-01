@@ -51,7 +51,9 @@ class CandidateRouter:
     ) -> List[Tuple[Concept, float]]:
         """Score concepts against input state text and return top candidates."""
         k = top_k or self.max_candidates
-        query_tokens = set(tokenize_normalize(state_text))
+        # Sorted so that float accumulation order (and therefore tie-breaking) is reproducible.
+        query_tokens = sorted(set(tokenize_normalize(state_text)))
+        query_set = set(query_tokens)
 
         # Filter candidate pool if constrained by root
         allowed_concepts: Set[str] = (
@@ -64,30 +66,40 @@ class CandidateRouter:
             matching_curies = self.inverted_index.get(token, set()).intersection(allowed_concepts)
             # Inverse document frequency weighting
             idf = 1.0 / (1.0 + len(matching_curies))
-            for curie in matching_curies:
+            for curie in sorted(matching_curies):
                 scores[curie] += idf * 2.0
 
-        # Add Jaccard overlap on token sets
-        for curie in allowed_concepts:
+        # Add Jaccard overlap on token sets (only concepts sharing a token can score)
+        for curie in sorted(scores):
             concept_toks = self.concept_tokens.get(curie, set())
-            if not concept_toks:
-                continue
-            intersection = len(query_tokens.intersection(concept_toks))
+            intersection = len(query_set.intersection(concept_toks))
             if intersection > 0:
-                jaccard = intersection / len(query_tokens.union(concept_toks))
+                jaccard = intersection / len(query_set.union(concept_toks))
                 scores[curie] += jaccard * 5.0
 
-        # Sort descending by score
-        ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+        # Sort descending by score, ties broken by CURIE for determinism
+        ranked = sorted(scores.items(), key=lambda x: (-x[1], x[0]))
         top_results = ranked[:k]
 
-        # If zero matches found (e.g. completely novel terminology), fallback to root's immediate children
-        if not top_results and root_curie:
-            root_concept = self.ontology.concepts.get(root_curie)
-            if root_concept and root_concept.children:
-                return [(self.ontology.concepts[c], 0.1) for c in sorted(list(root_concept.children))[:k]]
+        if not top_results:
+            # Completely novel terminology: fall back to the children of the root (or of the
+            # ontology's single top-level concept), else the top-level concepts themselves.
+            return [(self.ontology.concepts[c], 0.1) for c in self._fallback_curies(root_curie)[:k]]
 
         return [(self.ontology.concepts[curie], score) for curie, score in top_results]
+
+    def _fallback_curies(self, root_curie: str | None) -> List[str]:
+        if root_curie is not None:
+            anchor = root_curie if root_curie in self.ontology.concepts else None
+        else:
+            top_level = sorted(c for c, concept in self.ontology.concepts.items() if not concept.parents)
+            anchor = top_level[0] if len(top_level) == 1 else None
+            if anchor is None:
+                return top_level
+        if anchor is None:
+            return []
+        children = sorted(self.ontology.concepts[anchor].children)
+        return children or [anchor]
 
     def extract_decision_subgraph(
         self,
@@ -97,13 +109,9 @@ class CandidateRouter:
     ) -> Ontology:
         """Extract a self-contained active decision subgraph tailored to the input state.
 
-        Includes top candidate leaves, their parents up to root, and their direct disjoint peers.
+        Includes the top routed candidates and all of their ancestors.
         """
         limit = max_candidates or self.max_candidates
         top_candidates = self.route_candidates(state_text, root_curie=root_curie, top_k=limit)
         curies = [c.curie for c, _ in top_candidates]
-
-        if not curies and root_curie:
-            curies = [root_curie]
-
         return self.ontology.extract_subgraph(curies, include_parents=True)
