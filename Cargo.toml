@@ -3,6 +3,7 @@ members = [
     "crates/owl-fast-core",
     "crates/mycelia-ort-utils",
     "crates/olaya-core",
+    "crates/olaya-wasm",
 ]
 resolver = "2"
 

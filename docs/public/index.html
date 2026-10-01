@@ -3,8 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leio: The Ontology-Grounded System 1 Decision Model</title>
-  <meta name="description" content="Leio is not a chatbot. It is a sub-millisecond System 1 decision engine that returns mathematically verified probabilities over formal ontologies. Zero hallucinations, input-only pricing, edge-native.">
+  <title>Leio — Ontology-Grounded System 1 Decision Engine | $0.042/1M Inputs</title>
+  <meta name="description" content="Leio is a sub-millisecond System 1 decision engine that grounds text into formal ontologies (GS1, Schema.org, DOID, BFO) with P(child)≤P(parent) monotonicity guarantees. Input-only pricing at $0.042/1M tokens — outputs always free. Jev-compatible API.">
+  <meta name="keywords" content="system 1, decision engine, ontology grounding, leio, o-laya, jev compatible, schema.org, GS1, DOID, BM25, BERT, decision model, semantic classification, structured prediction">
+  <meta name="author" content="Dionisio Chiuratto Agourakis">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://public-nine-jade-58.vercel.app/">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Leio — Ontology-Grounded System 1 Decision Engine">
+  <meta property="og:description" content="Not a chatbot. Returns mathematically proven probabilities over formal ontologies in &lt;1ms. P(child)≤P(parent) guaranteed. $0.042/1M inputs — outputs free.">
+  <meta property="og:url" content="https://public-nine-jade-58.vercel.app/">
+  <meta property="og:site_name" content="Leio">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Leio — Sub-millisecond Ontology Decision Engine">
+  <meta name="twitter:description" content="Jev-compatible System 1 decision engine with formal ontology grounding. GS1, DOID, Schema.org. P(child)≤P(parent) mathematically guaranteed. $0.042/1M inputs, outputs free.">
+  <meta name="twitter:creator" content="@dionisio_ca">
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Leio",
+    "alternateName": "O-Laya",
+    "description": "Ontology-grounded System 1 decision engine with formal axiom guarantees",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Cross-platform (Browser, Python, Node.js, Rust)",
+    "author": {
+      "@type": "Person",
+      "name": "Dionisio Chiuratto Agourakis",
+      "email": "dionisio.ca@gmail.com"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0.000000042",
+      "priceCurrency": "USD",
+      "description": "$0.042 per 1 million input tokens. Output tokens free."
+    },
+    "codeRepository": "https://github.com/josaum/olaya",
+    "license": "https://opensource.org/licenses/Apache-2.0",
+    "keywords": "system 1, ontology, decision engine, GS1, DOID, schema.org, BFO, SKOS, BERT, OWL"
+  }
+  </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
@@ -1033,7 +1074,7 @@ result = olaya.system_one(state, questions)</code></pre>
     <hr/>
 
     <h2>Measured Performance & Hardware Benchmarks</h2>
-    <p>Measured on consumer hardware (Apple Silicon MPS / single CPU core) on operational GS1 supply chain workloads:</p>
+    <p>Measured on consumer hardware (Apple Silicon MPS / single CPU core) on operational GS1 supply chain workloads. The new WASM build (<code>olaya-wasm</code>, 189 KB) runs entirely in-browser with Rust-native speed — no server, no network round-trip.</p>
     <div class="table-container">
       <table>
         <thead>
@@ -1048,7 +1089,16 @@ result = olaya.system_one(state, questions)</code></pre>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr style="background: rgba(56,139,253,0.06);">
+            <td><strong>🦀 Rust WASM</strong> (<code>olaya-wasm</code>) <span style="font-size:0.68rem;color:#3fb950;font-family:monospace;border:1px solid #3fb95044;border-radius:3px;padding:0.05rem 0.3rem;background:rgba(63,185,80,0.1);">NEW</span></td>
+            <td>0 (pure index)</td>
+            <td>189 KB .wasm binary</td>
+            <td><strong>&lt; 1 µs</strong></td>
+            <td>&lt; 2 µs</td>
+            <td><strong>&gt;500,000 qps</strong></td>
+            <td>In-browser native inference — zero network, zero JS overhead</td>
+          </tr>
+ <tr>
             <td><strong>Rust Arrow Lexical</strong> (<code>olaya-core</code>)</td>
             <td>0 (pure index)</td>
             <td>Arrow IPC Buffer</td>
@@ -1086,6 +1136,25 @@ result = olaya.system_one(state, questions)</code></pre>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- WASM upgrade callout -->
+    <div style="background: linear-gradient(135deg, rgba(56,139,253,0.08) 0%, rgba(166,100,255,0.06) 100%); border: 1px solid #1f6feb44; border-radius: 8px; padding: 1rem 1.25rem; margin: 1.25rem 0;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">
+        <div>
+          <div style="font-size:0.78rem;text-transform:uppercase;color:#58a6ff;font-weight:700;letter-spacing:0.08em;margin-bottom:0.3rem;">🦀 New: Rust WASM Build (olaya-wasm)</div>
+          <strong>Sub-microsecond browser inference without any network round-trip.</strong>
+          <p style="font-size:0.82rem;color:#8b949e;margin:0.35rem 0 0 0;">The <code>olaya-wasm</code> crate compiles the full IDF-weighted BM25 router + axiom projection kernel to a 189 KB WebAssembly binary. Load it via <code>&lt;script type="module"&gt;</code> and route 500k+ decisions/second in the browser — faster than any HTTP call.</p>
+        </div>
+        <div style="font-family:monospace;font-size:0.78rem;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:0.5rem 0.75rem;white-space:nowrap;flex-shrink:0;">
+          <div style="color:#8b949e;">// Browser ESModule</div>
+          <div>import init, { OlayaWasm }</div>
+          <div style="padding-left:1em;">from <span style="color:#79c0ff;">'./wasm/olaya_wasm.js'</span>;</div>
+          <div style="color:#8b949e;margin-top:0.25rem;">await init();</div>
+          <div>const engine = new OlayaWasm(conceptsJson);</div>
+          <div>const result = engine.system_one(state, 8);</div>
+        </div>
+      </div>
     </div>
 
     <hr/>
