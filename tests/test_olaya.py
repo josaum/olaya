@@ -1,17 +1,15 @@
 """Unit tests for O-Laya (Ontology-Grounded Decision Model)."""
 
-import pytest
 import numpy as np
-from olaya.ontology import Concept, Ontology, create_incident_ontology
-from olaya.candidate_router import CandidateRouter
+import pytest
+
 from olaya.axioms import (
-    enforce_subsumption_monotonicity,
     enforce_disjointness_exclusion,
+    enforce_subsumption_monotonicity,
     normalized_entropy_confidence,
-    calibrate_and_project_distribution,
 )
-from olaya.sequence import build_ontology_sequence
-from olaya.engine import OLaya
+from olaya.candidate_router import CandidateRouter
+from olaya.ontology import create_incident_ontology
 
 
 def test_ontology_dag():
@@ -62,7 +60,7 @@ def test_axioms_and_calibration():
 
     # Test normalized entropy
     p_certain = np.array([1.0, 0.0, 0.0])
-    p_uniform = np.array([1/3, 1/3, 1/3])
+    p_uniform = np.array([1 / 3, 1 / 3, 1 / 3])
     assert normalized_entropy_confidence(p_certain) == pytest.approx(1.0, abs=1e-3)
     assert normalized_entropy_confidence(p_uniform) == pytest.approx(0.0, abs=1e-3)
 
@@ -88,9 +86,7 @@ def test_axioms_and_calibration():
     assert gated["INCIDENT:BILLING"] == 0.0
 
 
-def test_olaya_system_one_e2e():
-    olaya = OLaya()
-
+def test_olaya_system_one_e2e(olaya):
     state = {
         "service": "billing-worker",
         "log_level": "FATAL",
@@ -131,7 +127,19 @@ def test_olaya_system_one_e2e():
     # Verify concept answer structure
     ans = result.answers["triage"]
     assert ans.curie in olaya.ontology.concepts
+    assert ans.curie != "INCIDENT:ROOT"
     assert len(ans.lineage) >= 2
+    assert ans.curie in ans.candidate_probabilities
+    assert sum(ans.candidate_probabilities.values()) == pytest.approx(1.0, abs=1e-3)
+    # The selected concept is never an ancestor of another competing candidate.
+    for other in ans.candidate_probabilities:
+        if other != ans.curie:
+            assert not olaya.ontology.is_subsumed_by(other, ans.curie)
+    # Marginals are monotone under subsumption.
+    for curie, p in ans.probabilities.items():
+        for parent in olaya.ontology.concepts[curie].parents:
+            if parent in ans.probabilities:
+                assert ans.probabilities[parent] >= p - 1e-4
     assert ans.confidence >= 0.0
     assert ans.axioms_verified is True
 

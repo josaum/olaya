@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import json
-from collections import defaultdict, deque
+from collections import deque
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 
 @dataclass
@@ -15,13 +15,13 @@ class Concept:
     curie: str  # e.g., "INCIDENT:DATABASE_OUTAGE"
     label: str  # e.g., "Database Outage"
     description: str  # e.g., "Critical disruption to database connectivity or read/write operations"
-    synonyms: List[str] = field(default_factory=list)
-    parents: Set[str] = field(default_factory=set)  # direct superclasses (subClassOf)
-    children: Set[str] = field(default_factory=set)  # direct subclasses
-    disjoint_with: Set[str] = field(default_factory=set)  # mutually exclusive concepts
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    synonyms: list[str] = field(default_factory=list)
+    parents: set[str] = field(default_factory=set)  # direct superclasses (subClassOf)
+    children: set[str] = field(default_factory=set)  # direct subclasses
+    disjoint_with: set[str] = field(default_factory=set)  # mutually exclusive concepts
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "curie": self.curie,
             "label": self.label,
@@ -33,7 +33,7 @@ class Concept:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> Concept:
+    def from_dict(cls, data: dict[str, Any]) -> Concept:
         return cls(
             curie=data["curie"],
             label=data["label"],
@@ -50,9 +50,9 @@ class Ontology:
 
     def __init__(self, name: str = "default_ontology"):
         self.name = name
-        self.concepts: Dict[str, Concept] = {}
-        self._ancestor_cache: Dict[str, Set[str]] = {}
-        self._descendant_cache: Dict[str, Set[str]] = {}
+        self.concepts: dict[str, Concept] = {}
+        self._ancestor_cache: dict[str, set[str]] = {}
+        self._descendant_cache: dict[str, set[str]] = {}
 
     def add_concept(self, concept: Concept) -> Concept:
         """Add or update a concept in the ontology."""
@@ -83,7 +83,7 @@ class Ontology:
         self._ancestor_cache.clear()
         self._descendant_cache.clear()
 
-    def get_ancestors(self, curie: str) -> Set[str]:
+    def get_ancestors(self, curie: str) -> set[str]:
         """Compute the transitive closure of superclasses (including self)."""
         if curie in self._ancestor_cache:
             return self._ancestor_cache[curie]
@@ -91,7 +91,7 @@ class Ontology:
         if curie not in self.concepts:
             return set()
 
-        ancestors: Set[str] = {curie}
+        ancestors: set[str] = {curie}
         queue = deque([curie])
         while queue:
             curr = queue.popleft()
@@ -105,7 +105,7 @@ class Ontology:
         self._ancestor_cache[curie] = ancestors
         return ancestors
 
-    def get_descendants(self, curie: str) -> Set[str]:
+    def get_descendants(self, curie: str) -> set[str]:
         """Compute the transitive closure of subclasses (including self)."""
         if curie in self._descendant_cache:
             return self._descendant_cache[curie]
@@ -113,7 +113,7 @@ class Ontology:
         if curie not in self.concepts:
             return set()
 
-        descendants: Set[str] = {curie}
+        descendants: set[str] = {curie}
         queue = deque([curie])
         while queue:
             curr = queue.popleft()
@@ -141,7 +141,7 @@ class Ontology:
                 return True
         return False
 
-    def get_lineage(self, curie: str) -> List[str]:
+    def get_lineage(self, curie: str) -> list[str]:
         """Return ordered ancestral path from root to curie."""
         if curie not in self.concepts:
             return [curie]
@@ -161,16 +161,22 @@ class Ontology:
 
         return list(reversed(lineage))
 
-    def extract_subgraph(self, target_curies: List[str], include_parents: bool = True) -> Ontology:
+    def extract_subgraph(self, target_curies: list[str], include_parents: bool = True) -> Ontology:
         """Extract a self-contained sub-ontology containing target curies and their lineage."""
         sub = Ontology(name=f"{self.name}_subgraph")
-        to_include: Set[str] = set()
+        # Ordered set: targets keep their given order, ancestors follow sorted, so the subgraph's
+        # concept order never depends on set iteration (and hence on PYTHONHASHSEED).
+        to_include: dict[str, None] = {}
 
         for c in target_curies:
             if c in self.concepts:
-                to_include.add(c)
-                if include_parents:
-                    to_include.update(self.get_ancestors(c))
+                to_include[c] = None
+        if include_parents:
+            ancestors: set[str] = set()
+            for c in to_include:
+                ancestors.update(self.get_ancestors(c))
+            for c in sorted(ancestors):
+                to_include.setdefault(c, None)
 
         # Add concepts
         for c in to_include:
@@ -224,11 +230,31 @@ def create_incident_ontology() -> Ontology:
     onto.add_concept(Concept("INCIDENT:ROOT", "Operational Incident", "Any anomalous operational event."))
 
     # Level 1 Domains
-    onto.add_concept(Concept("INCIDENT:INFRA", "Infrastructure Incident", "Hardware, compute, hypervisor, or OS issues."))
-    onto.add_concept(Concept("INCIDENT:DATA", "Data & Storage Incident", "Database, cache, message broker, or pipeline issues."))
-    onto.add_concept(Concept("INCIDENT:SECURITY", "Security & Access Incident", "Unauthorized access, breach, credential leak, or policy violation."))
-    onto.add_concept(Concept("INCIDENT:BILLING", "Billing & Commercial Incident", "Invoicing, payment processing, subscription, or checkout errors."))
-    onto.add_concept(Concept("INCIDENT:APPLICATION", "Application Error", "Client UI glitches, 5xx server exceptions, or logic bugs."))
+    onto.add_concept(
+        Concept("INCIDENT:INFRA", "Infrastructure Incident", "Hardware, compute, hypervisor, or OS issues.")
+    )
+    onto.add_concept(
+        Concept("INCIDENT:DATA", "Data & Storage Incident", "Database, cache, message broker, or pipeline issues.")
+    )
+    onto.add_concept(
+        Concept(
+            "INCIDENT:SECURITY",
+            "Security & Access Incident",
+            "Unauthorized access, breach, credential leak, or policy violation.",
+        )
+    )
+    onto.add_concept(
+        Concept(
+            "INCIDENT:BILLING",
+            "Billing & Commercial Incident",
+            "Invoicing, payment processing, subscription, or checkout errors.",
+        )
+    )
+    onto.add_concept(
+        Concept(
+            "INCIDENT:APPLICATION", "Application Error", "Client UI glitches, 5xx server exceptions, or logic bugs."
+        )
+    )
 
     for dom in ["INCIDENT:INFRA", "INCIDENT:DATA", "INCIDENT:SECURITY", "INCIDENT:BILLING", "INCIDENT:APPLICATION"]:
         onto.add_subsumption(dom, "INCIDENT:ROOT")
@@ -238,21 +264,70 @@ def create_incident_ontology() -> Ontology:
     onto.add_disjointness("INCIDENT:INFRA", "INCIDENT:BILLING")
 
     # Level 2 Specifics under Data
-    onto.add_concept(Concept("INCIDENT:DB_OUTAGE", "Database Outage", "Complete loss of primary DB or replica cluster connectivity.", synonyms=["db down", "postgres unreachable", "mysql connection refused"]))
-    onto.add_concept(Concept("INCIDENT:DB_DEADLOCK", "Database Deadlock", "Concurrent transactions blocked waiting for conflicting locks.", synonyms=["lock wait timeout", "deadlock detected"]))
-    onto.add_concept(Concept("INCIDENT:DATA_PIPELINE", "Data Pipeline Stall", "Kafka lag, Celery/Airflow failure, or consumer crash.", synonyms=["kafka lag", "dag failed"]))
+    onto.add_concept(
+        Concept(
+            "INCIDENT:DB_OUTAGE",
+            "Database Outage",
+            "Complete loss of primary DB or replica cluster connectivity.",
+            synonyms=["db down", "postgres unreachable", "mysql connection refused"],
+        )
+    )
+    onto.add_concept(
+        Concept(
+            "INCIDENT:DB_DEADLOCK",
+            "Database Deadlock",
+            "Concurrent transactions blocked waiting for conflicting locks.",
+            synonyms=["lock wait timeout", "deadlock detected"],
+        )
+    )
+    onto.add_concept(
+        Concept(
+            "INCIDENT:DATA_PIPELINE",
+            "Data Pipeline Stall",
+            "Kafka lag, Celery/Airflow failure, or consumer crash.",
+            synonyms=["kafka lag", "dag failed"],
+        )
+    )
     for d in ["INCIDENT:DB_OUTAGE", "INCIDENT:DB_DEADLOCK", "INCIDENT:DATA_PIPELINE"]:
         onto.add_subsumption(d, "INCIDENT:DATA")
 
     # Level 2 Specifics under Security
-    onto.add_concept(Concept("INCIDENT:AUTH_BREACH", "Authentication Breach", "Compromised credentials, unauthorized token issuance, or brute-force attack.", synonyms=["api key leaked", "unauthorized login"]))
-    onto.add_concept(Concept("INCIDENT:DDOS", "DDoS Attack", "High-volume distributed traffic overwhelming ingress points.", synonyms=["dos attack", "syn flood"]))
+    onto.add_concept(
+        Concept(
+            "INCIDENT:AUTH_BREACH",
+            "Authentication Breach",
+            "Compromised credentials, unauthorized token issuance, or brute-force attack.",
+            synonyms=["api key leaked", "unauthorized login"],
+        )
+    )
+    onto.add_concept(
+        Concept(
+            "INCIDENT:DDOS",
+            "DDoS Attack",
+            "High-volume distributed traffic overwhelming ingress points.",
+            synonyms=["dos attack", "syn flood"],
+        )
+    )
     for s in ["INCIDENT:AUTH_BREACH", "INCIDENT:DDOS"]:
         onto.add_subsumption(s, "INCIDENT:SECURITY")
 
     # Level 2 Specifics under Billing
-    onto.add_concept(Concept("INCIDENT:PAYMENT_GATEWAY", "Payment Gateway Failure", "Stripe/Adyen/banking webhook failures or payment processing errors.", synonyms=["stripe 500", "payment decline storm"]))
-    onto.add_concept(Concept("INCIDENT:INVOICE_MISCALC", "Invoice Calculation Error", "Incorrect tax, discount, or pricing tier billing error.", synonyms=["overcharged", "wrong tax"]))
+    onto.add_concept(
+        Concept(
+            "INCIDENT:PAYMENT_GATEWAY",
+            "Payment Gateway Failure",
+            "Stripe/Adyen/banking webhook failures or payment processing errors.",
+            synonyms=["stripe 500", "payment decline storm"],
+        )
+    )
+    onto.add_concept(
+        Concept(
+            "INCIDENT:INVOICE_MISCALC",
+            "Invoice Calculation Error",
+            "Incorrect tax, discount, or pricing tier billing error.",
+            synonyms=["overcharged", "wrong tax"],
+        )
+    )
     for b in ["INCIDENT:PAYMENT_GATEWAY", "INCIDENT:INVOICE_MISCALC"]:
         onto.add_subsumption(b, "INCIDENT:BILLING")
 

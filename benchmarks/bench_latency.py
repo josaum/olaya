@@ -1,8 +1,10 @@
 """Benchmark warm inference latency and throughput for O-Laya."""
 
-import time
 import statistics
+import time
+
 from olaya.engine import OLaya
+
 
 def run_benchmark():
     print("Initializing O-Laya engine...")
@@ -45,8 +47,8 @@ def run_benchmark():
     n_runs = 25
     print(f"Executing {n_runs} benchmark runs...")
     latencies = []
-    
-    for i in range(n_runs):
+
+    for _ in range(n_runs):
         t0 = time.perf_counter()
         res = olaya.system_one(state, questions)
         dt = (time.perf_counter() - t0) * 1000.0
@@ -73,12 +75,13 @@ def run_benchmark():
 
     # Verify answers
     ans = res.answers["triage"]
-    print(f"\nSample Decision Output:")
+    print("\nSample Decision Output:")
     print(f"Grounded Concept: {ans.curie} ({ans.label})")
     print(f"Lineage to Root:  {' -> '.join(ans.lineage)}")
     print(f"Subsumes P(true): {res.answers['is_data_issue'].subsumes}")
     print(f"Urgency Score:    {res.answers['urgency'].score}")
     print(f"Escalate (Noul):  {res.answers['escalate_oncall'].noul}")
+
 
 if __name__ == "__main__":
     run_benchmark()

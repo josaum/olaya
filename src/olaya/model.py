@@ -8,8 +8,6 @@ Matches Laya / Jev non-autoregressive architecture:
 
 from __future__ import annotations
 
-from typing import Tuple
-
 import torch
 import torch.nn as nn
 from transformers import AutoConfig, AutoModel
@@ -18,8 +16,12 @@ from transformers import AutoConfig, AutoModel
 class OntologyDecisionHead(nn.Module):
     """Pools hidden states at marker positions and computes option logits."""
 
-    def __init__(self, hidden_size: int, dropout: float = 0.1):
+    def __init__(self, hidden_size: int, dropout: float = 0.1, num_question_types: int = 5):
         super().__init__()
+        # Question-type conditioning (concept / score / subsumes / choice / noul), added to the pooled
+        # marker and [CLS] states. Zero-initialised so it starts as an identity.
+        self.qtype_embedding = nn.Embedding(num_question_types, hidden_size)
+        nn.init.zeros_(self.qtype_embedding.weight)
         self.dense = nn.Linear(hidden_size, hidden_size)
         self.act = nn.GELU()
         self.norm = nn.LayerNorm(hidden_size)
@@ -39,7 +41,8 @@ class OntologyDecisionHead(nn.Module):
         marker_pos: torch.Tensor,  # [B, K]
         marker_mask: torch.Tensor,  # [B, K] (bool)
         cls_hidden_state: torch.Tensor,  # [B, H]
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        qtype: torch.Tensor,  # [B]
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         B, K = marker_pos.shape
         H = sequence_hidden_states.shape[-1]
 
@@ -47,6 +50,8 @@ class OntologyDecisionHead(nn.Module):
         # Expand marker_pos to [B, K, H]
         idx = marker_pos.unsqueeze(-1).expand(B, K, H)
         marker_states = torch.gather(sequence_hidden_states, 1, idx)
+        qtype_emb = self.qtype_embedding(qtype)  # [B, H]
+        marker_states = marker_states + qtype_emb.unsqueeze(1)
 
         # Transform marker states
         h = self.norm(self.act(self.dense(marker_states)))
@@ -59,7 +64,7 @@ class OntologyDecisionHead(nn.Module):
         logits = torch.where(marker_mask, logits, torch.tensor(-1e4, device=logits.device, dtype=logits.dtype))
 
         # Act / escalate probability: [B, 2]
-        act_logits = self.act_head(cls_hidden_state)
+        act_logits = self.act_head(cls_hidden_state + qtype_emb)
         act_probs = torch.softmax(act_logits, dim=-1)
 
         return logits, act_probs
@@ -84,7 +89,11 @@ class OntologyDecisionModel(nn.Module):
                 self.hidden_size = self.encoder.config.hidden_size
             except Exception:
                 # Fallback to local config if offline
-                cfg = AutoConfig.from_pretrained(backbone_name_or_config) if isinstance(backbone_name_or_config, str) else backbone_name_or_config
+                cfg = (
+                    AutoConfig.from_pretrained(backbone_name_or_config)
+                    if isinstance(backbone_name_or_config, str)
+                    else backbone_name_or_config
+                )
                 self.encoder = AutoModel.from_config(cfg)
                 self.hidden_size = cfg.hidden_size
 
@@ -97,11 +106,11 @@ class OntologyDecisionModel(nn.Module):
         marker_pos: torch.Tensor,  # [B, K]
         marker_mask: torch.Tensor,  # [B, K]
         qtype: torch.Tensor,  # [B]
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         # Encode full bidirectional sequence (cross-attention across tokens)
         outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
         sequence_hidden = outputs.last_hidden_state  # [B, L, H]
         cls_hidden = sequence_hidden[:, 0, :]  # [B, H]
 
-        logits, act_probs = self.head(sequence_hidden, marker_pos, marker_mask, cls_hidden)
+        logits, act_probs = self.head(sequence_hidden, marker_pos, marker_mask, cls_hidden, qtype)
         return logits, act_probs
