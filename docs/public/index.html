@@ -166,36 +166,42 @@
   </header>
 
   <article>
-    <!-- INTERACTIVE LIVE DEMO (FITS IN ONE FOLD) -->
+    <!-- INTERACTIVE LIVE DEMO (FITS IN ONE FOLD WITH INSTANT DOMAIN SWITCHING) -->
     <div class="demo-container">
       <div class="demo-header">
         <div class="demo-title">
           <div class="pulse-dot"></div>
-          <span>Interactive Live Demo: Real-Time GS1 Decision Model</span>
+          <span id="demoTitle">Interactive Live Demo: Zero-Shot Decision Model</span>
         </div>
-        <div id="latencyBadge" class="metric-pill">Ready in Browser</div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span id="domainBadge" class="metric-pill" style="color: #a371f7; border-color: #a371f755;">GS1 Supply Chain</span>
+          <div id="latencyBadge" class="metric-pill">Ready in Browser</div>
+        </div>
+      </div>
+
+      <!-- DOMAIN SWITCHER TABS -->
+      <div style="display: flex; gap: 0.35rem; margin-bottom: 0.5rem; flex-wrap: wrap; background: #0d1117; padding: 0.35rem; border-radius: 6px; border: 1px solid #30363d;">
+        <button id="tab-gs1" class="preset-btn" style="background: #1f6feb; color: #fff; font-weight: 600;" onclick="switchDomain('gs1')">📦 GS1 Supply Chain (Trade Items)</button>
+        <button id="tab-schemaorg" class="preset-btn" onclick="switchDomain('schemaorg')">🌐 Schema.org (Google SEO & Rich Snippets)</button>
+        <button id="tab-bfo" class="preset-btn" onclick="switchDomain('bfo')">🏛️ BFO (ISO/IEC 21838-2 Top-Level)</button>
+        <button id="tab-skos" class="preset-btn" onclick="switchDomain('skos')">📚 SKOS (Taxonomies & Thesauri)</button>
+        <button id="tab-incident" class="preset-btn" onclick="switchDomain('incident')">🚨 IT Incident & SRE Triage</button>
       </div>
       
       <div class="demo-stack">
         <!-- Input Panel (Top) -->
         <div class="demo-input-panel">
           <div class="panel-label">
-            <span>Input State (Warehouse Scan / EPCIS Event Stream)</span>
+            <span id="inputLabel">Input State (Supply Chain Scan / Text Observation)</span>
             <div style="display: flex; gap: 0.6rem; align-items: center;">
               <span id="charCount" style="font-family: monospace; color: #58a6ff;">0 chars</span>
             </div>
           </div>
-          <textarea id="stateInput" class="demo-textarea" placeholder="Paste or type warehouse observation, barcode scan, or packing slip..."></textarea>
+          <textarea id="stateInput" class="demo-textarea" placeholder="Type or paste text observation to evaluate in real time..."></textarea>
           
-          <div class="demo-presets">
+          <div id="presetsContainer" class="demo-presets">
             <span style="font-size: 0.75rem; color: #8b949e; font-weight: 500;">Presets:</span>
-            <button class="preset-btn" onclick="loadPreset('milk')">Perishable Whole Milk</button>
-            <button class="preset-btn" onclick="loadPreset('pallet')">Returnable Euro Pallet</button>
-            <button class="preset-btn" onclick="loadPreset('meat')">Frozen Poultry Cuts</button>
-            <button class="preset-btn" onclick="loadPreset('apparel')">Safety Footwear</button>
-            <button class="preset-btn" onclick="loadPreset('nylabone')">Nylabone Dog Toy</button>
-            <button class="preset-btn" onclick="loadPreset('pharma')">mRNA Cold Vaccine</button>
-            <button class="preset-btn" onclick="loadPreset('battery')">UN3480 Lithium Pack</button>
+            <!-- Rendered dynamically per domain -->
           </div>
         </div>
 
@@ -205,10 +211,11 @@
             <span>Real-Time Grounded Decision Output (Nested JSON)</span>
             <span id="axiomStatus" style="color: #3fb950; font-family: monospace; font-size: 0.8rem;">axioms_verified: true</span>
           </div>
-          <pre id="jsonOutput" class="demo-output-pre">Loading GS1 Web Vocabulary & O-Laya Engine...</pre>
+          <pre id="jsonOutput" class="demo-output-pre">Loading Ontologies & O-Laya Engine...</pre>
         </div>
       </div>
     </div>
+
 
     <div class="mermaid">
 flowchart TD
@@ -498,61 +505,164 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
 
     let olayaEngine = null;
     let rawConcepts = [];
+    let currentDomain = 'gs1';
 
-    const PRESETS = {
-      milk: "Grade A pasteurized whole milk, 1 gallon jug with tamper-evident induction seal. Keep refrigerated at 34-38 F. GTIN: 0614141000036",
-      pallet: "Returnable heavy-duty wooden euro pallet 1200x800mm with RFID tag and security seal. Packaging container return.",
-      meat: "Frozen chicken breast cuts 10kg corrugated master box, vacuum sealed poultry meat. Keep frozen below 0 F.",
-      apparel: "Slip-resistant steel-toe safety footwear, warehouse worker protective boots with oil-resistant rubber sole.",
-      nylabone: "Nylabone Power Chew Original Bone Dog Chew Toy — Small, Original Flavor. Nylabone is part of Central Garden & Pet’s brand portfolio. Central company information Product description A durable, bone-shaped nylon chew toy designed for dogs with powerful chewing habits. This Small variant is intended for dogs weighing up to 25 pounds and has original flavor infused throughout. It provides an outlet for chewing; the manufacturer also states that chewing helps clean teeth and freshen breath. It is a non-edible toy made in the United States.",
-      pharma: "Sterile mRNA suspension vaccine vials, 10-dose multi-puncture medical product. Store in ultra-low deep freeze at -80 C to -60 C. Prescription pharmaceutical only.",
-      battery: "High-capacity 48V 100Ah lithium-ion battery energy storage module. Classified as UN3480 Class 9 Miscellaneous Dangerous Goods. Cargo aircraft only."
+    const DOMAIN_CONFIG = {
+      gs1: {
+        name: "GS1 Supply Chain",
+        badge: "📦 GS1 Supply Chain",
+        title: "Interactive Live Demo: Real-Time GS1 Decision Model",
+        inputLabel: "Input State (Warehouse Barcode Scan / EPCIS Event Stream)",
+        url: "./ontologies/gs1_ontology.json",
+        downsetTarget: "gs1:FoodBeverageTobaccoProduct",
+        downsetLabel: "cold_chain_divert_required",
+        presets: [
+          { id: "milk", label: "Perishable Whole Milk", text: "Grade A pasteurized whole milk, 1 gallon jug with tamper-evident induction seal. Keep refrigerated at 34-38 F. GTIN: 0614141000036" },
+          { id: "pallet", label: "Returnable Euro Pallet", text: "Returnable heavy-duty wooden euro pallet 1200x800mm with RFID tag and security seal. Packaging container return." },
+          { id: "meat", label: "Frozen Poultry Cuts", text: "Frozen chicken breast cuts 10kg corrugated master box, vacuum sealed poultry meat. Keep frozen below 0 F." },
+          { id: "apparel", label: "Safety Footwear", text: "Slip-resistant steel-toe safety footwear, warehouse worker protective boots with oil-resistant rubber sole." },
+          { id: "nylabone", label: "Nylabone Dog Toy", text: "Nylabone Power Chew Original Bone Dog Chew Toy — Small, Original Flavor. Nylabone durable nylon dog chew toy." },
+          { id: "pharma", label: "mRNA Cold Vaccine", text: "Sterile mRNA suspension vaccine vials, 10-dose multi-puncture medical product. Store in ultra-low deep freeze at -80 C to -60 C." },
+          { id: "battery", label: "UN3480 Lithium Pack", text: "High-capacity 48V 100Ah lithium-ion battery energy storage module. Classified as UN3480 Class 9 Miscellaneous Dangerous Goods." }
+        ]
+      },
+      schemaorg: {
+        name: "Schema.org (Google SEO)",
+        badge: "🌐 Schema.org (Google SEO & Rich Snippets)",
+        title: "Interactive Live Demo: Schema.org Google Structured Data Triage",
+        inputLabel: "Input Web Page Content / Headings / Snippet",
+        url: "./ontologies/schemaorg_ontology.json",
+        downsetTarget: "schema:CreativeWork",
+        downsetLabel: "creative_work_syndication",
+        presets: [
+          { id: "recipe", label: "Sourdough Bread Recipe", text: "Artisan Sourdough Bread Recipe with active starter, organic bread flour, sea salt, 75% hydration and 24-hour slow fermentation in Dutch oven." },
+          { id: "job", label: "Senior SRE Job Posting", text: "Senior Site Reliability Engineer at CloudCorp. Full-time remote job posting. Experience with Kubernetes, distributed tracing, and Go required. $180k-$220k salary." },
+          { id: "faq", label: "FAQ Page / Customer Questions", text: "Frequently Asked Questions: How do I track my return shipment? Can I cancel my subscription before renewal? Where is my order refund processed?" },
+          { id: "howto", label: "How-To Step by Step", text: "How to safely replace a car headlight bulb in 5 steps. Step 1: Open the hood. Step 2: Disconnect the battery terminal. Step 3: Unclip bulb retainer." },
+          { id: "localbiz", label: "Downtown Italian Bistro", text: "Luigi's Authentic Trattoria - Italian restaurant in Downtown Chicago. Open Tuesday through Sunday 5pm-11pm. Reservations and outdoor patio dining." },
+          { id: "software", label: "Mobile Photo Editor App", text: "PixelPro AI Photo Editor for iOS and Android. Mobile application featuring RAW image processing, background removal, and HDR filters." }
+        ]
+      },
+      bfo: {
+        name: "BFO Top-Level Ontology",
+        badge: "🏛️ BFO (ISO/IEC 21838-2)",
+        title: "Interactive Live Demo: Basic Formal Ontology (BFO) Grounding",
+        inputLabel: "Input Phenomenon / Physical Entity / Process Description",
+        url: "./ontologies/bfo_ontology.json",
+        downsetTarget: "bfo:BFO_0000003", // occurrent
+        downsetLabel: "is_occurrent_event",
+        presets: [
+          { id: "process", label: "Chemical Polymerization Process", text: "Exothermic chemical reaction and polymerization process occurring continuously over a 45-minute heating cycle in the reactor chamber." },
+          { id: "material", label: "Titanium Surgical Implant", text: "Biocompatible grade 5 titanium surgical screw implant, three-dimensional solid material entity occupying spatial region." },
+          { id: "role", label: "Clinical Trial Patient Role", text: "A volunteer participant possessing the temporary clinical trial subject role during medical evaluation." },
+          { id: "disposition", label: "Fragile Glass Brittleness", text: "The physical disposition and fragility of tempered glass to fracture upon sudden high impact shock." }
+        ]
+      },
+      skos: {
+        name: "SKOS Standard",
+        badge: "📚 SKOS Knowledge Organization",
+        title: "Interactive Live Demo: W3C SKOS Thesauri & Taxonomies",
+        inputLabel: "Input Controlled Vocabulary Observation / Subject Heading",
+        url: "./ontologies/skos_ontology.json",
+        downsetTarget: "skos:Concept",
+        downsetLabel: "is_thesaurus_concept",
+        presets: [
+          { id: "concept", label: "Thesaurus Concept Entry", text: "Controlled vocabulary term and preferred descriptor representing semantic subject classification." },
+          { id: "scheme", label: "Faceted Concept Scheme", text: "Comprehensive hierarchical knowledge organization classification scheme and subject authority file." },
+          { id: "collection", label: "Ordered Subject Collection", text: "An ordered collection of taxonomic descriptors and alphabetical thesaurus terms." }
+        ]
+      },
+      incident: {
+        name: "IT Incident & SRE Triage",
+        badge: "🚨 IT Incident & SRE Triage",
+        title: "Interactive Live Demo: Real-Time SRE Incident Classifier",
+        inputLabel: "Input Production Alert / Log Snippet / PagerDuty Event",
+        url: "./ontologies/incident_ontology.json",
+        downsetTarget: "INCIDENT:DATA",
+        downsetLabel: "data_storage_impact",
+        presets: [
+          { id: "dbdown", label: "PostgreSQL Connection Refused", text: "CRITICAL 500: FATAL remaining connection slots reserved for non-replication superuser connections. Postgres primary unreachable." },
+          { id: "stripe", label: "Stripe Webhook 500 Storm", text: "Billing webhook failure spike: Stripe checkout session completion handler timing out with HTTP 504 gateway timeout." },
+          { id: "breach", label: "Compromised Token Leak", text: "Security anomaly detected: Admin service account API key exposed in public commit log. Unauthorized token generation alert." },
+          { id: "kafka", label: "Kafka Consumer Lag Surge", text: "Order processing pipeline stalled: Kafka consumer group partition lag exceeded 250,000 unread messages in topic orders-v1." }
+        ]
+      }
     };
 
-    window.loadPreset = function(key) {
-      const textarea = document.getElementById('stateInput');
-      textarea.value = PRESETS[key] || '';
-      triggerDecision();
-    };
+    window.switchDomain = async function(domainKey) {
+      if (!DOMAIN_CONFIG[domainKey]) return;
+      currentDomain = domainKey;
+      const cfg = DOMAIN_CONFIG[domainKey];
 
-    async function initDemo() {
+      // Update UI Tabs
+      ['gs1', 'schemaorg', 'bfo', 'skos', 'incident'].forEach(k => {
+        const btn = document.getElementById(`tab-${k}`);
+        if (!btn) return;
+        if (k === domainKey) {
+          btn.style.background = '#1f6feb';
+          btn.style.color = '#fff';
+          btn.style.fontWeight = '600';
+        } else {
+          btn.style.background = '#21262d';
+          btn.style.color = '#c9d1d9';
+          btn.style.fontWeight = 'normal';
+        }
+      });
+
+      // Update Labels
+      document.getElementById('demoTitle').textContent = cfg.title;
+      document.getElementById('domainBadge').textContent = cfg.badge;
+      document.getElementById('inputLabel').textContent = cfg.inputLabel;
+
+      // Render Presets
+      const container = document.getElementById('presetsContainer');
+      container.innerHTML = `<span style="font-size: 0.75rem; color: #8b949e; font-weight: 500;">Presets:</span>`;
+      cfg.presets.forEach(p => {
+        const b = document.createElement('button');
+        b.className = 'preset-btn';
+        b.textContent = p.label;
+        b.onclick = () => {
+          document.getElementById('stateInput').value = p.text;
+          triggerDecision();
+        };
+        container.appendChild(b);
+      });
+
+      // Load Ontology
       const latencyBadge = document.getElementById('latencyBadge');
       const jsonOutput = document.getElementById('jsonOutput');
+      latencyBadge.textContent = 'Loading domain...';
+      latencyBadge.style.color = '#e3b341';
+      jsonOutput.textContent = `Loading ${cfg.name} ontology DAG...`;
 
       try {
-        const resp = await fetch('./gs1_ontology.json');
+        const resp = await fetch(cfg.url);
         const data = await resp.json();
-        
-        // Map concepts to numeric IDs and edges for DAG
-        const curieToId = new Map();
-        data.concepts.forEach((c, idx) => {
-          curieToId.set(c.curie, idx);
-        });
 
-        rawConcepts = data.concepts.map((c, idx) => ({
-          id: idx,
-          curie: "gs1:" + c.curie,
-          label: c.label,
-          description: c.description,
-          parents: (c.parents || []).map(p => curieToId.get(p)).filter(id => id !== undefined),
-          disjointWith: (c.disjoint_with || []).map(d => curieToId.get(d)).filter(id => id !== undefined),
-          synonyms: c.synonyms || []
-        }));
+        // Load into OntologyDAG using static fromJSON
+        const dag = OntologyDAG.fromJSON(data);
+        rawConcepts = dag.getAll();
 
-        const dag = new OntologyDAG(rawConcepts);
-        olayaEngine = new OLaya(dag);
+        if (!olayaEngine) {
+          olayaEngine = new OLaya(dag);
+        } else {
+          olayaEngine.switchOntology(dag);
+        }
 
-        latencyBadge.textContent = "Engine Ready";
-        latencyBadge.style.color = "#3fb950";
-        latencyBadge.style.borderColor = "#3fb95055";
+        latencyBadge.textContent = `${dag.size()} Classes Ready`;
+        latencyBadge.style.color = '#3fb950';
+        latencyBadge.style.borderColor = '#3fb95055';
 
-        // Initial run with default preset
-        window.loadPreset('milk');
+        // Load first preset automatically
+        if (cfg.presets.length > 0) {
+          document.getElementById('stateInput').value = cfg.presets[0].text;
+          triggerDecision();
+        }
       } catch (err) {
         console.error(err);
-        jsonOutput.textContent = "Error initializing engine: " + err.message;
+        jsonOutput.textContent = `Failed loading ${cfg.name}: ${err.message}`;
       }
-    }
+    };
 
     async function triggerDecision() {
       if (!olayaEngine) return;
@@ -571,6 +681,7 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
         return;
       }
 
+      const cfg = DOMAIN_CONFIG[currentDomain];
       const t0 = performance.now();
       const decision = await olayaEngine.systemOne(text, 8);
       const dt = (performance.now() - t0).toFixed(2);
@@ -580,21 +691,37 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
       // Build lineage array
       const lineage = [];
       let curr = decision.selectedConcept;
-      while (curr) {
+      const visited = new Set();
+      while (curr && !visited.has(curr.id)) {
+        visited.add(curr.id);
         lineage.unshift(curr.curie);
         if (curr.parents.length > 0) {
-          curr = rawConcepts[curr.parents[0]];
+          curr = olayaEngine.ontology.getById(curr.parents[0]);
         } else {
           break;
         }
       }
 
-      // Check if food & beverage subsumed
-      const isPerishable = lineage.some(c => c.includes("FoodBeverage") || c.includes("Milk") || c.includes("Meat"));
+      // Check down-set subsumption condition
+      const targetId = olayaEngine.ontology.getByCurie(cfg.downsetTarget)?.id;
+      let isSubsumed = false;
+      if (targetId !== undefined) {
+        isSubsumed = olayaEngine.ontology.subsumes(targetId, decision.selectedConcept.id);
+      } else {
+        // Fallback name check
+        isSubsumed = lineage.some(c => c.toLowerCase().includes(cfg.downsetTarget.split(':').pop().toLowerCase()));
+      }
+
+      const subsumesCheckObj = {
+        principal_downset: cfg.downsetTarget,
+        subsumes: isSubsumed
+      };
+      subsumesCheckObj[cfg.downsetLabel] = isSubsumed;
 
       // Output nested structured JSON
       const output = {
         observation_state: {
+          active_domain: cfg.name,
           text_snippet: text.length > 80 ? text.substring(0, 80) + "..." : text,
           tokens_evaluated: text.split(/\s+/).length
         },
@@ -606,11 +733,7 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
             confidence: Number(decision.confidence.toFixed(4)),
             axioms_verified: decision.axiomsVerified
           },
-          subsumes_check: {
-            principal_downset: "gs1:FoodBeverageTobaccoProduct",
-            subsumes: isPerishable,
-            cold_chain_divert_required: isPerishable
-          },
+          subsumes_check: subsumesCheckObj,
           active_subgraph_probabilities: decision.probabilities
             .slice()
             .sort((a, b) => b.prob - a.prob)
@@ -623,6 +746,7 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
         },
         runtime_telemetry: {
           engine: "O-Laya Browser WebAssembly / ESModule",
+          classes_in_domain: olayaEngine.ontology.size(),
           inference_latency_ms: Number(dt),
           monotonicity_guaranteed: true,
           disjointness_guaranteed: true
@@ -637,7 +761,9 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
       triggerDecision();
     });
 
-    initDemo();
+    // Start with default GS1 domain
+    switchDomain('gs1');
   </script>
+
 </body>
 </html>
