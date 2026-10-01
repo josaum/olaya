@@ -2,7 +2,7 @@
 title: "What O-Laya Actually Is: An Ontology-Grounded System 1 Decision Model"
 description: "A parallel and architectural response to Laya: why modern supply chain, warehousing, and agent pipelines require ontology-grounded decision models with mathematical guarantees."
 date: "2026-10-01"
-author: "O-Laya Team"
+author: "Dionisio Chiuratto Agourakis (dionisio.ca@gmail.com)"
 tags: ["ai", "decision-model", "ontology", "supply-chain", "gs1", "rust", "mcp"]
 ---
 
