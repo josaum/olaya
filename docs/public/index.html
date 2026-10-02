@@ -2512,6 +2512,31 @@
       background: var(--accent-blue-glow);
     }
 
+    .format-tab-btn {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-secondary);
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      padding: 0.18rem 0.55rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .format-tab-btn:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text-main);
+    }
+
+    .format-tab-btn.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #ffffff;
+      font-weight: 700;
+    }
+
     /* ── Positioning Matrix: What Leio IS vs What It Is NOT ── */
     .positioning-section {
       padding: 4.5rem 0 2rem 0;
@@ -3193,15 +3218,17 @@
             </div>
 
             <div class="pane-label" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem;">
-              <span>Machine-Native JSON Response</span>
-              <div style="display:flex;gap:0.4rem;align-items:center;">
-                <button class="code-action-btn" onclick="copyCurlExample(this)" title="Copy ready-to-run curl command">Copy cURL</button>
-                <button class="code-action-btn" onclick="copyPythonExample(this)" title="Copy Python SDK snippet">Copy Python</button>
-                <span style="color:var(--accent-green);font-size:0.7rem;font-weight:700;">Outputs 100% Free</span>
+              <span>Machine-Native Output &amp; Integration</span>
+              <div class="output-format-tabs" style="display:flex;gap:0.25rem;">
+                <button type="button" class="format-tab-btn active" onclick="switchOutputFormat('json', this)">JSON</button>
+                <button type="button" class="format-tab-btn" onclick="switchOutputFormat('curl', this)">cURL</button>
+                <button type="button" class="format-tab-btn" onclick="switchOutputFormat('python', this)">Python</button>
+                <button type="button" class="format-tab-btn" onclick="switchOutputFormat('ts', this)">TypeScript</button>
+                <button type="button" class="format-tab-btn" onclick="switchOutputFormat('langchain', this)">LangChain</button>
               </div>
             </div>
             <div class="json-output-wrap">
-              <button class="json-copy-btn" onclick="copyJsonOutput(this)">Copy JSON</button>
+              <button class="json-copy-btn" id="activeOutputCopyBtn" onclick="copyActiveOutput(this)">Copy Output</button>
               <pre id="jsonOutput" class="json-output-pre">Evaluating decision...</pre>
             </div>
           </div>
@@ -5048,7 +5075,8 @@
             probability: Number(p.prob.toFixed(4))
           }))
         };
-        jsonOutput.textContent = JSON.stringify(outputJson, null, 2);
+        lastJsonDecision = JSON.stringify(outputJson, null, 2);
+        renderActiveOutput();
       }
     }
 
@@ -5199,48 +5227,118 @@
       }, 300);
     }
 
-    async function copyCurlExample(btn) {
+    let currentOutputFormat = 'json';
+    let lastJsonDecision = '';
+
+    function renderActiveOutput() {
+      const jsonOutput = document.getElementById('jsonOutput');
+      if (!jsonOutput) return;
+
       const textarea = document.getElementById('stateInput');
       const text = textarea ? textarea.value.trim() : "Grade A pasteurized whole milk 1gal jug";
       const escaped = (text || "Grade A pasteurized whole milk 1gal jug").replace(/"/g, '\\"');
       const host = (typeof window !== 'undefined' && window.location.origin && window.location.origin.startsWith('http'))
         ? window.location.origin
         : 'https://public-nine-jade-58.vercel.app';
-      const curlCmd = `curl -X POST ${host}/api/systemone \\\n  -H "Content-Type: application/json" \\\n  -d '{"observation": "${escaped}"}'`;
-      const ok = await writeClipboard(curlCmd);
+
+      if (currentOutputFormat === 'json') {
+        jsonOutput.textContent = lastJsonDecision || JSON.stringify({ message: "Type an input observation to evaluate decision." }, null, 2);
+      } else if (currentOutputFormat === 'curl') {
+        jsonOutput.textContent = `# 1. Sub-Millisecond Decision Request via Edge API
+curl -X POST ${host}/api/systemone \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "observation": "${escaped}",
+    "domain": "${currentDomain}"
+  }'`;
+      } else if (currentOutputFormat === 'python') {
+        jsonOutput.textContent = `# 2. Python SDK / HTTP Fast Reflex
+import requests
+
+response = requests.post(
+    "${host}/api/systemone",
+    headers={"Content-Type": "application/json"},
+    json={
+        "observation": "${escaped}",
+        "domain": "${currentDomain}"
+    },
+    timeout=2.0
+)
+
+verdict = response.json()
+print("Selected Concept:", verdict["selected_concept"]["label"])
+print("Calibrated Confidence:", verdict["confidence"])
+print("Axioms Validated:", verdict["axioms_satisfied"])`;
+      } else if (currentOutputFormat === 'ts') {
+        jsonOutput.textContent = `// 3. TypeScript / Node.js & Vercel AI Edge
+interface DecisionVerdict {
+  selected_concept: { curie: string; label: string };
+  confidence: number;
+  axioms_satisfied: boolean;
+}
+
+const response = await fetch("${host}/api/systemone", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    observation: "${escaped}",
+    domain: "${currentDomain}"
+  })
+});
+
+const verdict: DecisionVerdict = await response.json();
+console.log(verdict.selected_concept.label, \`\${(verdict.confidence * 100).toFixed(1)}%\`);`;
+      } else if (currentOutputFormat === 'langchain') {
+        jsonOutput.textContent = `# 4. LangChain / CrewAI Deterministic Agent Tool
+from langchain.tools import tool
+import requests
+
+@tool
+def system1_ontology_decision(observation: str) -> dict:
+    """Sub-millisecond System 1 reflex: returns formally verified ontology
+    verdict with 0% hallucination for high-velocity agent routing."""
+    res = requests.post(
+        "${host}/api/systemone",
+        json={"observation": observation, "domain": "${currentDomain}"},
+        timeout=1.5
+    )
+    return res.json()`;
+      }
+    }
+
+    async function copyActiveOutput(btn) {
+      const outputEl = document.getElementById('jsonOutput');
+      if (!outputEl) return;
+      const text = outputEl.textContent;
+      const ok = await writeClipboard(text);
       if (ok && btn) {
         if (!btn.dataset.origText) btn.dataset.origText = btn.textContent;
-        btn.textContent = '✓ Copied cURL!';
+        btn.textContent = '✓ Copied!';
         btn.style.color = '#03aa5c';
         if (btn._copyTimeout) clearTimeout(btn._copyTimeout);
         btn._copyTimeout = setTimeout(() => {
-          btn.textContent = btn.dataset.origText;
+          btn.textContent = btn.dataset.origText || 'Copy Output';
           btn.style.color = '';
           delete btn.dataset.origText;
         }, 1800);
       }
     }
 
+    function switchOutputFormat(format, btn) {
+      currentOutputFormat = format;
+      document.querySelectorAll('.format-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderActiveOutput();
+    }
+
+    async function copyCurlExample(btn) {
+      switchOutputFormat('curl');
+      await copyActiveOutput(btn);
+    }
+
     async function copyPythonExample(btn) {
-      const textarea = document.getElementById('stateInput');
-      const text = textarea ? textarea.value.trim() : "Grade A pasteurized whole milk 1gal jug";
-      const escaped = (text || "Grade A pasteurized whole milk 1gal jug").replace(/"/g, '\\"');
-      const host = (typeof window !== 'undefined' && window.location.origin && window.location.origin.startsWith('http'))
-        ? window.location.origin
-        : 'https://public-nine-jade-58.vercel.app';
-      const pyCode = `import requests\n\nresp = requests.post(\n    "${host}/api/systemone",\n    json={"observation": "${escaped}"}\n)\nprint(resp.json())`;
-      const ok = await writeClipboard(pyCode);
-      if (ok && btn) {
-        if (!btn.dataset.origText) btn.dataset.origText = btn.textContent;
-        btn.textContent = '✓ Copied Python!';
-        btn.style.color = '#03aa5c';
-        if (btn._copyTimeout) clearTimeout(btn._copyTimeout);
-        btn._copyTimeout = setTimeout(() => {
-          btn.textContent = btn.dataset.origText;
-          btn.style.color = '';
-          delete btn.dataset.origText;
-        }, 1800);
-      }
+      switchOutputFormat('python');
+      await copyActiveOutput(btn);
     }
 
     function initStickyBar() {
@@ -5713,9 +5811,10 @@ URGENT: Surgical oncology referral needed immediately. Initiate vascular cancer 
       }
     }
 
-    // ── Window Bindings ──────────────────────────────────────────────────────
     window.switchDomain = switchDomain;
     window.copyJsonOutput = copyJsonOutput;
+    window.switchOutputFormat = switchOutputFormat;
+    window.copyActiveOutput = copyActiveOutput;
     window.triggerDecision = triggerDecision;
     window.updateCalculator = updateCalculator;
     window.setCalcPreset = setCalcPreset;
