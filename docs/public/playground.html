@@ -1414,9 +1414,11 @@
           <div class="studio-panel">
             <div class="panel-header-row">
               <span class="panel-kicker">Grounded Decision Verdict</span>
-              <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
                 <span id="axiomStatus" style="color: var(--green); font-family: var(--font-mono); font-size: 0.74rem;">axioms: verified ✓</span>
-                <button class="preset-chip" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;" onclick="copyJsonOutput(this)">Copy JSON</button>
+                <button class="preset-chip" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;" onclick="copyCurlExample(this)" title="Copy ready-to-run curl command">Copy cURL</button>
+                <button class="preset-chip" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;" onclick="copyPythonExample(this)" title="Copy Python snippet">Copy Python</button>
+                <button class="preset-chip" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;" onclick="copyJsonOutput(this)" title="Copy output JSON">Copy JSON</button>
               </div>
             </div>
 
@@ -1853,22 +1855,48 @@ import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
       }
     };
 
-    function copyJsonOutput(btn) {
+    async function writeClipboard(text) {
+      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          return true;
+        } catch (e) {}
+      }
+      if (typeof document !== 'undefined') {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          ta.style.top = '-9999px';
+          ta.setAttribute('readonly', '');
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          if (ok) return true;
+        } catch (e) {}
+      }
+      return false;
+    }
+
+    async function copyJsonOutput(btn) {
       const targetBtn = btn || (typeof window !== 'undefined' && window.event ? window.event.target : null);
       const outputEl = document.getElementById('jsonOutput');
       const jsonText = outputEl ? outputEl.textContent : '';
-      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(jsonText).then(() => {
-          if (targetBtn) {
-            const orig = targetBtn.textContent;
-            targetBtn.textContent = 'Copied!';
-            targetBtn.style.color = '#3fb950';
-            setTimeout(() => {
-              targetBtn.textContent = orig;
-              targetBtn.style.color = '';
-            }, 1500);
-          }
-        }).catch(() => {});
+      if (!jsonText) return;
+      const ok = await writeClipboard(jsonText);
+      if (ok && targetBtn) {
+        if (!targetBtn.dataset.origText) targetBtn.dataset.origText = targetBtn.textContent;
+        targetBtn.textContent = '✓ Copied!';
+        targetBtn.style.color = '#3fb950';
+        if (targetBtn._copyTimeout) clearTimeout(targetBtn._copyTimeout);
+        targetBtn._copyTimeout = setTimeout(() => {
+          targetBtn.textContent = targetBtn.dataset.origText || 'Copy JSON';
+          targetBtn.style.color = '';
+          delete targetBtn.dataset.origText;
+        }, 1800);
       }
     }
 
@@ -2389,20 +2417,66 @@ import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
     });
   }
 
+  async function copyCurlExample(btn) {
+    const textarea = document.getElementById('stateInput');
+    const text = textarea ? textarea.value.trim() : "Grade A pasteurized whole milk 1gal jug";
+    const escaped = (text || "Grade A pasteurized whole milk 1gal jug").replace(/"/g, '\\"');
+    const host = (typeof window !== 'undefined' && window.location.origin && window.location.origin.startsWith('http'))
+      ? window.location.origin
+      : 'https://public-nine-jade-58.vercel.app';
+    const curlCmd = `curl -X POST ${host}/api/systemone \\\n  -H "Content-Type: application/json" \\\n  -d '{"observation": "${escaped}"}'`;
+    const ok = await writeClipboard(curlCmd);
+    if (ok && btn) {
+      if (!btn.dataset.origText) btn.dataset.origText = btn.textContent;
+      btn.textContent = '✓ Copied cURL!';
+      btn.style.color = '#3fb950';
+      if (btn._copyTimeout) clearTimeout(btn._copyTimeout);
+      btn._copyTimeout = setTimeout(() => {
+        btn.textContent = btn.dataset.origText;
+        btn.style.color = '';
+        delete btn.dataset.origText;
+      }, 1800);
+    }
+  }
+
+  async function copyPythonExample(btn) {
+    const textarea = document.getElementById('stateInput');
+    const text = textarea ? textarea.value.trim() : "Grade A pasteurized whole milk 1gal jug";
+    const escaped = (text || "Grade A pasteurized whole milk 1gal jug").replace(/"/g, '\\"');
+    const host = (typeof window !== 'undefined' && window.location.origin && window.location.origin.startsWith('http'))
+      ? window.location.origin
+      : 'https://public-nine-jade-58.vercel.app';
+    const pyCode = `import requests\n\nresp = requests.post(\n    "${host}/api/systemone",\n    json={"observation": "${escaped}"}\n)\nprint(resp.json())`;
+    const ok = await writeClipboard(pyCode);
+    if (ok && btn) {
+      if (!btn.dataset.origText) btn.dataset.origText = btn.textContent;
+      btn.textContent = '✓ Copied Python!';
+      btn.style.color = '#3fb950';
+      if (btn._copyTimeout) clearTimeout(btn._copyTimeout);
+      btn._copyTimeout = setTimeout(() => {
+        btn.textContent = btn.dataset.origText;
+        btn.style.color = '';
+        delete btn.dataset.origText;
+      }, 1800);
+    }
+  }
+
   // Copy to clipboard initializer for quick-copy cards
   async function copySnippet(text, el) {
     try {
-      await navigator.clipboard.writeText(text);
-      const hint = el.querySelector('.copy-hint') || el.querySelector('span:last-child');
-      if (hint) {
-        const oldText = hint.textContent;
+      const ok = await writeClipboard(text);
+      if (ok && el) {
+        const hint = el.querySelector('.quick-copy-hint') || el.querySelector('.copy-hint') || el.querySelector('span:last-child') || el;
+        if (!hint.dataset.origText) hint.dataset.origText = hint.textContent;
         hint.textContent = '✓ Copied';
         hint.style.color = '#3fb950';
         el.style.borderColor = '#2ea043';
-        setTimeout(() => {
-          hint.textContent = oldText;
+        if (hint._copyTimeout) clearTimeout(hint._copyTimeout);
+        hint._copyTimeout = setTimeout(() => {
+          hint.textContent = hint.dataset.origText;
           hint.style.color = '';
           el.style.borderColor = '';
+          delete hint.dataset.origText;
         }, 1800);
       }
     } catch(e) {}
@@ -2446,6 +2520,8 @@ import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
   window.nextPalletManual = nextPalletManual;
   window.copyCodeBlock = copyCodeBlock;
   window.copySnippet = copySnippet;
+  window.copyCurlExample = copyCurlExample;
+  window.copyPythonExample = copyPythonExample;
 
   // ── Document Initialization ──────────────────────────────────────────────
   function initPage() {
