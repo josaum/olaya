@@ -87,3 +87,25 @@ fn test_fca_concept_lattice_to_arrow_decision_engine() {
     assert!(res.axioms_verified);
     assert!(res.confidence > 0.0);
 }
+
+#[test]
+fn test_induced_procurement_arrow_decision_engine() {
+    let arrow_path = std::path::Path::new("models/induced_procurement.arrow");
+    if !arrow_path.exists() {
+        return;
+    }
+    let batch = olaya_core::read_ontology_ipc(arrow_path).expect("Failed to read induced_procurement.arrow");
+    assert!(batch.num_rows() >= 10);
+
+    let engine = OlayaEngine::new(batch).expect("Failed to build engine");
+    let res = engine
+        .system_one("High value serialized laptop with lithium ion UN3481 battery", 4)
+        .expect("Decision failed");
+
+    println!(
+        "🎯 Induced Procurement Decision: {} [{}] (Confidence: {:.2})",
+        res.selected_label, res.selected_curie, res.confidence
+    );
+    assert!(res.axioms_verified);
+}
+

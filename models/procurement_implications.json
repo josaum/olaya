@@ -1,0 +1,392 @@
+[
+  {
+    "conclusion": [
+      "HighValueAsset",
+      "SerialTracked"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "Electronics",
+      "Portable",
+      "BatteryPowered",
+      "HighValueAsset",
+      "LithiumIonUN3481",
+      "SerialTracked"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [
+      "SerialTracked"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "Electronics",
+      "Portable",
+      "BatteryPowered",
+      "HighValueAsset",
+      "LithiumIonUN3481",
+      "SerialTracked"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "Electronics",
+      "Portable",
+      "BatteryPowered",
+      "HighValueAsset",
+      "LithiumIonUN3481",
+      "SerialTracked"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [
+      "SerialTracked"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "HighValueAsset",
+      "SerialTracked"
+    ],
+    "support": 3
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "HighValueAsset",
+      "SerialTracked"
+    ],
+    "support": 3
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "SerialTracked"
+    ],
+    "support": 4
+  },
+  {
+    "conclusion": [
+      "HighValueAsset",
+      "SerialTracked"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "HighValueAsset",
+      "SerialTracked",
+      "EnterpriseHardware",
+      "RackMounted",
+      "DualPowerSupply"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [
+      "SerialTracked"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "HighValueAsset",
+      "SerialTracked",
+      "EnterpriseHardware",
+      "RackMounted",
+      "DualPowerSupply"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "HighValueAsset",
+      "SerialTracked",
+      "EnterpriseHardware",
+      "RackMounted",
+      "DualPowerSupply"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [
+      "SerialTracked",
+      "EnterpriseHardware",
+      "RackMounted"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "HighValueAsset",
+      "SerialTracked",
+      "EnterpriseHardware",
+      "RackMounted",
+      "DualPowerSupply"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [
+      "SerialTracked"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "SerialTracked",
+      "EnterpriseHardware",
+      "RackMounted"
+    ],
+    "support": 2
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "SerialTracked",
+      "EnterpriseHardware",
+      "RackMounted"
+    ],
+    "support": 2
+  },
+  {
+    "conclusion": [
+      "SerialTracked"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "SerialTracked",
+      "EnterpriseHardware",
+      "RackMounted",
+      "NetworkInfrastructure"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "SerialTracked",
+      "EnterpriseHardware",
+      "RackMounted",
+      "NetworkInfrastructure"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [
+      "SerialTracked",
+      "EnterpriseHardware",
+      "RackMounted"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "SerialTracked",
+      "EnterpriseHardware",
+      "RackMounted",
+      "NetworkInfrastructure"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "ColdChain",
+      "PerishableLogistics",
+      "TemperatureMonitored",
+      "ReturnableAsset"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [
+      "ColdChain",
+      "PerishableLogistics"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "ColdChain",
+      "PerishableLogistics",
+      "TemperatureMonitored",
+      "ReturnableAsset"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "ColdChain",
+      "PerishableLogistics"
+    ],
+    "support": 3
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "ColdChain",
+      "PerishableLogistics",
+      "DairyProduct",
+      "FDAApproved",
+      "BarcodeUPCA"
+    ],
+    "support": 2
+  },
+  {
+    "conclusion": [
+      "ColdChain",
+      "PerishableLogistics"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "ColdChain",
+      "PerishableLogistics",
+      "DairyProduct",
+      "FDAApproved",
+      "BarcodeUPCA"
+    ],
+    "support": 2
+  },
+  {
+    "conclusion": [
+      "FDAApproved"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "ColdChain",
+      "PerishableLogistics",
+      "DairyProduct",
+      "FDAApproved",
+      "BarcodeUPCA"
+    ],
+    "support": 2
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "FDAApproved"
+    ],
+    "support": 3
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "FDAApproved",
+      "MedicalDevice",
+      "SingleUseDisposable",
+      "ISO13485",
+      "Biocompatible"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [
+      "FDAApproved"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "FDAApproved",
+      "MedicalDevice",
+      "SingleUseDisposable",
+      "ISO13485",
+      "Biocompatible"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [
+      "MedicalDevice",
+      "ISO13485"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "FDAApproved",
+      "MedicalDevice",
+      "SingleUseDisposable",
+      "ISO13485",
+      "Biocompatible"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "MedicalDevice",
+      "ISO13485"
+    ],
+    "support": 2
+  },
+  {
+    "conclusion": [
+      "HighValueAsset",
+      "SerialTracked"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "HighValueAsset",
+      "SerialTracked",
+      "MedicalDevice",
+      "ISO13485",
+      "ElectricalSafetyIEC60601"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [
+      "SerialTracked"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "HighValueAsset",
+      "SerialTracked",
+      "MedicalDevice",
+      "ISO13485",
+      "ElectricalSafetyIEC60601"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "HighValueAsset",
+      "SerialTracked",
+      "MedicalDevice",
+      "ISO13485",
+      "ElectricalSafetyIEC60601"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [
+      "MedicalDevice",
+      "ISO13485"
+    ],
+    "confidence": 1.0,
+    "premise": [
+      "HighValueAsset",
+      "SerialTracked",
+      "MedicalDevice",
+      "ISO13485",
+      "ElectricalSafetyIEC60601"
+    ],
+    "support": 1
+  },
+  {
+    "conclusion": [],
+    "confidence": 1.0,
+    "premise": [
+      "HazardousMaterial",
+      "Class3Flammable",
+      "OSHARegulated",
+      "SecondaryContainmentRequired"
+    ],
+    "support": 1
+  }
+]
