@@ -502,6 +502,63 @@ impl ConceptLattice {
         self.top
     }
 
+    /// Tests if superconcept subsumes subconcept: $(A_1, B_1) \le (A_2, B_2) \iff A_1 \subseteq A_2$.
+    pub fn subsumes(&self, superconcept: usize, subconcept: usize) -> bool {
+        self.concepts[subconcept]
+            .extent
+            .is_subset_of(&self.concepts[superconcept].extent)
+    }
+
+    /// Tests whether the concept lattice satisfies the distributive law:
+    /// $x \wedge (y \vee z) = (x \wedge y) \vee (x \wedge z)$ for all concepts.
+    ///
+    /// By Birkhoff's Theorem, a finite lattice is a Heyting algebra if and only if it is distributive.
+    pub fn is_distributive(&self) -> bool {
+        let n = self.concepts.len();
+        for x in 0..n {
+            for y in 0..n {
+                for z in 0..n {
+                    let y_join_z = self.join(y, z);
+                    let lhs = self.meet(x, y_join_z);
+
+                    let x_meet_y = self.meet(x, y);
+                    let x_meet_z = self.meet(x, z);
+                    let rhs = self.join(x_meet_y, x_meet_z);
+
+                    if lhs != rhs {
+                        return false;
+                    }
+                }
+            }
+        }
+        true
+    }
+
+    /// Computes the Heyting relative pseudocomplement $(a \to b) = \bigvee \{c \in L \mid c \wedge a \le b\}$.
+    ///
+    /// In a distributive concept lattice (Heyting algebra), this represents the strongest implication concept
+    /// that, when conjoined with `a`, guarantees `b`.
+    pub fn implies(&self, a: usize, b: usize) -> usize {
+        let mut result = self.bottom;
+        for (i, _) in self.concepts.iter().enumerate() {
+            let meet_val = self.meet(i, a);
+            if self.subsumes(b, meet_val) {
+                result = self.join(result, i);
+            }
+        }
+        result
+    }
+
+    /// Computes the Heyting pseudocomplement / intuitionistic negation: $\neg a = (a \to \bot)$.
+    pub fn negate(&self, a: usize) -> usize {
+        self.implies(a, self.bottom)
+    }
+
+    /// Returns true if concept is the top element $\top = (G, G^\uparrow)$ (tautology).
+    pub fn is_tautology(&self, concept_idx: usize) -> bool {
+        concept_idx == self.top
+    }
+
     /// Extracts sound attribute implications ($X \implies Y$) from the lattice.
     pub fn compute_canonical_implications(&self) -> Vec<Implication> {
         let mut implications = Vec::new();
@@ -715,4 +772,63 @@ mod tests {
             assert!(e.description.is_some());
         }
     }
+
+    #[test]
+    fn test_heyting_algebra_pseudocomplement_and_intuitionistic_negation() {
+        // Boolean powerset / distributive context
+        let pairs = [
+            ("Obj1", "AttrA"),
+            ("Obj2", "AttrB"),
+            ("Obj3", "AttrC"),
+            ("Obj12", "AttrA"),
+            ("Obj12", "AttrB"),
+            ("Obj13", "AttrA"),
+            ("Obj13", "AttrC"),
+            ("Obj23", "AttrB"),
+            ("Obj23", "AttrC"),
+            ("Obj123", "AttrA"),
+            ("Obj123", "AttrB"),
+            ("Obj123", "AttrC"),
+        ];
+
+        let ctx = FormalContext::from_named_pairs(&pairs);
+        let lattice = ConceptLattice::build(ctx);
+
+        assert!(lattice.is_distributive(), "Powerset lattice must be distributive");
+
+        // 1. Identity of Implication: a -> a = Top
+        for a in 0..lattice.concepts.len() {
+            let imp = lattice.implies(a, a);
+            assert!(lattice.is_tautology(imp), "a -> a must equal Top for all concepts");
+        }
+
+        // 2. Implication to Top: a -> Top = Top
+        for a in 0..lattice.concepts.len() {
+            let imp = lattice.implies(a, lattice.top);
+            assert!(lattice.is_tautology(imp));
+        }
+
+        // 3. Negation of Bottom: ~Bottom = Top
+        assert_eq!(lattice.negate(lattice.bottom), lattice.top);
+
+        // 4. Negation of Top: ~Top = Bottom
+        assert_eq!(lattice.negate(lattice.top), lattice.bottom);
+
+        // 5. Heyting Adjunction: c <= (a -> b) <=> c ^ a <= b
+        for a in 0..lattice.concepts.len() {
+            for b in 0..lattice.concepts.len() {
+                let a_imp_b = lattice.implies(a, b);
+                for c in 0..lattice.concepts.len() {
+                    let left_side = lattice.subsumes(a_imp_b, c);
+                    let c_meet_a = lattice.meet(c, a);
+                    let right_side = lattice.subsumes(b, c_meet_a);
+                    assert_eq!(
+                        left_side, right_side,
+                        "Heyting adjunction must hold for all (a, b, c) in distributive lattice"
+                    );
+                }
+            }
+        }
+    }
 }
+
