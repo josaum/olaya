@@ -632,7 +632,18 @@ impl OntologyParser {
                                 individual_uris.insert(uri.to_string());
                                 entity_types.insert(uri.to_string(), EntityType::Individual);
                             }
-                            _ => {}
+                            other => {
+                                if variant == ConferenceEvalVariant::Full
+                                    && !Self::should_skip(uri)
+                                    && !other.starts_with("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+                                    && !other.starts_with("http://www.w3.org/2000/01/rdf-schema#")
+                                    && !other.starts_with("http://www.w3.org/2002/07/owl#")
+                                {
+                                    individual_uris.insert(uri.to_string());
+                                    entity_types.insert(uri.to_string(), EntityType::Individual);
+                                    subclass_edges.push((uri.to_string(), other.to_string()));
+                                }
+                            }
                         }
                     }
                 }
