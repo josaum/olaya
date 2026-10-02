@@ -30,7 +30,11 @@ struct JsonOntology {
     concepts: Vec<JsonConcept>,
 }
 
-fn process_ontology<P: AsRef<Path>>(input_path: P, name: Option<&str>) -> Result<JsonOntology> {
+fn process_ontology<P: AsRef<Path>>(
+    input_path: P,
+    name: Option<&str>,
+    full_mode: bool,
+) -> Result<JsonOntology> {
     let path = input_path.as_ref();
     let mut files = Vec::new();
     if path.is_dir() {
@@ -49,7 +53,12 @@ fn process_ontology<P: AsRef<Path>>(input_path: P, name: Option<&str>) -> Result
     let mut entities: Vec<Entity> = Vec::new();
     for f in &files {
         println!("Parsing ontology from: {}", f.display());
-        match OntologyParser::parse_file(f) {
+        let variant = if full_mode {
+            owl_fast_core::ConferenceEvalVariant::Full
+        } else {
+            owl_fast_core::ConferenceEvalVariant::M1
+        };
+        match OntologyParser::parse_file_with_eval(f, variant) {
             Ok(mut ents) => {
                 println!(
                     "  Extracted {} entities from {}",
@@ -66,13 +75,19 @@ fn process_ontology<P: AsRef<Path>>(input_path: P, name: Option<&str>) -> Result
 
     println!("Total combined entities extracted: {}", entities.len());
 
-    // Filter to classes only
+    // Filter to classes and (if full_mode) individuals
     let class_entities: Vec<&Entity> = entities
         .iter()
-        .filter(|e| matches!(e.entity_type, EntityType::Class))
+        .filter(|e| {
+            if full_mode {
+                matches!(e.entity_type, EntityType::Class | EntityType::Individual)
+            } else {
+                matches!(e.entity_type, EntityType::Class)
+            }
+        })
         .collect();
 
-    println!("Classes identified: {}", class_entities.len());
+    println!("Concepts identified: {}", class_entities.len());
 
     // Build URI to CURIE mapping
     let mut uri_to_curie = BTreeMap::new();
@@ -247,15 +262,16 @@ fn export_to_arrow(json_onto: &JsonOntology, output_path: &Path) -> Result<()> {
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
     if args.len() < 3 {
-        eprintln!("Usage: convert_ontology <input.ttl|owl|rdf|dir> <output.json|output.arrow> [ontology_name]");
+        eprintln!("Usage: convert_ontology <input.ttl|owl|rdf|dir> <output.json|output.arrow> [ontology_name] [--full]");
         std::process::exit(1);
     }
 
     let input_path = &args[1];
     let output_path = &args[2];
-    let name = args.get(3).map(|s| s.as_str());
+    let full_mode = args.iter().any(|a| a == "--full");
+    let name = args.get(3).filter(|&s| s != "--full").map(|s| s.as_str());
 
-    let json_onto = process_ontology(input_path, name)?;
+    let json_onto = process_ontology(input_path, name, full_mode)?;
 
     let out_p = Path::new(output_path);
     if let Some(parent) = out_p.parent() {

@@ -46,3 +46,26 @@ fn test_real_doid_arrow_ipc_inference() {
     );
     assert!(decision.axioms_verified);
 }
+
+#[test]
+fn test_real_gs1_full_arrow_ipc_inference() {
+    let arrow_path = Path::new("models/gs1_full.arrow");
+    if !arrow_path.exists() {
+        return;
+    }
+
+    let batch = read_ontology_ipc(arrow_path).expect("Failed to read gs1_full.arrow");
+    assert!(batch.num_rows() >= 1900);
+
+    let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from gs1_full.arrow");
+
+    let decision = engine
+        .system_one("Refrigerated organic whole milk dairy beverage with pasteurized cream", 8)
+        .expect("Decision failed");
+
+    println!(
+        "🎯 GS1 Full Zero-Copy Decision: {} [{}] (Confidence: {:.2})",
+        decision.selected_label, decision.selected_curie, decision.confidence
+    );
+    assert!(decision.axioms_verified);
+}
