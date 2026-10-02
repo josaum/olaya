@@ -1613,6 +1613,464 @@
       color: #38bdf8;
     }
 
+    /* ── Autonomous Agent Simulation Section ── */
+    .agent-sim-section {
+      padding: 4.5rem 0 3rem;
+    }
+
+    .agent-sim-window {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      margin-top: 1.5rem;
+    }
+
+    .agent-sim-bar {
+      height: 48px;
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+    }
+
+    [data-theme="dark"] .agent-sim-bar {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .agent-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      background: rgba(3, 170, 92, 0.12);
+      color: var(--accent-green);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(3, 170, 92, 0.3);
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .agent-status-badge.running {
+      background: rgba(2, 132, 199, 0.12);
+      color: var(--accent-blue);
+      border-color: rgba(2, 132, 199, 0.3);
+    }
+
+    .agent-scenario-bar {
+      background: #f8fafc;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    [data-theme="dark"] .agent-scenario-bar {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .agent-scenario-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .agent-tab-btn {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.5rem 0.95rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.15s ease;
+    }
+
+    .agent-tab-btn:hover {
+      border-color: var(--border-strong);
+      color: var(--text-main);
+    }
+
+    .agent-tab-btn.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    [data-theme="dark"] .agent-tab-btn.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #ffffff;
+    }
+
+    .agent-controls-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn-agent-run {
+      background: linear-gradient(180deg, #03aa5c 0%, #028547 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 0.48rem 1.1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 2px 8px rgba(3, 170, 92, 0.3);
+      transition: all 0.15s ease;
+    }
+
+    .btn-agent-run:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .btn-agent-step {
+      background: var(--bg-alt);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      padding: 0.48rem 0.9rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+
+    .btn-agent-step:hover {
+      border-color: var(--border-strong);
+      color: var(--text-main);
+    }
+
+    /* ── Side-by-Side Agent Layout ── */
+    .agent-sim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.08fr;
+      min-height: 560px;
+    }
+
+    .agent-col {
+      padding: 1.5rem;
+    }
+
+    .agent-col.left-col {
+      border-right: 1px solid var(--border);
+      background: #fafafa;
+    }
+
+    [data-theme="dark"] .agent-col.left-col {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .agent-col.right-col {
+      background: var(--bg-alt);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .col-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .col-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .col-clock {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent-blue);
+      font-weight: 700;
+    }
+
+    /* ── Pipeline Stepper ── */
+    .progress-track {
+      height: 4px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0284c7 0%, #03aa5c 100%);
+      width: 0%;
+      transition: width 0.35s ease;
+    }
+
+    .pipeline-nodes-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-bottom: 1.3rem;
+    }
+
+    .agent-node-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.95rem 1.1rem;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .agent-node-card.active {
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 14px var(--accent-blue-glow);
+      background: rgba(2, 132, 199, 0.04);
+      transform: translateX(3px);
+    }
+
+    .agent-node-card.completed {
+      border-color: rgba(3, 170, 92, 0.4);
+      background: rgba(3, 170, 92, 0.03);
+    }
+
+    .node-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.3rem;
+    }
+
+    .node-label {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .node-status-pill {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    [data-theme="dark"] .node-status-pill {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .agent-node-card.active .node-status-pill {
+      background: rgba(2, 132, 199, 0.15);
+      color: var(--accent-blue);
+      border-color: rgba(2, 132, 199, 0.3);
+    }
+
+    .agent-node-card.completed .node-status-pill {
+      background: rgba(3, 170, 92, 0.15);
+      color: var(--accent-green);
+      border-color: rgba(3, 170, 92, 0.3);
+    }
+
+    .node-desc {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ── Live Agent Telemetry Bar ── */
+    .agent-telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.65rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      text-align: center;
+    }
+
+    .agent-telemetry-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--accent-green);
+    }
+
+    .agent-telemetry-lbl {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ── Right Inspector Panel ── */
+    .inspector-subtabs {
+      display: flex;
+      gap: 0.4rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .subtab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .subtab-btn:hover {
+      color: var(--text-main);
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .subtab-btn.active {
+      background: #0f172a;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    [data-theme="dark"] .subtab-btn.active {
+      background: var(--accent-blue);
+      color: #ffffff;
+    }
+
+    /* ── Transformation Diff Box ── */
+    .diff-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      flex-grow: 1;
+    }
+
+    .diff-block {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .diff-block-bar {
+      height: 30px;
+      background: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0.85rem;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .diff-pre {
+      padding: 0.85rem;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: #f1f5f9;
+      line-height: 1.5;
+      overflow-x: auto;
+      max-height: 200px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .diff-pre.input-raw {
+      color: #cbd5e1;
+      border-left: 3px solid #e11d48;
+    }
+
+    .diff-pre.output-clean {
+      color: #38bdf8;
+      border-left: 3px solid #03aa5c;
+    }
+
+    .diff-arrow-badge {
+      text-align: center;
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      color: var(--accent-blue);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    /* ── Streaming Terminal Log ── */
+    .agent-stream-terminal {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: #e2e8f0;
+      line-height: 1.6;
+      flex-grow: 1;
+      overflow-y: auto;
+      max-height: 480px;
+    }
+
+    .stream-log-entry {
+      margin-bottom: 0.35rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .stream-log-time {
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    .stream-log-tag {
+      color: #38bdf8;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .stream-log-tag.success { color: #10b981; }
+    .stream-log-tag.system { color: #bc8cff; }
+    .stream-log-tag.tool { color: #fbbf24; }
+
+    @media (max-width: 950px) {
+      .agent-sim-grid { grid-template-columns: 1fr; }
+      .agent-col.left-col { border-right: none; border-bottom: 1px solid var(--border); }
+      .agent-telemetry-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+
     /* ── Enterprise Security, Privacy & Architecture ── */
     .security-section {
       padding: 4.5rem 0;
@@ -2273,6 +2731,7 @@
     </a>
     <div class="nav-links">
       <a href="#demo" class="nav-link">Live Demo</a>
+      <a href="#agent-runtime" class="nav-link" style="color:var(--accent-blue);font-weight:700;">🤖 Agent Runtime</a>
       <a href="#solutions" class="nav-link">Solutions</a>
       <a href="#positioning" class="nav-link secondary-link">What Leio Is</a>
       <a href="#benchmarks" class="nav-link secondary-link">Benchmarks</a>
@@ -2528,6 +2987,199 @@
             <div class="json-output-wrap">
               <button class="json-copy-btn" onclick="copyJsonOutput(this)">Copy JSON</button>
               <pre id="jsonOutput" class="json-output-pre">Evaluating decision...</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Autonomous Agent Runtime Simulation (Side-by-Side Animation) ── -->
+    <section class="agent-sim-section" id="agent-runtime">
+      <div class="section-header">
+        <div class="section-kicker">Autonomous Agent Runtime &middot; Side-by-Side Simulation</div>
+        <h2 class="section-h2">Watch an AI Agent execute real work in real time.</h2>
+        <p class="section-p">
+          Select an enterprise mission below. Watch the autonomous agent ingest raw unstructured feeds, evaluate formal Leio ontology lattices in &lt; 1ms, trigger specialized deterministic tools, and emit production-grade artifacts.
+        </p>
+      </div>
+
+      <div class="agent-sim-window">
+        <!-- Top macOS Studio Bar -->
+        <div class="agent-sim-bar">
+          <div class="studio-dots">
+            <span class="studio-dot red"></span>
+            <span class="studio-dot yellow"></span>
+            <span class="studio-dot green"></span>
+          </div>
+          <div class="studio-title" id="agentWindowHeader">
+            🤖 Leio Agent Runtime &middot; <span id="agentActiveScenarioTitle">Secure Document Processing (OCR + IA)</span>
+          </div>
+          <div>
+            <span class="agent-status-badge" id="agentLiveStatusBadge">● Agent Idle</span>
+          </div>
+        </div>
+
+        <!-- 3 User Scenarios & Execution Controls -->
+        <div class="agent-scenario-bar">
+          <div class="agent-scenario-tabs">
+            <button id="agentTab-doc" class="agent-tab-btn active" onclick="selectAgentScenario('doc')">
+              <span>📄</span> Secure Document Processing (OCR + IA)
+            </button>
+            <button id="agentTab-retail" class="agent-tab-btn" onclick="selectAgentScenario('retail')">
+              <span>🛒</span> Retail Data Cleaning &middot; Normalization, Dedup, Standardization, Enrichment
+            </button>
+            <button id="agentTab-interop" class="agent-tab-btn" onclick="selectAgentScenario('interop')">
+              <span>🔗</span> Interoperability &middot; Linking Different Systems by Meaning, Not Code
+            </button>
+          </div>
+
+          <div class="agent-controls-group">
+            <button id="btnRunAgent" class="btn-agent-run" onclick="runAgentSimulation()">
+              ▶ Run Autonomous Agent
+            </button>
+            <button class="btn-agent-step" onclick="stepAgentSimulation()">
+              ⟳ Next Step
+            </button>
+          </div>
+        </div>
+
+        <!-- Side-by-Side Simulation Layout -->
+        <div class="agent-sim-grid">
+          <!-- Left Column: The Agent Execution Pipeline -->
+          <div class="agent-col left-col">
+            <div class="col-header">
+              <span class="col-title">
+                <span>⚡</span> Execution Pipeline (<span id="agentCurrentStepText">Ready</span>)
+              </span>
+              <span class="col-clock" id="agentStepClock">0.00 ms</span>
+            </div>
+
+            <!-- Progress Track -->
+            <div class="progress-track">
+              <div class="progress-fill" id="agentProgressBar"></div>
+            </div>
+
+            <!-- 4 Pipeline Nodes -->
+            <div class="pipeline-nodes-stack">
+              <!-- Node 1 -->
+              <div class="agent-node-card" id="agentNode-1">
+                <div class="node-top">
+                  <span class="node-label"><span>📥</span> 1. Ingest &amp; Parse Unstructured Input</span>
+                  <span class="node-status-pill" id="nodePill-1">WAITING</span>
+                </div>
+                <div class="node-desc" id="nodeDesc-1">
+                  Ingests scanned PDF OCR text, multi-supplier catalog feeds, or disparate legacy system events.
+                </div>
+              </div>
+
+              <!-- Node 2 -->
+              <div class="agent-node-card" id="agentNode-2">
+                <div class="node-top">
+                  <span class="node-label"><span>⚡</span> 2. Leio System 1 Ontology Decision</span>
+                  <span class="node-status-pill" id="nodePill-2">WAITING</span>
+                </div>
+                <div class="node-desc" id="nodeDesc-2">
+                  Maps input to formal categorical ontology DAG in &lt; 0.8ms. Zero LLM prompt tokens burned.
+                </div>
+              </div>
+
+              <!-- Node 3 -->
+              <div class="agent-node-card" id="agentNode-3">
+                <div class="node-top">
+                  <span class="node-label"><span>🛠️</span> 3. Agent Tool Execution &amp; Synthesis</span>
+                  <span class="node-status-pill" id="nodePill-3">WAITING</span>
+                </div>
+                <div class="node-desc" id="nodeDesc-3">
+                  Executes specialized tools: PII redaction, entity deduplication, unit standardization, or cross-system ontology bridge.
+                </div>
+              </div>
+
+              <!-- Node 4 -->
+              <div class="agent-node-card" id="agentNode-4">
+                <div class="node-top">
+                  <span class="node-label"><span>🛡️</span> 4. Axiom Verification &amp; Artifact Output</span>
+                  <span class="node-status-pill" id="nodePill-4">WAITING</span>
+                </div>
+                <div class="node-desc" id="nodeDesc-4">
+                  Enforces subsumption monotonicity P(A) &le; P(B) and disjointness A &sqcap; B = &bot;. Emits immutable JSON artifact.
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Telemetry Strip -->
+            <div class="agent-telemetry-strip">
+              <div>
+                <div class="agent-telemetry-val" id="telemetryLatency">0.82 ms</div>
+                <div class="agent-telemetry-lbl">Execution Time</div>
+              </div>
+              <div>
+                <div class="agent-telemetry-val" id="telemetryTokens">0 tokens</div>
+                <div class="agent-telemetry-lbl">LLM Token Burn</div>
+              </div>
+              <div>
+                <div class="agent-telemetry-val" id="telemetryCost">$0.00000004</div>
+                <div class="agent-telemetry-lbl">Decision Cost</div>
+              </div>
+              <div>
+                <div class="agent-telemetry-val" id="telemetryAxioms">100% Valid</div>
+                <div class="agent-telemetry-lbl">Axiom Proofs</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Dual-View Live Inspection & Transformation Diff -->
+          <div class="agent-col right-col">
+            <div class="col-header" style="margin-bottom:0.75rem;">
+              <div class="inspector-subtabs">
+                <button id="btnSubtabDiff" class="subtab-btn active" onclick="switchInspectorSubtab('diff')">
+                  ⇄ Transformation Diff
+                </button>
+                <button id="btnSubtabTrace" class="subtab-btn" onclick="switchInspectorSubtab('trace')">
+                  📜 Streaming Agent Trace
+                </button>
+              </div>
+              <div style="font-size:0.74rem;color:var(--text-muted);font-family:var(--font-mono);" id="inspectorMetaLabel">
+                Live Data Artifact
+              </div>
+            </div>
+
+            <!-- Subtab View 1: Transformation Diff -->
+            <div class="diff-box" id="inspectorDiffView">
+              <!-- Raw Input -->
+              <div class="diff-block">
+                <div class="diff-block-bar">
+                  <span id="diffInputHeader">RAW UNSTRUCTURED / NOISY INPUT</span>
+                  <span style="color:#ef4444;font-weight:700;">Needs AI Agent Action</span>
+                </div>
+                <pre class="diff-pre input-raw" id="diffInputContent">Loading scenario input...</pre>
+              </div>
+
+              <!-- Directional Transformation Indicator -->
+              <div class="diff-arrow-badge">
+                <span>&darr;</span>
+                <span>⚡ LEIO SYSTEM 1 AGENTIC TRANSFORMATION (&lt; 1ms)</span>
+                <span>&darr;</span>
+              </div>
+
+              <!-- Clean Standardized Artifact -->
+              <div class="diff-block" style="flex-grow:1;">
+                <div class="diff-block-bar">
+                  <span id="diffOutputHeader">CLEAN STANDARDIZED ENTERPRISE ARTIFACT</span>
+                  <span style="color:#10b981;font-weight:700;" id="diffOutputBadge">Ready for Production DB</span>
+                </div>
+                <pre class="diff-pre output-clean" id="diffOutputContent">// Standardized artifact will stream here upon agent execution...</pre>
+              </div>
+            </div>
+
+            <!-- Subtab View 2: Streaming Agent Trace -->
+            <div class="agent-stream-terminal" id="inspectorTraceView" style="display:none;">
+              <div id="streamTraceLogs">
+                <div class="stream-log-entry">
+                  <span class="stream-log-time">[0.00ms]</span>
+                  <span class="stream-log-tag system">[System Ready]</span>
+                  <span>Autonomous Agent Runtime initialized. Select a scenario and press "Run Autonomous Agent".</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -4164,6 +4816,457 @@
       updateSticky();
     }
 
+    // ── Autonomous Agent Simulation Engine ──────────────────────────────────
+    const AGENT_SCENARIOS = {
+      doc: {
+        id: 'doc',
+        title: 'Secure Document Processing (OCR + IA)',
+        inputTitle: 'RAW UNSTRUCTURED OCR SCAN (#DOC-99201)',
+        outputTitle: 'STRUCTURED HIPAA-COMPLIANT CLINICAL ARTIFACT',
+        rawInput: `[OCR SCAN #DOC-99201 - EMERGENCY ADMISSION NOTE]
+PATIENT: Johnathan Doe | Age: 52 | Sex: M
+SSN: 942-12-8819 | DOB: 1974-06-22 | Hosp ID: #EHR-77192
+PRESENTING COMPLAINT: Pt presents w/ severe right upper quadrant pain, unexplained weight loss & jaundice.
+PATHOLOGY LABS: Liver biopsy confirms vascular malignant neoplasm originating from endothelial lining of hepatic vessels (angiosarcoma).
+URGENT: Surgical oncology referral needed immediately. Initiate vascular cancer pathway C49.9.`,
+        cleanOutput: `{
+  "document_id": "DOC-99201",
+  "security_classification": "HIPAA_AIR_GAPPED_ZDR",
+  "compliance_audit": {
+    "zero_data_retention": true,
+    "phi_redacted": true,
+    "cloud_api_transit": false
+  },
+  "patient_redacted": {
+    "name": "J. D.",
+    "ssn": "[REDACTED_SSN_942-XX-XXXX]",
+    "dob": "[REDACTED_DOB_1974-XX-XX]",
+    "age": 52
+  },
+  "clinical_entities": {
+    "primary_diagnosis": "angiosarcoma",
+    "ontology_curie": "DOID:0001816",
+    "parent_taxonomy": "DOID:162 (malignant neoplasm)",
+    "icd10_code": "C49.9",
+    "monotonicity_proof": "P(child: 0.942) <= P(parent: 0.988) [VERIFIED]"
+  },
+  "downstream_action": {
+    "ehr_flag": "URGENT_SURGICAL_ONCOLOGY_CONSULT",
+    "status": "DISPATCHED_TO_ONCALL"
+  }
+}`,
+        steps: [
+          {
+            desc: "Ingests raw scanned PDF text from emergency intake terminal. Cleans OCR noise.",
+            logTag: "OCR Parse",
+            logText: "Extracted 420 chars from scan #DOC-99201. Normalized noisy whitespace and layout headers.",
+            clock: "0.12 ms"
+          },
+          {
+            desc: "Leio evaluates DOID clinical ontology DAG in local RAM in 260µs. Grounds to DOID:0001816 (angiosarcoma).",
+            logTag: "Leio System 1",
+            logText: "Evaluated DOID ontology DAG. Selected concept: DOID:0001816 (angiosarcoma) with parent DOID:162 (malignant neoplasm). Confidence: 0.988.",
+            clock: "0.38 ms"
+          },
+          {
+            desc: "Agent tool executes in volatile memory: redacts SSN and DOB to prevent HIPAA cloud leakage.",
+            logTag: "Tool: PII_Redactor",
+            logText: "Redacted SSN (942-XX-XXXX) & DOB (1974-XX-XX) in volatile memory. Zero PHI persisted or sent to external cloud.",
+            clock: "0.62 ms"
+          },
+          {
+            desc: "Enforces formal diagnostic monotonicity: P(child) <= P(parent). Emits structured FHIR JSON artifact.",
+            logTag: "Axiom Proof",
+            logText: "Verified subsumption monotonicity: P(angiosarcoma: 0.942) <= P(malignant_neoplasm: 0.988) [PASSED]. Emitted HIPAA FHIR record.",
+            clock: "0.82 ms"
+          }
+        ],
+        metrics: {
+          latency: "0.82 ms",
+          tokens: "0 tokens",
+          cost: "$0.00000004",
+          axioms: "100% Valid"
+        }
+      },
+
+      retail: {
+        id: 'retail',
+        title: 'Retail Data Cleaning: Normalization, Dedup, Standardization, Enrichment',
+        inputTitle: 'RAW MULTI-SUPPLIER CATALOG FEED (3 RECORDS)',
+        outputTitle: 'CANONICAL MASTER DATA CATALOG (DEDUPLICATED & ENRICHED)',
+        rawInput: `[SUPPLIER FEED INGESTION - 3 UNSTRUCTURED RECORDS]
+1. "applle iPhne 15 pro max 256gb natural titanium unlocked - bulk case (3 pk)" [Vendor A: TechWholesale]
+2. "Apple iPhone 15 ProMax, 256 GB - Nat Titanium [Vendor SKU: APL-15PM-256-NT]" [Vendor B: GlobalDirect]
+3. "Grade A whl milk organic 1 Gal plastic jug pasteurized 34F cold chain barcode 0614141000036" [Vendor C: DairyCo]`,
+        cleanOutput: `{
+  "catalog_cleaning_summary": {
+    "raw_records_ingested": 3,
+    "canonical_records_produced": 2,
+    "deduplication_ratio": "2:1 merged",
+    "processing_latency_ms": 0.85
+  },
+  "master_data_records": [
+    {
+      "gtin": "00195949038291",
+      "canonical_title": "Apple iPhone 15 Pro Max (256 GB, Natural Titanium)",
+      "brand": "Apple",
+      "gs1_taxonomy": "gs1:ConsumerElectronics",
+      "deduplicated_sources": ["TechWholesale:bulk_case_3pk", "GlobalDirect:APL-15PM-256-NT"],
+      "standardized_specs": {
+        "storage_gb": 256,
+        "finish": "Natural Titanium",
+        "hazmat_classification": "UN3480_CLASS_9_LITHIUM_ION"
+      }
+    },
+    {
+      "gtin": "0614141000036",
+      "canonical_title": "Grade A Organic Whole Milk (1 Gallon / 3.785 L)",
+      "gs1_taxonomy": "gs1:MilkButterCreamYogurtCheeseEggsSubstitutes",
+      "parent_category": "gs1:FoodBeverageTobaccoProduct",
+      "standardized_specs": {
+        "volume_liters": 3.785,
+        "storage_temp_celsius": 1.1,
+        "cold_chain_divert": "COLD_CHAIN_BAY_03"
+      }
+    }
+  ]
+}`,
+        steps: [
+          {
+            desc: "Ingests raw heterogeneous CSV/JSON vendor spreadsheets with spelling variations and typos.",
+            logTag: "Token Clean",
+            logText: "Parsed 3 vendor records. Corrected token typos ('applle iPhne' -> 'Apple iPhone 15 Pro Max').",
+            clock: "0.14 ms"
+          },
+          {
+            desc: "Leio evaluates GS1 Web Vocabulary DAG. Classifies items into Electronics and Perishable Food classes.",
+            logTag: "Leio System 1",
+            logText: "Evaluated GS1 Web Vocabulary DAG. Grounded items to gs1:ConsumerElectronics and gs1:FoodBeverageTobaccoProduct in 280µs.",
+            clock: "0.41 ms"
+          },
+          {
+            desc: "Deduplication tool clusters Record #1 and Record #2 to single canonical GTIN (00195949038291).",
+            logTag: "Tool: EntityDedup",
+            logText: "Matched vendor SKU 'APL-15PM-256-NT' and bulk description to canonical GTIN: 00195949038291. Unified warehouse stock.",
+            clock: "0.66 ms"
+          },
+          {
+            desc: "Standardizes units ('1 Gal' -> 3.785L, '34F' -> 1.1°C). Attaches UN3480 hazmat & cold-chain tags.",
+            logTag: "Tool: Standardize",
+            logText: "Normalized imperial units to SI standards. Enriched lithium-ion pack with UN3480 Dangerous Goods safety placard.",
+            clock: "0.85 ms"
+          }
+        ],
+        metrics: {
+          latency: "0.85 ms",
+          tokens: "0 tokens",
+          cost: "$0.00000004",
+          axioms: "100% Valid"
+        }
+      },
+
+      interop: {
+        id: 'interop',
+        title: 'Interoperability: Linking Different Systems by Meaning, Not Code',
+        inputTitle: 'HETEROGENEOUS CROSS-SYSTEM PAYLOADS (HL7, SAP, SCHEMA.ORG)',
+        outputTitle: 'UNIVERSAL SEMANTIC FEDERATION GRAPH (ZERO GLUE CODE)',
+        rawInput: `[CROSS-SYSTEM HETEROGENEOUS INGESTION]
+• Legacy Healthcare EHR (HL7 v2): "DG1|1||780.60^FEVER OF UNKNOWN ORIGIN^I9|||F"
+• ERP Logistics (SAP ECC): "MAT_GROUP: 4092_CLD | COND: PERISH_34F | GTIN_REF: 0614141000036"
+• Telehealth App (Schema.org JSON-LD): "{ '@type': 'MedicalCondition', 'name': 'Unspecified Pyrexia' }"`,
+        cleanOutput: `{
+  "semantic_interoperability_bridge": "LEIO_CROSS_SYSTEM_FEDERATION_V1",
+  "hardcoded_glue_code_lines": 0,
+  "execution_time_ms": 0.86,
+  "federated_entities": [
+    {
+      "domain": "Clinical Informatics",
+      "unified_ontology_concept": "DOID:14566 (infectious_disease_fever)",
+      "subsumed_system_identifiers": {
+        "epic_hl7_v2": "DG1|780.60 (Fever of Unknown Origin)",
+        "w3c_schema_org": "schema:MedicalCondition/Pyrexia",
+        "icd10_crosswalk": "R50.9",
+        "snomed_ct_id": "386661006"
+      },
+      "semantic_relationship": "IDENTITY_GROUNDED"
+    },
+    {
+      "domain": "Supply Chain & ERP",
+      "unified_ontology_concept": "gs1:FoodBeverageTobaccoProduct",
+      "subsumed_system_identifiers": {
+        "sap_material_group": "4092_CLD",
+        "gs1_gtin": "0614141000036",
+        "temperature_condition": "PERISHABLE_REFRIGERATED"
+      },
+      "semantic_relationship": "GS1_TAXONOMY_GROUNDED"
+    }
+  ]
+}`,
+        steps: [
+          {
+            desc: "Ingests divergent legacy formats (HL7 v2 pipe-delimited, SAP material group, and Schema.org JSON-LD).",
+            logTag: "Ingress Bridge",
+            logText: "Ingested 3 heterogeneous protocols. No manual point-to-point custom regex connectors required.",
+            clock: "0.11 ms"
+          },
+          {
+            desc: "Leio projects legacy codes into unified formal W3C OWL / DOID / GS1 category lattices in < 1ms.",
+            logTag: "Leio System 1",
+            logText: "Evaluated semantic lattices. Unified '780.60' and 'Pyrexia' to DOID:14566 (infectious fever).",
+            clock: "0.42 ms"
+          },
+          {
+            desc: "Semantic matcher establishes equivalence based on ontology downsets rather than brittle code strings.",
+            logTag: "Meaning Link",
+            logText: "Resolved cross-system equivalence. HL7, Schema.org, and SNOMED CT federated by meaning.",
+            clock: "0.68 ms"
+          },
+          {
+            desc: "Verifies disjointness: ClinicalCondition ⊓ LogisticsMaterial = ⊥. Emits universal federated graph node.",
+            logTag: "Axiom Check",
+            logText: "Axiomatic disjointness verified: Clinical domain and Logistics domain strictly decoupled (A ⊓ B = ⊥). Emitted graph artifact.",
+            clock: "0.86 ms"
+          }
+        ],
+        metrics: {
+          latency: "0.86 ms",
+          tokens: "0 tokens",
+          cost: "$0.00000004",
+          axioms: "100% Valid"
+        }
+      }
+    };
+
+    let activeScenarioKey = 'doc';
+    let agentSimulationTimer = null;
+    let agentCurrentStep = 0;
+    let isAgentRunning = false;
+
+    function selectAgentScenario(key) {
+      if (!AGENT_SCENARIOS[key]) return;
+      activeScenarioKey = key;
+      const scen = AGENT_SCENARIOS[key];
+
+      // Update scenario tab buttons
+      ['doc', 'retail', 'interop'].forEach(k => {
+        const btn = document.getElementById(`agentTab-${k}`);
+        if (btn) btn.classList.toggle('active', k === key);
+      });
+
+      // Update headers
+      const titleEl = document.getElementById('agentActiveScenarioTitle');
+      if (titleEl) titleEl.textContent = scen.title;
+
+      const inputHeader = document.getElementById('diffInputHeader');
+      if (inputHeader) inputHeader.textContent = scen.inputTitle;
+
+      const outputHeader = document.getElementById('diffOutputHeader');
+      if (outputHeader) outputHeader.textContent = scen.outputTitle;
+
+      // Populate input
+      const inputEl = document.getElementById('diffInputContent');
+      if (inputEl) inputEl.textContent = scen.rawInput;
+
+      // Reset output
+      const outputEl = document.getElementById('diffOutputContent');
+      if (outputEl) outputEl.textContent = '// Press "Run Autonomous Agent" to execute multi-step pipeline...';
+
+      // Reset step indicators
+      resetAgentState();
+
+      // Reset telemetry
+      const telLat = document.getElementById('telemetryLatency');
+      if (telLat) telLat.textContent = scen.metrics.latency;
+
+      // Reset trace log with welcoming message
+      const logContainer = document.getElementById('streamTraceLogs');
+      if (logContainer) {
+        logContainer.innerHTML = `
+          <div class="stream-log-entry">
+            <span class="stream-log-time">[0.00ms]</span>
+            <span class="stream-log-tag system">[Ready]</span>
+            <span>Selected scenario: <strong>${scen.title}</strong>. Press "Run Autonomous Agent" or "Next Step".</span>
+          </div>
+        `;
+      }
+    }
+
+    function resetAgentState() {
+      if (agentSimulationTimer) {
+        clearTimeout(agentSimulationTimer);
+        agentSimulationTimer = null;
+      }
+      isAgentRunning = false;
+      agentCurrentStep = 0;
+
+      const runBtn = document.getElementById('btnRunAgent');
+      if (runBtn) {
+        runBtn.innerHTML = '▶ Run Autonomous Agent';
+        runBtn.disabled = false;
+      }
+
+      const statusBadge = document.getElementById('agentLiveStatusBadge');
+      if (statusBadge) {
+        statusBadge.textContent = '● Agent Idle';
+        statusBadge.className = 'agent-status-badge';
+      }
+
+      const stepText = document.getElementById('agentCurrentStepText');
+      if (stepText) stepText.textContent = 'Ready';
+
+      const clockEl = document.getElementById('agentStepClock');
+      if (clockEl) clockEl.textContent = '0.00 ms';
+
+      const progressBar = document.getElementById('agentProgressBar');
+      if (progressBar) progressBar.style.width = '0%';
+
+      for (let i = 1; i <= 4; i++) {
+        const node = document.getElementById(`agentNode-${i}`);
+        const pill = document.getElementById(`nodePill-${i}`);
+        if (node) node.className = 'agent-node-card';
+        if (pill) {
+          pill.textContent = 'WAITING';
+        }
+      }
+    }
+
+    function runAgentSimulation() {
+      if (isAgentRunning) return;
+      resetAgentState();
+      isAgentRunning = true;
+
+      const runBtn = document.getElementById('btnRunAgent');
+      if (runBtn) {
+        runBtn.innerHTML = '⏳ Executing...';
+        runBtn.disabled = true;
+      }
+
+      const statusBadge = document.getElementById('agentLiveStatusBadge');
+      if (statusBadge) {
+        statusBadge.textContent = '● Agent Executing (< 1ms)';
+        statusBadge.className = 'agent-status-badge running';
+      }
+
+      function executeNext(stepIdx) {
+        if (stepIdx > 4) {
+          // Completed
+          isAgentRunning = false;
+          if (runBtn) {
+            runBtn.innerHTML = '✓ Re-Run Mission';
+            runBtn.disabled = false;
+          }
+          if (statusBadge) {
+            statusBadge.textContent = `✓ Completed in ${AGENT_SCENARIOS[activeScenarioKey].metrics.latency}`;
+            statusBadge.className = 'agent-status-badge';
+          }
+          const stepText = document.getElementById('agentCurrentStepText');
+          if (stepText) stepText.textContent = 'Completed';
+          return;
+        }
+
+        applyAgentStep(stepIdx);
+
+        // Schedule next step with fast visual animation (600ms per step)
+        agentSimulationTimer = setTimeout(() => {
+          executeNext(stepIdx + 1);
+        }, 650);
+      }
+
+      executeNext(1);
+    }
+
+    function stepAgentSimulation() {
+      if (isAgentRunning) return;
+      agentCurrentStep++;
+      if (agentCurrentStep > 4) {
+        agentCurrentStep = 1;
+        resetAgentState();
+      }
+      applyAgentStep(agentCurrentStep);
+    }
+
+    function applyAgentStep(stepNum) {
+      const scen = AGENT_SCENARIOS[activeScenarioKey];
+      const stepData = scen.steps[stepNum - 1];
+
+      // Update previous nodes to completed
+      for (let i = 1; i < stepNum; i++) {
+        const prevNode = document.getElementById(`agentNode-${i}`);
+        const prevPill = document.getElementById(`nodePill-${i}`);
+        if (prevNode) prevNode.className = 'agent-node-card completed';
+        if (prevPill) prevPill.textContent = '✓ VERIFIED';
+      }
+
+      // Update current node to active
+      const currNode = document.getElementById(`agentNode-${stepNum}`);
+      const currPill = document.getElementById(`nodePill-${stepNum}`);
+      if (currNode) currNode.className = 'agent-node-card active';
+      if (currPill) currPill.textContent = '● ACTIVE';
+
+      // Update progress bar
+      const progressBar = document.getElementById('agentProgressBar');
+      if (progressBar) progressBar.style.width = `${stepNum * 25}%`;
+
+      // Update clock
+      const clockEl = document.getElementById('agentStepClock');
+      if (clockEl) clockEl.textContent = stepData.clock;
+
+      const stepText = document.getElementById('agentCurrentStepText');
+      if (stepText) stepText.textContent = `Step ${stepNum} of 4`;
+
+      // Add to streaming trace log
+      const logContainer = document.getElementById('streamTraceLogs');
+      if (logContainer) {
+        const entry = document.createElement('div');
+        entry.className = 'stream-log-entry';
+        const isSuccess = stepNum === 4;
+        entry.innerHTML = `
+          <span class="stream-log-time">[${stepData.clock}]</span>
+          <span class="stream-log-tag ${isSuccess ? 'success' : 'tool'}">[${stepData.logTag}]</span>
+          <span>${stepData.logText}</span>
+        `;
+        logContainer.appendChild(entry);
+        logContainer.scrollTop = logContainer.scrollHeight;
+      }
+
+      // If last step, reveal output artifact
+      if (stepNum === 4) {
+        const currPill = document.getElementById(`nodePill-${stepNum}`);
+        if (currPill) currPill.textContent = '✓ VERIFIED';
+        if (currNode) currNode.className = 'agent-node-card completed';
+
+        const outputEl = document.getElementById('diffOutputContent');
+        if (outputEl) {
+          outputEl.textContent = scen.cleanOutput;
+        }
+
+        const outBadge = document.getElementById('diffOutputBadge');
+        if (outBadge) outBadge.textContent = '✓ Emitted to Production DB';
+      }
+    }
+
+    function switchInspectorSubtab(tabKey) {
+      const diffView = document.getElementById('inspectorDiffView');
+      const traceView = document.getElementById('inspectorTraceView');
+      const btnDiff = document.getElementById('btnSubtabDiff');
+      const btnTrace = document.getElementById('btnSubtabTrace');
+      const metaLabel = document.getElementById('inspectorMetaLabel');
+
+      if (tabKey === 'diff') {
+        if (diffView) diffView.style.display = 'flex';
+        if (traceView) traceView.style.display = 'none';
+        if (btnDiff) btnDiff.classList.add('active');
+        if (btnTrace) btnTrace.classList.remove('active');
+        if (metaLabel) metaLabel.textContent = 'Live Data Artifact';
+      } else {
+        if (diffView) diffView.style.display = 'none';
+        if (traceView) traceView.style.display = 'block';
+        if (btnDiff) btnDiff.classList.remove('active');
+        if (btnTrace) btnTrace.classList.add('active');
+        if (metaLabel) metaLabel.textContent = 'Kernel Execution Trace';
+      }
+    }
+
     // ── Window Bindings ──────────────────────────────────────────────────────
     window.switchDomain = switchDomain;
     window.copyJsonOutput = copyJsonOutput;
@@ -4177,6 +5280,10 @@
     window.closeEnterpriseModal = closeEnterpriseModal;
     window.closeModalOnBackdrop = closeModalOnBackdrop;
     window.handleEnterpriseSubmit = handleEnterpriseSubmit;
+    window.selectAgentScenario = selectAgentScenario;
+    window.runAgentSimulation = runAgentSimulation;
+    window.stepAgentSimulation = stepAgentSimulation;
+    window.switchInspectorSubtab = switchInspectorSubtab;
 
     function initPage() {
       const stateInput = document.getElementById('stateInput');
@@ -4186,6 +5293,7 @@
       updateSliderTrack(1000000);
       initStickyBar();
       switchDomain('leio');
+      selectAgentScenario('doc');
     }
 
     if (document.readyState === 'loading') {
