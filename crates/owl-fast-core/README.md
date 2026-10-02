@@ -2,9 +2,18 @@
 
 OWL / RDF / OBO / SKOS entity extraction on top of the Oxigraph component parser stack — the centralized ontology parser for `office-parsers-rs`.
 
-This is a **Mycelia Sovereign Crate**: a reusable, standalone primitive held to the [publishable-crate contract](../../docs/architecture/publishable-crate-contract.md).
+This is a reusable parser crate included in the O-Laya workspace. See the
+[repository README](../../README.md) for runtime architecture and verification
+boundaries.
 
 **Role boundary:** this crate is a **parser / extractor / RAG chunker**, not an OWL2-RL reasoner. It does **not** expand `equivalentClass`, restrictions, or property chains into inferred triples — platform reasoning stays in Crepe Datalog (`mycelia-gateway`). Asserted `owl:sameAs` / `owl:equivalentProperty` links are preserved on the entity model (never collapsed).
+
+## HTTP edge boundary
+
+The separate [System One edge handler](../../docs/public/api/systemone.js) does
+not call this parser or load a formal ontology DAG. Its abstention and negation
+behavior is specified in [the edge contract](../../spec/systemone-reliability.md);
+those response changes do not alter this crate's parser API.
 
 ## What it does
 

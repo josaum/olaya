@@ -13,6 +13,43 @@ It ships as three runtimes that share one ontology model and one axiom specifica
 | **Python** | `olaya` (`src/olaya`) | Transformer marker-pooling head (**untrained**, see below) | Full `system_one` API: `concept`, `subsumes`, `choice`, `score`, `noul` |
 | **Node / TypeScript** | `@mycelia/olaya` (`packages/olaya-node`) | Lexical | Zero-dependency ESM + CJS; `systemOne`, `choice`, `score`, `noul` |
 
+## System One HTTP edge API
+
+The HTTP demo accepts `POST /api/systemone` at
+<https://public-nine-jade-58.vercel.app/api/systemone>; `GET` returns health metadata.
+Its implementation is [docs/public/api/systemone.js](docs/public/api/systemone.js).
+This edge handler uses lexical matching and does not load the ontology DAG,
+trained weights, or the full axiom projection kernel described below.
+Temperature-scaled softmax weights and entropy confidence do not by themselves
+establish empirical calibration. The health metadata currently advertises stronger
+ontology guarantees than this handler implements.
+
+```bash
+curl https://public-nine-jade-58.vercel.app/api/systemone \
+  -H 'Content-Type: application/json' \
+  --data '{"state":"Urgent frozen seafood shipment requires cold storage.","questions":{"storage":{"type":"choice","options":["cold storage","ambient storage"]},"priority":{"type":"score","criteria":["routine","urgent","critical"]},"frozen":{"type":"noul","instructions":"frozen seafood"}}}'
+```
+
+The source contract now returns `choice: null`, `abstained: true`, and a reason
+for unsupported or tied choices. Consumers must handle abstention before acting.
+Edge `noul` uses bounded English proposition-local negation; conflicting positive
+and negative mentions return `0.5` with confidence `0`. It is not general language
+reasoning. See the [complete edge contract](spec/systemone-reliability.md).
+
+Verification on 2026-10-02: all 15 edge regression tests passed locally:
+
+```bash
+node --test tests/systemone-edge.test.mjs
+```
+
+The reliability patch was committed locally as `7989f31`. Production deployment
+and GitHub push were blocked by connectivity in that verification session;
+the public URL has not been verified with this patch. Local handler measurements
+are separate from deployed latency: 2,000 samples after 200 warm-up requests,
+using one request with all three primitives, measured original/patched median
+0.0274/0.0317 ms and p95 0.0377/0.0420 ms. These include local request parsing and
+response decoding and exclude network transport.
+
 ## Project status: read this first
 
 - **Trained weights and ONNX models are available.** O-Laya includes a trained decision head
@@ -59,7 +96,7 @@ Measured on Apple Silicon MPS via `benchmarks/bench_e2e_comparison.py` over 25 o
 | **Throughput** | **~210,000 decisions/s** | **130.8 decisions/s** | **6.0 decisions/s** | **52.5 decisions/s** |
 | **Axiom Kernel** | Rust (`olaya-core`) | PyTorch + Projection | PyTorch + Projection | Spec 2024-11-05 verified |
 
-- **Sub-microsecond routing**: The Arrow-native lexical router achieves 4.8 µs flat latency.
+- **Microsecond routing**: The Arrow-native lexical router achieves 4.8 µs flat latency.
 - **Ultra-low latency neural decisions**: Lightweight Custom BERT provides full cross-attention candidate reasoning under 23 ms.
 - **Deep semantic capacity**: ModernBERT-base expands representation capacity for intricate enterprise knowledge graphs.
 - **Agent RPC integration**: Zero-dependency stdio JSON-RPC 2.0 WebMCP bridge executes live tool calls in under 18 ms.
