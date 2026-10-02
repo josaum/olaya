@@ -50,7 +50,7 @@ def export_olaya(
             )
             custom_encoder = BertModel(cfg)
             model = OntologyDecisionModel(hidden_size=h_size, custom_encoder=custom_encoder)
-        model.load_state_dict(ckpt["model_state_dict"])
+        model.load_state_dict(ckpt["model_state_dict"], strict=False)
     else:
         print(f"Loading backbone {backbone_name} and building OntologyDecisionModel...")
         model = OntologyDecisionModel(backbone_name_or_config=backbone_name)

@@ -22,6 +22,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 from transformers import BertConfig, BertModel
 
+from olaya.category_theory import CategoricalLoss, extract_morphism_matrices
 from olaya.data_gen import (
     ALL_REMEDIATION_ACTIONS,
     DEFAULT_SCORE_CRITERIA,
@@ -44,6 +45,7 @@ class TrainingSample:
     target_idx: int
     act_target: int
     qtype_name: str
+    ontology: Ontology | None = None
 
 
 def build_training_samples(
@@ -89,6 +91,7 @@ def build_training_samples(
                         target_idx=target_idx,
                         act_target=act_target,
                         qtype_name="concept",
+                        ontology=ontology,
                     )
                 )
 
@@ -234,7 +237,7 @@ class DecisionDataset(Dataset):
 
 
 def collate_decision_batch(batch: list[TrainingSample], pad_id: int = 0) -> dict[str, torch.Tensor]:
-    """Pad bundles into batched model inputs."""
+    """Pad bundles into batched model inputs, including category-theoretic morphism matrices."""
     n = len(batch)
     max_seq_len = max(len(s.bundle.input_ids) for s in batch)
     max_markers = max(len(s.bundle.marker_positions) for s in batch)
@@ -247,6 +250,12 @@ def collate_decision_batch(batch: list[TrainingSample], pad_id: int = 0) -> dict
     targets = torch.zeros((n,), dtype=torch.long)
     act_targets = torch.zeros((n,), dtype=torch.long)
 
+    # Category theory morphism matrices
+    subsumption_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
+    parent_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
+    child_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
+    disjoint_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
+
     for i, s in enumerate(batch):
         b = s.bundle
         seq_len = len(b.input_ids)
@@ -256,6 +265,17 @@ def collate_decision_batch(batch: list[TrainingSample], pad_id: int = 0) -> dict
         if num_m > 0:
             marker_pos[i, :num_m] = torch.tensor(b.marker_positions, dtype=torch.long)
             marker_mask[i, :num_m] = True
+
+            # Extract category morphism matrices if ontology is available
+            if s.ontology is not None and len(b.candidate_curies) > 0:
+                sub_m, p_m, c_m, disj_m = extract_morphism_matrices(
+                    b.candidate_curies, s.ontology, max_k=num_m
+                )
+                subsumption_adj[i, :num_m, :num_m] = torch.from_numpy(sub_m)
+                parent_adj[i, :num_m, :num_m] = torch.from_numpy(p_m)
+                child_adj[i, :num_m, :num_m] = torch.from_numpy(c_m)
+                disjoint_adj[i, :num_m, :num_m] = torch.from_numpy(disj_m)
+
         qtypes[i] = b.qtype
         targets[i] = s.target_idx
         act_targets[i] = s.act_target
@@ -268,6 +288,10 @@ def collate_decision_batch(batch: list[TrainingSample], pad_id: int = 0) -> dict
         "qtype": qtypes,
         "targets": targets,
         "act_targets": act_targets,
+        "subsumption_adj": subsumption_adj,
+        "parent_adj": parent_adj,
+        "child_adj": child_adj,
+        "disjoint_adj": disjoint_adj,
     }
 
 
@@ -372,14 +396,16 @@ def train_olaya(
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs * len(train_loader), eta_min=1e-5)
     criterion_dec = nn.CrossEntropyLoss()
     criterion_act = nn.NLLLoss()
+    criterion_cat = CategoricalLoss(weight_mono=0.5, weight_disj=0.3, weight_cone=0.1)
 
     best_val_acc = 0.0
     metrics: dict[str, float] = {}
 
-    print(f"Starting training on {dev} for {epochs} epochs...")
+    print(f"Starting training on {dev} for {epochs} epochs with Category-Theoretic Loss...")
     for epoch in range(1, epochs + 1):
         model.train()
         total_loss = 0.0
+        total_cat_loss = 0.0
         correct_dec = 0
         total_items = 0
 
@@ -391,13 +417,34 @@ def train_olaya(
             qtypes = batch["qtype"].to(dev)
             targets = batch["targets"].to(dev)
             act_targets = batch["act_targets"].to(dev)
+            subsumption_adj = batch["subsumption_adj"].to(dev)
+            parent_adj = batch["parent_adj"].to(dev)
+            child_adj = batch["child_adj"].to(dev)
+            disjoint_adj = batch["disjoint_adj"].to(dev)
 
             optimizer.zero_grad()
-            logits, act_probs = model(input_ids, attention_mask, marker_pos, marker_mask, qtypes)
+            logits, act_probs, marker_states = model(
+                input_ids,
+                attention_mask,
+                marker_pos,
+                marker_mask,
+                qtypes,
+                parent_adj=parent_adj,
+                child_adj=child_adj,
+                disjoint_adj=disjoint_adj,
+                return_marker_states=True,
+            )
 
             loss_dec = criterion_dec(logits, targets)
             loss_act = criterion_act(torch.log(act_probs + 1e-8), act_targets)
-            loss = loss_dec + 0.2 * loss_act
+            loss_cat, _ = criterion_cat(
+                logits=logits,
+                marker_states=marker_states,
+                subsumption_mask=subsumption_adj,
+                disjoint_mask=disjoint_adj,
+                marker_mask=marker_mask,
+            )
+            loss = loss_dec + 0.2 * loss_act + loss_cat
 
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
@@ -405,16 +452,21 @@ def train_olaya(
             scheduler.step()
 
             total_loss += float(loss.item()) * len(targets)
+            total_cat_loss += float(loss_cat.item()) * len(targets)
             preds = torch.argmax(logits, dim=-1)
             correct_dec += int((preds == targets).sum().item())
             total_items += len(targets)
 
         train_loss = total_loss / total_items
+        train_cat_loss = total_cat_loss / total_items
         train_acc = correct_dec / total_items
 
         # Validation
         model.eval()
         val_loss = 0.0
+        val_cat_loss = 0.0
+        val_mono_viols: list[float] = []
+        val_disj_colls: list[float] = []
         val_correct = 0
         val_items = 0
         with torch.no_grad():
@@ -426,23 +478,50 @@ def train_olaya(
                 qtypes = batch["qtype"].to(dev)
                 targets = batch["targets"].to(dev)
                 act_targets = batch["act_targets"].to(dev)
+                subsumption_adj = batch["subsumption_adj"].to(dev)
+                parent_adj = batch["parent_adj"].to(dev)
+                child_adj = batch["child_adj"].to(dev)
+                disjoint_adj = batch["disjoint_adj"].to(dev)
 
-                logits, act_probs = model(input_ids, attention_mask, marker_pos, marker_mask, qtypes)
+                logits, act_probs, marker_states = model(
+                    input_ids,
+                    attention_mask,
+                    marker_pos,
+                    marker_mask,
+                    qtypes,
+                    parent_adj=parent_adj,
+                    child_adj=child_adj,
+                    disjoint_adj=disjoint_adj,
+                    return_marker_states=True,
+                )
                 loss_dec = criterion_dec(logits, targets)
                 loss_act = criterion_act(torch.log(act_probs + 1e-8), act_targets)
-                loss = loss_dec + 0.2 * loss_act
+                loss_cat, cat_metrics = criterion_cat(
+                    logits=logits,
+                    marker_states=marker_states,
+                    subsumption_mask=subsumption_adj,
+                    disjoint_mask=disjoint_adj,
+                    marker_mask=marker_mask,
+                )
+                loss = loss_dec + 0.2 * loss_act + loss_cat
 
                 val_loss += float(loss.item()) * len(targets)
+                val_cat_loss += float(loss_cat.item()) * len(targets)
+                val_mono_viols.append(cat_metrics["mono_violation_rate"])
+                val_disj_colls.append(cat_metrics["disj_collision_rate"])
                 preds = torch.argmax(logits, dim=-1)
                 val_correct += int((preds == targets).sum().item())
                 val_items += len(targets)
 
         val_loss /= val_items
+        val_cat_loss /= val_items
         val_acc = val_correct / val_items
+        avg_mono_viol = float(np.mean(val_mono_viols)) if val_mono_viols else 0.0
+        avg_disj_coll = float(np.mean(val_disj_colls)) if val_disj_colls else 0.0
 
         print(
-            f"Epoch {epoch}/{epochs} | Train Loss: {train_loss:.4f} Acc: {train_acc:.2%} | "
-            f"Val Loss: {val_loss:.4f} Acc: {val_acc:.2%}"
+            f"Epoch {epoch}/{epochs} | Train Loss: {train_loss:.4f} (Cat: {train_cat_loss:.4f}) Acc: {train_acc:.2%} | "
+            f"Val Loss: {val_loss:.4f} Acc: {val_acc:.2%} | Mono Viol: {avg_mono_viol:.1%} Disj Coll: {avg_disj_coll:.1%}"
         )
 
         if val_acc > best_val_acc:
@@ -461,6 +540,9 @@ def train_olaya(
                 },
                 "val_acc": val_acc,
                 "val_loss": val_loss,
+                "val_cat_loss": val_cat_loss,
+                "val_mono_violation_rate": avg_mono_viol,
+                "val_disj_collision_rate": avg_disj_coll,
             }
             torch.save(checkpoint, str(out_file))
             print(f"  -> Saved best checkpoint (acc: {val_acc:.2%}) to {out_file}")
@@ -469,5 +551,8 @@ def train_olaya(
         "best_val_acc": best_val_acc,
         "final_train_acc": train_acc,
         "final_val_loss": val_loss,
+        "final_cat_loss": val_cat_loss,
+        "final_mono_violation_rate": avg_mono_viol,
+        "final_disj_collision_rate": avg_disj_coll,
     }
     return model, metrics

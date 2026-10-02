@@ -196,6 +196,7 @@ def _generate_tasks_for_concept_query(
             target_idx=target_idx,
             act_target=1 if len(ancestors) > 1 else 0,
             qtype_name="concept",
+            ontology=ontology,
         )
     )
 
@@ -273,6 +274,7 @@ def _generate_tasks_for_concept_query(
             target_idx=choice_idx,
             act_target=1,
             qtype_name="choice",
+            ontology=ontology,
         )
     )
 
