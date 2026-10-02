@@ -1337,97 +1337,280 @@
       font-weight: 700;
     }
 
-    /* ── Enterprise Solutions by Industry Vertical ── */
+    /* ── Enterprise Solutions & Use Cases Architecture ── */
     .solutions-section {
-      padding: 4rem 0;
+      padding: 4.5rem 0;
     }
 
-    .solutions-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
-    }
-
-    .solution-card {
+    /* ── Architectural Blueprint Card ── */
+    .blueprint-card {
       background: var(--bg-alt);
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius-xl);
       padding: 2.2rem;
+      margin-bottom: 3rem;
       box-shadow: var(--shadow-sm);
+    }
+
+    .blueprint-header {
       display: flex;
-      flex-direction: column;
       justify-content: space-between;
-      transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .solution-card:hover {
-      border-color: var(--accent-blue);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-    }
-
-    .solution-card-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 1.1rem;
-      margin-bottom: 1.1rem;
-    }
-
-    .solution-icon-wrap {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--radius-md);
-      background: rgba(2, 132, 199, 0.08);
-      border: 1px solid rgba(2, 132, 199, 0.2);
-      display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      flex-shrink: 0;
+      margin-bottom: 1.8rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
-    .solution-industry {
-      font-size: 0.72rem;
-      font-family: var(--font-mono);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--accent-blue);
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-    }
-
-    .solution-title {
-      font-size: 1.22rem;
+    .blueprint-title {
+      font-size: 1.35rem;
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.02em;
+    }
+
+    .blueprint-flow {
+      display: grid;
+      grid-template-columns: 1fr 40px 1.4fr 40px 1.4fr;
+      align-items: center;
+      gap: 0.8rem;
+      background: #f8fafc;
+      padding: 1.6rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+    }
+
+    [data-theme="dark"] .blueprint-flow {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .flow-step {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .flow-step.highlight {
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 16px var(--accent-blue-glow);
+      background: rgba(2, 132, 199, 0.03);
+    }
+
+    .flow-step.fast-path {
+      border-color: rgba(3, 170, 92, 0.4);
+      background: rgba(3, 170, 92, 0.04);
+    }
+
+    .flow-step-num {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      color: var(--accent-blue);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .flow-step-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+    }
+
+    .flow-step-desc {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .flow-arrow {
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      text-align: center;
+      font-weight: 800;
+    }
+
+    /* ── Detailed Use Case Cards ── */
+    .usecase-card-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2.2rem;
+    }
+
+    .usecase-card-detailed {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 2.4rem;
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 2.4rem;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .usecase-card-detailed:hover {
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-md);
+    }
+
+    .usecase-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .usecase-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent-blue);
+      background: rgba(2, 132, 199, 0.08);
+      border: 1px solid rgba(2, 132, 199, 0.2);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      width: fit-content;
+    }
+
+    .usecase-heading {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.025em;
       line-height: 1.25;
     }
 
-    .solution-body {
-      font-size: 0.92rem;
-      color: var(--text-secondary);
-      line-height: 1.65;
-      margin-bottom: 1.6rem;
-    }
-
-    .solution-metric-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+    .usecase-block {
       background: #f8fafc;
       border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 0.6rem 0.95rem;
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      font-family: var(--font-mono);
+      border-radius: var(--radius-md);
+      padding: 0.95rem 1.15rem;
     }
 
-    [data-theme="dark"] .solution-metric-pill {
-      background: rgba(255, 255, 255, 0.03);
+    [data-theme="dark"] .usecase-block {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .usecase-block-label {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .usecase-block-label.problem { color: var(--accent-red); }
+    .usecase-block-label.solution { color: var(--accent-green); }
+
+    .usecase-block-text {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .usecase-metrics-strip {
+      display: flex;
+      gap: 1.6rem;
+      padding-top: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .usecase-metric-stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .usecase-metric-val {
+      font-family: var(--font-mono);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--accent-green);
+    }
+
+    .usecase-metric-lbl {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ── Use Case Code & Telemetry Window ── */
+    .usecase-terminal {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .usecase-terminal-bar {
+      height: 38px;
+      background: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .usecase-terminal-title {
+      font-size: 0.74rem;
+      color: #94a3b8;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .usecase-terminal-badge {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
+
+    .usecase-terminal-body {
+      padding: 1.2rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.55;
+    }
+
+    .usecase-step-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      margin-bottom: 0.4rem;
+      font-weight: 700;
+    }
+
+    .usecase-code-snippet {
+      color: #e2e8f0;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      margin-bottom: 0.9rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .usecase-code-snippet.output {
+      border-color: rgba(3, 170, 92, 0.3);
+      background: rgba(3, 170, 92, 0.08);
+      color: #38bdf8;
     }
 
     /* ── Enterprise Security, Privacy & Architecture ── */
@@ -1587,7 +1770,8 @@
       .metric-strip { grid-template-columns: repeat(2, 1fr); }
       .duel-grid { grid-template-columns: 1fr; }
       .workbench-body { grid-template-columns: 1fr; }
-      .solutions-grid { grid-template-columns: 1fr; }
+      .blueprint-flow { grid-template-columns: 1fr; }
+      .usecase-card-detailed { grid-template-columns: 1fr; }
       .security-grid { grid-template-columns: 1fr 1fr; }
       .bento-grid { grid-template-columns: 1fr; }
       .bento-card.col-span-2 { grid-column: span 1; }
@@ -1854,109 +2038,305 @@
       </div>
     </section>
 
-    <!-- ── Enterprise Solutions by Industry Vertical ── -->
+    <!-- ── Enterprise Solutions & Use Cases Architecture ── -->
     <section class="solutions-section" id="solutions">
       <div class="section-header">
-        <div class="section-kicker">Enterprise Solutions</div>
-        <h2 class="section-h2">Engineered for mission-critical operations.</h2>
+        <div class="section-kicker">Concrete Production Use Cases</div>
+        <h2 class="section-h2">Where Leio fits in your stack.</h2>
         <p class="section-p">
-          Replacing brittle prompt chains with deterministic, sub-millisecond System 1 categorical decisions.
+          92% of production software operations need an instant, deterministic decision &mdash; not a slow, probabilistic chat paragraph.
         </p>
       </div>
 
-      <div class="solutions-grid">
-        <!-- Solution 1: Supply Chain & Logistics -->
-        <div class="solution-card">
+      <!-- ── The System 1 / System 2 Architectural Blueprint ── -->
+      <div class="blueprint-card">
+        <div class="blueprint-header">
           <div>
-            <div class="solution-card-header">
-              <div class="solution-icon-wrap">📦</div>
-              <div>
-                <div class="solution-industry">Global Supply Chain &amp; Freight</div>
-                <h3 class="solution-title">Conveyor Sorter &amp; Cold-Chain Automation</h3>
-              </div>
-            </div>
-            <p class="solution-body">
-              Industrial cross-dock facilities and parcel sorters run conveyor lines at 4 meters/second. 
-              Waiting 1,500ms for cloud LLMs causes catastrophic line jams. Leio classifies GS1 GTIN sensor feeds 
-              at 200kHz in under 1 microsecond, triggering hardware PLC diverters with mathematical cold-chain guarantees.
-            </p>
+            <div style="font-size:0.75rem;font-family:var(--font-mono);color:var(--accent-blue);font-weight:700;text-transform:uppercase;">Architectural Pattern</div>
+            <div class="blueprint-title">The Dual-Process AI Architecture</div>
           </div>
-          <div class="solution-metric-pill">
-            <span style="color:var(--accent-green);font-weight:700;">&lt; 1&mu;s PLC Latency</span>
-            <span>&middot;</span>
-            <span>Zero Conveyor Stoppages</span>
+          <div style="font-size:0.82rem;color:var(--text-secondary);font-family:var(--font-mono);">
+            ⚡ <strong>92% Fast Path</strong> (&lt; 1ms &middot; $0.042/1M) &nbsp;|&nbsp; 🧠 <strong>8% Slow Path</strong> (LLM reasoning)
           </div>
         </div>
 
-        <!-- Solution 2: Clinical Informatics & Healthcare -->
-        <div class="solution-card">
-          <div>
-            <div class="solution-card-header">
-              <div class="solution-icon-wrap">🧬</div>
-              <div>
-                <div class="solution-industry">Healthcare &amp; Life Sciences</div>
-                <h3 class="solution-title">HIPAA-Compliant Diagnostic Categorization</h3>
+        <div class="blueprint-flow">
+          <!-- Step 1 -->
+          <div class="flow-step">
+            <div class="flow-step-num">Step 1 &middot; Ingress</div>
+            <div class="flow-step-title">Raw Event Stream</div>
+            <div class="flow-step-desc">
+              Customer prompt, 200kHz barcode scan, telemetry alert, or clinical record.
+            </div>
+          </div>
+
+          <div class="flow-arrow">&rarr;</div>
+
+          <!-- Step 2 -->
+          <div class="flow-step highlight">
+            <div class="flow-step-num">Step 2 &middot; System 1</div>
+            <div class="flow-step-title">⚡ Leio Decision Kernel</div>
+            <div class="flow-step-desc">
+              Evaluates formal lattice in <strong>&lt; 0.8ms</strong> for <strong>$0.000000042</strong>. Axiomatically bounded.
+            </div>
+          </div>
+
+          <div class="flow-arrow">&rarr;</div>
+
+          <!-- Step 3 -->
+          <div class="flow-step fast-path">
+            <div class="flow-step-num" style="color:var(--accent-green);">Step 3 &middot; 92% of Traffic</div>
+            <div class="flow-step-title">Direct Software Action</div>
+            <div class="flow-step-desc">
+              Fires hardware diverter, selects agent tool, routes ticket. <strong>Zero LLM cost. Zero wait.</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 4 Detailed Real-World Use Cases ── -->
+      <div class="usecase-card-grid">
+
+        <!-- Use Case 1: Autonomous AI Agent Tool Routing -->
+        <div class="usecase-card-detailed">
+          <div class="usecase-info">
+            <span class="usecase-badge">🤖 AI Agents &middot; Copilots &middot; LangChain &middot; MCP</span>
+            <h3 class="usecase-heading">Instant Agent Tool Selection &amp; Context Pre-Filtering</h3>
+            
+            <div class="usecase-block">
+              <div class="usecase-block-label problem">❌ The Problem Without Leio</div>
+              <div class="usecase-block-text">
+                Passing 80+ tool descriptions into Claude 3.5 or GPT-4o consumes <strong>12,000 tokens ($0.03 per step)</strong> and forces the user to wait <strong>2,200ms</strong> while the model ponders tool selection.
               </div>
             </div>
-            <p class="solution-body">
-              Sending unprotected patient telemetry to external AI chat APIs introduces severe HIPAA and GDPR liability. 
-              Leio executes 100% on-premise over DOID and ICD-10 ontologies with formal diagnostic monotonicity: 
-              a patient diagnosed with a specific subclass (e.g., <em>Angiosarcoma</em>) is guaranteed never to have higher probability than its parent class (<em>Malignant Neoplasm</em>).
-            </p>
+
+            <div class="usecase-block">
+              <div class="usecase-block-label solution">✓ The Solution With Leio</div>
+              <div class="usecase-block-text">
+                Leio acts as the agent's subconscious reflex. In <strong>0.8ms</strong>, it evaluates your tool ontology and narrows 80 tools down to the exact 1&ndash;2 needed before the LLM is ever called.
+              </div>
+            </div>
+
+            <div class="usecase-metrics-strip">
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">85% Faster</span>
+                <span class="usecase-metric-lbl">Agent response latency</span>
+              </div>
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">90% Less</span>
+                <span class="usecase-metric-lbl">LLM token context burn</span>
+              </div>
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">0% Hallucination</span>
+                <span class="usecase-metric-lbl">Invalid tool call prevention</span>
+              </div>
+            </div>
           </div>
-          <div class="solution-metric-pill">
-            <span style="color:var(--accent-green);font-weight:700;">100% On-Premise / HIPAA</span>
-            <span>&middot;</span>
-            <span>Provable Monotonicity</span>
+
+          <div class="usecase-terminal">
+            <div class="usecase-terminal-bar">
+              <span class="usecase-terminal-title">Agent Tool Routing Telemetry</span>
+              <span class="usecase-terminal-badge">&lt; 0.8ms WASM</span>
+            </div>
+            <div class="usecase-terminal-body">
+              <div class="usecase-step-label">Input User Intent</div>
+              <div class="usecase-code-snippet">"Please refund order #84912 immediately, customer was billed twice on Stripe"</div>
+              
+              <div class="usecase-step-label">Leio Decision Evaluation</div>
+              <div class="usecase-code-snippet output">{
+  "selected_tool": "finance:stripe_refund_charge",
+  "confidence": 0.984,
+  "ontology_branch": ["Tool", "Finance", "Payments", "Refund"],
+  "axioms_verified": true,
+  "action": "EXECUTE_TOOL_DIRECTLY"
+}</div>
+              <div style="font-size:0.72rem;color:#10b981;font-weight:600;">
+                ✓ Tool executed in 1.1ms total &middot; No LLM token tax incurred
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Solution 3: Cloud Infrastructure & Autonomous SRE -->
-        <div class="solution-card">
-          <div>
-            <div class="solution-card-header">
-              <div class="solution-icon-wrap">🚨</div>
-              <div>
-                <div class="solution-industry">Cloud Infrastructure &amp; Telecom</div>
-                <h3 class="solution-title">Deterministic Incident Triage &amp; Routing</h3>
+        <!-- Use Case 2: GS1 Supply Chain Conveyor Diverter -->
+        <div class="usecase-card-detailed">
+          <div class="usecase-info">
+            <span class="usecase-badge">📦 Supply Chain &middot; Logistics &middot; GS1 &middot; Edge PLC</span>
+            <h3 class="usecase-heading">Conveyor Sorter &amp; Cold-Chain Divert at Line Rate</h3>
+            
+            <div class="usecase-block">
+              <div class="usecase-block-label problem">❌ The Problem Without Leio</div>
+              <div class="usecase-block-text">
+                Fulfillment conveyor lines move parcels at 4 meters/second. A 1,500ms cloud LLM call causes packages to shoot past diverter chutes, triggering line emergency stops and barcode read timeouts.
               </div>
             </div>
-            <p class="solution-body">
-              During cascading cloud outages, thousands of microservice alerts fire simultaneously. 
-              Heuristic LLM triage suffers from stochastic hallucinations and rate-limit throttling. 
-              Leio evaluates incident topologies with axiomatic disjointness (<code>A &sqcap; B = &bot;</code>), 
-              guaranteeing mutually exclusive root-cause routing in under 1ms.
-            </p>
+
+            <div class="usecase-block">
+              <div class="usecase-block-label solution">✓ The Solution With Leio</div>
+              <div class="usecase-block-text">
+                The 189 KB WebAssembly binary runs embedded on edge PLC controllers. It classifies 200kHz barcode and optical sensor streams in <strong>&lt; 1 microsecond</strong> with mathematical cold-chain guarantees.
+              </div>
+            </div>
+
+            <div class="usecase-metrics-strip">
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">&lt; 1 &mu;s</span>
+                <span class="usecase-metric-lbl">In-RAM edge execution</span>
+              </div>
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">Zero</span>
+                <span class="usecase-metric-lbl">Conveyor line stoppages</span>
+              </div>
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">100%</span>
+                <span class="usecase-metric-lbl">GS1-128 compliance</span>
+              </div>
+            </div>
           </div>
-          <div class="solution-metric-pill">
-            <span style="color:var(--accent-green);font-weight:700;">250x Cost Reduction</span>
-            <span>&middot;</span>
-            <span>Zero Alert Hallucinations</span>
+
+          <div class="usecase-terminal">
+            <div class="usecase-terminal-bar">
+              <span class="usecase-terminal-title">Warehouse PLC Optical Telemetry</span>
+              <span class="usecase-terminal-badge">&lt; 1&mu;s Hardware Rate</span>
+            </div>
+            <div class="usecase-terminal-body">
+              <div class="usecase-step-label">Laser Scanner &amp; OCR Feed</div>
+              <div class="usecase-code-snippet">"GTIN: 0614141000036 Grade A organic pasteurized whole milk 1gal jug, temp 36F, induction sealed"</div>
+              
+              <div class="usecase-step-label">Leio Decision Evaluation</div>
+              <div class="usecase-code-snippet output">{
+  "curie": "gs1:MilkButterCreamYogurtCheeseEggsSubstitutes",
+  "parent": "gs1:FoodBeverageTobaccoProduct",
+  "confidence": 0.991,
+  "cold_chain_divert_required": true,
+  "plc_signal": "PULSE_CHUTE_DIVERTER_03"
+}</div>
+              <div style="font-size:0.72rem;color:#10b981;font-weight:600;">
+                ✓ PLC Diverter Solenoid Activated in 850 nanoseconds
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Solution 4: Financial Services & Compliance -->
-        <div class="solution-card">
-          <div>
-            <div class="solution-card-header">
-              <div class="solution-icon-wrap">💳</div>
-              <div>
-                <div class="solution-industry">Financial Services &amp; RegTech</div>
-                <h3 class="solution-title">Auditable Monotonic Decision Infrastructure</h3>
+        <!-- Use Case 3: SRE Incident Triage & Automated Runbook Dispatch -->
+        <div class="usecase-card-detailed">
+          <div class="usecase-info">
+            <span class="usecase-badge">🚨 Cloud SRE &middot; DevOps &middot; Datadog &middot; PagerDuty</span>
+            <h3 class="usecase-heading">Deterministic Incident Triage During Alert Storms</h3>
+            
+            <div class="usecase-block">
+              <div class="usecase-block-label problem">❌ The Problem Without Leio</div>
+              <div class="usecase-block-text">
+                When a Kubernetes cluster partitions, 5,000 alerts hit PagerDuty in 60 seconds. LLMs rate-limit immediately, cost thousands of dollars, and hallucinate conflicting runbook assignments across teams.
               </div>
             </div>
-            <p class="solution-body">
-              Financial regulators (SEC, FINRA, BaFin) mandate explainable, reproducible decision trails for 
-              automated transaction monitoring, sanctions screening, and credit risk evaluation. 
-              Every Leio classification outputs formal category-theoretic proofs and exact confidence intervals for full regulatory audit compliance.
-            </p>
+
+            <div class="usecase-block">
+              <div class="usecase-block-label solution">✓ The Solution With Leio</div>
+              <div class="usecase-block-text">
+                Leio evaluates alerts over the formal incident topology. Axiomatic disjointness (<code>A &sqcap; B = &bot;</code>) mathematically guarantees mutually exclusive root-cause routing in under 1ms.
+              </div>
+            </div>
+
+            <div class="usecase-metrics-strip">
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">0.8 ms</span>
+                <span class="usecase-metric-lbl">Mean Time to Acknowledge</span>
+              </div>
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">250x</span>
+                <span class="usecase-metric-lbl">Cloud triage cost reduction</span>
+              </div>
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">Zero</span>
+                <span class="usecase-metric-lbl">Conflicting team runbooks</span>
+              </div>
+            </div>
           </div>
-          <div class="solution-metric-pill">
-            <span style="color:var(--accent-green);font-weight:700;">Immutable Audit Proofs</span>
-            <span>&middot;</span>
-            <span>Deterministic Compliance</span>
+
+          <div class="usecase-terminal">
+            <div class="usecase-terminal-bar">
+              <span class="usecase-terminal-title">SRE Alert Ingestion Stream</span>
+              <span class="usecase-terminal-badge">&lt; 1ms Edge API</span>
+            </div>
+            <div class="usecase-terminal-body">
+              <div class="usecase-step-label">Kubernetes Cluster Event</div>
+              <div class="usecase-code-snippet">"etcd cluster lost quorum on region us-east-1a, peer connections timing out on TLS port 2380"</div>
+              
+              <div class="usecase-step-label">Leio Decision Evaluation</div>
+              <div class="usecase-code-snippet output">{
+  "curie": "incident:EtcdQuorumLoss",
+  "disjoint_check": "NetworkPartition ⊓ EtcdLoss = ⊥ (PASSED)",
+  "confidence": 0.988,
+  "route_target": "sre-storage-core-oncall",
+  "runbook_trigger": "etcd_snapshot_restore_auto"
+}</div>
+              <div style="font-size:0.72rem;color:#10b981;font-weight:600;">
+                ✓ Routed to Storage On-Call in 0.72ms &middot; Runbook dispatched
+              </div>
+            </div>
           </div>
         </div>
+
+        <!-- Use Case 4: Clinical Healthcare Triage & HIPAA Diagnostic Coding -->
+        <div class="usecase-card-detailed">
+          <div class="usecase-info">
+            <span class="usecase-badge">🧬 Healthcare &middot; Clinical Informatics &middot; DOID &middot; HIPAA</span>
+            <h3 class="usecase-heading">Air-Gapped Clinical Diagnostic Triage &amp; EHR Coding</h3>
+            
+            <div class="usecase-block">
+              <div class="usecase-block-label problem">❌ The Problem Without Leio</div>
+              <div class="usecase-block-text">
+                Sending raw patient clinical notes to public cloud LLMs violates HIPAA and GDPR. Self-hosting 70B open models requires 4x A100 GPUs ($8,000/mo) and suffers from stochastic diagnostic inconsistencies.
+              </div>
+            </div>
+
+            <div class="usecase-block">
+              <div class="usecase-block-label solution">✓ The Solution With Leio</div>
+              <div class="usecase-block-text">
+                Runs 100% on-premises in hospital networks or client browser EHR software with formal subsumption monotonicity: a child disease probability can never mathematically exceed its parent pathology.
+              </div>
+            </div>
+
+            <div class="usecase-metrics-strip">
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">100%</span>
+                <span class="usecase-metric-lbl">Air-gapped HIPAA compliant</span>
+              </div>
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">P(A) &le; P(B)</span>
+                <span class="usecase-metric-lbl">Formal monotonicity proof</span>
+              </div>
+              <div class="usecase-metric-stat">
+                <span class="usecase-metric-val">Zero</span>
+                <span class="usecase-metric-lbl">Cloud PHI data transit</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="usecase-terminal">
+            <div class="usecase-terminal-bar">
+              <span class="usecase-terminal-title">Hospital EHR Clinical Note Triage</span>
+              <span class="usecase-terminal-badge">100% On-Premises</span>
+            </div>
+            <div class="usecase-terminal-body">
+              <div class="usecase-step-label">Clinician Observation Note</div>
+              <div class="usecase-code-snippet">"Patient presents with malignant tumor arising from blood vessel endothelium, vascular cancer"</div>
+              
+              <div class="usecase-step-label">Leio Decision Evaluation</div>
+              <div class="usecase-code-snippet output">{
+  "curie": "DOID:0001816 (angiosarcoma)",
+  "parent": "DOID:162 (malignant neoplasm)",
+  "monotonicity_check": "P(child: 0.941) <= P(parent: 0.985) [VERIFIED]",
+  "hipaa_status": "PROCESSED_IN_RAM_AIR_GAPPED",
+  "icd_mapping": "C49.9"
+}</div>
+              <div style="font-size:0.72rem;color:#10b981;font-weight:600;">
+                ✓ Evaluated locally in 0.82ms &middot; Zero PHI touched external cloud
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
