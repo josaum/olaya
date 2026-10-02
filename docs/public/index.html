@@ -1188,8 +1188,8 @@
 
     .calc-metrics-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
       margin-top: 2rem;
     }
 
@@ -3987,11 +3987,22 @@
       </div>
 
       <div class="calc-slider-wrap">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;">
-          <span style="font-size:0.92rem;font-weight:600;color:var(--text-secondary);">Monthly Decision Volume:</span>
-          <span id="calcVolumeDisplay" style="font-size:1.5rem;font-weight:800;font-family:var(--font-mono);color:var(--accent-blue);">1,000,000</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.75rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <label for="calcModelSelect" style="font-size:0.85rem;font-weight:600;color:var(--text-secondary);">Benchmark Against:</label>
+            <select id="calcModelSelect" onchange="updateCalculator(document.getElementById('calcSlider').value)" style="background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.4rem 0.75rem;font-size:0.82rem;font-weight:600;color:var(--text-main);cursor:pointer;">
+              <option value="gpt4o">GPT-4o ($2.50 in / $10.00 out)</option>
+              <option value="claude">Claude 3.5 Sonnet ($3.00 in / $15.00 out)</option>
+              <option value="gpt4omini" selected>GPT-4o-mini ($0.15 in / $0.60 out)</option>
+              <option value="mistral">Mistral Small ($0.10 in / $0.30 out)</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:0.4rem;">
+            <span style="font-size:0.85rem;color:var(--text-muted);font-weight:600;">Decisions / Month:</span>
+            <span id="calcVolumeDisplay" style="font-size:1.5rem;font-weight:800;font-family:var(--font-mono);color:var(--accent-blue);">1,000,000</span>
+          </div>
         </div>
-        <input type="range" id="calcSlider" class="calc-slider" min="100000" max="50000000" step="100000" value="1000000" oninput="updateCalculator(this.value)">
+        <input type="range" id="calcSlider" class="calc-slider" aria-label="Monthly Decision Volume" min="100000" max="50000000" step="100000" value="1000000" oninput="updateCalculator(this.value)">
 
         <div class="slider-presets-row">
           <span style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;font-weight:600;">Quick Presets:</span>
@@ -4005,21 +4016,27 @@
 
       <div class="calc-metrics-grid">
         <div class="calc-metric-box">
-          <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;font-weight:600;">Standard LLM Cost</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;font-weight:600;">Current LLM API Cost</div>
           <div id="calcLlmCost" style="font-size:1.6rem;font-weight:800;color:var(--accent-red);font-family:var(--font-mono);">$4,500.00 / mo</div>
-          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.3rem;">~300 input + 150 output tokens</div>
+          <div id="calcLlmSub" style="font-size:0.72rem;color:var(--text-muted);margin-top:0.3rem;">~300 input + 80 output tokens</div>
         </div>
 
         <div class="calc-metric-box">
           <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;font-weight:600;">Leio System 1 Cost</div>
           <div id="calcLeioCost" style="font-size:1.6rem;font-weight:800;color:var(--accent-green);font-family:var(--font-mono);">$1.26 / mo</div>
-          <div style="font-size:0.72rem;color:var(--accent-green);margin-top:0.3rem;font-weight:600;">Outputs 100% Free</div>
+          <div style="font-size:0.72rem;color:var(--accent-green);margin-top:0.3rem;font-weight:600;">Outputs 100% Free &amp; Unmetered</div>
         </div>
 
         <div class="calc-metric-box savings">
-          <div style="font-size:0.78rem;color:var(--accent-green);margin-bottom:0.3rem;font-weight:700;">Net Annual Savings</div>
-          <div id="calcAnnualSavings" style="font-size:1.6rem;font-weight:800;color:var(--accent-green);font-family:var(--font-mono);">$53,984.88 / year saved</div>
-          <div id="calcLeioTime" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.3rem;font-weight:600;">&lt; 0.80 seconds total time</div>
+          <div style="font-size:0.78rem;color:var(--accent-green);margin-bottom:0.3rem;font-weight:700;">Net Annual Dollar Savings</div>
+          <div id="calcAnnualSavings" style="font-size:1.6rem;font-weight:800;color:var(--accent-green);font-family:var(--font-mono);">$53,984.88 / yr</div>
+          <div id="calcLeioTime" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.3rem;font-weight:600;">99.9% cost reduction</div>
+        </div>
+
+        <div class="calc-metric-box">
+          <div style="font-size:0.78rem;color:var(--accent-blue);margin-bottom:0.3rem;font-weight:700;">Wall-Clock Time Eliminated</div>
+          <div id="calcHoursSaved" style="font-size:1.6rem;font-weight:800;color:var(--accent-blue);font-family:var(--font-mono);">402.5 hrs / mo</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.3rem;">Agent blocking time recovered</div>
         </div>
       </div>
     </section>
@@ -5045,25 +5062,50 @@
       slider.style.background = `linear-gradient(to right, #0284c7 0%, #38bdf8 ${pct}%, #e2e8f0 ${pct}%, #e2e8f0 100%)`;
     }
 
+    const MODEL_RATES = {
+      gpt4o: { inRate: 2.50 / 1e6, outRate: 10.00 / 1e6, name: "GPT-4o", avgIn: 300, avgOut: 80, latencySec: 1.45 },
+      claude: { inRate: 3.00 / 1e6, outRate: 15.00 / 1e6, name: "Claude 3.5 Sonnet", avgIn: 300, avgOut: 80, latencySec: 1.65 },
+      gpt4omini: { inRate: 0.15 / 1e6, outRate: 0.60 / 1e6, name: "GPT-4o-mini", avgIn: 300, avgOut: 80, latencySec: 0.95 },
+      mistral: { inRate: 0.10 / 1e6, outRate: 0.30 / 1e6, name: "Mistral Small", avgIn: 300, avgOut: 80, latencySec: 0.85 }
+    };
+
     function updateCalculator(val) {
       updateSliderTrack(val);
       const volume = Number(val);
       const displayEl = document.getElementById('calcVolumeDisplay');
       if (displayEl) displayEl.textContent = volume.toLocaleString();
 
-      const llmMonthlyCost = volume * 0.0045;
-      const leioMonthlyCost = volume * 0.00000126;
+      const modelSelect = document.getElementById('calcModelSelect');
+      const modelKey = modelSelect ? modelSelect.value : 'gpt4omini';
+      const model = MODEL_RATES[modelKey] || MODEL_RATES.gpt4omini;
+
+      const llmCostPerDecision = (model.avgIn * model.inRate) + (model.avgOut * model.outRate);
+      const llmMonthlyCost = volume * llmCostPerDecision;
+      const leioCostPerDecision = model.avgIn * (0.042 / 1e6);
+      const leioMonthlyCost = volume * leioCostPerDecision;
       const annualSavings = (llmMonthlyCost - leioMonthlyCost) * 12;
-      const leioSeconds = (volume * 0.0000008).toFixed(2);
+
+      const secondsSaved = volume * (model.latencySec - 0.0008);
+      const hoursSaved = (secondsSaved / 3600).toFixed(1);
 
       const calcLlmCost = document.getElementById('calcLlmCost');
       if (calcLlmCost) calcLlmCost.textContent = '$' + llmMonthlyCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / mo';
+
+      const calcLlmSub = document.getElementById('calcLlmSub');
+      if (calcLlmSub) calcLlmSub.textContent = `~${model.avgIn} in + ${model.avgOut} out tokens (${model.name})`;
+
       const calcLeioCost = document.getElementById('calcLeioCost');
       if (calcLeioCost) calcLeioCost.textContent = '$' + leioMonthlyCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / mo';
+
       const calcAnnualSavings = document.getElementById('calcAnnualSavings');
-      if (calcAnnualSavings) calcAnnualSavings.textContent = '$' + annualSavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / year saved';
+      if (calcAnnualSavings) calcAnnualSavings.textContent = '$' + annualSavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / yr';
+
       const calcLeioTime = document.getElementById('calcLeioTime');
-      if (calcLeioTime) calcLeioTime.textContent = '< ' + leioSeconds + ' seconds total';
+      const pctDrop = llmMonthlyCost > 0 ? (((llmMonthlyCost - leioMonthlyCost) / llmMonthlyCost) * 100).toFixed(1) : '99.9';
+      if (calcLeioTime) calcLeioTime.textContent = `${pctDrop}% infrastructure cost reduction`;
+
+      const calcHoursSaved = document.getElementById('calcHoursSaved');
+      if (calcHoursSaved) calcHoursSaved.textContent = Number(hoursSaved).toLocaleString() + ' hrs / mo';
     }
 
     function setCalcPreset(val) {
