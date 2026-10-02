@@ -17,6 +17,121 @@
   <meta name="twitter:description" content="Evaluate formal ontologies in < 1ms. $0.042/1M input tokens. Outputs always free.">
   <meta name="twitter:image" content="https://public-nine-jade-58.vercel.app/og-preview.png">
 
+  <!-- Structured Data: JSON-LD for AI Agents and Search Engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://public-nine-jade-58.vercel.app/#website",
+        "url": "https://public-nine-jade-58.vercel.app/",
+        "name": "Leio Decision Infrastructure",
+        "description": "Sub-millisecond decision infrastructure for autonomous software agents and production systems.",
+        "publisher": {
+          "@id": "https://public-nine-jade-58.vercel.app/#organization"
+        }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://public-nine-jade-58.vercel.app/#organization",
+        "name": "Leio AI",
+        "url": "https://public-nine-jade-58.vercel.app/",
+        "logo": "https://public-nine-jade-58.vercel.app/og-preview.png",
+        "sameAs": [
+          "https://github.com/josaum/olaya"
+        ]
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://public-nine-jade-58.vercel.app/#software",
+        "name": "Leio System 1 Decision Engine",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "WebAssembly, Node.js, Python, Linux, macOS, Cloudflare Workers, Vercel Edge",
+        "description": "High-performance ontology-grounded decision engine evaluating formal subsumption lattices in < 1ms with proven monotonicity and zero hallucination.",
+        "offers": {
+          "@type": "AggregateOffer",
+          "priceCurrency": "USD",
+          "lowPrice": "0.00",
+          "highPrice": "0.042",
+          "offerCount": "3",
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Developer Free Tier",
+              "price": "0.00",
+              "priceCurrency": "USD",
+              "description": "100,000 free decisions/month, WASM client runtime, open weights."
+            },
+            {
+              "@type": "Offer",
+              "name": "Production Edge API",
+              "price": "0.042",
+              "priceCurrency": "USD",
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "0.042",
+                "priceCurrency": "USD",
+                "unitText": "1M input tokens (outputs 100% free)"
+              }
+            },
+            {
+              "@type": "Offer",
+              "name": "Air-Gapped Enterprise Appliance",
+              "price": "3500.00",
+              "priceCurrency": "USD",
+              "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "3500.00",
+                "priceCurrency": "USD",
+                "unitText": "month (dedicated VPC, custom ontologies, SLA)"
+              }
+            }
+          ]
+        },
+        "featureList": [
+          "Sub-microsecond WASM in-browser inference",
+          "Input-only billing at $0.042/1M tokens with free outputs",
+          "Mathematically proven subsumption monotonicity P(A) <= P(B)",
+          "Axiomatic disjointness preservation A ⊓ B = ⊥",
+          "Zero hallucination via bounded ontology downsets",
+          "GS1, DOID, BFO, Schema.org, and custom enterprise ontology support"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://public-nine-jade-58.vercel.app/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Leio and how is it different from an LLM?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Leio is a sub-millisecond System 1 decision engine for software systems and AI agents. Unlike generative LLMs that predict arbitrary next tokens at 1,500ms latency, Leio evaluates formal ontology lattices in under 1 millisecond with mathematical guarantees against hallucination and proven monotonicity."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does Leio pricing work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Leio charges $0.042 per 1,000,000 input tokens. Output decisions and probability vectors are 100% free and unmetered, resulting in up to 250x lower infrastructure cost than LLMs."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can Leio run on-premise or in-browser without sending data to third parties?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Leio compiles to a 189 KB WebAssembly (WASM) binary and Docker appliance that runs entirely client-side or inside air-gapped VPCs with Zero Data Retention (ZDR), fully compliant with HIPAA and SOC 2."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
   <!-- Inter & JetBrains Mono Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -604,6 +719,63 @@
       border-color: var(--border);
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       font-weight: 700;
+    }
+
+    .tab-btn.highlight-poc-tab {
+      background: rgba(124, 58, 237, 0.08);
+      border-color: rgba(124, 58, 237, 0.25);
+      color: var(--accent-purple);
+      font-weight: 700;
+    }
+
+    .tab-btn.highlight-poc-tab:hover {
+      background: rgba(124, 58, 237, 0.15);
+      color: var(--accent-purple);
+    }
+
+    .tab-btn.highlight-poc-tab.active {
+      background: var(--accent-purple);
+      color: #ffffff;
+      border-color: var(--accent-purple);
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent-blue);
+      outline-offset: 2px;
+    }
+
+    .skip-nav-link {
+      position: absolute;
+      top: -70px;
+      left: 1rem;
+      background: var(--accent-blue);
+      color: #ffffff;
+      padding: 0.6rem 1.2rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      z-index: 999999;
+      text-decoration: none;
+      transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+
+    .skip-nav-link:focus {
+      top: 14px;
+      outline: 2px solid #ffffff;
+    }
+
+    .custom-concept-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(124, 58, 237, 0.1);
+      color: var(--accent-purple);
+      border: 1px solid rgba(124, 58, 237, 0.25);
+      border-radius: 999px;
+      padding: 0.15rem 0.6rem;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
     }
 
     .workbench-body {
@@ -2721,6 +2893,7 @@
 </head>
 <body>
 
+  <a href="#demo" class="skip-nav-link">Skip to Interactive Demo (Tab to Focus)</a>
   <div class="ambient-glow-top"></div>
 
   <!-- ── Fixed Clean Navbar ── -->
@@ -2918,21 +3091,45 @@
           </div>
         </div>
 
-        <!-- 7 Domain Segmented Control Tabs -->
-        <div class="segmented-control">
-          <button id="tab-leio" class="tab-btn active" onclick="switchDomain('leio')">⚡ Leio Model &amp; Pricing</button>
-          <button id="tab-gs1" class="tab-btn" onclick="switchDomain('gs1')">📦 GS1 Supply Chain</button>
-          <button id="tab-doid" class="tab-btn" onclick="switchDomain('doid')">🧬 Disease (DOID)</button>
-          <button id="tab-schemaorg" class="tab-btn" onclick="switchDomain('schemaorg')">🌐 Schema.org</button>
-          <button id="tab-incident" class="tab-btn" onclick="switchDomain('incident')">🚨 SRE Incidents</button>
-          <button id="tab-bfo" class="tab-btn" onclick="switchDomain('bfo')">🏛️ BFO Upper</button>
-          <button id="tab-skos" class="tab-btn" onclick="switchDomain('skos')">📚 SKOS</button>
+        <!-- Domain Segmented Control Tabs -->
+        <div class="segmented-control" role="tablist" aria-label="Ontology Domains">
+          <button id="tab-leio" role="tab" aria-selected="true" class="tab-btn active" onclick="switchDomain('leio')">⚡ Leio Model &amp; Pricing</button>
+          <button id="tab-custom" role="tab" aria-selected="false" class="tab-btn highlight-poc-tab" onclick="switchDomain('custom')">🧪 Instant Custom POC</button>
+          <button id="tab-gs1" role="tab" aria-selected="false" class="tab-btn" onclick="switchDomain('gs1')">📦 GS1 Supply Chain</button>
+          <button id="tab-doid" role="tab" aria-selected="false" class="tab-btn" onclick="switchDomain('doid')">🧬 Disease (DOID)</button>
+          <button id="tab-schemaorg" role="tab" aria-selected="false" class="tab-btn" onclick="switchDomain('schemaorg')">🌐 Schema.org</button>
+          <button id="tab-incident" role="tab" aria-selected="false" class="tab-btn" onclick="switchDomain('incident')">🚨 SRE Incidents</button>
+          <button id="tab-bfo" role="tab" aria-selected="false" class="tab-btn" onclick="switchDomain('bfo')">🏛️ BFO Upper</button>
+          <button id="tab-skos" role="tab" aria-selected="false" class="tab-btn" onclick="switchDomain('skos')">📚 SKOS</button>
         </div>
 
         <!-- 2-Column Split Workbench -->
         <div class="workbench-body">
           <!-- Left: Input & Ranked Concept Probabilities -->
           <div class="workbench-pane">
+            <!-- Custom POC Template & Category Sandbox Panel -->
+            <div id="customPocPanel" style="display:none;background:rgba(124,58,237,0.04);border:1px solid rgba(124,58,237,0.22);border-radius:var(--radius-sm);padding:0.9rem;margin-bottom:1rem;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;flex-wrap:wrap;gap:0.5rem;">
+                <span style="font-size:0.82rem;font-weight:700;color:var(--accent-purple);display:flex;align-items:center;gap:0.35rem;">
+                  🧪 Custom Enterprise Schema Sandbox
+                </span>
+                <span style="font-size:0.75rem;color:var(--text-muted);">Compiled in browser in &lt; 1ms</span>
+              </div>
+              <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.5rem;">
+                Select an enterprise template to test custom categories:
+              </div>
+              <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.75rem;" id="customTemplateButtons">
+                <button type="button" class="preset-btn" style="border-color:rgba(124,58,237,0.35);font-size:0.75rem;" onclick="loadCustomTemplate('fintech')">💳 FinTech Fraud Risk</button>
+                <button type="button" class="preset-btn" style="border-color:rgba(124,58,237,0.35);font-size:0.75rem;" onclick="loadCustomTemplate('support')">🎫 Support Ticket Triage</button>
+                <button type="button" class="preset-btn" style="border-color:rgba(124,58,237,0.35);font-size:0.75rem;" onclick="loadCustomTemplate('devops')">☁️ SRE Outage Severity</button>
+                <button type="button" class="preset-btn" style="border-color:rgba(124,58,237,0.35);font-size:0.75rem;" onclick="loadCustomTemplate('legal')">⚖️ Legal Contract Risk</button>
+              </div>
+              <div style="font-size:0.74rem;color:var(--text-muted);display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap;">
+                <span>Active Classes:</span>
+                <span id="customConceptBadges" style="display:flex;gap:0.3rem;flex-wrap:wrap;"></span>
+              </div>
+            </div>
+
             <div class="pane-label">
               <span id="inputLabel">Input Observation</span>
               <span id="charCount">0 chars</span>
@@ -4317,6 +4514,181 @@
           { id: "alzheimer", label: "Alzheimer's Disease", text: "Progressive neurodegenerative disease. Amyloid plaque accumulation, neurofibrillary tangles, cognitive decline and dementia in elderly." },
           { id: "melanoma", label: "Cutaneous Melanoma", text: "Malignant skin cancer arising from melanocytes. UV radiation exposure risk factor. BRAF V600E mutation commonly found." }
         ]
+      },
+      custom: {
+        name: "Custom Schema POC Sandbox",
+        badge: "🧪 Custom Enterprise Schema Sandbox",
+        title: "Build Your Own Sub-Millisecond Decision POC",
+        inputLabel: "Observation to Classify with Your Custom Schema",
+        url: null,
+        downsetTarget: "custom:HighRiskFraud",
+        downsetLabel: "requires_immediate_freeze",
+        presets: []
+      }
+    };
+
+    const CUSTOM_TEMPLATES = {
+      fintech: {
+        name: "FinTech Fraud & Risk Triage",
+        target: "custom:HighRiskFraud",
+        targetLabel: "requires_immediate_freeze",
+        concepts: [
+          { curie: "custom:HighRiskFraud", label: "High Risk Fraud", description: "Compromised credential, stolen card velocity anomaly, foreign IP proxy, rapid cash-out attempt.", synonyms: ["fraud", "stolen card", "account takeover", "compromised", "velocity anomaly"], parents: ["custom:TransactionAssessment"], disjointWith: ["custom:LegitimateTx"] },
+          { curie: "custom:SuspiciousActivity", label: "Suspicious Activity", description: "Unusual merchant category, first-time international purchase, velocity trigger warning.", synonyms: ["suspicious", "unusual", "flagged transaction", "requires review", "anomaly"], parents: ["custom:TransactionAssessment"], disjointWith: [] },
+          { curie: "custom:LegitimateTx", label: "Legitimate Transaction", description: "Standard cardholder purchase matching historical behavior, chip and PIN verified, familiar merchant.", synonyms: ["normal", "approved", "legitimate", "trusted merchant", "verified"], parents: ["custom:TransactionAssessment"], disjointWith: ["custom:HighRiskFraud"] },
+          { curie: "custom:ChargebackDispute", label: "Customer Chargeback Dispute", description: "Customer reported unrecognized charge, double billing, or friendly fraud dispute.", synonyms: ["chargeback", "dispute", "unrecognized charge", "double billing", "refund claim"], parents: ["custom:TransactionAssessment"], disjointWith: [] },
+          { curie: "custom:TransactionAssessment", label: "Transaction Assessment", description: "Root financial transaction security classification.", synonyms: ["root", "transaction", "assessment"], parents: [], disjointWith: [] }
+        ],
+        presets: [
+          { id: "fraud1", label: "🚨 Stolen Card Anomaly", text: "Cardholder in Chicago, transaction originated from Tor exit node IP in Moscow for $4,999 gift cards within 45 seconds of password reset." },
+          { id: "legit1", label: "✅ Grocery POS Purchase", text: "Recurring weekly grocery purchase at local supermarket with chip-and-PIN verified matching billing zip code." },
+          { id: "dispute1", label: "⚠️ Friendly Fraud Dispute", text: "Customer claims double billing for subscription renewal on bank statement, requesting chargeback refund." }
+        ]
+      },
+      support: {
+        name: "Customer Support Intent Routing",
+        target: "custom:BillingDispute",
+        targetLabel: "route_to_finance_tier3",
+        concepts: [
+          { curie: "custom:BillingDispute", label: "Billing Dispute", description: "Invoice error, unexpected charge, payment method decline, refund request.", synonyms: ["invoice", "refund", "charged twice", "subscription renewal", "credit card"], parents: ["custom:SupportTicket"], disjointWith: ["custom:FeatureRequest"] },
+          { curie: "custom:BugReport", label: "Software Bug Report", description: "500 server error, application crash, broken UI button, API timeout.", synonyms: ["bug", "crash", "error 500", "broken", "traceback", "exception"], parents: ["custom:SupportTicket"], disjointWith: [] },
+          { curie: "custom:FeatureRequest", label: "Feature Request", description: "Suggestion for new integration, export button, dark mode, capability enhancement.", synonyms: ["feature", "request", "integration", "enhancement", "roadmap"], parents: ["custom:SupportTicket"], disjointWith: ["custom:BillingDispute"] },
+          { curie: "custom:AccountAccess", label: "Account Access Lockout", description: "Forgot password, 2FA lost, SSO failure, locked user profile.", synonyms: ["password reset", "2fa lockout", "sso login", "locked account"], parents: ["custom:SupportTicket"], disjointWith: [] },
+          { curie: "custom:SupportTicket", label: "Support Ticket", description: "Root customer inquiry classification.", synonyms: ["ticket", "support", "inquiry"], parents: [], disjointWith: [] }
+        ],
+        presets: [
+          { id: "sup_bug", label: "💥 Production API 500 Crash", text: "Whenever we POST to /v1/checkout we get an unhandled 500 Internal Server Error traceback on the checkout button." },
+          { id: "sup_bill", label: "💳 Double Charge Dispute", text: "I was billed twice on my Mastercard for the annual plan renewal on October 1st. Please issue a refund immediately." },
+          { id: "sup_feat", label: "💡 Linear Integration Request", text: "Can you add a direct webhook integration with Linear issues and GitHub project boards on the enterprise roadmap?" }
+        ]
+      },
+      devops: {
+        name: "DevOps & SRE Outage Severity",
+        target: "custom:P0Critical",
+        targetLabel: "page_oncall_executive",
+        concepts: [
+          { curie: "custom:P0Critical", label: "P0 Critical Outage", description: "Complete service down, data corruption, customer-facing revenue outage, primary database partition failure.", synonyms: ["p0", "outage", "database down", "revenue down", "critical emergency"], parents: ["custom:IncidentSeverity"], disjointWith: ["custom:P2Routine"] },
+          { curie: "custom:P1Degraded", label: "P1 Degraded Performance", description: "Elevated p99 latency above 2000ms, partial region failover, intermittent 502 bad gateway spikes.", synonyms: ["p1", "high latency", "degraded", "slow queries", "gateway timeout"], parents: ["custom:IncidentSeverity"], disjointWith: [] },
+          { curie: "custom:P2Routine", label: "P2 Routine Bug", description: "Non-critical administrative dashboard cosmetic flaw, delayed analytics batch, minor log spam.", synonyms: ["p2", "minor bug", "cosmetic", "routine", "non-urgent"], parents: ["custom:IncidentSeverity"], disjointWith: ["custom:P0Critical"] },
+          { curie: "custom:IncidentSeverity", label: "Incident Severity", description: "Root infrastructure incident triage.", synonyms: ["incident", "severity", "triage"], parents: [], disjointWith: [] }
+        ],
+        presets: [
+          { id: "p0_ex", label: "🚨 Primary Postgres Offline", text: "FATAL: primary Postgres database cluster unreachable in us-east-1, all customer checkouts and payments failing with 503." },
+          { id: "p1_ex", label: "⚠️ P99 Latency Surge 4500ms", text: "Redis cache eviction spike causing p99 search latency to degrade from 45ms to 4500ms across EU edge nodes." },
+          { id: "p2_ex", label: "ℹ️ Internal Analytics Delay", text: "Nightly cron job for internal BI metrics aggregation delayed by 30 minutes due to worker queue backlog." }
+        ]
+      },
+      legal: {
+        name: "Legal Contract Risk Review",
+        target: "custom:UnlimitedLiability",
+        targetLabel: "requires_general_counsel_veto",
+        concepts: [
+          { curie: "custom:UnlimitedLiability", label: "Unlimited Liability Clause", description: "Clause exposing company to uncapped indemnification, direct/indirect consequential damages without ceiling.", synonyms: ["unlimited liability", "uncapped damages", "consequential damages", "indemnity ceiling"], parents: ["custom:ContractRisk"], disjointWith: ["custom:StandardMSA"] },
+          { curie: "custom:DataExclusivity", label: "IP & Data Exclusivity Loss", description: "Vendor claims ownership or training rights over customer proprietary data and model embeddings.", synonyms: ["data ownership", "training rights", "ip transfer", "exclusivity"], parents: ["custom:ContractRisk"], disjointWith: [] },
+          { curie: "custom:StandardMSA", label: "Standard Commercial Terms", description: "Standard master services agreement with 12-month fees liability cap and mutual confidentiality.", synonyms: ["standard msa", "acceptable terms", "market standard", "mutual nda"], parents: ["custom:ContractRisk"], disjointWith: ["custom:UnlimitedLiability"] },
+          { curie: "custom:ContractRisk", label: "Contract Risk Assessment", description: "Root enterprise legal agreement risk.", synonyms: ["contract", "legal", "terms"], parents: [], disjointWith: [] }
+        ],
+        presets: [
+          { id: "leg_unlim", label: "🚨 Uncapped Indemnification", text: "Customer shall defend, indemnify and hold harmless Vendor against all liabilities without limitation of liability or cap on consequential damages." },
+          { id: "leg_ip", label: "⚠️ AI Model Training Rights", text: "Vendor retains perpetual, worldwide rights to utilize Customer prompt logs and inference payloads to train future foundation models." },
+          { id: "leg_std", label: "✅ Standard 12-Month Cap", text: "In no event shall either party's aggregate liability exceed the total fees paid by Customer during the twelve months preceding the claim." }
+        ]
+      }
+    };
+
+    let activeCustomTemplate = 'fintech';
+
+    window.loadCustomTemplate = async function(templateKey) {
+      if (!CUSTOM_TEMPLATES[templateKey]) return;
+      activeCustomTemplate = templateKey;
+      const tmpl = CUSTOM_TEMPLATES[templateKey];
+
+      DOMAIN_CONFIG.custom.downsetTarget = tmpl.target;
+      DOMAIN_CONFIG.custom.downsetLabel = tmpl.targetLabel;
+      DOMAIN_CONFIG.custom.presets = tmpl.presets;
+
+      const badgeWrap = document.getElementById('customConceptBadges');
+      if (badgeWrap) {
+        badgeWrap.innerHTML = tmpl.concepts
+          .filter(c => c.parents.length > 0)
+          .map(c => `<span class="custom-concept-tag">${c.label}</span>`)
+          .join('');
+      }
+
+      const tmplBtns = document.querySelectorAll('#customTemplateButtons .preset-btn');
+      tmplBtns.forEach(btn => {
+        if (btn.getAttribute('onclick')?.includes(templateKey)) {
+          btn.style.background = 'var(--accent-purple)';
+          btn.style.color = '#ffffff';
+          btn.style.borderColor = 'var(--accent-purple)';
+        } else {
+          btn.style.background = 'transparent';
+          btn.style.color = 'var(--text-secondary)';
+          btn.style.borderColor = 'rgba(124, 58, 237, 0.35)';
+        }
+      });
+
+      const container = document.getElementById('presetsContainer');
+      if (container) {
+        container.innerHTML = '';
+        tmpl.presets.forEach(p => {
+          const b = document.createElement('button');
+          b.className = 'preset-btn';
+          b.textContent = p.label;
+          b.onclick = () => {
+            const input = document.getElementById('stateInput');
+            if (input) {
+              input.value = p.text;
+              triggerDecision();
+            }
+          };
+          container.appendChild(b);
+        });
+      }
+
+      const dag = OntologyDAG.fromJSON({ concepts: tmpl.concepts });
+      rawConcepts = dag.getAll();
+
+      if (!olayaEngine) {
+        olayaEngine = new OLaya(dag);
+      } else {
+        olayaEngine.switchOntology(dag);
+      }
+
+      if (wasmReady) {
+        try {
+          const conceptsPayload = rawConcepts.map(c => ({
+            id: c.id,
+            curie: c.curie,
+            label: c.label,
+            description: c.description || "",
+            synonyms: c.synonyms || [],
+            parents: c.parents || [],
+            disjoint_with: c.disjointWith || []
+          }));
+          wasmEngine = new OlayaWasm(JSON.stringify(conceptsPayload));
+        } catch (we) {
+          wasmEngine = null;
+        }
+      }
+
+      const latencyBadge = document.getElementById('latencyBadge');
+      if (latencyBadge) {
+        if (wasmReady && wasmEngine) {
+          latencyBadge.textContent = `🦀 WASM Custom (${dag.size()} Classes, < 1µs)`;
+          latencyBadge.style.color = '#03aa5c';
+        } else {
+          latencyBadge.textContent = `⚡ JS Custom (${dag.size()} Classes Ready)`;
+          latencyBadge.style.color = '#0284c7';
+        }
+      }
+
+      if (tmpl.presets.length > 0) {
+        const input = document.getElementById('stateInput');
+        if (input) {
+          input.value = tmpl.presets[0].text;
+          triggerDecision();
+        }
       }
     };
 
@@ -4326,15 +4698,23 @@
       const cfg = DOMAIN_CONFIG[domainKey];
 
       // Update UI Tabs
-      ['leio', 'gs1', 'schemaorg', 'bfo', 'skos', 'incident', 'doid'].forEach(k => {
+      ['leio', 'custom', 'gs1', 'schemaorg', 'bfo', 'skos', 'incident', 'doid'].forEach(k => {
         const btn = document.getElementById(`tab-${k}`);
         if (!btn) return;
         if (k === domainKey) {
           btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
         } else {
           btn.classList.remove('active');
+          btn.setAttribute('aria-selected', 'false');
         }
       });
+
+      // Toggle Custom POC panel
+      const customPocPanel = document.getElementById('customPocPanel');
+      if (customPocPanel) {
+        customPocPanel.style.display = domainKey === 'custom' ? 'block' : 'none';
+      }
 
       // Update Labels
       const demoTitle = document.getElementById('demoTitle');
@@ -4343,6 +4723,11 @@
       if (domainBadge) domainBadge.textContent = cfg.badge;
       const inputLabel = document.getElementById('inputLabel');
       if (inputLabel) inputLabel.textContent = cfg.inputLabel;
+
+      if (domainKey === 'custom') {
+        await window.loadCustomTemplate(activeCustomTemplate);
+        return;
+      }
 
       // Render Presets
       const container = document.getElementById('presetsContainer');
