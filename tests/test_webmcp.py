@@ -190,3 +190,61 @@ def test_mcp_extract_and_ground_tool():
     assert "gs1_grounding" in content
     assert "schemaorg_grounding" in content
     assert content["gs1_grounding"]["confidence"] > 0.0
+
+
+def test_mcp_compliance_ping_and_notifications():
+    server = OLayaMCPServer()
+    ping_req = {
+        "jsonrpc": "2.0",
+        "id": 101,
+        "method": "ping",
+    }
+    resp = server.handle_message(ping_req)
+    assert resp["id"] == 101
+    assert resp["result"] == {}
+
+    # Notification returns None
+    init_note = server.handle_message({"jsonrpc": "2.0", "method": "notifications/initialized"})
+    assert init_note is None
+
+    cancel_note = server.handle_message({"jsonrpc": "2.0", "method": "notifications/cancelled", "params": {"requestId": 1}})
+    assert cancel_note is None
+
+    templates_req = {"jsonrpc": "2.0", "id": 102, "method": "resources/templates/list"}
+    tpl_resp = server.handle_message(templates_req)
+    assert tpl_resp["id"] == 102
+    assert "resourceTemplates" in tpl_resp["result"]
+
+
+def test_mcp_leio_product_ontology():
+    server = OLayaMCPServer(mode="fast")
+    # Test reading resource
+    read_req = {
+        "jsonrpc": "2.0",
+        "id": 103,
+        "method": "resources/read",
+        "params": {"uri": "ontology://leio"},
+    }
+    read_resp = server.handle_message(read_req)
+    contents = json.loads(read_resp["result"]["contents"][0]["text"])
+    assert contents["domain"] == "leio"
+    assert contents["num_concepts"] >= 30
+
+    # Test inspect ecosystem tool
+    call_req = {
+        "jsonrpc": "2.0",
+        "id": 104,
+        "method": "tools/call",
+        "params": {
+            "name": "leio_inspect_ecosystem",
+            "arguments": {
+                "query": "Transparent token accounting at 0.042 dollars per 1 million input tokens with unmetered answers.",
+            },
+        },
+    }
+    resp = server.handle_message(call_req)
+    assert resp["id"] == 104
+    assert not resp["result"]["isError"]
+    content = json.loads(resp["result"]["content"][0]["text"])
+    assert content["domain"] == "leio"
+    assert content["curie"].startswith("leio:") and ("leio:Pricing" in content["lineage"] or content["curie"] in ("leio:InputOnlyMetering", "leio:PayAsYouGoScaleTier", "leio:JevCompatibleBilling", "leio:FreeOutputTokens"))

@@ -45,6 +45,10 @@ def find_ontology_file(domain: str) -> Path | None:
         "incident": DATA_DIR / "incident_ontology.json",
         "gs1voc": DATA_DIR / "gs1_ontology.json",
         "schema": DATA_DIR / "schemaorg_ontology.json",
+        "leio": DATA_DIR / "leio_ontology.json",
+        "product": DATA_DIR / "leio_ontology.json",
+        "model": DATA_DIR / "leio_ontology.json",
+        "pricing": DATA_DIR / "leio_ontology.json",
     }
     if domain in aliases and aliases[domain].is_file():
         return aliases[domain]
@@ -143,7 +147,7 @@ TOOLS = [
                 },
                 "domain": {
                     "type": "string",
-                    "enum": ["gs1", "schemaorg", "doid", "incident"],
+                    "enum": ["gs1", "schemaorg", "doid", "incident", "leio"],
                     "default": "gs1",
                     "description": "Target ontology domain.",
                 },
@@ -171,7 +175,7 @@ TOOLS = [
                 },
                 "domain": {
                     "type": "string",
-                    "enum": ["gs1", "schemaorg", "doid", "incident"],
+                    "enum": ["gs1", "schemaorg", "doid", "incident", "leio"],
                     "default": "gs1",
                     "description": "Ontology domain.",
                 },
@@ -226,6 +230,20 @@ TOOLS = [
         },
     },
     {
+        "name": "leio_inspect_ecosystem",
+        "description": "Ground questions or requirements about Leio's product architecture, model mathematical axioms (subsumption monotonicity, disjointness kernel), and pricing economics ($0.042/1M tokens, developer free tier, enterprise VPC).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "User question, product requirement, pricing inquiry, or architectural scenario.",
+                }
+            },
+            "required": ["query"],
+        },
+    },
+    {
         "name": "olaya_extract_and_ground",
         "description": "Parse raw web HTML, JSON-LD, or GTIN product text, extract microdata, and ground simultaneously across GS1 and Schema.org.",
         "inputSchema": {
@@ -266,6 +284,12 @@ RESOURCES = [
         "description": "System 1 operational reliability and incident triage taxonomy.",
         "mimeType": "application/json",
     },
+    {
+        "uri": "ontology://leio",
+        "name": "Leio Product, Model & Pricing Ontology",
+        "description": "Comprehensive formal ontology defining Leio System 1 product components, mathematical kernel guarantees, and $0.042/1M input pricing tiers.",
+        "mimeType": "application/json",
+    },
 ]
 
 PROMPTS = [
@@ -291,6 +315,17 @@ PROMPTS = [
             }
         ],
     },
+    {
+        "name": "explain_leio_architecture_and_pricing",
+        "description": "Explain how Leio System 1 compares to generative LLMs, its mathematical axiom guarantees, and transparent token pricing.",
+        "arguments": [
+            {
+                "name": "customer_requirement",
+                "description": "Description of the use case, throughput need, or budget constraint.",
+                "required": True,
+            }
+        ],
+    },
 ]
 
 
@@ -301,7 +336,7 @@ class OLayaMCPServer:
         self.mode = mode
         self.server_info = {
             "name": "olaya-mcp",
-            "version": "0.2.0",
+            "version": "0.3.0",
             "protocolVersion": "2024-11-05",
         }
 
@@ -471,6 +506,30 @@ class OLayaMCPServer:
                 "total_latency_ms": res_gs1.latency_ms + res_schema.latency_ms,
             }
 
+        elif name == "leio_inspect_ecosystem":
+            query = args.get("query", "")
+            engine = get_cached_engine("leio", mode=self.mode)
+            res = engine.system_one(
+                state=query,
+                questions={
+                    "ecosystem_ground": {
+                        "type": "concept",
+                        "instructions": "Classify requirement under Leio product components, mathematical model axioms, or pricing tiers.",
+                    }
+                },
+            )
+            ans = res.answers["ecosystem_ground"]
+            return {
+                "domain": "leio",
+                "curie": ans.curie,
+                "label": ans.label,
+                "confidence": ans.confidence,
+                "lineage": ans.lineage,
+                "probabilities": {k: round(v, 4) for k, v in ans.candidate_probabilities.items()},
+                "axioms_verified": ans.axioms_verified,
+                "latency_ms": res.latency_ms,
+            }
+
         raise ValueError(f"Unknown tool: {name}")
 
     def handle_message(self, request: dict[str, Any]) -> dict[str, Any] | None:
@@ -479,19 +538,59 @@ class OLayaMCPServer:
         method = request.get("method")
         params = request.get("params", {})
 
+        # Protocol handshake & negotiation
         if method == "initialize":
+            client_ver = params.get("protocolVersion", "2024-11-05")
+            # Support 2024-11-05 and 2026 specifications
+            protocol_version = client_ver if str(client_ver).startswith(("2024", "2026")) else "2024-11-05"
             return {
                 "jsonrpc": "2.0",
                 "id": req_id,
                 "result": {
-                    "protocolVersion": "2024-11-05",
+                    "protocolVersion": protocol_version,
                     "serverInfo": self.server_info,
                     "capabilities": {
                         "tools": {"listChanged": False},
                         "resources": {"subscribe": False, "listChanged": False},
                         "prompts": {"listChanged": False},
+                        "logging": {},
                     },
                 },
+            }
+
+        elif method in ("notifications/initialized", "initialized"):
+            # Client handshake confirmation (notification, no response)
+            return None
+
+        elif method in ("notifications/cancelled", "cancelled"):
+            return None
+
+        elif method == "ping":
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": {},
+            }
+
+        elif method == "logging/setLevel":
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": {},
+            }
+
+        elif method in ("resources/templates/list", "resourceTemplates/list"):
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": {"resourceTemplates": []},
+            }
+
+        elif method == "completion/complete":
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": {"completion": {"values": [], "hasMore": False}},
             }
 
         elif method == "tools/list":
@@ -545,6 +644,9 @@ class OLayaMCPServer:
             elif prompt_name == "triage_operational_incident":
                 lp = p_args.get("log_payload", "")
                 text = f"Please classify the following operational incident telemetry using O-Laya tools:\n\n{lp}"
+            elif prompt_name == "explain_leio_architecture_and_pricing":
+                cr = p_args.get("customer_requirement", "")
+                text = f"Please evaluate the following system requirement against Leio System 1 architecture, formal axioms, and $0.042/1M pricing:\n\n{cr}"
             else:
                 text = f"Prompt: {prompt_name}"
 
@@ -629,48 +731,78 @@ class OLayaMCPServer:
                 sys.stdout.flush()
 
     def run_sse(self, port: int = 8080) -> None:
-        """Run lightweight HTTP/SSE transport for MCP agents."""
+        """Run standard WebMCP HTTP/SSE transport for browser and cloud agents."""
         server_inst = self
 
         class MCPHandler(http.server.BaseHTTPRequestHandler):
+            def send_cors_headers(self):
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD")
+                self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-Key, mcp-session-id")
+
+            def do_OPTIONS(self):
+                self.send_response(204)
+                self.send_cors_headers()
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+
             def do_POST(self):
                 content_len = int(self.headers.get("Content-Length", 0))
                 body = self.rfile.read(content_len)
                 try:
-                    req = json.loads(body)
+                    req = json.loads(body.decode("utf-8"))
                     resp = server_inst.handle_message(req)
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps(resp).encode("utf-8"))
+                    self.send_response(200 if resp is not None else 204)
+                    self.send_cors_headers()
+                    if resp is not None:
+                        self.send_header("Content-Type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps(resp).encode("utf-8"))
+                    else:
+                        self.end_headers()
                 except Exception as e:
                     self.send_response(400)
+                    self.send_cors_headers()
                     self.send_header("Content-Type", "application/json")
                     self.end_headers()
-                    self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
+                    self.wfile.write(json.dumps({
+                        "jsonrpc": "2.0",
+                        "id": None,
+                        "error": {"code": -32700, "message": f"Parse error: {e}"}
+                    }).encode("utf-8"))
 
             def do_GET(self):
-                if self.path == "/sse" or self.path == "/events":
+                if self.path in ("/sse", "/events"):
                     self.send_response(200)
+                    self.send_cors_headers()
                     self.send_header("Content-Type", "text/event-stream")
                     self.send_header("Cache-Control", "no-cache")
                     self.send_header("Connection", "keep-alive")
                     self.end_headers()
-                    init_event = f"event: endpoint\ndata: http://localhost:{port}/mcp\n\n"
+                    init_event = f"event: endpoint\ndata: http://localhost:{port}/mcp\n\n: keep-alive\n\n"
                     self.wfile.write(init_event.encode("utf-8"))
+                    self.wfile.flush()
                 else:
                     self.send_response(200)
+                    self.send_cors_headers()
                     self.send_header("Content-Type", "application/json")
                     self.end_headers()
-                    self.wfile.write(
-                        json.dumps({"name": "olaya-mcp", "version": "0.2.0", "status": "running"}).encode("utf-8")
-                    )
+                    status_info = {
+                        "name": "olaya-mcp",
+                        "version": "0.3.0",
+                        "protocolVersion": "2024-11-05",
+                        "status": "ready",
+                        "supportedDomains": ["gs1", "schemaorg", "doid", "incident", "leio"],
+                        "capabilities": {"tools": True, "resources": True, "prompts": True},
+                        "pricing": "$0.042 / 1M input tokens (outputs 100% free)"
+                    }
+                    self.wfile.write(json.dumps(status_info, indent=2).encode("utf-8"))
 
             def log_message(self, format, *args):
                 pass  # suppress standard access logging
 
         httpd = http.server.HTTPServer(("0.0.0.0", port), MCPHandler)
-        print(f"O-Laya MCP HTTP/SSE server listening on http://0.0.0.0:{port}...")
+        print(f"O-Laya WebMCP HTTP/SSE server listening on http://0.0.0.0:{port}...")
         httpd.serve_forever()
 
 
