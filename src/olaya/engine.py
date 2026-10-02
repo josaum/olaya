@@ -154,7 +154,7 @@ class OLaya:
 
             if ckpt is not None:
                 state_dict = ckpt["model_state_dict"] if isinstance(ckpt, dict) and "model_state_dict" in ckpt else ckpt
-                self.model.load_state_dict(state_dict)
+                self.model.load_state_dict(state_dict, strict=False)
         else:
             self.model = model
 

@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
+import numpy as np
 import torch
 import torch.nn as nn
 from scripts.export_onnx_ort import export_olaya
@@ -18,6 +19,7 @@ from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, PreTrainedTokenizerFast
 
 from olaya.calibration import fit_temperature, pad_and_cat_logits
+from olaya.category_theory import CategoricalLoss
 from olaya.real_ontology_train import generate_real_ontology_samples, load_ontology_file
 from olaya.train import (
     DecisionDataset,
@@ -120,6 +122,7 @@ def train_single_domain(
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs * len(train_loader), eta_min=1e-5)
     criterion_dec = nn.CrossEntropyLoss()
     criterion_act = nn.NLLLoss()
+    criterion_cat = CategoricalLoss(weight_mono=0.5, weight_disj=0.3, weight_cone=0.1)
 
     best_val_acc = 0.0
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -128,9 +131,11 @@ def train_single_domain(
     best_val_logits: list[torch.Tensor] = []
     best_val_targets: list[torch.Tensor] = []
 
+    print(f"Starting domain training on {dev} for {epochs} epochs with Category-Theoretic Loss...")
     for epoch in range(1, epochs + 1):
         model.train()
         total_loss = 0.0
+        total_cat_loss = 0.0
         correct_dec = 0
         total_items = 0
 
@@ -142,13 +147,34 @@ def train_single_domain(
             qtypes = batch["qtype"].to(dev)
             targets = batch["targets"].to(dev)
             act_targets = batch["act_targets"].to(dev)
+            subsumption_adj = batch["subsumption_adj"].to(dev)
+            parent_adj = batch["parent_adj"].to(dev)
+            child_adj = batch["child_adj"].to(dev)
+            disjoint_adj = batch["disjoint_adj"].to(dev)
 
             optimizer.zero_grad()
-            logits, act_probs = model(input_ids, attention_mask, marker_pos, marker_mask, qtypes)
+            logits, act_probs, marker_states = model(
+                input_ids,
+                attention_mask,
+                marker_pos,
+                marker_mask,
+                qtypes,
+                parent_adj=parent_adj,
+                child_adj=child_adj,
+                disjoint_adj=disjoint_adj,
+                return_marker_states=True,
+            )
 
             loss_dec = criterion_dec(logits, targets)
             loss_act = criterion_act(torch.log(act_probs + 1e-8), act_targets)
-            loss = loss_dec + 0.2 * loss_act
+            loss_cat, _ = criterion_cat(
+                logits=logits,
+                marker_states=marker_states,
+                subsumption_mask=subsumption_adj,
+                disjoint_mask=disjoint_adj,
+                marker_mask=marker_mask,
+            )
+            loss = loss_dec + 0.2 * loss_act + loss_cat
 
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
@@ -156,16 +182,21 @@ def train_single_domain(
             scheduler.step()
 
             total_loss += float(loss.item()) * len(targets)
+            total_cat_loss += float(loss_cat.item()) * len(targets)
             preds = torch.argmax(logits, dim=-1)
             correct_dec += int((preds == targets).sum().item())
             total_items += len(targets)
 
         train_loss = total_loss / total_items
+        train_cat_loss = total_cat_loss / total_items
         train_acc = correct_dec / total_items
 
         # Validation
         model.eval()
         val_loss = 0.0
+        val_cat_loss = 0.0
+        val_mono_viols: list[float] = []
+        val_disj_colls: list[float] = []
         val_correct = 0
         val_items = 0
         epoch_val_logits: list[torch.Tensor] = []
@@ -180,13 +211,37 @@ def train_single_domain(
                 qtypes = batch["qtype"].to(dev)
                 targets = batch["targets"].to(dev)
                 act_targets = batch["act_targets"].to(dev)
+                subsumption_adj = batch["subsumption_adj"].to(dev)
+                parent_adj = batch["parent_adj"].to(dev)
+                child_adj = batch["child_adj"].to(dev)
+                disjoint_adj = batch["disjoint_adj"].to(dev)
 
-                logits, act_probs = model(input_ids, attention_mask, marker_pos, marker_mask, qtypes)
+                logits, act_probs, marker_states = model(
+                    input_ids,
+                    attention_mask,
+                    marker_pos,
+                    marker_mask,
+                    qtypes,
+                    parent_adj=parent_adj,
+                    child_adj=child_adj,
+                    disjoint_adj=disjoint_adj,
+                    return_marker_states=True,
+                )
                 loss_dec = criterion_dec(logits, targets)
                 loss_act = criterion_act(torch.log(act_probs + 1e-8), act_targets)
-                loss = loss_dec + 0.2 * loss_act
+                loss_cat, cat_metrics = criterion_cat(
+                    logits=logits,
+                    marker_states=marker_states,
+                    subsumption_mask=subsumption_adj,
+                    disjoint_mask=disjoint_adj,
+                    marker_mask=marker_mask,
+                )
+                loss = loss_dec + 0.2 * loss_act + loss_cat
 
                 val_loss += float(loss.item()) * len(targets)
+                val_cat_loss += float(loss_cat.item()) * len(targets)
+                val_mono_viols.append(cat_metrics["mono_violation_rate"])
+                val_disj_colls.append(cat_metrics["disj_collision_rate"])
                 preds = torch.argmax(logits, dim=-1)
                 val_correct += int((preds == targets).sum().item())
                 val_items += len(targets)
@@ -195,11 +250,14 @@ def train_single_domain(
                 epoch_val_targets.append(targets.cpu())
 
         val_loss /= val_items
+        val_cat_loss /= val_items
         val_acc = val_correct / val_items
+        avg_mono_viol = float(np.mean(val_mono_viols)) if val_mono_viols else 0.0
+        avg_disj_coll = float(np.mean(val_disj_colls)) if val_disj_colls else 0.0
 
         print(
-            f"Epoch {epoch}/{epochs} | Train Loss: {train_loss:.4f} Acc: {train_acc:.2%} | "
-            f"Val Loss: {val_loss:.4f} Acc: {val_acc:.2%}"
+            f"Epoch {epoch}/{epochs} | Train Loss: {train_loss:.4f} (Cat: {train_cat_loss:.4f}) Acc: {train_acc:.2%} | "
+            f"Val Loss: {val_loss:.4f} Acc: {val_acc:.2%} | Mono Viol: {avg_mono_viol:.1%} Disj Coll: {avg_disj_coll:.1%}"
         )
 
         if val_acc > best_val_acc:
