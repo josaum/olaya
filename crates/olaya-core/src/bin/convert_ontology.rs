@@ -1,8 +1,8 @@
 use anyhow::{Context, Result};
-use olaya_core::extract_curie;
+use olaya_core::{extract_curie, write_ontology_ipc, OntologyBatchBuilder};
 use owl_fast_core::{Entity, EntityType, OntologyParser};
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::env;
 use std::fs::{self, File};
 use std::io::Write;
@@ -200,10 +200,54 @@ fn process_ontology<P: AsRef<Path>>(input_path: P, name: Option<&str>) -> Result
     })
 }
 
+fn export_to_arrow(json_onto: &JsonOntology, output_path: &Path) -> Result<()> {
+    let mut builder = OntologyBatchBuilder::new();
+    let mut curie_to_id: HashMap<&str, u32> = HashMap::with_capacity(json_onto.concepts.len());
+
+    for (idx, c) in json_onto.concepts.iter().enumerate() {
+        curie_to_id.insert(c.curie.as_str(), idx as u32);
+    }
+
+    for (idx, c) in json_onto.concepts.iter().enumerate() {
+        let parent_ids: Vec<u32> = c
+            .parents
+            .iter()
+            .filter_map(|p| curie_to_id.get(p.as_str()).copied())
+            .collect();
+
+        let disjoint_ids: Vec<u32> = c
+            .disjoint_with
+            .iter()
+            .filter_map(|d| curie_to_id.get(d.as_str()).copied())
+            .collect();
+
+        let synonyms: Vec<&str> = c.synonyms.iter().map(|s| s.as_str()).collect();
+
+        builder.append_concept(
+            idx as u32,
+            &c.curie,
+            &c.label,
+            &c.description,
+            &parent_ids,
+            &disjoint_ids,
+            &synonyms,
+        );
+    }
+
+    let batch = builder.finish().context("Failed to build Arrow RecordBatch")?;
+    write_ontology_ipc(&batch, output_path).context("Failed to write Arrow IPC")?;
+    println!(
+        "⚡ Successfully exported {} concepts to zero-copy Arrow IPC: {}",
+        json_onto.concepts.len(),
+        output_path.display()
+    );
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
     if args.len() < 3 {
-        eprintln!("Usage: convert_ontology <input.ttl|owl|rdf> <output.json> [ontology_name]");
+        eprintln!("Usage: convert_ontology <input.ttl|owl|rdf|dir> <output.json|output.arrow> [ontology_name]");
         std::process::exit(1);
     }
 
@@ -218,15 +262,20 @@ fn main() -> Result<()> {
         fs::create_dir_all(parent)?;
     }
 
-    let mut out_file = File::create(out_p)
-        .with_context(|| format!("Failed to create output file: {output_path}"))?;
-    let json_bytes = serde_json::to_vec_pretty(&json_onto)?;
-    out_file.write_all(&json_bytes)?;
+    if output_path.ends_with(".arrow") || output_path.ends_with(".ipc") {
+        export_to_arrow(&json_onto, out_p)?;
+    } else {
+        let mut out_file = File::create(out_p)
+            .with_context(|| format!("Failed to create output file: {output_path}"))?;
+        let json_bytes = serde_json::to_vec_pretty(&json_onto)?;
+        out_file.write_all(&json_bytes)?;
 
-    println!(
-        "Successfully exported {} concepts to: {}",
-        json_onto.concepts.len(),
-        output_path
-    );
+        println!(
+            "Successfully exported {} concepts to JSON: {}",
+            json_onto.concepts.len(),
+            output_path
+        );
+    }
+
     Ok(())
 }
