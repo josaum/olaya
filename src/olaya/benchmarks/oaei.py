@@ -15,12 +15,15 @@ from typing import Any
 
 from olaya.axioms import (
     enforce_disjointness_exclusion,
+    enforce_owl2_rl_axioms,
     enforce_subsumption_monotonicity,
     project_hierarchical_distribution,
     verify_axioms,
+    verify_owl2_rl_axioms,
 )
 from olaya.candidate_router import CandidateRouter
-from olaya.ontology import Concept, Ontology
+from olaya.ontology import Concept, ObjectProperty, Ontology
+from olaya.owl2_rl import OWL2RLClosure, OWL2RLReasoner
 
 # XML Namespaces used in OWL and OAEI Alignment RDF
 NS_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -46,7 +49,7 @@ def camel_to_words(name: str) -> str:
 
 
 class OWLParser:
-    """Parser for OWL/RDF ontologies into O-Laya Ontology objects."""
+    """Comprehensive parser for OWL 2 RL ontologies into O-Laya Ontology objects."""
 
     @staticmethod
     def parse(owl_file: str | Path) -> Ontology:
@@ -58,7 +61,13 @@ class OWLParser:
         classes_dict: dict[str, Concept] = {}
         parents_map: dict[str, set[str]] = {}
         disjoints_map: dict[str, set[str]] = {}
+        equivalences_map: dict[str, set[str]] = {}
+        intersections_map: dict[str, list[list[str]]] = {}
+        unions_map: dict[str, list[list[str]]] = {}
 
+        # -------------------------------------------------------------
+        # 1. Parse owl:Class entities and core axioms
+        # -------------------------------------------------------------
         for elem in root.findall(f".//{{{NS_OWL}}}Class"):
             cid = elem.attrib.get(f"{{{NS_RDF}}}ID") or elem.attrib.get(f"{{{NS_RDF}}}about")
             if not cid:
@@ -113,6 +122,53 @@ class OWLParser:
                     if d and d != curie:
                         disjoints_map[curie].add(d)
 
+            # EquivalentClass
+            if curie not in equivalences_map:
+                equivalences_map[curie] = set()
+            for eq in elem.findall(f"{{{NS_OWL}}}equivalentClass"):
+                res = eq.attrib.get(f"{{{NS_RDF}}}resource")
+                if res:
+                    e = clean_uri(res)
+                    if e and e != "Thing" and e != curie:
+                        equivalences_map[curie].add(e)
+                nested = eq.find(f"{{{NS_OWL}}}Class")
+                if nested is not None:
+                    e = clean_uri(nested.attrib.get(f"{{{NS_RDF}}}ID") or nested.attrib.get(f"{{{NS_RDF}}}about"))
+                    if e and e != "Thing" and e != curie:
+                        equivalences_map[curie].add(e)
+
+                    # Check if nested is unionOf
+                    union_elem = nested.find(f"{{{NS_OWL}}}unionOf")
+                    if union_elem is not None:
+                        u_members = []
+                        for uc in union_elem.findall(f".//{{{NS_OWL}}}Class"):
+                            uid = clean_uri(uc.attrib.get(f"{{{NS_RDF}}}ID") or uc.attrib.get(f"{{{NS_RDF}}}about") or uc.attrib.get(f"{{{NS_RDF}}}resource"))
+                            if uid and uid != "Thing" and uid != curie:
+                                u_members.append(uid)
+                        if u_members:
+                            unions_map.setdefault(curie, []).append(u_members)
+
+                    # Check if nested is intersectionOf
+                    int_elem = nested.find(f"{{{NS_OWL}}}intersectionOf")
+                    if int_elem is not None:
+                        i_members = []
+                        for ic in int_elem.findall(f".//{{{NS_OWL}}}Class"):
+                            iid = clean_uri(ic.attrib.get(f"{{{NS_RDF}}}ID") or ic.attrib.get(f"{{{NS_RDF}}}about") or ic.attrib.get(f"{{{NS_RDF}}}resource"))
+                            if iid and iid != "Thing" and iid != curie:
+                                i_members.append(iid)
+                        if i_members:
+                            intersections_map.setdefault(curie, []).append(i_members)
+
+            # DisjointUnionOf
+            for dju in elem.findall(f"{{{NS_OWL}}}disjointUnionOf"):
+                dju_members = []
+                for mc in dju.findall(f".//{{{NS_OWL}}}Class"):
+                    mid = clean_uri(mc.attrib.get(f"{{{NS_RDF}}}ID") or mc.attrib.get(f"{{{NS_RDF}}}about") or mc.attrib.get(f"{{{NS_RDF}}}resource"))
+                    if mid and mid != "Thing" and mid != curie:
+                        dju_members.append(mid)
+                if len(dju_members) >= 2:
+                    ontology.add_disjoint_union(curie, dju_members)
+
             if curie not in classes_dict:
                 classes_dict[curie] = Concept(
                     curie=curie,
@@ -121,7 +177,6 @@ class OWLParser:
                     synonyms=synonyms,
                 )
             else:
-                # Merge comment/label if found later
                 if comment and not classes_dict[curie].description:
                     classes_dict[curie].description = comment
 
@@ -129,7 +184,7 @@ class OWLParser:
         for c in classes_dict.values():
             ontology.add_concept(c)
 
-        # Wire subsumption relations (only between existing concepts)
+        # Wire subsumption relations
         for curie, parents in parents_map.items():
             if curie not in ontology.concepts:
                 continue
@@ -137,13 +192,101 @@ class OWLParser:
                 if p in ontology.concepts:
                     ontology.add_subsumption(curie, p)
 
-        # Wire disjointness relations (only between existing concepts)
+        # Wire disjointness relations
         for curie, disjoints in disjoints_map.items():
             if curie not in ontology.concepts:
                 continue
             for d in disjoints:
                 if d in ontology.concepts:
                     ontology.add_disjointness(curie, d)
+
+        # Wire equivalence relations
+        for curie, equivs in equivalences_map.items():
+            if curie not in ontology.concepts:
+                continue
+            for eq in equivs:
+                if eq in ontology.concepts:
+                    ontology.add_equivalence(curie, eq)
+
+        # Wire unions
+        for curie, u_lists in unions_map.items():
+            for u_ops in u_lists:
+                ontology.add_union(curie, u_ops)
+
+        # Wire intersections
+        for curie, i_lists in intersections_map.items():
+            for i_ops in i_lists:
+                ontology.add_intersection(curie, i_ops)
+
+        # -------------------------------------------------------------
+        # 2. Parse owl:AllDisjointClasses
+        # -------------------------------------------------------------
+        for adc in root.findall(f".//{{{NS_OWL}}}AllDisjointClasses"):
+            members = []
+            for mc in adc.findall(f".//{{{NS_OWL}}}Class"):
+                mid = clean_uri(mc.attrib.get(f"{{{NS_RDF}}}ID") or mc.attrib.get(f"{{{NS_RDF}}}about") or mc.attrib.get(f"{{{NS_RDF}}}resource"))
+                if mid and mid in ontology.concepts:
+                    members.append(mid)
+            for i, m1 in enumerate(members):
+                for m2 in members[i + 1:]:
+                    ontology.add_disjointness(m1, m2)
+
+        # -------------------------------------------------------------
+        # 3. Parse owl:ObjectProperty & owl:DatatypeProperty
+        # -------------------------------------------------------------
+        for prop_tag in [f"{{{NS_OWL}}}ObjectProperty", f"{{{NS_OWL}}}DatatypeProperty"]:
+            for pelem in root.findall(f".//{prop_tag}"):
+                pid = pelem.attrib.get(f"{{{NS_RDF}}}ID") or pelem.attrib.get(f"{{{NS_RDF}}}about")
+                if not pid:
+                    continue
+                pcurie = clean_uri(pid)
+                if not pcurie:
+                    continue
+
+                plabel_elem = pelem.find(f"{{{NS_RDFS}}}label")
+                plabel = plabel_elem.text.strip() if plabel_elem is not None and plabel_elem.text else camel_to_words(pcurie)
+
+                domains = set()
+                for d in pelem.findall(f"{{{NS_RDFS}}}domain"):
+                    dres = clean_uri(d.attrib.get(f"{{{NS_RDF}}}resource"))
+                    if dres and dres in ontology.concepts:
+                        domains.add(dres)
+
+                ranges = set()
+                for r in pelem.findall(f"{{{NS_RDFS}}}range"):
+                    rres = clean_uri(r.attrib.get(f"{{{NS_RDF}}}resource"))
+                    if rres and rres in ontology.concepts:
+                        ranges.add(rres)
+
+                inverses = set()
+                for inv in pelem.findall(f"{{{NS_OWL}}}inverseOf"):
+                    ires = clean_uri(inv.attrib.get(f"{{{NS_RDF}}}resource"))
+                    if ires:
+                        inverses.add(ires)
+
+                subprops = set()
+                for sp in pelem.findall(f"{{{NS_RDFS}}}subPropertyOf"):
+                    spres = clean_uri(sp.attrib.get(f"{{{NS_RDF}}}resource"))
+                    if spres:
+                        subprops.add(spres)
+
+                # Property types
+                is_trans = pelem.find(f"{{{NS_OWL}}}TransitiveProperty") is not None or "TransitiveProperty" in pelem.attrib.values()
+                is_func = pelem.find(f"{{{NS_OWL}}}FunctionalProperty") is not None or "FunctionalProperty" in pelem.attrib.values()
+                is_symm = pelem.find(f"{{{NS_OWL}}}SymmetricProperty") is not None or "SymmetricProperty" in pelem.attrib.values()
+
+                prop_obj = ObjectProperty(
+                    curie=pcurie,
+                    label=plabel,
+                    domains=domains,
+                    ranges=ranges,
+                    inverses=inverses,
+                    parents=subprops,
+                    is_transitive=is_trans,
+                    is_functional=is_func,
+                    is_symmetric=is_symm,
+                )
+                ontology.add_property(prop_obj)
 
         return ontology
 
@@ -278,6 +421,8 @@ class OAEIBenchmark:
         post_disj_colls = 0
         top_matches = []
 
+        target_closure = OWL2RLReasoner(target_onto).compute_closure()
+
         for align in valid_alignments:
             src_concept = source_onto.concepts[align.entity1]
             ground_truth_target = align.entity2
@@ -313,41 +458,31 @@ class OAEIBenchmark:
 
             # Check axiomatic consistency on top-5 predicted candidate set
             top_k_curies = ranked_curies[:5]
-            # Dummy raw softmax probabilities based on rank
             raw_scores = [1.0 / (i + 1) for i in range(len(top_k_curies))]
             total = sum(raw_scores)
             raw_probs = {c: s / total for c, s in zip(top_k_curies, raw_scores)}
 
-            # Check raw violations
-            for c, p_c in raw_probs.items():
-                for parent in target_onto.concepts[c].parents:
-                    if parent in raw_probs and raw_probs[parent] < p_c - 1e-5:
-                        raw_mono_viols += 1
-            for a, b in target_onto.concepts.items():
-                if a in raw_probs:
-                    for dj in b.disjoint_with:
-                        if dj in raw_probs and dj > a:
-                            if max(raw_probs[a], raw_probs[dj]) >= 0.4 and min(raw_probs[a], raw_probs[dj]) > 0.05:
-                                raw_disj_colls += 1
+            # Check raw violations under OWL 2 RL deductive closure
+            _, raw_viols = verify_owl2_rl_axioms(raw_probs, target_onto, threshold=0.4, closure=target_closure)
+            for v in raw_viols:
+                if "monotonicity" in v:
+                    raw_mono_viols += 1
+                elif "Disjointness" in v:
+                    raw_disj_colls += 1
 
-            # Apply Leio's axiomatic projection operator
-            mono_probs = enforce_subsumption_monotonicity(raw_probs, target_onto)
-            post_probs = enforce_disjointness_exclusion(mono_probs, target_onto, threshold=0.4)
-            # Re-normalize if non-zero
+            # Apply Leio's OWL 2 RL axiomatic projection operator
+            post_probs = enforce_owl2_rl_axioms(raw_probs, target_onto, threshold=0.4, closure=target_closure)
             sum_p = sum(post_probs.values())
             if sum_p > 0:
                 post_probs = {c: p / sum_p for c, p in post_probs.items()}
 
-            for c, p_c in post_probs.items():
-                for parent in target_onto.concepts[c].parents:
-                    if parent in post_probs and post_probs[parent] < p_c - 1e-5:
-                        post_mono_viols += 1
-            for a, b in target_onto.concepts.items():
-                if a in post_probs:
-                    for dj in b.disjoint_with:
-                        if dj in post_probs and dj > a:
-                            if max(post_probs[a], post_probs[dj]) >= 0.4 and min(post_probs[a], post_probs[dj]) > 0.05:
-                                post_disj_colls += 1
+            # Verify post violations under OWL 2 RL deductive closure
+            _, post_viols = verify_owl2_rl_axioms(post_probs, target_onto, threshold=0.4, closure=target_closure)
+            for v in post_viols:
+                if "monotonicity" in v:
+                    post_mono_viols += 1
+                elif "Disjointness" in v:
+                    post_disj_colls += 1
 
             top_matches.append({
                 "source": align.entity1,

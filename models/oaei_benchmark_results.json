@@ -2,11 +2,11 @@
   "benchmark": "OAEI Conference Track",
   "pairs_evaluated": 21,
   "total_classes": 259,
-  "hits_at_1_pct": 57.52895752895753,
+  "hits_at_1_pct": 55.98455598455598,
   "hits_at_3_pct": 80.6949806949807,
   "hits_at_5_pct": 85.71428571428571,
-  "macro_mrr": 0.7118851487253319,
-  "raw_violations": 207,
+  "macro_mrr": 0.7059612480645892,
+  "raw_violations": 492,
   "post_violations": 0,
   "details": [
     {
@@ -21,7 +21,7 @@
       "mrr": 0.6801190476190476,
       "raw_monotonicity_violations": 9,
       "post_monotonicity_violations": 0,
-      "raw_disjoint_collisions": 5,
+      "raw_disjoint_collisions": 35,
       "post_disjoint_collisions": 0
     },
     {
@@ -34,9 +34,9 @@
       "recall_at_3": 0.75,
       "recall_at_5": 0.75,
       "mrr": 0.6777379876973373,
-      "raw_monotonicity_violations": 5,
+      "raw_monotonicity_violations": 14,
       "post_monotonicity_violations": 0,
-      "raw_disjoint_collisions": 3,
+      "raw_disjoint_collisions": 5,
       "post_disjoint_collisions": 0
     },
     {
@@ -49,9 +49,9 @@
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "mrr": 0.875,
-      "raw_monotonicity_violations": 0,
+      "raw_monotonicity_violations": 1,
       "post_monotonicity_violations": 0,
-      "raw_disjoint_collisions": 7,
+      "raw_disjoint_collisions": 20,
       "post_disjoint_collisions": 0
     },
     {
@@ -66,7 +66,7 @@
       "mrr": 0.6527777777777778,
       "raw_monotonicity_violations": 2,
       "post_monotonicity_violations": 0,
-      "raw_disjoint_collisions": 2,
+      "raw_disjoint_collisions": 9,
       "post_disjoint_collisions": 0
     },
     {
@@ -79,7 +79,7 @@
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "mrr": 0.8333333333333334,
-      "raw_monotonicity_violations": 3,
+      "raw_monotonicity_violations": 7,
       "post_monotonicity_violations": 0,
       "raw_disjoint_collisions": 0,
       "post_disjoint_collisions": 0
@@ -94,7 +94,7 @@
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "mrr": 0.7166666666666667,
-      "raw_monotonicity_violations": 7,
+      "raw_monotonicity_violations": 8,
       "post_monotonicity_violations": 0,
       "raw_disjoint_collisions": 0,
       "post_disjoint_collisions": 0
@@ -109,9 +109,9 @@
       "recall_at_3": 0.8571428571428571,
       "recall_at_5": 0.8571428571428571,
       "mrr": 0.7279589371980676,
-      "raw_monotonicity_violations": 7,
+      "raw_monotonicity_violations": 19,
       "post_monotonicity_violations": 0,
-      "raw_disjoint_collisions": 0,
+      "raw_disjoint_collisions": 30,
       "post_disjoint_collisions": 0
     },
     {
@@ -124,9 +124,9 @@
       "recall_at_3": 0.8,
       "recall_at_5": 0.9,
       "mrr": 0.6542857142857142,
-      "raw_monotonicity_violations": 10,
+      "raw_monotonicity_violations": 16,
       "post_monotonicity_violations": 0,
-      "raw_disjoint_collisions": 8,
+      "raw_disjoint_collisions": 23,
       "post_disjoint_collisions": 0
     },
     {
@@ -139,7 +139,7 @@
       "recall_at_3": 0.7777777777777778,
       "recall_at_5": 0.7777777777777778,
       "mrr": 0.7407407407407408,
-      "raw_monotonicity_violations": 5,
+      "raw_monotonicity_violations": 6,
       "post_monotonicity_violations": 0,
       "raw_disjoint_collisions": 0,
       "post_disjoint_collisions": 0
@@ -171,7 +171,7 @@
       "mrr": 0.7575757575757577,
       "raw_monotonicity_violations": 14,
       "post_monotonicity_violations": 0,
-      "raw_disjoint_collisions": 2,
+      "raw_disjoint_collisions": 42,
       "post_disjoint_collisions": 0
     },
     {
@@ -184,9 +184,9 @@
       "recall_at_3": 0.8571428571428571,
       "recall_at_5": 0.9285714285714286,
       "mrr": 0.8045112781954887,
-      "raw_monotonicity_violations": 2,
+      "raw_monotonicity_violations": 9,
       "post_monotonicity_violations": 0,
-      "raw_disjoint_collisions": 12,
+      "raw_disjoint_collisions": 40,
       "post_disjoint_collisions": 0
     },
     {
@@ -199,9 +199,9 @@
       "recall_at_3": 0.8260869565217391,
       "recall_at_5": 0.8695652173913043,
       "mrr": 0.7587206396801599,
-      "raw_monotonicity_violations": 7,
+      "raw_monotonicity_violations": 10,
       "post_monotonicity_violations": 0,
-      "raw_disjoint_collisions": 5,
+      "raw_disjoint_collisions": 38,
       "post_disjoint_collisions": 0
     },
     {
@@ -214,7 +214,7 @@
       "recall_at_3": 0.5384615384615384,
       "recall_at_5": 0.5384615384615384,
       "mrr": 0.4679664081973014,
-      "raw_monotonicity_violations": 4,
+      "raw_monotonicity_violations": 21,
       "post_monotonicity_violations": 0,
       "raw_disjoint_collisions": 0,
       "post_disjoint_collisions": 0
@@ -237,29 +237,29 @@
     {
       "pair": "edas-ekaw",
       "evaluated_classes": 19,
-      "hits_at_1": 8,
+      "hits_at_1": 7,
       "hits_at_3": 15,
       "hits_at_5": 17,
-      "acc_at_1": 0.42105263157894735,
+      "acc_at_1": 0.3684210526315789,
       "recall_at_3": 0.7894736842105263,
       "recall_at_5": 0.8947368421052632,
-      "mrr": 0.6063725490196079,
-      "raw_monotonicity_violations": 7,
+      "mrr": 0.5800567595459236,
+      "raw_monotonicity_violations": 10,
       "post_monotonicity_violations": 0,
-      "raw_disjoint_collisions": 7,
+      "raw_disjoint_collisions": 18,
       "post_disjoint_collisions": 0
     },
     {
       "pair": "edas-iasted",
       "evaluated_classes": 19,
-      "hits_at_1": 11,
+      "hits_at_1": 9,
       "hits_at_3": 12,
       "hits_at_5": 13,
-      "acc_at_1": 0.5789473684210527,
+      "acc_at_1": 0.47368421052631576,
       "recall_at_3": 0.631578947368421,
       "recall_at_5": 0.6842105263157895,
-      "mrr": 0.6342324431973105,
-      "raw_monotonicity_violations": 12,
+      "mrr": 0.5816008642499422,
+      "raw_monotonicity_violations": 21,
       "post_monotonicity_violations": 0,
       "raw_disjoint_collisions": 0,
       "post_disjoint_collisions": 0
@@ -267,13 +267,13 @@
     {
       "pair": "edas-sigkdd",
       "evaluated_classes": 11,
-      "hits_at_1": 5,
+      "hits_at_1": 4,
       "hits_at_3": 9,
       "hits_at_5": 10,
-      "acc_at_1": 0.45454545454545453,
+      "acc_at_1": 0.36363636363636365,
       "recall_at_3": 0.8181818181818182,
       "recall_at_5": 0.9090909090909091,
-      "mrr": 0.6461566888396156,
+      "mrr": 0.6007021433850702,
       "raw_monotonicity_violations": 10,
       "post_monotonicity_violations": 0,
       "raw_disjoint_collisions": 0,
@@ -289,7 +289,7 @@
       "recall_at_3": 0.9,
       "recall_at_5": 0.9,
       "mrr": 0.8642857142857142,
-      "raw_monotonicity_violations": 6,
+      "raw_monotonicity_violations": 8,
       "post_monotonicity_violations": 0,
       "raw_disjoint_collisions": 0,
       "post_disjoint_collisions": 0
@@ -319,7 +319,7 @@
       "recall_at_3": 0.8666666666666667,
       "recall_at_5": 0.8666666666666667,
       "mrr": 0.7701754385964912,
-      "raw_monotonicity_violations": 17,
+      "raw_monotonicity_violations": 18,
       "post_monotonicity_violations": 0,
       "raw_disjoint_collisions": 0,
       "post_disjoint_collisions": 0
