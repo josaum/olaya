@@ -1668,7 +1668,7 @@
               <span class="panel-kicker">Grounded Decision Verdict</span>
               <div style="display: flex; gap: 0.5rem; align-items: center;">
                 <span id="axiomStatus" style="color: var(--green); font-family: var(--font-mono); font-size: 0.74rem;">axioms: verified ✓</span>
-                <button class="preset-chip" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;" onclick="copyJsonOutput()">Copy JSON</button>
+                <button class="preset-chip" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;" onclick="copyJsonOutput(this)">Copy JSON</button>
               </div>
             </div>
 
@@ -2130,20 +2130,42 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
 
   <!-- Interactive Live Demo Script -->
 <script type="module">
-    import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
+import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
     import init, { OlayaWasm } from './wasm/olaya_wasm.js';
 
     let wasmEngine = null;
     let wasmReady = false;
     let wasmInitError = null;
 
-    try {
-      await init();
+    // Non-blocking WASM initialization
+    init().then(() => {
       wasmReady = true;
-    } catch (e) {
+      const latencyBadge = document.getElementById('latencyBadge');
+      if (latencyBadge) {
+        latencyBadge.textContent = 'WASM < 1µs';
+        latencyBadge.style.color = '#30d158';
+      }
+      // If an ontology is already loaded, try instantiating the WASM engine
+      if (rawConcepts && rawConcepts.length > 0) {
+        try {
+          const conceptsPayload = rawConcepts.map(c => ({
+            id: c.id,
+            curie: c.curie,
+            label: c.label,
+            description: c.description || "",
+            synonyms: c.synonyms || [],
+            parents: c.parents || [],
+            disjoint_with: c.disjointWith || []
+          }));
+          wasmEngine = new OlayaWasm(JSON.stringify(conceptsPayload));
+        } catch (we) {
+          console.warn('Deferred WASM init warning:', we);
+        }
+      }
+    }).catch(e => {
       wasmInitError = e;
       console.warn('WASM fallback to pure JS:', e);
-    }
+    });
 
     let olayaEngine = null;
     let rawConcepts = [];
@@ -2246,7 +2268,7 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
           { id: "breach", label: "Compromised Token Leak", text: "Security anomaly detected: Admin service account API key exposed in public commit log. Unauthorized token generation alert." },
           { id: "kafka", label: "Kafka Consumer Lag Surge", text: "Order processing pipeline stalled: Kafka consumer group partition lag exceeded 250,000 unread messages in topic orders-v1." }
         ]
-      }
+      },
       doid: {
         name: "Disease Ontology (DOID)",
         badge: "🧬 Disease Ontology (DOID)",
@@ -2266,7 +2288,7 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
       }
     };
 
-    window.switchDomain = async function(domainKey) {
+    async function switchDomain(domainKey) {
       if (!DOMAIN_CONFIG[domainKey]) return;
       currentDomain = domainKey;
       const cfg = DOMAIN_CONFIG[domainKey];
@@ -2369,19 +2391,24 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
       }
     };
 
-    window.copyJsonOutput = function() {
-      const jsonText = document.getElementById('jsonOutput').textContent;
-      navigator.clipboard.writeText(jsonText).then(() => {
-        const btn = event.target;
-        const orig = btn.textContent;
-        btn.textContent = 'Copied!';
-        btn.style.color = '#3fb950';
-        setTimeout(() => {
-          btn.textContent = orig;
-          btn.style.color = '';
-        }, 1500);
-      });
-    };
+    function copyJsonOutput(btn) {
+      const targetBtn = btn || (typeof window !== 'undefined' && window.event ? window.event.target : null);
+      const outputEl = document.getElementById('jsonOutput');
+      const jsonText = outputEl ? outputEl.textContent : '';
+      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(jsonText).then(() => {
+          if (targetBtn) {
+            const orig = targetBtn.textContent;
+            targetBtn.textContent = 'Copied!';
+            targetBtn.style.color = '#3fb950';
+            setTimeout(() => {
+              targetBtn.textContent = orig;
+              targetBtn.style.color = '';
+            }, 1500);
+          }
+        }).catch(() => {});
+      }
+    }
 
     async function triggerDecision() {
       if (!olayaEngine) return;
@@ -2404,6 +2431,7 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
       const t0 = performance.now();
       let decision;
       let usedWasm = false;
+      let dt = '0.00';
 
       if (wasmReady && wasmEngine) {
         try {
@@ -2427,7 +2455,7 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
       } else {
         decision = await olayaEngine.systemOne(text, 12);
       }
-      const dt = (performance.now() - t0).toFixed(2);
+      dt = (performance.now() - t0).toFixed(2);
 
       if (usedWasm) {
         latencyBadge.textContent = `WASM < 1µs`;
@@ -2483,6 +2511,12 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
           (!isLast ? `<span class="lineage-sep">→</span>` : '');
       }).join(' ');
 
+      // Render Visual Probability Bars & Proofs
+      const sortedProbs = (decision.probabilities || [])
+        .slice()
+        .sort((a, b) => b.prob - a.prob)
+        .slice(0, 5);
+
       // Update Proof Status Items
       const downsetVerdict = document.getElementById('downsetVerdict');
       const downsetDescription = document.getElementById('downsetDescription');
@@ -2510,12 +2544,6 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
         void dCard.offsetWidth;
         dCard.classList.add('decision-pulse');
       }
-
-      // Render Visual Probability Bars
-      const sortedProbs = decision.probabilities
-        .slice()
-        .sort((a, b) => b.prob - a.prob)
-        .slice(0, 5);
 
       const probBarsContainer = document.getElementById('probBarsContainer');
       probBarsContainer.innerHTML = sortedProbs.map((p, idx) => {
@@ -2616,7 +2644,7 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
       }
     ];
 
-    window.toggleAgentSimulation = function() {
+    function toggleAgentSimulation() {
       const track = document.getElementById('conveyorTrack');
       const laser = document.getElementById('laserBeam');
       const btn = document.getElementById('agentSimBtn');
@@ -2681,6 +2709,7 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
       const t0 = performance.now();
       let decision;
       let latencyLabel = '';
+      let dt = '0.00';
 
       if (wasmReady && wasmEngine) {
         try {
@@ -2700,12 +2729,12 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
           latencyLabel = '< 1µs (WASM)';
         } catch (we) {
           decision = await olayaEngine.systemOne(item.text, 12);
-          const dt = (performance.now() - t0).toFixed(2);
+          dt = (performance.now() - t0).toFixed(2);
           latencyLabel = `${dt} ms (JS)`;
         }
       } else {
         decision = await olayaEngine.systemOne(item.text, 12);
-        const dt = (performance.now() - t0).toFixed(2);
+        dt = (performance.now() - t0).toFixed(2);
         latencyLabel = `${dt} ms (JS)`;
       }
 
@@ -2731,7 +2760,7 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
       }
     }
 
-    window.shareOnX = function() {
+    function shareOnX() {
       const text = encodeURIComponent(
         "Meet Leio: an ontology-grounded System 1 decision engine that runs in <1ms directly in your browser.\n\n" +
         "⚡ Like Jev & Laya, but with mathematical guarantees:\n" +
@@ -2751,7 +2780,7 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
 
     
   // ── Live Race Simulation ──────────────────────────────────────────────────
-  window.runLiveRace = function() {
+  function runLiveRace() {
     const btn = document.getElementById('raceBtn');
     const leioBar = document.getElementById('leioProgressBar');
     const llmBar = document.getElementById('llmProgressBar');
@@ -2801,10 +2830,22 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
     }, 100);
   };
 
+  // ── Slider Track & Presets ──────────────────────────────────────────────
+  function updateSliderTrack(val) {
+    const slider = document.getElementById('calcSlider');
+    if (!slider) return;
+    const min = Number(slider.min) || 100000;
+    const max = Number(slider.max) || 50000000;
+    const pct = Math.max(0, Math.min(100, ((Number(val) - min) / (max - min)) * 100));
+    slider.style.background = `linear-gradient(to right, #0071e3 0%, #2997ff ${pct}%, rgba(255, 255, 255, 0.1) ${pct}%, rgba(255, 255, 255, 0.1) 100%)`;
+  }
+
   // ── Economics Calculator Logic ────────────────────────────────────────────
-  window.updateCalculator = function(val) {
+  function updateCalculator(val) {
+    updateSliderTrack(val);
     const volume = Number(val);
-    document.getElementById('calcVolumeDisplay').textContent = volume.toLocaleString();
+    const displayEl = document.getElementById('calcVolumeDisplay');
+    if (displayEl) displayEl.textContent = volume.toLocaleString();
 
     // LLM estimate: ~300 prompt tokens + 150 output tokens = 450 tokens @ $10/1M avg = $0.0045/req
     const llmMonthlyCost = volume * 0.0045;
@@ -2816,34 +2857,94 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
     const llmHours = (volume * 1.2 / 3600).toFixed(1);
     const leioSeconds = (volume * 0.0000008).toFixed(2);
 
-    document.getElementById('calcLlmCost').textContent = '$' + llmMonthlyCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / mo';
-    document.getElementById('calcLeioCost').textContent = '$' + leioMonthlyCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / mo';
-    document.getElementById('calcAnnualSavings').textContent = '$' + annualSavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / year saved';
-    document.getElementById('calcLlmTime').textContent = Number(llmHours).toLocaleString() + ' hours';
-    document.getElementById('calcLeioTime').textContent = '< ' + leioSeconds + ' seconds';
-  };
+    const calcLlmCost = document.getElementById('calcLlmCost');
+    if (calcLlmCost) calcLlmCost.textContent = '$' + llmMonthlyCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / mo';
+    const calcLeioCost = document.getElementById('calcLeioCost');
+    if (calcLeioCost) calcLeioCost.textContent = '$' + leioMonthlyCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / mo';
+    const calcAnnualSavings = document.getElementById('calcAnnualSavings');
+    if (calcAnnualSavings) calcAnnualSavings.textContent = '$' + annualSavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' / year saved';
+    const calcLlmTime = document.getElementById('calcLlmTime');
+    if (calcLlmTime) calcLlmTime.textContent = Number(llmHours).toLocaleString() + ' hours';
+    const calcLeioTime = document.getElementById('calcLeioTime');
+    if (calcLeioTime) calcLeioTime.textContent = '< ' + leioSeconds + ' seconds';
+  }
 
-    // Start with default GS1 domain
-    switchDomain('leio');
+  function setCalcPreset(val) {
+    const slider = document.getElementById('calcSlider');
+    if (slider) {
+      slider.value = val;
+      updateCalculator(val);
+    }
+    document.querySelectorAll('.slider-preset-btn').forEach(btn => {
+      const text = btn.textContent;
+      const matches = (val === 100000 && text.includes('100K')) ||
+                      (val === 1000000 && text.includes('1M')) ||
+                      (val === 5000000 && text.includes('5M')) ||
+                      (val === 20000000 && text.includes('20M')) ||
+                      (val === 50000000 && text.includes('50M'));
+      btn.classList.toggle('active', matches);
+    });
+  }
 
-  // Copy to clipboard initializer for all pre blocks
-  
-  window.copySnippet = async function(text, el) {
+  // ── Manual Next Pallet in Conveyor Sim ────────────────────────────────────
+  function nextPalletManual() {
+    if (typeof runSimStep === 'function') runSimStep();
+    const track = document.getElementById('conveyorTrack');
+    const laser = document.getElementById('laserBeam');
+    if (track) {
+      track.classList.add('running');
+      setTimeout(() => { if (!simInterval) track.classList.remove('running'); }, 1200);
+    }
+    if (laser) {
+      laser.classList.add('active');
+      setTimeout(() => { if (!simInterval) laser.classList.remove('active'); }, 1200);
+    }
+  }
+
+  // ── Code Block Copy Button ──────────────────────────────────────────────
+  function copyCodeBlock(btn) {
+    const container = btn.closest('.code-container');
+    const code = container ? container.querySelector('code') : null;
+    if (!code) return;
+    navigator.clipboard.writeText(code.innerText.trim()).then(() => {
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 1600);
+    });
+  }
+
+  // ── Mouse-Tracking Spotlight Effect ─────────────────────────────────────
+  function initSpotlights() {
+    document.querySelectorAll('.spotlight-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      });
+    });
+  }
+
+  // Copy to clipboard initializer for quick-copy cards
+  async function copySnippet(text, el) {
     try {
       await navigator.clipboard.writeText(text);
-      const hint = el.querySelector('.copy-hint');
+      const hint = el.querySelector('.copy-hint') || el.querySelector('span:last-child');
       if (hint) {
+        const oldText = hint.textContent;
         hint.textContent = '✓ Copied';
         hint.style.color = '#3fb950';
         el.style.borderColor = '#2ea043';
         setTimeout(() => {
-          hint.textContent = 'Copy';
-          hint.style.color = '#8b949e';
-          el.style.borderColor = '#21262d';
+          hint.textContent = oldText;
+          hint.style.color = '';
+          el.style.borderColor = '';
         }, 1800);
       }
     } catch(e) {}
-  };
+  }
 
   function initCopyButtons() {
     document.querySelectorAll('pre').forEach(pre => {
@@ -2871,178 +2972,32 @@ result = olaya.system_one(state, questions)</code></pre></div></div>
       wrapper.appendChild(btn);
     });
   }
-  document.addEventListener('DOMContentLoaded', initCopyButtons);
-  initCopyButtons();
 
-  </script>
-<script type="module">
+  // ── Explicit Global Window Exports for Inline HTML Handlers ──────────────
+  window.switchDomain = switchDomain;
+  window.copyJsonOutput = copyJsonOutput;
+  window.toggleAgentSimulation = toggleAgentSimulation;
+  window.shareOnX = shareOnX;
+  window.runLiveRace = runLiveRace;
+  window.updateCalculator = updateCalculator;
+  window.setCalcPreset = setCalcPreset;
+  window.nextPalletManual = nextPalletManual;
+  window.copyCodeBlock = copyCodeBlock;
+  window.copySnippet = copySnippet;
 
-    // ── Mouse-Tracking Spotlight Effect ─────────────────────────────────────
-    function initSpotlights() {
-      document.querySelectorAll('.spotlight-card').forEach(card => {
-        card.addEventListener('mousemove', e => {
-          const rect = card.getBoundingClientRect();
-          card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-          card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-        });
-      });
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initSpotlights);
-    } else {
-      initSpotlights();
-    }
+  // ── Document Initialization ──────────────────────────────────────────────
+  function initPage() {
+    initCopyButtons();
+    initSpotlights();
+    updateSliderTrack(1000000);
+    switchDomain('leio');
+  }
 
-    // ── Slider Track & Presets ──────────────────────────────────────────────
-    window.setCalcPreset = function(val) {
-      const slider = document.getElementById('calcSlider');
-      if (slider) {
-        slider.value = val;
-        updateCalculator(val);
-      }
-      document.querySelectorAll('.slider-preset-btn').forEach(btn => {
-        const text = btn.textContent;
-        const matches = (val === 100000 && text.includes('100K')) ||
-                        (val === 1000000 && text.includes('1M')) ||
-                        (val === 5000000 && text.includes('5M')) ||
-                        (val === 20000000 && text.includes('20M')) ||
-                        (val === 50000000 && text.includes('50M'));
-        btn.classList.toggle('active', matches);
-      });
-    };
-
-    function updateSliderTrack(val) {
-      const slider = document.getElementById('calcSlider');
-      if (!slider) return;
-      const min = Number(slider.min) || 100000;
-      const max = Number(slider.max) || 50000000;
-      const pct = Math.max(0, Math.min(100, ((Number(val) - min) / (max - min)) * 100));
-      slider.style.background = `linear-gradient(to right, #0071e3 0%, #2997ff ${pct}%, rgba(255, 255, 255, 0.1) ${pct}%, rgba(255, 255, 255, 0.1) 100%)`;
-    }
-
-    // Wrap updateCalculator to update track and presets
-    const originalUpdateCalc = window.updateCalculator;
-    window.updateCalculator = function(val) {
-      updateSliderTrack(val);
-      originalUpdateCalc(val);
-    };
-    // Initialize slider track on load
-    setTimeout(() => updateSliderTrack(1000000), 50);
-
-    // ── Manual Next Pallet in Conveyor Sim ────────────────────────────────────
-    window.nextPalletManual = function() {
-      runSimStep();
-      const track = document.getElementById('conveyorTrack');
-      const laser = document.getElementById('laserBeam');
-      if (track) {
-        track.classList.add('running');
-        setTimeout(() => { if (!simInterval) track.classList.remove('running'); }, 1200);
-      }
-      if (laser) {
-        laser.classList.add('active');
-        setTimeout(() => { if (!simInterval) laser.classList.remove('active'); }, 1200);
-      }
-    };
-
-    // ── Code Block Copy Button ──────────────────────────────────────────────
-    window.copyCodeBlock = function(btn) {
-      const container = btn.closest('.code-container');
-      const code = container ? container.querySelector('code') : null;
-      if (!code) return;
-      navigator.clipboard.writeText(code.innerText.trim()).then(() => {
-        btn.textContent = 'Copied ✓';
-        btn.classList.add('copied');
-        setTimeout(() => {
-          btn.textContent = 'Copy';
-          btn.classList.remove('copied');
-        }, 1600);
-      });
-    };
-
-</script>
-<script type="module">
-
-    // ── Mouse-Tracking Spotlight Effect ─────────────────────────────────────
-    function initSpotlights() {
-      document.querySelectorAll('.spotlight-card').forEach(card => {
-        card.addEventListener('mousemove', e => {
-          const rect = card.getBoundingClientRect();
-          card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-          card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-        });
-      });
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initSpotlights);
-    } else {
-      initSpotlights();
-    }
-
-    // ── Slider Track & Presets ──────────────────────────────────────────────
-    window.setCalcPreset = function(val) {
-      const slider = document.getElementById('calcSlider');
-      if (slider) {
-        slider.value = val;
-        updateCalculator(val);
-      }
-      document.querySelectorAll('.slider-preset-btn').forEach(btn => {
-        const text = btn.textContent;
-        const matches = (val === 100000 && text.includes('100K')) ||
-                        (val === 1000000 && text.includes('1M')) ||
-                        (val === 5000000 && text.includes('5M')) ||
-                        (val === 20000000 && text.includes('20M')) ||
-                        (val === 50000000 && text.includes('50M'));
-        btn.classList.toggle('active', matches);
-      });
-    };
-
-    function updateSliderTrack(val) {
-      const slider = document.getElementById('calcSlider');
-      if (!slider) return;
-      const min = Number(slider.min) || 100000;
-      const max = Number(slider.max) || 50000000;
-      const pct = Math.max(0, Math.min(100, ((Number(val) - min) / (max - min)) * 100));
-      slider.style.background = `linear-gradient(to right, #0071e3 0%, #2997ff ${pct}%, rgba(255, 255, 255, 0.1) ${pct}%, rgba(255, 255, 255, 0.1) 100%)`;
-    }
-
-    // Wrap updateCalculator to update track and presets
-    const originalUpdateCalc = window.updateCalculator;
-    window.updateCalculator = function(val) {
-      updateSliderTrack(val);
-      originalUpdateCalc(val);
-    };
-    // Initialize slider track on load
-    setTimeout(() => updateSliderTrack(1000000), 50);
-
-    // ── Manual Next Pallet in Conveyor Sim ────────────────────────────────────
-    window.nextPalletManual = function() {
-      runSimStep();
-      const track = document.getElementById('conveyorTrack');
-      const laser = document.getElementById('laserBeam');
-      if (track) {
-        track.classList.add('running');
-        setTimeout(() => { if (!simInterval) track.classList.remove('running'); }, 1200);
-      }
-      if (laser) {
-        laser.classList.add('active');
-        setTimeout(() => { if (!simInterval) laser.classList.remove('active'); }, 1200);
-      }
-    };
-
-    // ── Code Block Copy Button ──────────────────────────────────────────────
-    window.copyCodeBlock = function(btn) {
-      const container = btn.closest('.code-container');
-      const code = container ? container.querySelector('code') : null;
-      if (!code) return;
-      navigator.clipboard.writeText(code.innerText.trim()).then(() => {
-        btn.textContent = 'Copied ✓';
-        btn.classList.add('copied');
-        setTimeout(() => {
-          btn.textContent = 'Copy';
-          btn.classList.remove('copied');
-        }, 1600);
-      });
-    };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPage);
+  } else {
+    initPage();
+  }
 
 </script>
 </body>
