@@ -190,15 +190,17 @@ def _generate_tasks_for_concept_query(
         qtype_id=QTYPE_IDS["concept"],
         qtype_name="concept",
     )
-    samples.append(
-        TrainingSample(
-            bundle=bundle_concept,
-            target_idx=target_idx,
-            act_target=1 if len(ancestors) > 1 else 0,
-            qtype_name="concept",
-            ontology=ontology,
+    if target_curie in bundle_concept.candidate_curies:
+        target_idx = bundle_concept.candidate_curies.index(target_curie)
+        samples.append(
+            TrainingSample(
+                bundle=bundle_concept,
+                target_idx=target_idx,
+                act_target=1 if len(ancestors) > 1 else 0,
+                qtype_name="concept",
+                ontology=ontology,
+            )
         )
-    )
 
     # 2. Subsumes task: test membership in down-set \downarrow C
     is_positive = rng.random() < 0.5
@@ -268,15 +270,17 @@ def _generate_tasks_for_concept_query(
         qtype_id=QTYPE_IDS["choice"],
         qtype_name="choice",
     )
-    samples.append(
-        TrainingSample(
-            bundle=bundle_choice,
-            target_idx=choice_idx,
-            act_target=1,
-            qtype_name="choice",
-            ontology=ontology,
+    if target_curie in bundle_choice.candidate_curies:
+        choice_idx = bundle_choice.candidate_curies.index(target_curie)
+        samples.append(
+            TrainingSample(
+                bundle=bundle_choice,
+                target_idx=choice_idx,
+                act_target=1,
+                qtype_name="choice",
+                ontology=ontology,
+            )
         )
-    )
 
     # 4. Score task: relevance / hierarchy depth level (0..3)
     score_level = min(3, max(0, len(ancestors) - 1))
