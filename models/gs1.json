@@ -1,0 +1,538 @@
+{
+  "name": "gs1voc",
+  "concepts": [
+    {
+      "curie": "AdditionalProductClassificationDetails",
+      "label": "Additional Product Classification Details",
+      "description": "A product classification for the product other than the Global Product Classification(GPC brick value).",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "AdditiveDetails",
+      "label": "Additive Details",
+      "description": "A set of details about one of the additives within the product.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "AllergenDetails",
+      "label": "Allergen Details",
+      "description": "Details of an allergen for a product.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "AuthenticityDetails",
+      "label": "Authenticity Details",
+      "description": "A set of details about covert or overt security features that may contribute to checking the authenticity of a product or product instance.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "AwardPrizeDetails",
+      "label": "Award Prize",
+      "description": "Describes a prize or award won by a product or organization.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Beverage",
+      "label": "Beverage",
+      "description": "Any potable liquid.",
+      "parents": [
+        "FoodBeverageTobaccoProduct"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Brand",
+      "label": "Brand",
+      "description": "Information on brands and sub-brands for a product.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "CertificationDetails",
+      "label": "Certification",
+      "description": "Certification issued by a certifying body to a certification subject (Organization, Place, Product).",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Clothing",
+      "label": "Clothing",
+      "description": "A product that is worn on the body.",
+      "parents": [
+        "WearableProduct"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ColourCodeDetails",
+      "label": "Colour Code Details",
+      "description": "A set of colour code details (colour code, party controlling the code list) for the product.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "CompulsoryAdditionalInformation",
+      "label": "Compulsory Additional Information",
+      "description": "The group of compulsory information about a product.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ContactPoint",
+      "label": "Contact",
+      "description": "Information on an individual or department acting as point of contact for an organiation.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Country",
+      "label": "Country",
+      "description": "Country is a complex data type that indicates a country and a country subdivision.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DietTypeCodeDetails",
+      "label": "Diet Type Code Details",
+      "description": "A set of diet type code details (diet type code and diet type sub code) for the product.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Discount",
+      "label": "Discount",
+      "description": "Provides information on a discount applicable to an offer for example 2 percent.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "FoodAndBeveragePreparationInformation",
+      "label": "Food and Beverage Preparation Information",
+      "description": "Food and Beverage Preparation Information is a complex data type that indicates a preparation state code and preparation instructions.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "FoodBeverageTobaccoIngredientDetails",
+      "label": "Food Beverage Tobacco Ingredient",
+      "description": "Food Beverage Tobacco Ingredient is a complex data type that includes an ingredient statement and details.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "FoodBeverageTobaccoProduct",
+      "label": "Food Beverage Tobacco Product",
+      "description": "A food, beverage or tobacco product.",
+      "parents": [
+        "Product"
+      ],
+      "children": [
+        "Beverage",
+        "FruitsVegetables",
+        "MeatPoultry",
+        "MilkButterCreamYogurtCheeseEggsSubstitutes",
+        "Seafood"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Footwear",
+      "label": "Footwear",
+      "description": "Outerwear that is worn on the feet such as shoes or boots.",
+      "parents": [
+        "WearableProduct"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "FruitsVegetables",
+      "label": "Fruits and Vegetables",
+      "description": "Contains properties related specifically to fruit and vegetable products.",
+      "parents": [
+        "FoodBeverageTobaccoProduct"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GeoCoordinates",
+      "label": "GeoCoordinates",
+      "description": "The geographic coordinates of a place or event.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GeoShape",
+      "label": "GeoShape",
+      "description": "The geographic shape of a place. A GeoShape can be described using several properties whose values are based on latitude/longitude pairs. Either whitespace or commas can be used to separate latitude and longitude; whitespace should be used when writing a list of several such points.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LocationID:Details",
+      "label": "Location ID Details",
+      "description": "Government bodies, trade organisations, and other parties issue identifiers that are associated to locations. Linking these identifiers to GLN and one another supports consolidating records, mapping related, collaborative identifiers, enhances search ability and enables more efficient transitions...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LocationStatusHistory",
+      "label": "Location Status History",
+      "description": "Over the lifetime of a location, it may go through periods of being active and inactive. gs1:LocationStatusHistory allows changes in status to be communicated in advance and tracked over time.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MeatPoultry",
+      "label": "Meat Poultry",
+      "description": "Meat and poultry products.",
+      "parents": [
+        "FoodBeverageTobaccoProduct"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Message",
+      "label": "Message",
+      "description": "Any kind of electronic message for communication of information from one party to one or more other parties.",
+      "parents": [],
+      "children": [
+        "RegulatoryNotification"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MilkButterCreamYogurtCheeseEggsSubstitutes",
+      "label": "Milk Butter Cream Yogurt Cheese Eggs Substitutes",
+      "description": "Milk butter cream yogurts cheese eggs and any substitutes for these products.",
+      "parents": [
+        "FoodBeverageTobaccoProduct"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "NutritionMeasurementType",
+      "label": "Nutrition Measurement Type",
+      "description": "A class providing nutritional value and intake percent.",
+      "parents": [
+        "QuantitativeValue"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Offer",
+      "label": "Offer",
+      "description": "An offer to transfer some rights to an item or to provide a service,for example, an offer to sell tickets to an event, to rent the DVD of a movie, to stream a TV show over the internet, to repair a motorcycle, or to loan a book.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OrganicClaimDetails",
+      "label": "Organic Claim Details",
+      "description": "A set of organic claim details for the product.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Organization",
+      "label": "Organization",
+      "description": "An Organization is any legal or physical entity involved at any point in any supply chain and upon which there is a need to retrieve predefined information. An Organization is uniquely identified by a Global Location Number (GLN).",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OrganizationID:Details",
+      "label": "Organisation ID Details",
+      "description": "Government bodies, trade organisations, and other parties issue identifiers that are associated to legal entities and/or functions. Linking these identifiers to GLN and one another supports consolidating records, mapping related, collaborative identifiers, enhances search ability and enables more...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OrganizationStatusHistory",
+      "label": "Organisation Status History",
+      "description": "Over the lifetime of an organisation, it may go through periods of being active and inactive. gs1:OrganizationStatusHistory allows changes in status to be communicated in advance and tracked over time.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PackagingDetails",
+      "label": "Packaging",
+      "description": "Details on packaging for a product for example packaging type (bottle), materials, features, recycling, etc..",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PackagingMaterialDetails",
+      "label": "Packaging Material Details",
+      "description": "Information on any material used for packaging.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Place",
+      "label": "Place",
+      "description": "Entities that have a somewhat fixed, physical location.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PostalAddress",
+      "label": "Address",
+      "description": "The location at which a particular organization or person may be found or reached.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PriceSpecification",
+      "label": "Price Specification",
+      "description": "A structured value representing a monetary amount, consisting of a value and currency code.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Product",
+      "label": "Product",
+      "description": "Any item (product or service) upon which there is a need to retrieve pre-defined information and that may be priced, or ordered, or invoiced at any point in any supply chain.",
+      "parents": [],
+      "children": [
+        "FoodBeverageTobaccoProduct",
+        "WearableProduct"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ProductYieldDetails",
+      "label": "Product Yield Details",
+      "description": "A grouping of properties related to the yield of a food or beverage product according to a specified type of preparation.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "QuantitativeValue",
+      "label": "Measurement Type",
+      "description": "A point value or interval for product characteristics and other purposes. A unit of measurement is also specified.",
+      "parents": [],
+      "children": [
+        "NutritionMeasurementType"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ReferencedFileDetails",
+      "label": "Referenced File",
+      "description": "Provides URL and other information on a referenced electronic file.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "RegulatoryIdentifier",
+      "label": "Regulatory Identifier",
+      "description": "A repeatable grouping of identifiers that reference one document, record or dataset within one regulatory information system, repository or registry",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "RegulatoryInformation",
+      "label": "Regulatory Information",
+      "description": "Information on applicable government regulations applicable to a trade item",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "RegulatoryNotification",
+      "label": "Regulatory Notification",
+      "description": "A notification message about information on applicable government regulations applicable to a trade item",
+      "parents": [
+        "Message"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ReturnablePackageDepositDetails",
+      "label": "Returnable Package Deposit Details",
+      "description": "Details of the deposit for returnable packaging for a product.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Seafood",
+      "label": "Seafood",
+      "description": "Seafood Products including fish and shellfish.",
+      "parents": [
+        "FoodBeverageTobaccoProduct"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SizeCodeDetails",
+      "label": "Size Code Details",
+      "description": "A grouping of properties related to the representing the size of a product, by specifying a value from a specified code list.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SizeDetails",
+      "label": "Size Details",
+      "description": "A grouping of properties related to the size of a wearable product",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "TargetMarketDetails",
+      "label": "Target Market Details",
+      "description": "A set of target market details (product release date and associated countries) for the product.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "TextileMaterialDetails",
+      "label": "Textile Material",
+      "description": "Details on the composition of any materials used to make a product using textiles.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Transaction",
+      "label": "Transaction",
+      "description": "A repeatable grouping of identifiers that identify a business transaction ID and its type",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "TypeCode",
+      "label": "Type Code",
+      "description": "A code list.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "WarrantyPromise",
+      "label": "Warranty",
+      "description": "An assurance that the product is reliable and that repairs or replacement will be done free of charge within a given time limit and under certain conditions in the event of a defect.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "WearableProduct",
+      "label": "Wearable Product",
+      "description": "Products that are worn on the body.",
+      "parents": [
+        "Product"
+      ],
+      "children": [
+        "Clothing",
+        "Footwear"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    }
+  ]
+}
