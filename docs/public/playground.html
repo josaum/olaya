@@ -6,6 +6,24 @@
   <title>Leio Playground — Ontology-Grounded System 1 Decision Engine</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d1117'/><path d='M55 12 L22 54 L48 54 L44 88 L78 46 L52 46 Z' fill='%23388bfd'/></svg>">
   <meta name="description" content="Interactive playground for Leio: ontology-grounded System 1 decision engine. Live demo with 6 domain ontologies. Runs in-browser, &lt;1ms.">
+  <meta name="keywords" content="system 1, decision engine, playground, ontology grounding, leio, o-laya, GS1, DOID, schema.org, BFO, WebAssembly">
+  <meta name="author" content="Dionisio Chiuratto Agourakis">
+  <link rel="canonical" href="https://public-nine-jade-58.vercel.app/playground.html">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Leio Playground — Interactive System 1 Decision Workbench">
+  <meta property="og:description" content="Interactive demo for Leio: ontology-grounded System 1 decision engine. Live demo with 6 domain ontologies. In-browser &lt;1ms inference, axiom proofs.">
+  <meta property="og:url" content="https://public-nine-jade-58.vercel.app/playground.html">
+  <meta property="og:site_name" content="Leio">
+  <meta property="og:image" content="https://public-nine-jade-58.vercel.app/og-preview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Leio Playground — Interactive System 1 Decision Workbench">
+  <meta name="twitter:description" content="Try Leio in browser: ontology-grounded System 1 decision engine. P(child)≤P(parent) guaranteed. $0.042/1M inputs, outputs free.">
+  <meta name="twitter:image" content="https://public-nine-jade-58.vercel.app/og-preview.png">
+  <meta name="twitter:creator" content="@dionisio_ca">
   <style>
     *, *:before, *:after { box-sizing: border-box; }
     html, body {
@@ -16,6 +34,20 @@
       font-size: 15px;
       line-height: 1.5;
       overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1100px;
+      height: 480px;
+      background: radial-gradient(ellipse at top, rgba(56, 139, 253, 0.12), rgba(188, 140, 255, 0.05) 45%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
     a { color: #58a6ff; text-decoration: none; }
     a:hover { text-decoration: underline; }
@@ -451,9 +483,37 @@
       padding: 0.85rem; margin-bottom: 0.75rem; position: relative; overflow: hidden;
     }
     .conveyor-track {
-      height: 12px;
-      background: repeating-linear-gradient(45deg, #21262d, #21262d 10px, #30363d 10px, #30363d 20px);
-      border-radius: 6px; margin: 0.5rem 0 1rem 0;
+      height: 14px;
+      background: repeating-linear-gradient(45deg, #1b2028, #1b2028 10px, #2a313c 10px, #2a313c 20px);
+      background-size: 28px 14px;
+      border-radius: 3px;
+      margin: 0.5rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .conveyor-track.running {
+      animation: conveyorMove 0.8s linear infinite;
+    }
+    @keyframes conveyorMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 28px 0; }
+    }
+    .laser-beam {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 3px;
+      background: #58a6ff;
+      box-shadow: 0 0 10px #58a6ff, 0 0 20px #388bfd;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .laser-beam.active {
+      opacity: 1;
+      animation: laserSweep 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes laserSweep {
+      0% { left: 5%; }
+      100% { left: 95%; }
     }
     .pallet-box {
       background: #1f6feb22; border: 1px solid #388bfd; border-radius: 6px;
@@ -612,7 +672,7 @@
           <span id="simItemCurie" class="metric-pill" style="font-size: 0.75rem;">gs1:MilkButterCream</span>
         </div>
       </div>
-      <div class="conveyor-track"></div>
+      <div class="conveyor-track" id="conveyorTrack"><div class="laser-beam" id="laserBeam"></div></div>
       <div class="chute-grid">
         <div id="chute-cold" class="chute-gate divert-active">
           <strong>Chute 1: Cold Chain</strong>
@@ -1040,10 +1100,25 @@
     const cfg = DOMAIN_CONFIG[currentDomain];
     const t0  = performance.now();
     let decision;
+    let usedWasm = false;
     if (wasmReady && wasmEngine) {
       try {
-        decision = wasmEngine.system_one(text, 12);
+        const wasmRes = wasmEngine.system_one(text, 12);
+        const bestCid = olayaEngine.ontology.getByCurie(wasmRes.curie)?.id;
+        const selectedConcept = bestCid !== undefined ? olayaEngine.ontology.getById(bestCid) : { curie: wasmRes.curie, label: wasmRes.label, id: 0, parents: [] };
+        decision = {
+          selectedConcept: selectedConcept,
+          confidence: wasmRes.confidence,
+          probabilities: wasmRes.probabilities.map(([curie, prob]) => ({
+            curie: curie,
+            label: olayaEngine.ontology.getByCurie(curie)?.label || curie,
+            prob: prob
+          })),
+          axiomsVerified: wasmRes.axioms_verified
+        };
+        usedWasm = true;
       } catch(we) {
+        console.warn('WASM forward pass failed, fallback to JS:', we);
         decision = await olayaEngine.systemOne(text, 12);
       }
     } else {
@@ -1051,14 +1126,13 @@
     }
     const dt  = (performance.now() - t0).toFixed(2);
 
-    if (wasmReady && wasmEngine) {
+    if (usedWasm) {
       latencyBadge.textContent = `WASM < 1µs`;
       latencyBadge.style.color = '#3fb950';
     } else {
       latencyBadge.textContent = `${dt} ms (JS)`;
       latencyBadge.style.color = '#58a6ff';
     }
-
     // Lineage
     const lineage = []; let curr = decision.selectedConcept; const visited = new Set();
     while (curr && !visited.has(curr.id)) {
@@ -1152,20 +1226,26 @@
   ];
 
   window.toggleAgentSimulation = function() {
-    const btn = document.getElementById('agentSimBtn');
-    const tag = document.getElementById('agentStatusTag');
+    const track = document.getElementById('conveyorTrack');
+    const laser = document.getElementById('laserBeam');
+    const btn   = document.getElementById('agentSimBtn');
+    const tag   = document.getElementById('agentStatusTag');
     if (simInterval) {
       clearInterval(simInterval); simInterval = null;
       btn.textContent    = '▶ Run Live Mission';
       btn.style.background = '#238636';
       tag.textContent    = '⏸ Paused';
       tag.style.color    = '#e3b341';
+      if (track) track.classList.remove('running');
+      if (laser) laser.classList.remove('active');
       logToTerminal('[Agent Paused] Autonomous sorter paused by operator.');
     } else {
       btn.textContent    = '⏹ Stop Mission';
       btn.style.background = '#da3633';
       tag.textContent    = '● Autonomous Agent Active';
       tag.style.color    = '#3fb950';
+      if (track) track.classList.add('running');
+      if (laser) laser.classList.add('active');
       logToTerminal('[Mission Started] Autonomous agent listening to 200kHz barcode sensor stream...');
       runSimStep();
       simInterval = setInterval(runSimStep, 3200);
@@ -1199,18 +1279,34 @@
 
     const t0 = performance.now();
     let decision;
+    let latencyLabel = '';
     if (wasmReady && wasmEngine) {
       try {
-        decision = wasmEngine.system_one(item.text, 12);
+        const wasmRes = wasmEngine.system_one(item.text, 12);
+        const bestCid = olayaEngine.ontology.getByCurie(wasmRes.curie)?.id;
+        const selectedConcept = bestCid !== undefined ? olayaEngine.ontology.getById(bestCid) : { curie: wasmRes.curie, label: wasmRes.label, id: 0, parents: [] };
+        decision = {
+          selectedConcept: selectedConcept,
+          confidence: wasmRes.confidence,
+          probabilities: wasmRes.probabilities.map(([curie, prob]) => ({
+            curie: curie,
+            label: olayaEngine.ontology.getByCurie(curie)?.label || curie,
+            prob: prob
+          })),
+          axiomsVerified: wasmRes.axioms_verified
+        };
+        latencyLabel = '< 1µs (WASM)';
       } catch(we) {
         decision = await olayaEngine.systemOne(item.text, 12);
+        const dt = (performance.now() - t0).toFixed(2);
+        latencyLabel = `${dt} ms (JS)`;
       }
     } else {
       decision = await olayaEngine.systemOne(item.text, 12);
+      const dt = (performance.now() - t0).toFixed(2);
+      latencyLabel = `${dt} ms (JS)`;
     }
-    const dt = (performance.now() - t0).toFixed(2);
 
-    const latencyLabel = (wasmReady && wasmEngine) ? `< 1µs (WASM)` : `${dt}ms (JS)`;
     document.getElementById('agentClock').textContent    = latencyLabel;
     document.getElementById('simItemCurie').textContent  = decision.selectedConcept.curie;
 
