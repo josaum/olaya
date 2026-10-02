@@ -50,7 +50,7 @@ export class OLaya {
   /**
    * System 1 decision evaluation: resolves query state to an ontology concept in < 1 ms.
    */
-  public async systemOne(stateText: string, maxCandidates = 8): Promise<DecisionResult> {
+  public async systemOne(stateText: string, maxCandidates = 12): Promise<DecisionResult> {
     const subgraph = this.router.extractSubgraph(stateText, maxCandidates);
     const m = subgraph.concepts.length;
     if (m === 0) {
