@@ -49,6 +49,10 @@ def build_universe() -> Ontology:
         (MODELS_DIR / "universe_c2sim.json", "c2sim", "bfo:BFO_0000001"),
         (MODELS_DIR / "universe_fibo.json", "fibo", "bfo:BFO_0000001"),
         (MODELS_DIR / "universe_mondo.json", "mondo", "bfo:BFO_0000016"),
+        (MODELS_DIR / "universe_d3fend.json", "d3fend", "bfo:BFO_0000003"),
+        (MODELS_DIR / "universe_hs_codes.json", "hs", "bfo:BFO_0000040"),
+        (MODELS_DIR / "universe_lkif.json", "lkif", "bfo:BFO_0000001"),
+        (MODELS_DIR / "universe_sweet.json", "sweet", "bfo:BFO_0000001"),
     ]
 
     total_added = 0

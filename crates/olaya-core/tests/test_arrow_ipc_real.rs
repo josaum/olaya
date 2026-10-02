@@ -208,4 +208,97 @@ fn test_real_w3c_core_arrow_ipc_inference() {
     assert!(decision.axioms_verified);
 }
 
+#[test]
+fn test_real_d3fend_cyber_arrow_ipc_inference() {
+    let arrow_path = Path::new("models/d3fend.arrow");
+    if !arrow_path.exists() {
+        return;
+    }
+
+    let batch = read_ontology_ipc(arrow_path).expect("Failed to read d3fend.arrow");
+    assert!(batch.num_rows() >= 5000);
+
+    let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from d3fend.arrow");
+
+    let decision = engine
+        .system_one("Inbound network traffic filtering with deep packet inspection and credential dump blocking", 8)
+        .expect("Decision failed");
+
+    println!(
+        "🎯 MITRE D3FEND Zero-Copy Decision: {} [{}] (Confidence: {:.2})",
+        decision.selected_label, decision.selected_curie, decision.confidence
+    );
+    assert!(decision.axioms_verified);
+}
+
+#[test]
+fn test_real_hs_codes_trade_arrow_ipc_inference() {
+    let arrow_path = Path::new("models/hs_codes.arrow");
+    if !arrow_path.exists() {
+        return;
+    }
+
+    let batch = read_ontology_ipc(arrow_path).expect("Failed to read hs_codes.arrow");
+    assert!(batch.num_rows() >= 6900);
+
+    let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from hs_codes.arrow");
+
+    let decision = engine
+        .system_one("Pure-bred breeding horses and live bovine animals", 8)
+        .expect("Decision failed");
+
+    println!(
+        "🎯 WCO HS Codes Zero-Copy Decision: {} [{}] (Confidence: {:.2})",
+        decision.selected_label, decision.selected_curie, decision.confidence
+    );
+    assert!(decision.axioms_verified);
+}
+
+#[test]
+fn test_real_sweet_earth_arrow_ipc_inference() {
+    let arrow_path = Path::new("models/sweet_earth.arrow");
+    if !arrow_path.exists() {
+        return;
+    }
+
+    let batch = read_ontology_ipc(arrow_path).expect("Failed to read sweet_earth.arrow");
+    assert!(batch.num_rows() >= 12000);
+
+    let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from sweet_earth.arrow");
+
+    let decision = engine
+        .system_one("Atmospheric pressure climate zone vortex fluid dynamics", 8)
+        .expect("Decision failed");
+
+    println!(
+        "🎯 NASA SWEET Earth Zero-Copy Decision: {} [{}] (Confidence: {:.2})",
+        decision.selected_label, decision.selected_curie, decision.confidence
+    );
+    assert!(decision.axioms_verified);
+}
+
+#[test]
+fn test_real_lkif_legal_arrow_ipc_inference() {
+    let arrow_path = Path::new("models/lkif_legal.arrow");
+    if !arrow_path.exists() {
+        return;
+    }
+
+    let batch = read_ontology_ipc(arrow_path).expect("Failed to read lkif_legal.arrow");
+    assert!(batch.num_rows() >= 200);
+
+    let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from lkif_legal.arrow");
+
+    let decision = engine
+        .system_one("Legal person contractual obligation statutory liability", 8)
+        .expect("Decision failed");
+
+    println!(
+        "🎯 LKIF Core Legal Zero-Copy Decision: {} [{}] (Confidence: {:.2})",
+        decision.selected_label, decision.selected_curie, decision.confidence
+    );
+    assert!(decision.axioms_verified);
+}
+
+
 
