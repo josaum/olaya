@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leio — Ontology-Grounded System 1 Decision Engine | $0.042/1M Inputs</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d1117'/><path d='M55 12 L22 54 L48 54 L44 88 L78 46 L52 46 Z' fill='%23388bfd'/></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23000000'/><path d='M55 12 L22 54 L48 54 L44 88 L78 46 L52 46 Z' fill='%232997ff'/></svg>">
   <meta name="description" content="Leio is a sub-millisecond System 1 decision engine that grounds text into formal ontologies (GS1, Schema.org, DOID, BFO) with P(child)≤P(parent) monotonicity guarantees. Input-only pricing at $0.042/1M tokens — outputs always free. Jev-compatible API.">
   <meta name="keywords" content="system 1, decision engine, ontology grounding, leio, o-laya, jev compatible, schema.org, GS1, DOID, BM25, BERT, decision model, semantic classification, structured prediction">
   <meta name="author" content="Dionisio Chiuratto Agourakis">
@@ -13,7 +13,7 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Leio — Ontology-Grounded System 1 Decision Engine">
-  <meta property="og:description" content="Not a chatbot. Returns mathematically proven probabilities over formal ontologies in &lt;1ms. P(child)≤P(parent) guaranteed. zsh.042/1M inputs — outputs free.">
+  <meta property="og:description" content="Not a chatbot. Returns mathematically proven probabilities over formal ontologies in <1ms. P(child)≤P(parent) guaranteed. $0.042/1M inputs — outputs free.">
   <meta property="og:url" content="https://public-nine-jade-58.vercel.app/">
   <meta property="og:site_name" content="Leio">
   <meta property="og:image" content="https://public-nine-jade-58.vercel.app/og-preview.png">
@@ -22,7 +22,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Leio — Sub-millisecond Ontology Decision Engine">
-  <meta name="twitter:description" content="Jev-compatible System 1 decision engine with formal ontology grounding. GS1, DOID, Schema.org. P(child)≤P(parent) mathematically guaranteed. zsh.042/1M inputs, outputs free.">
+  <meta name="twitter:description" content="Jev-compatible System 1 decision engine with formal ontology grounding. GS1, DOID, Schema.org. P(child)≤P(parent) mathematically guaranteed. $0.042/1M inputs, outputs free.">
   <meta name="twitter:image" content="https://public-nine-jade-58.vercel.app/og-preview.png">
   <meta name="twitter:creator" content="@dionisio_ca">
   <!-- Structured Data (JSON-LD) -->
@@ -56,1059 +56,913 @@
     mermaid.initialize({ startOnLoad: true, theme: 'dark' });
   </script>
   <style>
+    /* ── Apple-Grade Design System ── */
     :root {
-      --background: #0d1117;
-      --panel-bg: #161b22;
-      --border: #30363d;
-      --border-muted: #21262d;
-      --text: #c9d1d9;
-      --text-heading: #f0f6fc;
-      --text-muted: #8b949e;
-      --accent-blue: #58a6ff;
-      --accent-green: #3fb950;
-      --accent-purple: #bc8cff;
+      --bg: #000000;
+      --bg-elevated: #0a0a0c;
+      --bg-card: rgba(255, 255, 255, 0.035);
+      --bg-card-hover: rgba(255, 255, 255, 0.055);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.14);
+      --text: #f5f5f7;
+      --text-muted: #86868b;
+      --text-tertiary: #6e6e73;
+      --blue: #2997ff;
+      --blue-hover: #0077ed;
+      --blue-btn: #0071e3;
+      --green: #30d158;
+      --purple: #bf5af2;
+      --red: #ff453a;
+      --orange: #ff9f0a;
+      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
+
     *, *:before, *:after {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
+
     html {
-      background: #0d1117;
-      color: #c9d1d9;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      font-size: 15px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 16px;
       line-height: 1.6;
       scroll-behavior: smooth;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
+
     body {
-      margin: 0;
-      padding: 0;
-      background: #0d1117;
-      color: #c9d1d9;
+      background: var(--bg);
+      color: var(--text);
       overflow-x: hidden;
       min-height: 100vh;
       position: relative;
     }
+
+    /* Serene ambient lighting */
     body::before {
       content: "";
       position: absolute;
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 1100px;
-      height: 480px;
-      background: radial-gradient(ellipse at top, rgba(56, 139, 253, 0.12), rgba(188, 140, 255, 0.05) 45%, transparent 70%);
+      width: 1200px;
+      height: 580px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(41, 151, 255, 0.13), rgba(191, 90, 242, 0.05) 45%, transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
+
     .page-wrap {
-      max-width: 1040px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: calc(48px + 1.5rem) 1.25rem 4rem 1.25rem;
+      padding: 68px 24px 100px 24px;
       position: relative;
       z-index: 1;
     }
+
     a {
-      color: #58a6ff;
+      color: var(--blue);
       text-decoration: none;
-      transition: color 0.15s;
+      transition: color 0.15s ease;
     }
     a:hover {
-      text-decoration: underline;
-    }
-    h1, h2, h3, h4 {
-      color: #f0f6fc;
-      font-weight: 700;
-      line-height: 1.25;
-      letter-spacing: -0.02em;
-    }
-    h1 {
-      font-size: 2.15rem;
-      margin: 0.5rem 0 0.25rem 0;
-    }
-    h2 {
-      font-size: 1.45rem;
-      margin-top: 2.4rem;
-      margin-bottom: 0.75rem;
-      padding-bottom: 0.45rem;
-      border-bottom: 1px solid #21262d;
-    }
-    h3 {
-      font-size: 1.08rem;
-      margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: #e6edf3;
-    }
-    p {
-      color: #c9d1d9;
-      line-height: 1.65;
-      margin: 0.6rem 0 1rem 0;
-    }
-    strong {
-      color: #f0f6fc;
-    }
-    hr {
-      border: none;
-      border-top: 1px solid #21262d;
-      margin: 2.5rem 0;
-    }
-    code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.86em;
-      color: #79c0ff;
-      background: rgba(110, 118, 129, 0.2);
-      padding: 0.15em 0.35em;
-      border-radius: 4px;
-      word-break: break-word;
-    }
-    pre {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 0.85rem 1rem;
-      overflow-x: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 0.83rem;
-      line-height: 1.5;
-      color: #c9d1d9;
-      margin: 0.75rem 0 1.25rem 0;
-    }
-    pre code {
-      color: #c9d1d9;
-      background: transparent;
-      padding: 0;
-      border-radius: 0;
-      font-size: inherit;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 0;
-      color: #c9d1d9;
-    }
-    th, td {
-      padding: 0.65rem 0.85rem;
-      border: 1px solid #30363d;
-      font-size: 0.86rem;
-      line-height: 1.45;
-    }
-    th {
-      background: #161b22;
-      color: #f0f6fc;
-      font-weight: 600;
-      text-align: left;
-    }
-    tr:nth-child(even) td {
-      background: rgba(22, 27, 34, 0.4);
-    }
-    header {
-      border-bottom: 1px solid #21262d;
-      margin-bottom: 1.25rem;
-      padding-bottom: 0.75rem;
-    }
-    .meta {
-      color: #8b949e;
-      font-size: 0.82rem;
-      margin-bottom: 0.25rem;
-    }
-    .badge {
-      display: inline-block;
-      background: #1b5e20;
-      color: #fff;
-      padding: 0.15rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      margin-right: 0.4rem;
-      margin-bottom: 0.25rem;
-    }
-    .table-container {
-      width: 100%;
-      margin: 1.5rem 0;
-      overflow-x: auto;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-    }
-    .callout {
-      background: rgba(27, 94, 32, 0.15);
-      border-left: 4px solid #4caf50;
-      padding: 0.85rem 1rem;
-      margin: 1.25rem 0;
-      border-radius: 0 6px 6px 0;
-    }
-    .mermaid {
-      background: #0d1117;
-      padding: 1rem 0.5rem;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-      text-align: center;
-      max-width: 100%;
-      overflow-x: auto;
-    }
-    .mermaid svg {
-      max-width: 100% !important;
-      height: auto !important;
+      color: #70b7ff;
+      text-decoration: none;
     }
 
-    /* ── Fixed Top Navbar ── */
-    .navbar {
+    /* ── Apple Top Frosted Navbar ── */
+    .apple-nav {
       position: fixed;
       top: 0; left: 0; right: 0;
-      height: 48px;
-      background: rgba(13, 17, 23, 0.94);
-      border-bottom: 1px solid #21262d;
-      backdrop-filter: blur(10px);
+      height: 52px;
+      background: rgba(0, 0, 0, 0.78);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 1.25rem;
+      padding: 0 24px;
       z-index: 1000;
     }
     .nav-inner {
-      max-width: 1040px;
+      max-width: 1080px;
       width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+    .nav-brand-badge {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 980px;
+      letter-spacing: 0.02em;
+    }
+    .nav-menu {
+      display: none;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    @media (min-width: 800px) {
+      .nav-menu { display: flex; }
+    }
+    .nav-item {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 400;
+      transition: color 0.15s ease;
+    }
+    .nav-item:hover {
+      color: #ffffff;
+    }
+    .nav-actions {
       display: flex;
       align-items: center;
       gap: 0.75rem;
     }
-    .brand-pill {
-      background: #1f6feb;
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.82rem;
-      padding: 0.2rem 0.65rem;
-      border-radius: 20px;
-      letter-spacing: 0.03em;
-      text-decoration: none;
-      flex-shrink: 0;
-      box-shadow: 0 0 12px rgba(31, 111, 235, 0.45);
-      transition: all 0.2s ease;
-    }
-    .brand-pill:hover {
-      background: #388bfd;
-      box-shadow: 0 0 16px rgba(56, 139, 253, 0.65);
-      text-decoration: none;
-    }
-    .nav-tagline {
-      font-size: 0.76rem;
-      color: #8b949e;
-      font-weight: 500;
-      display: none;
-    }
-    @media (min-width: 900px) {
-      .nav-tagline { display: inline; }
-    }
-    .nav-spacer { flex: 1; }
-    .nav-links {
-      display: none;
-      align-items: center;
-      gap: 0.2rem;
-    }
-    @media (min-width: 768px) {
-      .nav-links { display: flex; }
-    }
-    .nav-link {
-      color: #8b949e;
-      font-size: 0.82rem;
-      font-weight: 500;
-      text-decoration: none;
-      padding: 0.25rem 0.55rem;
-      border-radius: 6px;
-      transition: color 0.15s, background-color 0.15s;
-      white-space: nowrap;
-    }
-    .nav-link:hover {
-      color: #f0f6fc;
-      background: rgba(255, 255, 255, 0.05);
-      text-decoration: none;
-    }
     .nav-status-pill {
-      display: none;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.74rem;
-      color: #3fb950;
-      background: rgba(63,185,80,0.1);
-      border: 1px solid rgba(63,185,80,0.3);
-      border-radius: 20px;
-      padding: 0.15rem 0.55rem;
-    }
-    @media (min-width: 640px) {
-      .nav-status-pill { display: inline-flex; }
-    }
-    .nav-cta {
-      background: #238636;
-      color: #fff !important;
-      border: 1px solid #2ea043;
-      border-radius: 6px;
-      padding: 0.3rem 0.85rem;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      white-space: nowrap;
-      box-shadow: 0 0 12px rgba(46, 160, 67, 0.35);
-      transition: all 0.2s ease;
-    }
-    .nav-cta:hover {
-      background: #2ea043;
-      box-shadow: 0 0 16px rgba(46, 160, 67, 0.6);
-      text-decoration: none;
-    }
-
-    /* ── Code block copy button ── */
-    .code-wrapper {
-      position: relative;
-    }
-    .copy-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: rgba(33, 38, 45, 0.85);
-      border: 1px solid #30363d;
-      color: #8b949e;
-      border-radius: 6px;
-      padding: 0.22rem 0.55rem;
-      font-size: 0.72rem;
-      font-family: inherit;
-      font-weight: 500;
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      transition: all 0.15s ease;
-      z-index: 10;
-      backdrop-filter: blur(4px);
+      gap: 0.45rem;
+      font-size: 0.75rem;
+      color: var(--green);
+      background: rgba(48, 209, 88, 0.1);
+      border: 1px solid rgba(48, 209, 88, 0.25);
+      border-radius: 980px;
+      padding: 0.2rem 0.65rem;
+      font-weight: 500;
     }
-    .copy-btn:hover {
-      background: #30363d;
-      color: #c9d1d9;
-      border-color: #58a6ff;
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green);
+      animation: pulseAnim 2s infinite;
     }
-    .copy-btn.copied {
-      background: rgba(46, 160, 67, 0.2);
-      color: #3fb950;
-      border-color: #2ea043;
+    @keyframes pulseAnim {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .nav-cta-btn {
+      background: var(--blue-btn);
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.35rem 0.95rem;
+      border-radius: 980px;
+      transition: all 0.2s ease;
+    }
+    .nav-cta-btn:hover {
+      background: var(--blue-hover);
+      transform: scale(1.02);
     }
 
-    /* ── Comparison Table Leio Column Highlight ── */
-    .table-container th.col-leio {
-      background: rgba(31, 111, 235, 0.18) !important;
-      border-left: 2px solid #388bfd !important;
-      border-right: 2px solid #388bfd !important;
-      color: #58a6ff !important;
-      font-weight: 700;
+    /* ── Apple Hero Section ── */
+    .hero-section {
+      text-align: center;
+      padding: 80px 0 50px 0;
     }
-    .table-container td.col-leio {
-      background: rgba(31, 111, 235, 0.06);
-      border-left: 2px solid #388bfd !important;
-      border-right: 2px solid #388bfd !important;
-    }
-
-    /* SOTA Dual-View Live Decision Workbench */
-    .demo-container {
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 0.85rem 1rem;
-      margin: 1rem 0 1.75rem 0;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.45);
-      max-width: 100%;
-    }
-    .demo-header {
-      display: flex;
-      justify-content: space-between;
+    .apple-eyebrow {
+      display: inline-flex;
       align-items: center;
-      margin-bottom: 0.5rem;
-      border-bottom: 1px solid #21262d;
-      padding-bottom: 0.45rem;
-      flex-wrap: wrap;
       gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 980px;
+      padding: 0.35rem 0.95rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
     }
-    .demo-title {
-      font-size: 1rem;
+    .hero-h1 {
+      font-size: clamp(2.6rem, 5.5vw, 4.4rem);
       font-weight: 700;
-      color: #58a6ff;
+      line-height: 1.06;
+      letter-spacing: -0.04em;
+      color: #ffffff;
+      margin-bottom: 1.25rem;
+      text-wrap: balance;
+    }
+    .hero-h1-gradient {
+      background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.65) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: clamp(1.1rem, 2vw, 1.28rem);
+      line-height: 1.55;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 2.2rem auto;
+      letter-spacing: -0.015em;
+      font-weight: 400;
+      text-wrap: balance;
+    }
+    .hero-sub strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+    }
+    .btn-apple-primary {
+      background: var(--blue-btn);
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.75rem 1.6rem;
+      border-radius: 980px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 18px rgba(0, 113, 227, 0.35);
+      transition: all 0.2s ease;
+    }
+    .btn-apple-primary:hover {
+      background: var(--blue-hover);
+      transform: scale(1.02);
+      color: #ffffff;
+    }
+    .btn-apple-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: #f5f5f7;
+      border: 1px solid var(--border-strong);
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+      border-radius: 980px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    .btn-apple-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      transform: scale(1.02);
+    }
+
+    /* ── Apple Keynote 3-Stat Display ── */
+    .apple-stat-banner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem 2rem;
+      margin: 0 auto 4.5rem auto;
+      backdrop-filter: blur(20px);
+    }
+    @media (min-width: 768px) {
+      .apple-stat-banner {
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+        align-items: center;
+      }
+    }
+    .stat-col {
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      line-height: 1.1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+    .stat-divider {
+      display: none;
+      width: 1px;
+      height: 48px;
+      background: var(--border);
+    }
+    @media (min-width: 768px) {
+      .stat-divider { display: block; }
+    }
+
+    /* ── Apple Studio Window Frame (The Centerpiece Demo) ── */
+    .apple-studio-window {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border-strong);
+      border-radius: 24px;
+      box-shadow: 0 35px 90px -20px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+      margin-bottom: 6rem;
+    }
+    .studio-window-bar {
+      height: 46px;
+      background: rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+    }
+    .mac-dots {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+    .mac-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .mac-dot.red { background: #ff5f56; }
+    .mac-dot.yellow { background: #ffbd2e; }
+    .mac-dot.green { background: #27c93f; }
+    .studio-window-title {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+    .studio-window-status {
       display: flex;
       align-items: center;
       gap: 0.45rem;
+      font-size: 0.76rem;
+      color: var(--green);
+      font-family: var(--font-mono);
     }
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      background: #3fb950;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #3fb950;
-      animation: pulse 1.8s infinite;
-      flex-shrink: 0;
+
+    .studio-content {
+      padding: 1.75rem;
     }
-    @keyframes pulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.7); }
-      70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(63, 185, 80, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0); }
-    }
-    .domain-switcher-wrap {
-      width: 100%;
-      margin-bottom: 0.65rem;
+
+    /* ── Apple Segmented Control for Domain Switching ── */
+    .apple-segmented-wrap {
+      margin-bottom: 1.5rem;
     }
     .domain-mobile-select {
       display: none;
       width: 100%;
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      color: #58a6ff;
-      font-size: 0.88rem;
-      font-weight: 600;
-      padding: 0.55rem 0.75rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.65rem 1rem;
       outline: none;
       cursor: pointer;
-      margin-bottom: 0.25rem;
     }
-    .domain-mobile-select:focus {
-      border-color: #58a6ff;
+    @media (max-width: 760px) {
+      .domain-mobile-select { display: block; }
+      .apple-segmented-control { display: none !important; }
     }
-    .domain-tabs {
+    .apple-segmented-control {
       display: flex;
-      gap: 0.35rem;
-      flex-wrap: wrap;
-      background: #161b22;
-      padding: 0.35rem;
-      border-radius: 6px;
-      border: 1px solid #30363d;
-      width: 100%;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 980px;
+      padding: 4px;
+      overflow-x: auto;
     }
-    .domain-tab-btn {
+    .segmented-item {
       background: transparent;
-      color: #8b949e;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      padding: 0.35rem 0.65rem;
-      font-size: 0.76rem;
+      color: var(--text-muted);
+      border: none;
+      border-radius: 980px;
+      padding: 0.45rem 0.95rem;
+      font-size: 0.82rem;
       font-weight: 500;
+      font-family: inherit;
       cursor: pointer;
-      transition: all 0.15s ease-in-out;
+      white-space: nowrap;
+      transition: all 0.15s ease;
       flex: 1 1 auto;
       text-align: center;
-      min-height: 32px;
-      touch-action: manipulation;
-      white-space: normal;
     }
-    .domain-tab-btn:hover {
-      color: #c9d1d9;
-      background: #21262d;
-    }
-    .domain-tab-btn.active {
-      background: #1f6feb;
+    .segmented-item:hover {
       color: #ffffff;
+    }
+    .segmented-item.active {
+      background: #ffffff;
+      color: #000000;
       font-weight: 600;
-      border-color: #388bfd;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
     }
 
-    /* 2-Column Responsive Workbench Grid */
+    /* ── Split Workbench Grid ── */
     .workbench-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 0.75rem;
+      gap: 1.25rem;
     }
     @media (min-width: 860px) {
       .workbench-grid {
         grid-template-columns: 1fr 1fr;
       }
     }
-
-    .panel-box {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 0.7rem 0.85rem;
+    .studio-panel {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
       display: flex;
       flex-direction: column;
     }
-    .panel-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #8b949e;
-      margin-bottom: 0.4rem;
-      font-weight: 600;
+    .panel-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 0.4rem;
+      margin-bottom: 0.65rem;
     }
-    .demo-textarea {
+    .panel-kicker {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .panel-metric-text {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--blue);
+    }
+    .studio-textarea {
       width: 100%;
-      height: 74px;
-      min-height: 60px;
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      color: #c9d1d9;
+      height: 86px;
+      min-height: 70px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: #ffffff;
       font-family: inherit;
-      font-size: 0.88rem;
-      line-height: 1.4;
-      padding: 0.5rem 0.65rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      padding: 0.75rem 0.9rem;
       resize: vertical;
-      box-sizing: border-box;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .demo-textarea:focus {
-      border-color: #58a6ff;
-      box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
-    }
-    .demo-presets {
-      display: flex;
-      gap: 0.35rem;
-      margin-top: 0.45rem;
-      flex-wrap: wrap;
-      align-items: center;
-      width: 100%;
-    }
-    .preset-btn {
-      background: #21262d;
-      color: #c9d1d9;
-      border: 1px solid #30363d;
-      border-radius: 4px;
-      padding: 0.25rem 0.55rem;
-      font-size: 0.72rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.15s;
-      min-height: 28px;
-      touch-action: manipulation;
-    }
-    .preset-btn:hover {
-      background: #30363d;
-      color: #58a6ff;
-      border-color: #58a6ff;
+    .studio-textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(41, 151, 255, 0.25);
     }
 
-    /* Live Subgraph Visual Bars */
-    .prob-distribution-card {
-      margin-top: 0.65rem;
-      border-top: 1px solid #21262d;
-      padding-top: 0.5rem;
-      width: 100%;
+    /* Chip Presets */
+    .presets-row {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .preset-chip {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 980px;
+      padding: 0.3rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+    .preset-chip:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Probability Bars */
+    .prob-section {
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
     }
     .prob-row {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      margin-bottom: 0.35rem;
-      font-size: 0.76rem;
-      width: 100%;
+      gap: 0.6rem;
+      margin-bottom: 0.45rem;
+      font-size: 0.8rem;
     }
     .prob-curie {
-      width: 120px;
-      min-width: 90px;
-      max-width: 140px;
+      width: 130px;
+      min-width: 100px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      color: #c9d1d9;
-      font-family: monospace;
-      font-size: 0.73rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
       flex-shrink: 0;
     }
     .prob-bar-track {
-      flex: 1 1 auto;
-      height: 8px;
-      background: #21262d;
-      border-radius: 4px;
+      flex: 1;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 980px;
       overflow: hidden;
-      min-width: 40px;
     }
     .prob-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, #1f6feb, #388bfd);
-      border-radius: 4px;
-      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(90deg, #2997ff, #70b7ff);
+      border-radius: 980px;
+      transition: width 0.25s ease;
     }
     .prob-bar-fill.lead {
-      background: linear-gradient(90deg, #238636, #3fb950);
+      background: linear-gradient(90deg, #30d158, #6ee7b7);
     }
     .prob-value {
       width: 44px;
       text-align: right;
-      font-family: monospace;
-      color: #7ee787;
+      font-family: var(--font-mono);
+      color: var(--green);
       font-weight: 600;
-      font-size: 0.74rem;
+      font-size: 0.76rem;
       flex-shrink: 0;
     }
 
-    /* Inspector Card (Right Column) */
-    .decision-banner {
-      background: rgba(31, 111, 235, 0.12);
-      border: 1px solid rgba(56, 139, 253, 0.35);
-      border-radius: 6px;
-      padding: 0.55rem 0.75rem;
-      margin-bottom: 0.55rem;
-      width: 100%;
+    /* Decision Result Card */
+    .decision-card {
+      background: rgba(41, 151, 255, 0.06);
+      border: 1px solid rgba(41, 151, 255, 0.2);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 0.85rem;
     }
-    .decision-banner-top {
+    .decision-card-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.25rem;
-      gap: 0.4rem;
+      margin-bottom: 0.35rem;
+      gap: 0.5rem;
     }
     .curie-title {
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       font-weight: 700;
-      color: #79c0ff;
-      font-family: monospace;
-      word-break: break-all;
+      color: #ffffff;
+      font-family: var(--font-mono);
     }
     .conf-badge {
-      background: #238636;
-      color: #fff;
-      font-size: 0.72rem;
-      padding: 0.12rem 0.5rem;
-      border-radius: 10px;
+      background: rgba(48, 209, 88, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(48, 209, 88, 0.35);
+      font-size: 0.76rem;
+      padding: 0.18rem 0.65rem;
+      border-radius: 980px;
       font-weight: 600;
-      font-family: monospace;
+      font-family: var(--font-mono);
       white-space: nowrap;
-      flex-shrink: 0;
     }
     .lineage-breadcrumbs {
-      font-size: 0.74rem;
-      color: #8b949e;
+      font-size: 0.76rem;
+      color: var(--text-muted);
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.25rem;
+      gap: 0.35rem;
       line-height: 1.4;
-      width: 100%;
     }
     .lineage-step {
-      background: #21262d;
-      padding: 0.08rem 0.35rem;
-      border-radius: 3px;
-      color: #c9d1d9;
-      font-family: monospace;
-      font-size: 0.71rem;
-      word-break: break-all;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.1rem 0.45rem;
+      border-radius: 4px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
     }
     .lineage-sep {
-      color: #58a6ff;
-      font-size: 0.7rem;
+      color: var(--blue);
+      font-size: 0.72rem;
     }
 
-    /* Proof Badges Grid */
+    /* Axiom Proof Grid */
     .proof-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.4rem;
-      margin-bottom: 0.55rem;
-      width: 100%;
+      gap: 0.5rem;
+      margin-bottom: 0.85rem;
     }
     .proof-item {
-      background: #0d1117;
-      border: 1px solid #21262d;
-      border-radius: 4px;
-      padding: 0.35rem 0.5rem;
-      font-size: 0.72rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.5rem 0.65rem;
     }
     .proof-item strong {
-      color: #3fb950;
+      color: var(--green);
       display: block;
-      font-family: monospace;
-      font-size: 0.73rem;
-      word-break: break-word;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      margin-bottom: 0.15rem;
     }
     .proof-item span {
-      color: #8b949e;
-      font-size: 0.68rem;
-    }
-
-    /* JSON Output Box */
-    .demo-output-pre {
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 0.5rem 0.75rem;
-      height: 130px;
-      max-height: 180px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      font-size: 0.75rem;
-      line-height: 1.35;
-      margin: 0;
-      color: #7ee787;
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
-      white-space: pre-wrap;
-      word-break: break-word;
-      width: 100%;
-    }
-    .metric-pill {
-      background: #1f6feb22;
-      color: #58a6ff;
-      border: 1px solid #1f6feb55;
-      border-radius: 12px;
-      padding: 0.12rem 0.45rem;
+      color: var(--text-muted);
       font-size: 0.72rem;
-      font-family: monospace;
-      font-weight: 600;
-      white-space: nowrap;
+      line-height: 1.3;
+      display: block;
     }
 
-    /* Responsive Mobile Media Queries (< 700px) */
-    @media (max-width: 700px) {
-      body {
-        padding: 0.5rem 0.65rem;
-      }
-      h1 {
-        font-size: 1.35rem;
-      }
-      .demo-container {
-        padding: 0.65rem 0.65rem;
-        margin: 0.6rem 0 1.25rem 0;
-        border-radius: 6px;
-      }
-      .demo-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.35rem;
-      }
-      .demo-title {
-        font-size: 0.92rem;
-      }
-      .domain-mobile-select {
-        display: block;
-      }
-      .domain-tabs {
-        display: none;
-      }
-      .proof-grid {
-        grid-template-columns: 1fr;
-        gap: 0.35rem;
-      }
-      .prob-curie {
-        width: 95px;
-        min-width: 80px;
-        font-size: 0.68rem;
-      }
-      .prob-value {
-        width: 36px;
-        font-size: 0.68rem;
-      }
-      .decision-banner {
-        padding: 0.45rem 0.55rem;
-      }
-      .curie-title {
-        font-size: 0.85rem;
-      }
-      .demo-output-pre {
-        height: 120px;
-        font-size: 0.72rem;
-      }
-      table {
-        font-size: 0.75rem;
-      }
-      th, td {
-        padding: 0.4rem 0.45rem;
-      }
-    }
-
-    /* Live Autonomous Agent Sorter Card */
-    .mission-sim-card {
-      background: #0d1117;
-      border: 1px solid #388bfd55;
-      border-radius: 8px;
-      padding: 1rem 1.15rem;
-      margin: 1.25rem 0 1.75rem 0;
-      box-shadow: 0 8px 30px rgba(56, 139, 253, 0.12);
-      width: 100%;
-    }
-    .mission-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      border-bottom: 1px solid #21262d;
-      padding-bottom: 0.65rem;
-      margin-bottom: 0.75rem;
-    }
-    .mission-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #79c0ff;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .agent-status-tag {
-      font-size: 0.75rem;
-      font-family: monospace;
-      padding: 0.15rem 0.55rem;
-      border-radius: 12px;
-      background: rgba(63, 185, 80, 0.15);
-      color: #3fb950;
-      border: 1px solid rgba(63, 185, 80, 0.4);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-    .sim-ctrl-btn {
-      background: #238636;
-      color: #fff;
-      border: 1px solid #2ea043;
-      border-radius: 6px;
-      padding: 0.35rem 0.85rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: background 0.15s, transform 0.1s;
-    }
-    .sim-ctrl-btn:hover {
-      background: #2ea043;
-    }
-    .sim-share-btn {
-      background: #1f6feb;
-      color: #fff;
-      border: 1px solid #388bfd;
-      border-radius: 6px;
-      padding: 0.35rem 0.85rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all 0.15s;
-    }
-    .sim-share-btn:hover {
-      background: #388bfd;
-    }
-    .conveyor-stage {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 0.85rem;
-      margin-bottom: 0.75rem;
-      position: relative;
+    /* Collapsible JSON Output */
+    .apple-json-disclosure {
+      margin-top: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
       overflow: hidden;
+      background: rgba(0, 0, 0, 0.3);
     }
-    .conveyor-track {
-      height: 12px;
-      background: repeating-linear-gradient(45deg, #21262d, #21262d 10px, #30363d 10px, #30363d 20px);
-      border-radius: 6px;
-      margin: 0.5rem 0 1rem 0;
-      position: relative;
-    }
-    .pallet-box {
-      background: #1f6feb22;
-      border: 1px solid #388bfd;
-      border-radius: 6px;
-      padding: 0.6rem 0.75rem;
+    .apple-json-summary {
+      padding: 0.6rem 0.85rem;
+      font-size: 0.76rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      transition: all 0.3s ease;
+      user-select: none;
+      transition: background 0.15s ease;
     }
-    .chute-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 0.5rem;
-      margin-top: 0.75rem;
+    .apple-json-summary:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: #ffffff;
     }
-    .chute-gate {
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 0.45rem 0.6rem;
-      text-align: center;
-      font-size: 0.75rem;
-      transition: all 0.25s ease;
-    }
-    .chute-gate.divert-active {
-      border-color: #3fb950;
-      background: rgba(63, 185, 80, 0.15);
-      box-shadow: 0 0 12px rgba(63, 185, 80, 0.3);
-    }
-    .chute-gate.divert-active strong {
-      color: #3fb950;
-    }
-    .agent-terminal {
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 0.6rem 0.75rem;
-      font-family: monospace;
-      font-size: 0.76rem;
-      line-height: 1.45;
-      color: #c9d1d9;
+    .demo-output-pre {
+      background: #000000;
+      border-top: 1px solid var(--border);
+      padding: 0.75rem 0.85rem;
       height: 140px;
       overflow-y: auto;
+      font-size: 0.76rem;
+      line-height: 1.4;
+      color: #7ee787;
+      font-family: var(--font-mono);
       white-space: pre-wrap;
       word-break: break-word;
     }
-    .log-line {
-      margin-bottom: 0.25rem;
-    }
-    .log-time {
-      color: #8b949e;
-    }
-    .log-accent {
-      color: #58a6ff;
-    }
-    .log-success {
-      color: #3fb950;
-    }
-    .log-caution {
-      color: #f0883e;
-    }
-  
 
-    /* ── Head-to-Head Duel Card in Hero ── */
+    /* ── Apple Chapter Headers ── */
+    .apple-chapter {
+      margin: 110px 0 0 0;
+    }
+    .apple-kicker {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      margin-bottom: 0.5rem;
+    }
+    .apple-section-h2 {
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: #ffffff;
+      margin-bottom: 0.75rem;
+      text-wrap: balance;
+    }
+    .apple-section-p {
+      font-size: 1.08rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin-bottom: 2rem;
+      letter-spacing: -0.01em;
+      text-wrap: balance;
+    }
+
+    /* ── The Paradigm Shift Duel Cards ── */
     .duel-container {
-      background: rgba(22, 27, 34, 0.7);
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 1rem 1.15rem;
-      margin: 1.25rem 0 1.5rem 0;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(8px);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem;
+      backdrop-filter: blur(20px);
     }
     .duel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-bottom: 0.85rem;
-      padding-bottom: 0.65rem;
-      border-bottom: 1px solid #21262d;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
     }
     .duel-race-btn {
-      background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
-      color: #fff;
-      border: 1px solid #3fb950;
-      border-radius: 6px;
-      padding: 0.4rem 0.95rem;
-      font-size: 0.82rem;
+      background: var(--blue-btn);
+      color: #ffffff;
+      border: none;
+      border-radius: 980px;
+      padding: 0.55rem 1.25rem;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      box-shadow: 0 0 16px rgba(46, 160, 67, 0.35);
+      gap: 0.5rem;
       transition: all 0.2s ease;
     }
     .duel-race-btn:hover {
-      background: #2ea043;
-      box-shadow: 0 0 20px rgba(46, 160, 67, 0.6);
-      transform: translateY(-1px);
+      background: var(--blue-hover);
+      transform: scale(1.02);
     }
     .duel-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 0.85rem;
+      gap: 1.25rem;
     }
     @media (min-width: 768px) {
-      .duel-grid { grid-template-columns: 1fr 1fr; }
+      .duel-grid {
+        grid-template-columns: 1fr 1fr;
+      }
     }
     .duel-card {
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 0.85rem 1rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem;
       display: flex;
       flex-direction: column;
-      position: relative;
-      transition: all 0.25s ease;
     }
     .duel-card.leio-card {
-      border-color: rgba(63, 185, 80, 0.4);
-      box-shadow: 0 0 20px rgba(63, 185, 80, 0.08);
+      border-color: rgba(48, 209, 88, 0.35);
+      background: rgba(48, 209, 88, 0.03);
     }
     .duel-card.llm-card {
-      border-color: rgba(248, 81, 73, 0.3);
+      border-color: rgba(255, 69, 58, 0.25);
+      background: rgba(255, 69, 58, 0.02);
     }
     .duel-badge {
       display: inline-block;
       align-self: flex-start;
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      padding: 0.15rem 0.5rem;
-      border-radius: 4px;
-      margin-bottom: 0.4rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 980px;
+      margin-bottom: 0.75rem;
     }
     .duel-timer {
-      font-size: 1.6rem;
-      font-weight: 800;
-      font-family: ui-monospace, SFMono-Regular, monospace;
-      letter-spacing: -0.03em;
-      margin: 0.2rem 0 0.5rem 0;
+      font-size: 2.1rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
     }
     .duel-metric-list {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
-      font-size: 0.78rem;
-      margin-bottom: 0.65rem;
-      flex-grow: 1;
+      gap: 0.45rem;
+      font-size: 0.82rem;
+      margin-bottom: 1.25rem;
     }
     .duel-metric {
       display: flex;
       justify-content: space-between;
       gap: 0.5rem;
-      padding-bottom: 0.25rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
     }
-    .duel-metric span { color: #8b949e; }
+    .duel-metric strong {
+      color: #ffffff;
+      text-align: right;
+    }
     .race-progress-track {
       height: 6px;
-      background: #21262d;
-      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 980px;
       overflow: hidden;
-      margin: 0.4rem 0 0.25rem 0;
+      margin-bottom: 0.5rem;
     }
     .race-progress-bar {
       height: 100%;
       width: 0%;
-      transition: width 0.1s linear;
+      transition: width 0.05s linear;
     }
-    .race-progress-bar.leio { background: #3fb950; }
-    .race-progress-bar.llm { background: #f85149; }
+    .race-progress-bar.llm { background: var(--red); }
+    .race-progress-bar.leio { background: var(--green); }
     .race-status-text {
-      font-size: 0.72rem;
-      font-family: monospace;
-      color: #8b949e;
-      margin-top: 0.2rem;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
     }
 
-    /* ── Animated Conveyor & Scanner ── */
+    /* ── Autonomous Sorter Simulation Card ── */
+    .mission-sim-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem;
+      backdrop-filter: blur(20px);
+    }
+    .mission-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .sim-ctrl-btn {
+      background: var(--green);
+      color: #000000;
+      border: none;
+      border-radius: 980px;
+      padding: 0.5rem 1.25rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.2s ease;
+    }
+    .sim-ctrl-btn:hover {
+      transform: scale(1.02);
+      filter: brightness(1.1);
+    }
+    .sim-share-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 980px;
+      padding: 0.5rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .sim-share-btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
     .conveyor-stage {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
       position: relative;
+      overflow: hidden;
+    }
+    .pallet-box {
+      background: rgba(41, 151, 255, 0.08);
+      border: 1px solid rgba(41, 151, 255, 0.3);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
     .conveyor-track {
-      height: 14px;
-      background: repeating-linear-gradient(45deg, #1b2028, #1b2028 10px, #2a313c 10px, #2a313c 20px);
-      background-size: 28px 14px;
-      border-radius: 3px;
-      margin: 0.5rem 0;
+      height: 12px;
+      background: repeating-linear-gradient(45deg, #16181d, #16181d 10px, #262933 10px, #262933 20px);
+      border-radius: 980px;
+      margin: 0.85rem 0;
       position: relative;
       overflow: hidden;
     }
     .conveyor-track.running {
-      animation: conveyorMove 0.8s linear infinite;
+      animation: conveyorAnim 0.7s linear infinite;
     }
-    @keyframes conveyorMove {
+    @keyframes conveyorAnim {
       0% { background-position: 0 0; }
       100% { background-position: 28px 0; }
     }
@@ -1116,8 +970,8 @@
       position: absolute;
       top: 0; bottom: 0;
       width: 3px;
-      background: #58a6ff;
-      box-shadow: 0 0 10px #58a6ff, 0 0 20px #388bfd;
+      background: var(--blue);
+      box-shadow: 0 0 10px var(--blue);
       opacity: 0;
       transition: opacity 0.2s;
     }
@@ -1130,969 +984,920 @@
       100% { left: 95%; }
     }
 
-    /* ── Interactive ROI Economics Calculator ── */
-    .calc-container {
-      background: rgba(22, 27, 34, 0.8);
-      border: 1px solid #1f6feb66;
-      border-radius: 8px;
-      padding: 1.25rem 1.4rem;
-      margin: 1.75rem 0;
-      box-shadow: 0 8px 32px rgba(31, 111, 235, 0.12);
+    .chute-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.65rem;
+      margin-top: 0.85rem;
     }
-    .calc-slider-wrap {
-      margin: 1rem 0 1.25rem 0;
+    .chute-gate {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 0.75rem;
+      text-align: center;
+      font-size: 0.78rem;
+      transition: all 0.25s ease;
+    }
+    .chute-gate.divert-active {
+      border-color: var(--green);
+      background: rgba(48, 209, 88, 0.12);
+      box-shadow: 0 0 14px rgba(48, 209, 88, 0.25);
+    }
+    .chute-gate.divert-active strong {
+      color: var(--green);
+    }
+
+    .agent-terminal {
+      background: #000000;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--text);
+      height: 130px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    .log-line { margin-bottom: 0.25rem; }
+    .log-time { color: var(--text-tertiary); }
+
+    /* ── Bento Grid: Mathematical Foundations ── */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+    @media (min-width: 768px) {
+      .bento-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .bento-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem;
+      backdrop-filter: blur(20px);
+      transition: border-color 0.2s;
+    }
+    .bento-card:hover {
+      border-color: var(--border-strong);
+    }
+    .bento-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .bento-card p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .bento-formula {
+      font-family: var(--font-mono);
+      color: var(--green);
+      font-size: 0.84rem;
+      background: rgba(48, 209, 88, 0.08);
+      border: 1px solid rgba(48, 209, 88, 0.2);
+      border-radius: 6px;
+      padding: 0.4rem 0.65rem;
+      margin-top: 0.85rem;
+      display: inline-block;
+    }
+
+    /* ── Apple Benchmark Table ── */
+    .apple-table-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow-x: auto;
+      backdrop-filter: blur(20px);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+    th {
+      background: rgba(255, 255, 255, 0.04);
+      color: #ffffff;
+      font-weight: 600;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: -0.01em;
+    }
+    td {
+      padding: 0.95rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* ── Apple Pricing Cards & ROI Calculator ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    @media (min-width: 800px) {
+      .pricing-grid {
+        grid-template-columns: 1fr 1.15fr 1fr;
+        align-items: stretch;
+      }
+    }
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(20px);
+    }
+    .pricing-card.featured {
+      background: rgba(41, 151, 255, 0.04);
+      border-color: rgba(41, 151, 255, 0.35);
+      box-shadow: 0 0 35px rgba(41, 151, 255, 0.1);
+    }
+    .pricing-tier-name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 0.25rem;
+    }
+    .pricing-price {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.03em;
+      margin: 0.5rem 0;
+    }
+    .pricing-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .pricing-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      font-size: 0.86rem;
+      color: var(--text);
+      margin-bottom: 1.75rem;
+      flex: 1;
+    }
+    .pricing-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    /* ROI Slider */
+    .roi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem;
+      backdrop-filter: blur(20px);
     }
     .calc-slider {
       width: 100%;
       height: 8px;
-      border-radius: 4px;
-      background: #21262d;
+      border-radius: 980px;
+      background: rgba(255, 255, 255, 0.1);
       outline: none;
       -webkit-appearance: none;
       cursor: pointer;
+      margin: 1rem 0 1.5rem 0;
     }
     .calc-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      background: #58a6ff;
+      background: var(--blue);
+      box-shadow: 0 0 12px var(--blue);
       cursor: pointer;
-      box-shadow: 0 0 12px #58a6ff;
     }
-    .calc-grid {
+    .calc-metrics-row {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 1rem;
+      gap: 1.25rem;
     }
     @media (min-width: 768px) {
-      .calc-grid { grid-template-columns: 1fr 1fr; }
+      .calc-metrics-row {
+        grid-template-columns: 1fr 1fr;
+      }
     }
     .calc-box {
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 1rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
     }
     .calc-num {
-      font-size: 1.75rem;
-      font-weight: 800;
-      font-family: ui-monospace, SFMono-Regular, monospace;
-      margin: 0.25rem 0;
+      font-size: 1.85rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      margin: 0.35rem 0;
     }
     .calc-savings-banner {
-      background: linear-gradient(90deg, rgba(35,134,54,0.2) 0%, rgba(56,139,253,0.15) 100%);
-      border: 1px solid #2ea043;
-      border-radius: 6px;
-      padding: 0.85rem 1.15rem;
-      margin-top: 1rem;
+      background: rgba(48, 209, 88, 0.1);
+      border: 1px solid rgba(48, 209, 88, 0.3);
+      border-radius: 14px;
+      padding: 1rem 1.4rem;
+      margin-top: 1.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.75rem;
+    }
+
+    /* ── Developer Quick Copy Blocks ── */
+    .quick-copy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+    .quick-copy-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .quick-copy-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-strong);
+    }
+    .quick-copy-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+    .quick-copy-code {
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--green);
+    }
+    .quick-copy-desc {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Serene Apple Footer ── */
+    .apple-footer {
+      margin-top: 6rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .footer-links a:hover {
+      color: #ffffff;
+    }
+
+    /* Code & Callouts */
+    pre {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      font-size: 0.84rem;
+      font-family: var(--font-mono);
+      overflow-x: auto;
+      margin: 1rem 0;
+      color: #ffffff;
+    }
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.86em;
+      color: var(--blue);
+      background: rgba(41, 151, 255, 0.1);
+      padding: 0.15em 0.35em;
+      border-radius: 4px;
+    }
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+    .mermaid {
+      background: rgba(0,0,0,0.5);
+      padding: 1.5rem 1rem;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      margin: 2rem 0;
+      text-align: center;
+      overflow-x: auto;
     }
   </style>
 </head>
 <body>
-  <!-- ── Fixed Top Navbar ── -->
-  <nav class="navbar">
+  <!-- ── Apple Frosted Top Navbar ── -->
+  <nav class="apple-nav">
     <div class="nav-inner">
-      <a href="./index.html" class="brand-pill">⚡ LEIO</a>
-      <span class="nav-tagline">Ontology-Grounded System 1</span>
-      <div class="nav-spacer"></div>
-      <div class="nav-links">
-        <a href="#sorter-sim" class="nav-link">Live Sim</a>
-        <a href="#workbench" class="nav-link">Workbench</a>
-        <a href="#use-cases" class="nav-link">Use Cases</a>
-        <a href="#benchmarks" class="nav-link">Benchmarks</a>
-        <a href="#comparison" class="nav-link">vs Jev &amp; Laya</a>
-        <a href="#pricing" class="nav-link">Pricing</a>
-        <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener" class="nav-link">GitHub</a>
+      <a href="./index.html" class="nav-brand">
+        <span>⚡ LEIO</span>
+        <span class="nav-brand-badge">System 1</span>
+      </a>
+      <div class="nav-menu">
+        <a href="#workbench" class="nav-item">Studio</a>
+        <a href="#paradigm-shift" class="nav-item">Paradigm Shift</a>
+        <a href="#autonomy" class="nav-item">Autonomy</a>
+        <a href="#primitives" class="nav-item">Primitives</a>
+        <a href="#benchmarks" class="nav-item">Benchmarks</a>
+        <a href="#axioms" class="nav-item">Axioms</a>
+        <a href="#pricing" class="nav-item">Pricing</a>
       </div>
-      <span class="nav-status-pill">
-        <span class="pulse-dot" style="width:6px; height:6px;"></span> System 1 Active
-      </span>
-      <a href="./playground.html" class="nav-cta">▶ Open Playground</a>
+      <div class="nav-actions">
+        <span class="nav-status-pill">
+          <span class="pulse-dot"></span> Active
+        </span>
+        <a href="./playground.html" class="nav-cta-btn">Open Playground &rarr;</a>
+      </div>
     </div>
   </nav>
 
   <div class="page-wrap">
-    <header>
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-      <div>
-        <span class="badge" style="background:#1f6feb; font-size: 0.78rem; padding: 0.2rem 0.6rem;">⚡ LEIO</span>
-        <span class="badge" style="background:#238636;">OPEN WEIGHTS + API</span>
-        <span class="badge" style="background:#6e40c9;">SYSTEM 1 DECISION ENGINE</span>
-        <span class="badge" style="background:#0d47a1;">$0.042 / 1M INPUTS — OUTPUTS FREE</span>
+    <!-- ── Hero Stage ── -->
+    <header class="hero-section">
+      <div class="apple-eyebrow">
+        <span>⚡ Leio &middot; System 1 Decision Engine &middot; Open Weights</span>
       </div>
-      <div class="meta" style="margin: 0;">
-        By <strong>Dionisio Chiuratto Agourakis</strong> &middot; <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener">GitHub</a>
-      </div>
-    </div>
-    <div style="margin-top: 0.5rem; margin-bottom: 0.75rem;">
-      <h1 style="margin: 0.5rem 0 0.35rem 0; font-size: 2.35rem; letter-spacing: -0.035em; line-height: 1.15; color: #f0f6fc;">
-        Leio is not a chatbot.<br>
-        <span style="background: linear-gradient(90deg, #58a6ff 0%, #bc8cff 60%, #3fb950 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.55rem; font-weight: 600; letter-spacing: -0.015em;">
-          It returns mathematically proven decisions.
-        </span>
+      <h1 class="hero-h1">
+        Not a chatbot.<br>
+        <span class="hero-h1-gradient">A mathematical decision engine.</span>
       </h1>
-      <p style="font-size: 1.05rem; color: #c9d1d9; margin: 0.75rem 0 0.5rem 0; line-height: 1.55; max-width: 860px;">
-        Leio is an <strong>ontology-grounded System 1 decision engine</strong>. Unlike LLMs that generate verbose tokens sequentially, Leio evaluates entire formal ontologies in a single forward pass — returning calibrated probabilities with axiom-verified guarantees in <strong style="color: #3fb950;">&lt; 1ms in-browser via WebAssembly</strong>.
+      <p class="hero-sub">
+        Evaluating formal ontologies in <strong>&lt; 1ms</strong> with proven subsumption monotonicity and zero hallucination. At <strong>$0.042 per 1M input tokens</strong>, outputs are always 100% free.
       </p>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.75rem 0 1rem 0;">
-        <span style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); border-radius: 20px; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 600;">⚡ &lt; 1µs WASM &middot; &lt; 1ms Edge</span>
-        <span style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(56, 139, 253, 0.12); color: #58a6ff; border: 1px solid rgba(56, 139, 253, 0.35); border-radius: 20px; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 600;">🎯 $0.042 / 1M Inputs — Outputs 100% Free</span>
-        <span style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(188, 140, 255, 0.12); color: #bc8cff; border: 1px solid rgba(188, 140, 255, 0.35); border-radius: 20px; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 600;">📐 P(child) &le; P(parent) Guaranteed</span>
-        <span style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(240, 136, 62, 0.12); color: #f0883e; border: 1px solid rgba(240, 136, 62, 0.35); border-radius: 20px; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 600;">🌐 6 Enterprise Ontologies Ready</span>
+      <div class="hero-actions">
+        <a href="#workbench" class="btn-apple-primary">▶ Explore Interactive Studio</a>
+        <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener" class="btn-apple-secondary">GitHub &amp; Open Weights &nearr;</a>
       </div>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin-top: 0.75rem;">
-        <a href="./playground.html" style="display:inline-flex;align-items:center;gap:0.45rem;background:#238636;color:#fff;border:1px solid #2ea043;border-radius:6px;padding:0.55rem 1.25rem;font-size:0.92rem;font-weight:600;text-decoration:none;box-shadow: 0 0 16px rgba(46,160,67,0.35);">▶ Open Live Playground</a>
-        <a href="#sorter-sim" style="display:inline-flex;align-items:center;gap:0.45rem;background:#161b22;color:#f0f6fc;border:1px solid #30363d;border-radius:6px;padding:0.55rem 1.1rem;font-size:0.92rem;font-weight:500;text-decoration:none;">🤖 Watch Conveyor Agent</a>
-        <a href="#pricing" style="display:inline-flex;align-items:center;gap:0.45rem;background:transparent;color:#58a6ff;border:1px solid #1f6feb55;border-radius:6px;padding:0.55rem 1.1rem;font-size:0.92rem;font-weight:500;text-decoration:none;">⚡ Live cURL API ($0.042/1M)</a>
-      </div>
-    </div>
-    <p style="font-size: 0.88rem; color: #8b949e; margin: 0.5rem 0 0.75rem 0; line-height: 1.5;">
-      Like <strong>Jev from TypeSafe AI</strong> ($0.042/1M) and <strong>Laya from Convai</strong> &mdash; but with formal ontology grounding, P(child) &le; P(parent) subsumption monotonicity, and a category-theoretic disjointness kernel that makes hallucination <em>mathematically impossible</em>.
-    </p>
-  
-    <!-- HERO HEAD-TO-HEAD DUEL: GENERATIVE LLM vs FORMAL SYSTEM 1 -->
-    <div class="duel-container">
-      <div class="duel-header">
-        <div>
-          <span style="font-size:0.75rem;text-transform:uppercase;color:#8b949e;letter-spacing:0.06em;font-weight:700;">The Architectural Paradigm Shift</span>
-          <div style="font-size:1.15rem;font-weight:700;margin:0.15rem 0 0 0;color:#f0f6fc;">Generative LLM vs. Leio Formal System 1</div>
-        </div>
-        <button id="raceBtn" class="duel-race-btn" onclick="runLiveRace()">⚡ Run Live Latency Race</button>
-      </div>
-      <div class="duel-grid">
-        <!-- LLM Side -->
-        <div class="duel-card llm-card" id="llmRaceCard">
-          <div class="duel-badge" style="background:rgba(248,81,73,0.15);color:#f85149;border:1px solid rgba(248,81,73,0.3);">
-            Legacy Approach: Generative LLM
-          </div>
-          <div class="duel-timer" id="llmTimer" style="color:#f85149;">1,450 ms</div>
-          <div class="duel-metric-list">
-            <div class="duel-metric"><span>Output Paradigm:</span> <strong>Autoregressive tokens (1 by 1)</strong></div>
-            <div class="duel-metric"><span>Hallucination Risk:</span> <strong style="color:#f85149;">8–14% (Stochastic sampling)</strong></div>
-            <div class="duel-metric"><span>Math Guarantee:</span> <strong>None (Unconstrained softmax)</strong></div>
-            <div class="duel-metric"><span>Cost per 1M Decisions:</span> <strong style="color:#f85149;">$15,000.00 (Input + Output)</strong></div>
-            <div class="duel-metric"><span>Client Offline:</span> <strong>Impossible (Cloud GPUs only)</strong></div>
-          </div>
-          <div class="race-progress-track"><div class="race-progress-bar llm" id="llmProgressBar"></div></div>
-          <div class="race-status-text" id="llmStatusText">Idle — click "Run Live Latency Race"</div>
-        </div>
 
-        <!-- Leio Side -->
-        <div class="duel-card leio-card" id="leioRaceCard">
-          <div class="duel-badge" style="background:rgba(63,185,80,0.15);color:#3fb950;border:1px solid rgba(63,185,80,0.35);">
-            ⚡ Leio: Ontology-Grounded System 1
-          </div>
-          <div class="duel-timer" id="leioTimer" style="color:#3fb950;">&lt; 0.001 ms (0.8 µs)</div>
-          <div class="duel-metric-list">
-            <div class="duel-metric"><span>Output Paradigm:</span> <strong>Single forward pass over formal DAG</strong></div>
-            <div class="duel-metric"><span>Hallucination Risk:</span> <strong style="color:#3fb950;">0.000% (Axiom verified)</strong></div>
-            <div class="duel-metric"><span>Math Guarantee:</span> <strong style="color:#3fb950;">P(child) &le; P(parent) everywhere</strong></div>
-            <div class="duel-metric"><span>Cost per 1M Decisions:</span> <strong style="color:#3fb950;">$0.042 (Outputs 100% Free)</strong></div>
-            <div class="duel-metric"><span>Client Offline:</span> <strong style="color:#3fb950;">189 KB WebAssembly in Browser</strong></div>
-          </div>
-          <div class="race-progress-track"><div class="race-progress-bar leio" id="leioProgressBar"></div></div>
-          <div class="race-status-text" id="leioStatusText" style="color:#3fb950;">Ready in RAM (&gt;500k decisions/sec)</div>
+      <!-- 3 Keynote Metrics -->
+      <div class="apple-stat-banner">
+        <div class="stat-col">
+          <div class="stat-number">&lt; 1 &mu;s</div>
+          <div class="stat-label">In-Browser WASM Latency</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-col">
+          <div class="stat-number">$0.042</div>
+          <div class="stat-label">Per 1M Input Tokens &middot; Free Outputs</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-col">
+          <div class="stat-number">P(A) &le; P(B)</div>
+          <div class="stat-label">Formally Guaranteed Monotonicity</div>
         </div>
       </div>
-    </div>
-</header>
+    </header>
 
-  <article>
-    <!-- VIRAL USE CASE: AUTONOMOUS AGENT SORTER SIMULATION -->
-    <div class="mission-sim-card" id="sorter-sim">
-      <div class="mission-header">
-        <div>
-          <div class="mission-title">
-            <span>🤖 Autonomous Cross-Dock Sorter Agent</span>
-            <span class="agent-status-tag" id="agentStatusTag">● Live System 1 Agent</span>
-          </div>
-          <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: #8b949e;">
-            Watch a real-time agent dispatch pallets across high-speed conveyor chutes using ontology axioms in &lt;1ms.
-          </p>
+    <!-- ── The Centerpiece Demo: Apple Studio Window ── -->
+    <div class="apple-studio-window" id="workbench">
+      <div class="studio-window-bar">
+        <div class="mac-dots">
+          <span class="mac-dot red"></span>
+          <span class="mac-dot yellow"></span>
+          <span class="mac-dot green"></span>
         </div>
-        <div style="display: flex; gap: 0.45rem; align-items: center; flex-wrap: wrap;">
-          <button id="agentSimBtn" class="sim-ctrl-btn" onclick="toggleAgentSimulation()">▶ Run Live Mission</button>
-          <button class="sim-share-btn" onclick="shareOnX()">𝕏 Share on X</button>
+        <div class="studio-window-title" id="demoTitle">Leio Studio &middot; System 1 Decision Runtime</div>
+        <div class="studio-window-status">
+          <span id="domainBadge" style="display:none;">GS1 Supply Chain</span>
+          <span class="pulse-dot"></span>
+          <span id="latencyBadge">WASM &lt; 1&mu;s</span>
         </div>
       </div>
 
-      <!-- Live Conveyor Visualization -->
-      <div class="conveyor-stage">
-        <div class="pallet-box" id="palletBox">
-          <div>
-            <div style="font-size: 0.72rem; color: #8b949e; text-transform: uppercase; font-weight: 600;">Incoming Conveyor Scan</div>
-            <strong id="simItemTitle" style="color: #79c0ff; font-size: 0.95rem;">Perishable Whole Milk Cartons (Pallet #4092)</strong>
-            <div id="simItemMeta" style="font-size: 0.74rem; color: #8b949e; font-family: monospace;">GTIN: 0614141000036 | Sensor: 3.4°C | Carrier: ColdExpress</div>
-          </div>
-          <div style="text-align: right;">
-            <div style="font-size: 0.7rem; color: #8b949e;">Grounded Class</div>
-            <span id="simItemCurie" class="metric-pill" style="font-size: 0.75rem;">gs1:MilkButterCream</span>
-          </div>
-        </div>
-
-        <div class="conveyor-track" id="conveyorTrack"><div class="laser-beam" id="laserBeam"></div></div>
-
-        <!-- Diverter Chutes -->
-        <div class="chute-grid">
-          <div id="chute-cold" class="chute-gate divert-active">
-            <strong>Chute 1: Cold Chain</strong>
-            <div style="font-size: 0.68rem; color: #8b949e;">Perishables & Dairy (34-38°F)</div>
-          </div>
-          <div id="chute-hazmat" class="chute-gate">
-            <strong>Chute 2: Hazmat / UN</strong>
-            <div style="font-size: 0.68rem; color: #8b949e;">Lithium / Chem Quarantine</div>
-          </div>
-          <div id="chute-ambient" class="chute-gate">
-            <strong>Chute 3: Ambient Dry</strong>
-            <div style="font-size: 0.68rem; color: #8b949e;">General Retail & Hardware</div>
-          </div>
-          <div id="chute-return" class="chute-gate">
-            <strong>Chute 4: Reverse Pallet</strong>
-            <div style="font-size: 0.68rem; color: #8b949e;">Returnable Euro Packaging</div>
+      <div class="studio-content">
+        <!-- Apple Segmented Control for 7 Domains -->
+        <div class="apple-segmented-wrap">
+          <select id="domainSelect" class="domain-mobile-select" onchange="switchDomain(this.value)">
+            <option value="leio" selected>⚡ Leio Model &amp; Pricing</option>
+            <option value="gs1">📦 GS1 Supply Chain (Trade Items)</option>
+            <option value="doid">🧬 Disease Ontology (DOID)</option>
+            <option value="schemaorg">🌐 Schema.org (Google SEO)</option>
+            <option value="incident">🚨 IT Incident &amp; SRE Triage</option>
+            <option value="bfo">🏛️ BFO Top-Level (ISO/IEC 21838-2)</option>
+            <option value="skos">📚 SKOS Taxonomies</option>
+          </select>
+          <div class="apple-segmented-control">
+            <button id="tab-leio" class="segmented-item active" onclick="switchDomain('leio')">⚡ Leio Model &amp; Pricing</button>
+            <button id="tab-gs1" class="segmented-item" onclick="switchDomain('gs1')">📦 GS1 Supply Chain</button>
+            <button id="tab-doid" class="segmented-item" onclick="switchDomain('doid')">🧬 Disease (DOID)</button>
+            <button id="tab-schemaorg" class="segmented-item" onclick="switchDomain('schemaorg')">🌐 Schema.org</button>
+            <button id="tab-incident" class="segmented-item" onclick="switchDomain('incident')">🚨 SRE Incidents</button>
+            <button id="tab-bfo" class="segmented-item" onclick="switchDomain('bfo')">🏛️ BFO Upper</button>
+            <button id="tab-skos" class="segmented-item" onclick="switchDomain('skos')">📚 SKOS</button>
           </div>
         </div>
-      </div>
 
-      <!-- Real-Time Agent Telemetry Terminal -->
-      <div class="panel-label" style="margin-bottom: 0.35rem;">
-        <span>Real-Time Autonomous Agent Audit Log (Zero-Hallucination Decision Loop)</span>
-        <span id="agentClock" style="font-family: monospace; color: #58a6ff;">0 ms</span>
-      </div>
-      <div id="agentTerminal" class="agent-terminal">
-        <div class="log-line"><span class="log-time">[System Ready]</span> Leio decision engine initialized with GS1 Web Vocabulary DAG (63 classes).</div>
-        <div class="log-line"><span class="log-time">[Agent Idle]</span> Press <strong>"Run Live Mission"</strong> to watch autonomous barcode intake and conveyor diverts.</div>
-      </div>
-    </div>
-
-    <!-- INTERACTIVE LIVE DEMO WORKBENCH (SINGLE-FOLD DUAL-VIEW) -->
-    <div class="demo-container" id="workbench">
-      <div class="demo-header">
-        <div class="demo-title">
-          <div class="pulse-dot"></div>
-          <span id="demoTitle">Leio Decision Model Workbench</span>
-        </div>
-        <div style="display: flex; gap: 0.4rem; align-items: center;">
-          <span id="domainBadge" class="metric-pill" style="color: #a371f7; border-color: #a371f755;">GS1 Supply Chain</span>
-          <div id="latencyBadge" class="metric-pill">Ready in Browser</div>
-        </div>
-      </div>
-
-      <!-- DOMAIN SWITCHER (RESPONSIVE SELECT ON MOBILE, TABS ON DESKTOP) -->
-      <div class="domain-switcher-wrap">
-        <select id="domainSelect" class="domain-mobile-select" onchange="switchDomain(this.value)">
-          <option value="gs1" selected>📦 GS1 Supply Chain (Trade Items)</option>
-          <option value="schemaorg">🌐 Schema.org (Google SEO & Rich Snippets)</option>
-          <option value="bfo">🏛️ BFO Top-Level (ISO/IEC 21838-2)</option>
-          <option value="skos">📚 SKOS Taxonomies & Thesauri</option>
-          <option value="incident">🚨 IT Incident & SRE Triage</option>
-          <option value="doid">🧬 Disease Ontology (DOID)</option>
-        </select>
-        <div class="domain-tabs">
-          <button id="tab-gs1" class="domain-tab-btn active" onclick="switchDomain('gs1')">📦 GS1 Supply Chain</button>
-          <button id="tab-schemaorg" class="domain-tab-btn" onclick="switchDomain('schemaorg')">🌐 Schema.org (Google SEO)</button>
-          <button id="tab-bfo" class="domain-tab-btn" onclick="switchDomain('bfo')">🏛️ BFO Top-Level</button>
-          <button id="tab-skos" class="domain-tab-btn" onclick="switchDomain('skos')">📚 SKOS Taxonomies</button>
-          <button id="tab-incident" class="domain-tab-btn" onclick="switchDomain('incident')">🚨 SRE Incident Triage</button>
-          <button id="tab-doid" class="domain-tab-btn" onclick="switchDomain('doid')">🧬 Disease Ontology</button>
-        </div>
-      </div>
-      
-      <!-- 2-COLUMN SPLIT WORKBENCH -->
-      <div class="workbench-grid">
-        <!-- LEFT: INPUT & ACTIVE SUBGRAPH PROBABILITIES -->
-        <div class="panel-box">
-          <div class="panel-label">
-            <span id="inputLabel">Input Observation</span>
-            <span id="charCount" style="font-family: monospace; color: #58a6ff;">0 chars</span>
-          </div>
-          <textarea id="stateInput" class="demo-textarea" placeholder="Type or paste text observation to evaluate in real time..."></textarea>
-          
-          <div id="presetsContainer" class="demo-presets">
-            <span style="font-size: 0.72rem; color: #8b949e; font-weight: 500;">Presets:</span>
-            <!-- Rendered dynamically per domain -->
-          </div>
-
-          <!-- Active Subgraph Probability Distribution Bars -->
-          <div class="prob-distribution-card">
-            <div class="panel-label" style="margin-bottom: 0.35rem;">
-              <span>Active Subgraph Ranked Probabilities</span>
-              <span style="font-size: 0.68rem; color: #8b949e;">Softmax Projected</span>
+        <!-- 2-Column Split Workbench -->
+        <div class="workbench-grid">
+          <!-- Left: Input & Ranked Probabilities -->
+          <div class="studio-panel">
+            <div class="panel-header-row">
+              <span class="panel-kicker" id="inputLabel">Observation Input</span>
+              <span class="panel-metric-text" id="charCount">0 chars</span>
             </div>
-            <div id="probBarsContainer">
+            <textarea id="stateInput" class="studio-textarea" placeholder="Type or paste text observation to evaluate in real time..."></textarea>
+            
+            <div id="presetsContainer" class="presets-row">
               <!-- Rendered dynamically -->
             </div>
+
+            <!-- Probability Bars -->
+            <div class="prob-section">
+              <div class="panel-header-row" style="margin-bottom: 0.5rem;">
+                <span class="panel-kicker">Active Subgraph Ranked Probabilities</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">Axiom Projected</span>
+              </div>
+              <div id="probBarsContainer">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Decision Card & Axiom Proof Matrix -->
+          <div class="studio-panel">
+            <div class="panel-header-row">
+              <span class="panel-kicker">Grounded Decision Verdict</span>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <span id="axiomStatus" style="color: var(--green); font-family: var(--font-mono); font-size: 0.74rem;">axioms: verified ✓</span>
+                <button class="preset-chip" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;" onclick="copyJsonOutput()">Copy JSON</button>
+              </div>
+            </div>
+
+            <!-- High-Contrast Decision Banner -->
+            <div class="decision-card">
+              <div class="decision-card-top">
+                <span id="groundedCurie" class="curie-title">leio:SystemOneEngine</span>
+                <span id="groundedConfidence" class="conf-badge">100% Conf</span>
+              </div>
+              <div id="lineageBreadcrumbs" class="lineage-breadcrumbs">
+                <!-- Breadcrumbs -->
+              </div>
+            </div>
+
+            <!-- Mathematical Axioms Proof Matrix -->
+            <div class="proof-grid">
+              <div class="proof-item">
+                <strong>P(child) &le; P(parent)</strong>
+                <span>Subsumption Monotonicity holds</span>
+              </div>
+              <div class="proof-item">
+                <strong>A ⊓ B = &bot;</strong>
+                <span>Disjointness Exclusion holds</span>
+              </div>
+              <div class="proof-item">
+                <strong id="downsetVerdict">Down-Set: Subsumed</strong>
+                <span id="downsetDescription">Principal down-set membership verified</span>
+              </div>
+              <div class="proof-item">
+                <strong id="speedVerdict">&lt; 1 ms Runtime</strong>
+                <span>Sub-millisecond Browser ESModule</span>
+              </div>
+            </div>
+
+            <!-- Collapsible Clean JSON Output -->
+            <details class="apple-json-disclosure">
+              <summary class="apple-json-summary">
+                <span>Verifiable Telemetry JSON</span>
+                <span style="font-size: 0.7rem; color: var(--blue);">Click to expand</span>
+              </summary>
+              <pre id="jsonOutput" class="demo-output-pre">Loading Ontologies &amp; O-Laya Engine...</pre>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Chapter 2: The Architectural Paradigm Shift (Duel) ── -->
+    <section class="apple-chapter" id="paradigm-shift">
+      <div class="apple-kicker">THE ARCHITECTURAL PARADIGM SHIFT</div>
+      <h2 class="apple-section-h2">Why generative LLMs fail at structured decisions.</h2>
+      <p class="apple-section-p">
+        Generative LLMs sample tokens autoregressively one by one with unconstrained softmax pools. Leio evaluates formal knowledge graphs in a single forward pass with axiomatic exclusion.
+      </p>
+
+      <div class="duel-container">
+        <div class="duel-header">
+          <div>
+            <div style="font-size: 1.15rem; font-weight: 600; color: #ffffff;">Head-to-Head Latency &amp; Reliability Race</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.15rem;">Live simulated benchmark against cloud-hosted autoregressive models</div>
+          </div>
+          <button id="raceBtn" class="duel-race-btn" onclick="runLiveRace()">⚡ Run Live Latency Race</button>
+        </div>
+        <div class="duel-grid">
+          <!-- LLM Card -->
+          <div class="duel-card llm-card" id="llmRaceCard">
+            <div class="duel-badge" style="background: rgba(255, 69, 58, 0.15); color: var(--red);">
+              Legacy: Generative LLM
+            </div>
+            <div class="duel-timer" id="llmTimer" style="color: var(--red);">1,450 ms</div>
+            <div class="duel-metric-list">
+              <div class="duel-metric"><span>Output Paradigm:</span> <strong>Autoregressive tokens (1 by 1)</strong></div>
+              <div class="duel-metric"><span>Hallucination Risk:</span> <strong style="color: var(--red);">8–14% (Stochastic sampling)</strong></div>
+              <div class="duel-metric"><span>Math Guarantee:</span> <strong>None (Unconstrained softmax)</strong></div>
+              <div class="duel-metric"><span>Cost per 1M Decisions:</span> <strong style="color: var(--red);">$15,000.00 (Input + Output)</strong></div>
+              <div class="duel-metric"><span>Client Offline:</span> <strong>Impossible (Cloud GPUs only)</strong></div>
+            </div>
+            <div class="race-progress-track"><div class="race-progress-bar llm" id="llmProgressBar"></div></div>
+            <div class="race-status-text" id="llmStatusText">Idle — click "Run Live Latency Race"</div>
+          </div>
+
+          <!-- Leio Card -->
+          <div class="duel-card leio-card" id="leioRaceCard">
+            <div class="duel-badge" style="background: rgba(48, 209, 88, 0.15); color: var(--green);">
+              ⚡ Leio: Ontology-Grounded System 1
+            </div>
+            <div class="duel-timer" id="leioTimer" style="color: var(--green);">&lt; 0.001 ms (0.8 &mu;s)</div>
+            <div class="duel-metric-list">
+              <div class="duel-metric"><span>Output Paradigm:</span> <strong>Single forward pass over formal DAG</strong></div>
+              <div class="duel-metric"><span>Hallucination Risk:</span> <strong style="color: var(--green);">0.000% (Axiom verified)</strong></div>
+              <div class="duel-metric"><span>Math Guarantee:</span> <strong style="color: var(--green);">P(child) &le; P(parent) everywhere</strong></div>
+              <div class="duel-metric"><span>Cost per 1M Decisions:</span> <strong style="color: var(--green);">$0.042 (Outputs 100% Free)</strong></div>
+              <div class="duel-metric"><span>Client Offline:</span> <strong style="color: var(--green);">189 KB WebAssembly in Browser</strong></div>
+            </div>
+            <div class="race-progress-track"><div class="race-progress-bar leio" id="leioProgressBar"></div></div>
+            <div class="race-status-text" id="leioStatusText" style="color: var(--green);">Ready in RAM (&gt;500k decisions/sec)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Chapter 3: Real-Time Autonomy (Conveyor Agent) ── -->
+    <section class="apple-chapter" id="autonomy">
+      <div class="apple-kicker">REAL-TIME INDUSTRIAL AUTONOMY</div>
+      <h2 class="apple-section-h2">Zero-latency dispatch for autonomous physical systems.</h2>
+      <p class="apple-section-p">
+        Watch a live System 1 agent evaluate high-speed 200kHz barcode sensor streams and trigger pneumatic diverter gates across supply chain chutes using formal GS1 axioms in &lt;1ms.
+      </p>
+
+      <div class="mission-sim-card" id="sorter-sim">
+        <div class="mission-header">
+          <div>
+            <div style="font-size: 1.15rem; font-weight: 600; color: #ffffff; display: flex; align-items: center; gap: 0.5rem;">
+              <span>🤖 Autonomous Cross-Dock Sorter Agent</span>
+              <span id="agentStatusTag" style="font-size: 0.74rem; color: var(--green);">● Live System 1 Agent</span>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.2rem;">
+              Dispatching pallets across high-speed conveyor chutes using GS1 ontology axioms.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.65rem; align-items: center;">
+            <button id="agentSimBtn" class="sim-ctrl-btn" onclick="toggleAgentSimulation()">▶ Run Live Mission</button>
+            <button class="sim-share-btn" onclick="shareOnX()">𝕏 Share</button>
           </div>
         </div>
 
-        <!-- RIGHT: GROUNDED DECISION INSPECTOR & AXIOM PROOFS -->
-        <div class="panel-box">
-          <div class="panel-label">
-            <span>Verified Grounded Decision</span>
-            <div style="display: flex; gap: 0.4rem; align-items: center;">
-              <span id="axiomStatus" style="color: #3fb950; font-family: monospace; font-size: 0.72rem;">axioms: verified ✓</span>
-              <button class="preset-btn" style="padding: 0.05rem 0.35rem; font-size: 0.68rem;" onclick="copyJsonOutput()">Copy JSON</button>
+        <div class="conveyor-stage">
+          <div class="pallet-box" id="palletBox">
+            <div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Incoming Conveyor Pallet</div>
+              <strong id="simItemTitle" style="color: #ffffff; font-size: 1rem;">Perishable Whole Milk Cartons (Pallet #4092)</strong>
+              <div id="simItemMeta" style="font-size: 0.76rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 0.2rem;">GTIN: 0614141000036 | Sensor: 3.4°C | Carrier: ColdExpress</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.72rem; color: var(--text-muted);">Grounded CURIE</div>
+              <span id="simItemCurie" style="font-family: var(--font-mono); color: var(--blue); font-weight: 600;">gs1:MilkButterCream</span>
             </div>
           </div>
 
-          <!-- Decision Highlight Banner -->
-          <div class="decision-banner">
-            <div class="decision-banner-top">
-              <span id="groundedCurie" class="curie-title">gs1:Product</span>
-              <span id="groundedConfidence" class="conf-badge">100% Conf</span>
-            </div>
-            <div id="lineageBreadcrumbs" class="lineage-breadcrumbs">
-              <!-- Breadcrumbs rendered here -->
-            </div>
-          </div>
+          <div class="conveyor-track" id="conveyorTrack"><div class="laser-beam" id="laserBeam"></div></div>
 
-          <!-- Mathematical Axioms Proof Matrix -->
-          <div class="proof-grid">
-            <div class="proof-item">
-              <strong>P(child) ≤ P(parent)</strong>
-              <span>Subsumption Monotonicity holds</span>
+          <div class="chute-grid">
+            <div id="chute-cold" class="chute-gate divert-active">
+              <strong>Chute 1: Cold Chain</strong>
+              <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Perishables &amp; Dairy (34-38°F)</div>
             </div>
-            <div class="proof-item">
-              <strong>A ⊓ B = ⊥</strong>
-              <span>Disjointness Exclusion holds</span>
+            <div id="chute-hazmat" class="chute-gate">
+              <strong>Chute 2: Hazmat / UN</strong>
+              <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Lithium / Chem Quarantine</div>
             </div>
-            <div class="proof-item">
-              <strong id="downsetVerdict">Down-Set: Subsumed</strong>
-              <span id="downsetDescription">Principal down-set membership verified</span>
+            <div id="chute-ambient" class="chute-gate">
+              <strong>Chute 3: Ambient Dry</strong>
+              <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">General Retail &amp; Hardware</div>
             </div>
-            <div class="proof-item">
-              <strong id="speedVerdict">&lt; 1 ms Runtime</strong>
-              <span>Sub-millisecond Browser ESModule</span>
+            <div id="chute-return" class="chute-gate">
+              <strong>Chute 4: Reverse Pallet</strong>
+              <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Returnable Euro Packaging</div>
             </div>
           </div>
+        </div>
 
-          <!-- Compact Collapsible / Structured JSON Pre -->
-          <div class="panel-label" style="margin-top: 0.2rem; margin-bottom: 0.25rem;">
-            <span>Raw Verifiable Telemetry JSON</span>
-          </div>
-          <pre id="jsonOutput" class="demo-output-pre">Loading Ontologies & O-Laya Engine...</pre>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+          <span class="panel-kicker">Autonomous Agent Audit Log (Zero-Hallucination Loop)</span>
+          <span id="agentClock" style="font-family: var(--font-mono); font-size: 0.76rem; color: var(--blue);">0 ms</span>
+        </div>
+        <div id="agentTerminal" class="agent-terminal">
+          <div class="log-line"><span class="log-time">[System Ready]</span> Leio decision engine initialized with GS1 Web Vocabulary DAG (63 classes).</div>
+          <div class="log-line"><span class="log-time">[Agent Idle]</span> Press <strong>"Run Live Mission"</strong> to watch autonomous barcode intake and conveyor diverts.</div>
         </div>
       </div>
-    </div>
+    </section>
 
+    <!-- ── Chapter 4: The 5 Question Primitives ── -->
+    <section class="apple-chapter" id="primitives">
+      <div class="apple-kicker">STRUCTURED DECISION PRIMITIVES</div>
+      <h2 class="apple-section-h2">Five primitives. Zero prose.</h2>
+      <p class="apple-section-p">
+        Instead of prompting an unconstrained language model with paragraphs of instructions, you formulate decisions using five mathematically rigorous primitives.
+      </p>
 
-    <div class="mermaid">
-flowchart TD
-    Start(["Incoming Warehouse & Supply Chain Stream<br/>(GTIN barcode, EPCIS sensor event, packing slip, ASN)"]) --> Input["Structured GS1 Decision Query:<br/>concept, subsumes, choice, score, noul"]
-    
-    subgraph S1["Stage 1: Microsecond Subgraph Routing (Rust Arrow)"]
-        Input --> Router["Inverted Token Index<br/>(CamelCase-aware, IDF weighting)"]
-        Onto[("GS1 Web Vocabulary Standard<br/>Product, FoodBeverage, PackagingDetails, MeatPoultry, etc.")] --> Router
-        Router --> Sub["Active Candidate Subgraph<br/>(top-K leaves + complete ancestor hierarchy)"]
-    end
-    
-    subgraph S2["Stage 2: Non-Autoregressive Scoring"]
-        Sub --> Scorer["Cross-Attention Scorer<br/>(Rust Lexical: 4.8µs | Custom BERT: 12.7ms | ModernBERT: 199ms)"]
-    end
-    
-    subgraph S3["Stage 3: Axiom Projection Kernel"]
-        Scorer --> Proj["Axiom Projection (spec/AXIOMS.md)<br/>• Subsumption Monotonicity: P(child) ≤ P(parent)<br/>• Disjointness Exclusion: A ⊓ B = ⊥<br/>• Normalised Entropy Confidence"]
-    end
-    
-    Proj --> Out["Grounded Decision Output:<br/>• Verified CURIE + Lineage Path<br/>• Full Descendant/Ancestor Probabilities<br/>• axioms_verified: true"]
-    
-    Out --> Decision{"Where should the result go?"}
-    Decision -->|"High Confidence + Axioms Verified"| AutoAct["Act Locally & Instantly:<br/>Divert conveyer chute, route cold-chain zone, print customs label"]
-    Decision -->|"Low Confidence / Unknown SKU"| EscalateLLM["Escalate to LLM (System 2):<br/>Extract unstructured vendor invoice, parse novel packaging PDF"]
-    Decision -->|"Critical Inspection / Hazard"| HumanReview["Human QA Inspector & Dock Supervisor"]
-    </div>
+      <pre><code class="language-python">from olaya import OLaya
 
-    <!-- 4 HIGH-IMPACT REAL WORLD USE CASES -->
-    <h2 id="use-cases" style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Why This Changes Everything: 5 Real-World Use Cases</h2>
-    <p style="color: #8b949e; margin-bottom: 1.25rem;">
-      Instead of calling a 70B autoregressive LLM to generate 100 tokens of fragile JSON over 2 seconds, O-Laya delivers sub-millisecond, mathematically guaranteed decisions directly on the edge.
-    </p>
-
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.85rem; margin-bottom: 2rem;">
-      <div style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 0.85rem 1rem;">
-        <div style="font-size: 1.2rem; margin-bottom: 0.35rem;">📦 <strong>1. High-Speed Warehouse Diverters</strong></div>
-        <p style="font-size: 0.82rem; color: #c9d1d9; margin: 0 0 0.5rem 0;">
-          Conveyors move at 4 meters/second. A package passes a laser scanner with only <strong>25ms</strong> to trigger a pneumatic divert gate.
-        </p>
-        <div style="font-size: 0.74rem; color: #3fb950; font-family: monospace;">✓ 4.8µs to 0.8ms latency | Zero LLM bill</div>
-      </div>
-
-      <div style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 0.85rem 1rem;">
-        <div style="font-size: 1.2rem; margin-bottom: 0.35rem;">❄️ <strong>2. Automated Cold-Chain Quarantine</strong></div>
-        <p style="font-size: 0.82rem; color: #c9d1d9; margin: 0 0 0.5rem 0;">
-          Pharma vaccines and perishable dairy require strict temperature limits. Down-set axioms guarantee perishable items never route to ambient storage.
-        </p>
-        <div style="font-size: 0.74rem; color: #3fb950; font-family: monospace;">✓ P(child) ≤ P(parent) | Spoiled food prevention</div>
-      </div>
-
-      <div style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 0.85rem 1rem;">
-        <div style="font-size: 1.2rem; margin-bottom: 0.35rem;">🚨 <strong>3. Microsecond SRE Incident Triage</strong></div>
-        <p style="font-size: 0.82rem; color: #c9d1d9; margin: 0 0 0.5rem 0;">
-          When an outage fires 10,000 alert webhooks per second, flat classifiers choke. O-Laya routes alerts to the exact subsystem without hallucinating false severities.
-        </p>
-        <div style="font-size: 0.74rem; color: #3fb950; font-family: monospace;">✓ Disjoint root causes: A ⊓ B = ⊥</div>
-      </div>
-
-      <div style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 0.85rem 1rem;">
-        <div style="font-size: 1.2rem; margin-bottom: 0.35rem;">🔍 <strong>4. Google Rich Snippets & SEO Grounding</strong></div>
-        <p style="font-size: 0.82rem; color: #c9d1d9; margin: 0 0 0.5rem 0;">
-          Classify millions of scraped web pages into 660 Schema.org classes in real time for crawler indexing, rich results, and entity graphs.
-        </p>
-        <div style="font-size: 0.74rem; color: #3fb950; font-family: monospace;">✓ 100% Google Rich Results covered</div>
-      </div>
-
-      <div style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 0.85rem 1rem;">
-        <div style="font-size: 1.2rem; margin-bottom: 0.35rem;">🧬 <strong>5. Clinical Disease Classification (DOID)</strong></div>
-        <p style="font-size: 0.82rem; color: #c9d1d9; margin: 0 0 0.5rem 0;">
-          Ground free-text clinical observations into the Human Disease Ontology &mdash; routing diagnoses, triage codes, and biomarker reports into ICD-adjacent hierarchies without hallucinating disease names.
-        </p>
-        <div style="font-size: 0.74rem; color: #3fb950; font-family: monospace;">✓ 730 disease classes | Axiom-verified lineage | Zero ICD hallucination</div>
-      </div>
-    </div>
-
-    <h2>The Non-Generative Decision Paradigm in the Physical World</h2>
-    <p>In his recent piece, <a href="https://relay.sparkrouter.com/ai--and--local-models/what-laya-actually-is" target="_blank" rel="noopener">What Laya Actually Is</a>, the author laid out an argument for non-generative classification:</p>
-    <blockquote>
-      <em>"Laya is not a chatbot. It doesn’t write code or summarize text. It is a small local model that reads text and answers structured questions, returning probabilities instead of paragraphs."</em>
-    </blockquote>
-    <p>We agree with the fundamental premise. In modern industrial operations—automated distribution centers, automated sorters, drone pickers, and supply chain control towers—calling a cloud-hosted 70B autoregressive LLM to generate 100 tokens of JSON just to decide which conveyor chute to divert a package into is disastrously slow, prohibitively expensive, and prone to hallucinations.</p>
-
-    <div class="callout">
-      <strong>The Fatal Flaw of Flat Classifiers in Logistics:</strong>
-      Unconstrained classification models treat the physical world as flat lists of strings.
-      <br/><br/>
-      Consider a real logistics example at a high-speed cross-dock facility:
-      A barcode scanner reads GTIN <code>0614141000036</code> on an incoming pallet: <em>"Organic whole milk carton 1 gallon, refrigerated perishable dairy, returnable pallet."</em>
-      <br/><br/>
-      When you ask a flat classifier to route between <code>"Dairy"</code>, <code>"FoodBeverageTobaccoProduct"</code>, and <code>"Product"</code>, the model treats those options as disconnected, competing strings in an unconstrained softmax pool. It has no mathematical awareness that <strong>Dairy is a sub-class of Food & Beverage</strong>, which in turn is a <strong>sub-class of Product</strong>.
-    </div>
-
-    <p>In real production runs, flat classifiers frequently output:</p>
-    <p style="text-align: center; font-size: 1.15rem; font-family: monospace;">
-      P(MilkButterCreamYogurtCheeseEggsSubstitutes) = 0.88 &nbsp;&nbsp;while&nbsp;&nbsp; P(FoodBeverageTobaccoProduct) = 0.42
-    </p>
-    <p>This is a <strong>catastrophic logical contradiction</strong>. In formal logic and physical reality, if an item is milk, it is <em>by definition</em> a food/beverage product. If your automated warehouse software routes based on parent categories, the item will be routed to the wrong ambient storage aisle because the parent probability mysteriously collapsed.</p>
-    <p><strong>O-Laya solves this by grounding decisions in formal ontology lattices like GS1.</strong></p>
-
-    <hr/>
-
-    <h2>What O-Laya Actually Is</h2>
-    <p>O-Laya is an <strong>ontology-grounded System 1 decision engine</strong>. You provide:</p>
-    <ol>
-      <li><strong>An Input State</strong>: Barcode scan, OCR text from a bill of lading, IoT temperature log, or EPCIS event stream.</li>
-      <li><strong>A Formal Ontology DAG</strong>: The <strong>GS1 Web Vocabulary Standard</strong> (<code>gs1:Product</code>, <code>gs1:FoodBeverageTobaccoProduct</code>, <code>gs1:PackagingDetails</code>, <code>gs1:MeatPoultry</code>, etc.), complete with <code>subClassOf</code> and <code>disjointWith</code> axioms.</li>
-      <li><strong>Structured Questions</strong>: Formulated using 5 formal decision primitives.</li>
-    </ol>
-    <p>In a single forward pass, O-Laya projects candidate scores through an axiom kernel (<code>spec/AXIOMS.md</code>), guaranteeing that:</p>
-    <ul>
-      <li><strong>Subsumption Monotonicity holds</strong>: <code>P(child) ≤ P(parent)</code> everywhere across the supply chain hierarchy.</li>
-      <li><strong>Disjointness holds</strong>: Mutually exclusive categories (e.g. <code>FrozenColdChain ⊓ AmbientDry = ⊥</code>) sum to at most 1.0.</li>
-      <li><strong>Lineage is returned</strong>: Decisions provide full explainability from the root down to the exact GS1 CURIE.</li>
-      <li><strong><code>axioms_verified</code> is computed</strong>: Verified on the output tensor at runtime, never hard-coded.</li>
-    </ul>
-
-    <hr/>
-
-    <h2>The 5 Question Primitives: A Warehousing & GS1 Walkthrough</h2>
-    <p>Here is an automated warehouse receiving scanner running O-Laya against the GS1 Web Vocabulary:</p>
-
-    <pre><code class="language-python">from olaya import OLaya
-
-# Ingest standard GS1 Web Vocabulary DAG
 olaya = OLaya()
 
 state = {
     "gtin": "0614141000036",
-    "scan_text": "Grade A pasteurized whole milk, 1 gallon jug with tamper-evident induction seal. Keep refrigerated at 34-38 F.",
+    "scan_text": "Grade A pasteurized whole milk, 1 gallon jug with tamper-evident seal. Keep refrigerated at 34-38 F.",
     "sensor_temp_c": 3.2,
     "carrier": "ColdExpress Logistics",
 }
 
 questions = {
-    "taxonomy_grounding": {
-        "type": "concept",
-        "root": "Product",
-        "instructions": "Ground trade item into the specific GS1 product category."
-    },
-    "requires_cold_chain": {
-        "type": "subsumes",
-        "concept": "FoodBeverageTobaccoProduct",
-        "instructions": "Does this SKU fall under perishable consumable food handling rules?"
-    },
-    "packaging_triage": {
-        "type": "choice",
-        "instructions": "Determine returnable container handling.",
-        "criteria": {
-            "pallet_return": "reusable wooden or composite pallet requiring return credit",
-            "corrugated_bale": "cardboard master carton for bulk recycling",
-            "hazardous_drum": "chemical container requiring Hazmat manifest"
-        }
-    },
-    "dock_urgency": {
-        "type": "score",
-        "instructions": "Unload and cross-dock priority.",
-        "criteria": ["ambient_low", "standard_dock", "expedited_perishable_cold_chain"]
-    },
-    "seal_breach_alert": {
-        "type": "noul",
-        "instructions": "Is there any indication of seal damage or temperature excursion?"
-    }
+    "taxonomy_grounding": { "type": "concept", "root": "Product", "instructions": "Ground item into GS1 category." },
+    "requires_cold_chain": { "type": "subsumes", "concept": "FoodBeverageTobaccoProduct", "instructions": "Perishable handling rules?" },
+    "packaging_triage":   { "type": "choice", "criteria": {"pallet_return": "reusable wooden pallet", "corrugated_bale": "cardboard carton"} },
+    "dock_urgency":       { "type": "score", "criteria": ["ambient_low", "standard_dock", "expedited_perishable_cold_chain"] },
+    "seal_breach_alert":  { "type": "noul", "instructions": "Any indication of seal damage or temperature excursion?" }
 }
 
 result = olaya.system_one(state, questions)</code></pre>
 
-    <h3>1. <code>concept</code> (Leaf Taxonomy Grounding with Guaranteed Monotonicity)</h3>
-    <p>O-Laya identifies the exact leaf concept in the GS1 hierarchy and projects ancestral probabilities:</p>
-    <pre><code class="language-json">{
-  "curie": "gs1:MilkButterCreamYogurtCheeseEggsSubstitutes",
-  "lineage": [
-    "gs1:Product",
-    "gs1:FoodBeverageTobaccoProduct",
-    "gs1:MilkButterCreamYogurtCheeseEggsSubstitutes"
-  ],
-  "candidate_probabilities": {
-    "gs1:MilkButterCreamYogurtCheeseEggsSubstitutes": 0.894,
-    "gs1:Beverage": 0.082,
-    "gs1:MeatPoultry": 0.024
-  },
-  "probabilities": {
-    "gs1:Product": 1.0,
-    "gs1:FoodBeverageTobaccoProduct": 1.0,
-    "gs1:MilkButterCreamYogurtCheeseEggsSubstitutes": 0.894
-  },
-  "confidence": 0.841,
-  "axioms_verified": true
-}</code></pre>
-    <p><em>Notice: Because O-Laya derives parent probabilities from descendant mass, <code>P(Product) ≥ P(FoodBeverage) ≥ P(Milk)</code> holds with mathematical certainty. No downstream sorting system will ever get confused by broken hierarchy math.</em></p>
-
-    <h3>2. <code>subsumes</code> (Principal Down-Set Membership ↓C)</h3>
-    <p>Tests whether the item is in the principal down-set of <code>FoodBeverageTobaccoProduct</code>. Returns <code>P = 0.992</code>. The warehouse programmable logic controller (PLC) instantly diverts the pallet to <strong>Aisle 4 (Refrigerated Receiving)</strong> without querying an external LLM.</p>
-
-    <h3>3. <code>choice</code> (Disjoint Packaging Rules)</h3>
-    <p>Evaluates container types with formal exclusion. <code>pallet_return</code> is selected with <code>P = 0.941</code>, triggering an automated credit event in the warehouse management system (WMS).</p>
-
-    <h3>4. <code>score</code> (Ordered Unload Priority)</h3>
-    <p>Returns <code>2.0</code> on the scale (<code>expedited_perishable_cold_chain</code>) with 91.2% probability mass on level 2.</p>
-
-    <h3>5. <code>noul</code> (Out-of-Domain / Anomaly Gating)</h3>
-    <p>Binary hypothesis check on seal breach / temp anomaly. With <code>sensor_temp_c: 3.2</code> (within 34–38°F range), returns <code>P = 0.003</code> (0.3%). Clean bill of health; no quarantine needed.</p>
-
-    <hr/>
-
-    <h2>Solving the Scalability Bottleneck: From 20 Options to 100,000 SKUs</h2>
-    <p>A major limitation highlighted in the original Laya post is candidate scalability: <em>"Keep option lists short. Accuracy drops past roughly 20 options."</em></p>
-    <p>In modern enterprise warehousing, a standard distribution center manages <strong>50,000 to 200,000 distinct SKUs</strong> across hundreds of GS1 GPC (Global Product Classification) brick values. Feeding 5,000 product classes into an unconstrained prompt blows past context limits and collapses model attention.</p>
-    <p>O-Laya solves this using a <strong>Two-Tier Subgraph Routing Architecture</strong>:</p>
-    <ol>
-      <li><strong>Inverted Token Indexing with IDF Weighting (Sub-Microsecond)</strong>: All GS1 labels, synonyms, GPC bricks, and semantic descriptions are indexed into an Arrow-native memory buffer. Incoming barcodes, OCR text, or shipping manifests are tokenized with CamelCase awareness and matched in <strong>4.8 microseconds</strong>.</li>
-      <li><strong>Active Subgraph Extraction</strong>: Top-K candidate leaves and their complete ancestor chains are extracted into an active sub-lattice.</li>
-      <li><strong>Neural Scorer</strong>: The neural decision model only reasons over the active subgraph, allowing O-Laya to scale to <strong>hundreds of thousands of products and parts</strong> without latency degradation.</li>
-    </ol>
-
-    <hr/>
-
-    <h2>Measured Performance & Hardware Benchmarks</h2>
-    <p>Measured on consumer hardware (Apple Silicon MPS / single CPU core) on operational GS1 supply chain workloads. The new WASM build (<code>olaya-wasm</code>, 189 KB) runs entirely in-browser with Rust-native speed — no server, no network round-trip.</p>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Runtime / Architecture</th>
-            <th>Parameters</th>
-            <th>Dimension & Depth</th>
-            <th>Median Latency</th>
-            <th>P95 Latency</th>
-            <th>Throughput</th>
-            <th>Role in Warehouse / Supply Chain</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="background: rgba(56,139,253,0.06);">
-            <td><strong>🦀 Rust WASM</strong> (<code>olaya-wasm</code>) <a href="./wasm/" style="text-decoration:none;"><span style="font-size:0.68rem;color:#3fb950;font-family:monospace;border:1px solid #3fb95044;border-radius:3px;padding:0.05rem 0.3rem;background:rgba(63,185,80,0.1);">LIVE ✓</span></a></td>
-            <td>0 (pure index)</td>
-            <td>189 KB .wasm binary</td>
-            <td><strong>&lt; 1 µs</strong></td>
-            <td>&lt; 2 µs</td>
-            <td><strong>&gt;500,000 qps</strong></td>
-            <td>In-browser native inference — zero network, zero JS overhead</td>
-          </tr>
- <tr>
-            <td><strong>Rust Arrow Lexical</strong> (<code>olaya-core</code>)</td>
-            <td>0 (pure index)</td>
-            <td>Arrow IPC Buffer</td>
-            <td><strong>4.8 µs</strong></td>
-            <td>5.2 µs</td>
-            <td><strong>~210,000 qps</strong></td>
-            <td>Embedded PLC / Conveyor Chute Divert (&lt;1ms)</td>
-          </tr>
-          <tr>
-            <td><strong>Custom BERT Decision Model</strong></td>
-            <td>15.37M</td>
-            <td>4 layers, 256d</td>
-            <td><strong>12.71 ms</strong></td>
-            <td>14.52 ms</td>
-            <td><strong>231.7 qps</strong></td>
-            <td>Edge Scanner / Handheld Forklift Terminal</td>
-          </tr>
-          <tr>
-            <td><strong>ModernBERT-base Backbone</strong></td>
-            <td>149.91M</td>
-            <td>22 layers, 768d</td>
-            <td><strong>199.10 ms</strong></td>
-            <td>217.52 ms</td>
-            <td><strong>14.9 qps</strong></td>
-            <td>Complex ASN & Customs Document Ingestion</td>
-          </tr>
-          <tr>
-            <td><strong>WebMCP Agent Bridge</strong> (JSON-RPC)</td>
-            <td>N/A (RPC)</td>
-            <td>Custom BERT</td>
-            <td><strong>11.57 ms</strong></td>
-            <td>12.83 ms</td>
-            <td><strong>86.3 qps</strong></td>
-            <td>Autonomous Logistics Agent (MCP 2024-11-05)</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p style="font-size:0.82rem;color:#8b949e;margin:0.25rem 0 0.75rem 0;">The 189 KB <code>olaya_wasm_bg.wasm</code> binary is served at <a href="./wasm/">./wasm/</a> alongside this page.</p>
-
-    <!-- WASM upgrade callout -->
-    <div style="background: linear-gradient(135deg, rgba(56,139,253,0.08) 0%, rgba(166,100,255,0.06) 100%); border: 1px solid #1f6feb44; border-radius: 8px; padding: 1rem 1.25rem; margin: 1.25rem 0;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">
-        <div>
-          <div style="font-size:0.78rem;text-transform:uppercase;color:#58a6ff;font-weight:700;letter-spacing:0.08em;margin-bottom:0.3rem;">🦀 New: Rust WASM Build (olaya-wasm)</div>
-          <strong>Sub-microsecond browser inference without any network round-trip.</strong>
-          <p style="font-size:0.82rem;color:#8b949e;margin:0.35rem 0 0 0;">The <code>olaya-wasm</code> crate compiles the full IDF-weighted BM25 router + axiom projection kernel to a 189 KB WebAssembly binary. Load it via <code>&lt;script type="module"&gt;</code> and route 500k+ decisions/second in the browser — faster than any HTTP call.</p>
+      <div class="bento-grid" style="margin-top: 1.5rem;">
+        <div class="bento-card">
+          <h3>1. <code>concept</code></h3>
+          <p>Leaf taxonomy grounding with guaranteed monotonicity: <code>P(child) &le; P(parent)</code> everywhere. Returns full ancestral lineage with no broken category math.</p>
+          <div class="bento-formula">P(Product) &ge; P(FoodBeverage) &ge; P(Milk)</div>
         </div>
-        <div style="font-family:monospace;font-size:0.78rem;background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:0.5rem 0.75rem;white-space:nowrap;flex-shrink:0;">
-          <div style="color:#8b949e;">// Browser ESModule</div>
-          <div>import init, { OlayaWasm }</div>
-          <div style="padding-left:1em;">from <span style="color:#79c0ff;">'./wasm/olaya_wasm.js'</span>;</div>
-          <div style="color:#8b949e;margin-top:0.25rem;">await init();</div>
-          <div>const engine = new OlayaWasm(conceptsJson);</div>
-          <div>const result = engine.system_one(state, 8);</div>
+        <div class="bento-card">
+          <h3>2. <code>subsumes</code></h3>
+          <p>Tests whether the item belongs to the principal down-set &darr;C of a target category. Enables instantaneous PLC diverter triggers without querying external clouds.</p>
+          <div class="bento-formula">&darr;C = {x &isin; &Omicron; | x &sqsubseteq; C}</div>
+        </div>
+        <div class="bento-card">
+          <h3>3. <code>choice</code></h3>
+          <p>Evaluates mutually exclusive options with category-theoretic exclusion. If two classes are disjoint, their joint probability is strictly zero.</p>
+          <div class="bento-formula">A &sqcap; B = &bot; &implies; P(A &cap; B) = 0</div>
+        </div>
+        <div class="bento-card">
+          <h3>4. <code>score</code> &amp; <code>noul</code></h3>
+          <p>Ordered ordinal calibration for priority queues, alongside binary out-of-domain anomaly gating to catch sensor excursions and unknown SKUs.</p>
+          <div class="bento-formula">E[Y] = &sum; i &middot; P(level_i)</div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <hr/>
-
-    <h2 id="install">The Zero-Install Agent Wedge: <code>olaya-mcp</code></h2>
-    <p>If you are building supply chain agents with Claude Desktop, Cursor, LangChain, or CrewAI, you can drop O-Laya into your stack with a single command:</p>
-
-    <h3>Run Instantly via uvx or npx</h3>
-    <pre><code class="language-bash"># Python runtime (PyPI / uvx)
-uvx olaya-mcp
-
-# Or zero-dependency Node/TypeScript runtime (npm / npx)
-npx @mycelia/olaya-mcp</code></pre>
-
-    <h3>Auto-Configure Claude Desktop or Cursor in 1 Second</h3>
-    <pre><code class="language-bash"># Automatically detects and configures Claude Desktop:
-uvx olaya-mcp install --client claude
-
-# Or Cursor IDE:
-uvx olaya-mcp install --client cursor</code></pre>
-
-    <h3>Instant CLI Grounding</h3>
-    <pre><code class="language-bash"># Fast sub-millisecond lexical grounding
-olaya-mcp ground "Organic whole milk carton 1 gallon barcode 0614141000036" --domain gs1 --mode fast
-
-# Neural cross-encoder grounding
-olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --domain gs1 --mode neural</code></pre>
-
-    <hr/>
-
-    <hr/>
-
-    <h2>Business Model & Developer Economics: Leio vs Jev vs Laya</h2>
-    <p>
-      Generative LLMs bill by tokens outputted, incentivizing verbose paragraphs. TypeSafe AI's Jev pioneered <strong>input-only pricing</strong> ($0.042 / 1M input tokens, free output tokens) because decisions produce structured values, not prose.
-    </p>
-    <p>
-      <strong>Leio adopts the same developer-first business model:</strong>
-    </p>
-
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.85rem; margin: 1.5rem 0;">
-      <div style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 1rem;">
-        <div style="font-size: 0.75rem; text-transform: uppercase; color: #8b949e; font-weight: 600;">Self-Hosted / Edge (Open Weights)</div>
-        <div style="font-size: 1.5rem; font-weight: 700; color: #3fb950; margin: 0.25rem 0;">$0 / forever</div>
-        <p style="font-size: 0.82rem; color: #c9d1d9; margin-bottom: 0.5rem;">
-          Apache 2.0 open weights. Run locally in Browser WebAssembly, Node.js, Python, or embedded Rust Arrow PLC.
-        </p>
-        <div style="font-size: 0.72rem; color: #8b949e; font-family: monospace;">✓ 0ms network latency | 100% offline</div>
-      </div>
-
-      <div style="background: #161b22; border: 1px solid #1f6feb; border-radius: 6px; padding: 1rem; box-shadow: 0 0 16px rgba(31, 111, 235, 0.15);">
-        <div style="font-size: 0.75rem; text-transform: uppercase; color: #58a6ff; font-weight: 600;">Managed API (Jev-Compatible)</div>
-        <div style="font-size: 1.5rem; font-weight: 700; color: #58a6ff; margin: 0.25rem 0;">$0.042 <span style="font-size: 0.85rem; color: #8b949e; font-weight: normal;">/ 1M input tokens</span></div>
-        <p style="font-size: 0.82rem; color: #c9d1d9; margin-bottom: 0.5rem;">
-          Zero-maintenance hosted serverless endpoint. Output tokens are <strong>100% free</strong>.
-        </p>
-        <div style="font-size: 0.72rem; color: #58a6ff; font-family: monospace;">✓ Drop-in replacement for api.typesafe.ai</div>
-      </div>
-
-      <div style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 1rem;">
-        <div style="font-size: 0.75rem; text-transform: uppercase; color: #8b949e; font-weight: 600;">Enterprise On-Prem</div>
-        <div style="font-size: 1.5rem; font-weight: 700; color: #a371f7; margin: 0.25rem 0;">Custom SLA</div>
-        <p style="font-size: 0.82rem; color: #c9d1d9; margin-bottom: 0.5rem;">
-          Custom enterprise ontology compiled directly into hardware ASICs, high-throughput microsecond routing, dedicated VPC.
-        </p>
-        <div style="font-size: 0.72rem; color: #8b949e; font-family: monospace;">✓ 99.999% uptime | Air-gapped logistics</div>
-      
-    <!-- INTERACTIVE ROI & LATENCY ECONOMICS CALCULATOR -->
-    <div class="calc-container">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;">
-        <div>
-          <span style="font-size:0.75rem;text-transform:uppercase;color:#58a6ff;font-weight:700;letter-spacing:0.08em;">Interactive Economics Calculator</span>
-          <h3 style="font-size:1.2rem;margin:0.2rem 0 0 0;color:#f0f6fc;">Estimate Your Cost & Latency Savings Over Legacy LLMs</h3>
-        </div>
-        <div style="font-family:monospace;font-size:0.85rem;color:#3fb950;background:rgba(63,185,80,0.1);border:1px solid rgba(63,185,80,0.3);padding:0.25rem 0.65rem;border-radius:20px;">
-          99.7% Cost Reduction
-        </div>
-      </div>
-      <p style="font-size:0.84rem;color:#8b949e;margin:0 0 1rem 0;">
-        Adjust your expected monthly structured decision volume (routing, triage, gating, categorization):
+    <!-- ── Chapter 5: Measured Performance & Hardware Benchmarks ── -->
+    <section class="apple-chapter" id="benchmarks">
+      <div class="apple-kicker">VERIFIABLE HARDWARE BENCHMARKS</div>
+      <h2 class="apple-section-h2">Measured on bare metal. Proven at scale.</h2>
+      <p class="apple-section-p">
+        Tested on Apple Silicon MPS and single-core CPU on operational GS1 supply chain workloads. The WASM build runs entirely in-browser with zero network round-trip.
       </p>
 
-      <div class="calc-slider-wrap">
-        <div style="display:flex;justify-content:space-between;font-weight:600;font-size:0.88rem;margin-bottom:0.4rem;">
-          <span>Monthly Decisions: <strong id="calcVolumeDisplay" style="color:#58a6ff;font-size:1.05rem;">1,000,000</strong></span>
-          <span style="color:#8b949e;font-size:0.78rem;">(100k to 50,000,000 ops/mo)</span>
+      <div class="apple-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Runtime / Architecture</th>
+              <th>Parameters</th>
+              <th>Footprint</th>
+              <th>Median Latency</th>
+              <th>P95 Latency</th>
+              <th>Throughput</th>
+              <th>Deployment Target</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background: rgba(48, 209, 88, 0.05);">
+              <td><strong>🦀 Rust WASM</strong> (<code>olaya-wasm</code>) <span style="font-size:0.7rem;color:var(--green);font-family:var(--font-mono);border:1px solid rgba(48,209,88,0.3);border-radius:980px;padding:0.1rem 0.45rem;">LIVE ✓</span></td>
+              <td>0 (pure index)</td>
+              <td>189 KB .wasm binary</td>
+              <td><strong>&lt; 1 &mu;s</strong></td>
+              <td>&lt; 2 &mu;s</td>
+              <td><strong>&gt;500,000 qps</strong></td>
+              <td>In-browser client &middot; zero network, zero server</td>
+            </tr>
+            <tr>
+              <td><strong>Rust Arrow Lexical</strong> (<code>olaya-core</code>)</td>
+              <td>0 (pure index)</td>
+              <td>Arrow IPC Buffer</td>
+              <td><strong>4.8 &mu;s</strong></td>
+              <td>5.2 &mu;s</td>
+              <td><strong>~210,000 qps</strong></td>
+              <td>Embedded PLC &middot; Conveyor Chute Divert</td>
+            </tr>
+            <tr>
+              <td><strong>Custom BERT Decision Model</strong></td>
+              <td>15.37M</td>
+              <td>4 layers, 256d</td>
+              <td><strong>12.71 ms</strong></td>
+              <td>14.52 ms</td>
+              <td><strong>231.7 qps</strong></td>
+              <td>Edge Scanner &middot; Forklift Handheld Terminal</td>
+            </tr>
+            <tr>
+              <td><strong>ModernBERT-base Backbone</strong></td>
+              <td>149.91M</td>
+              <td>22 layers, 768d</td>
+              <td><strong>199.10 ms</strong></td>
+              <td>217.52 ms</td>
+              <td><strong>14.9 qps</strong></td>
+              <td>Control Tower &middot; High-Fidelity Triage</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Chapter 6: Transparent Economics & ROI Calculator ── -->
+    <section class="apple-chapter" id="pricing">
+      <div class="apple-kicker">RADICAL PRICING ECONOMICS</div>
+      <h2 class="apple-section-h2">$0.042 per million input tokens. Outputs free.</h2>
+      <p class="apple-section-p">
+        Generative LLMs bill you for slow, verbose output tokens. Leio meters inputs only at Jev-compatible rates, making output decisions completely unmetered and free.
+      </p>
+
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-tier-name">Developer Free Tier</div>
+          <div class="pricing-price">$0</div>
+          <div class="pricing-sub">Free forever for local development</div>
+          <ul class="pricing-features">
+            <li>✓ 100,000 API requests per month</li>
+            <li>✓ 189 KB in-browser WASM client</li>
+            <li>✓ Open-weights PyTorch &amp; ONNX checkpoints</li>
+            <li>✓ 6 standard domain ontologies included</li>
+            <li>✓ Community GitHub support</li>
+          </ul>
+          <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener" class="btn-apple-secondary" style="text-align: center; justify-content: center;">Get Started Free</a>
         </div>
+
+        <div class="pricing-card featured">
+          <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--blue); font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.25rem;">MOST POPULAR</div>
+          <div class="pricing-tier-name">Scale Tier</div>
+          <div class="pricing-price">$0.042</div>
+          <div class="pricing-sub">Per 1,000,000 input tokens &middot; Outputs 100% Free</div>
+          <ul class="pricing-features">
+            <li>✓ Jev-compatible drop-in HTTP/REST endpoint</li>
+            <li>✓ Zero cold-start sub-millisecond edge routing</li>
+            <li>✓ Up to 10,000 requests / second</li>
+            <li>✓ Uncapped free output decision payloads</li>
+            <li>✓ Axiom certification metadata included</li>
+            <li>✓ 99.95% uptime SLA</li>
+          </ul>
+          <a href="mailto:dionisio.ca@gmail.com?subject=Leio%20Scale%20API%20Access" class="btn-apple-primary" style="text-align: center; justify-content: center;">Provision API Key</a>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-tier-name">Enterprise VPC</div>
+          <div class="pricing-price">Custom</div>
+          <div class="pricing-sub">Dedicated on-premise &amp; air-gapped instances</div>
+          <ul class="pricing-features">
+            <li>✓ Air-gapped on-premise deployment</li>
+            <li>✓ Custom enterprise ontology fine-tuning</li>
+            <li>✓ Hardware PLC diverter bridge drivers</li>
+            <li>✓ Sub-microsecond bare-metal Arrow engine</li>
+            <li>✓ 99.999% high-availability SLA</li>
+            <li>✓ Dedicated solutions engineer</li>
+          </ul>
+          <a href="mailto:dionisio.ca@gmail.com?subject=Leio%20Enterprise%20VPC" class="btn-apple-secondary" style="text-align: center; justify-content: center;">Contact Enterprise</a>
+        </div>
+      </div>
+
+      <!-- ROI Calculator -->
+      <div class="roi-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <div style="font-size: 1.15rem; font-weight: 600; color: #ffffff;">Interactive ROI Calculator</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted);">Compare annual compute cost against generative LLM APIs</div>
+          </div>
+          <div>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Monthly Decisions: </span>
+            <strong id="calcVolumeDisplay" style="color: var(--blue); font-size: 1.1rem; font-family: var(--font-mono);">1,000,000</strong>
+          </div>
+        </div>
+
         <input type="range" min="100000" max="50000000" step="100000" value="1000000" class="calc-slider" id="calcSlider" oninput="updateCalculator(this.value)">
-      </div>
 
-      <div class="calc-grid">
-        <div class="calc-box">
-          <div style="font-size:0.75rem;color:#f85149;font-weight:700;text-transform:uppercase;">Legacy Generative LLM Stack</div>
-          <div class="calc-num" id="calcLlmCost" style="color:#f85149;">$4,500.00 / mo</div>
-          <div style="font-size:0.78rem;color:#8b949e;margin-top:0.35rem;">
-            <div>• Based on GPT-4o / Claude 3.5 structured prompt tokens</div>
-            <div>• Cumulative latency: <strong id="calcLlmTime" style="color:#c9d1d9;">333.3 hours</strong> of wait time/mo</div>
-            <div>• Non-deterministic schema failures: ~30,000 retries required</div>
+        <div class="calc-metrics-row">
+          <div class="calc-box">
+            <span class="panel-kicker" style="color: var(--red);">Generative LLM Cost (GPT-4o mini / Claude Haiku)</span>
+            <div class="calc-num" id="calcLlmCost" style="color: var(--red);">$4,500.00 / mo</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">Cumulative latency: <strong id="calcLlmTime" style="color: #ffffff;">333.3 hours</strong> of wait time/mo</div>
+          </div>
+
+          <div class="calc-box">
+            <span class="panel-kicker" style="color: var(--green);">Leio System 1 Cost ($0.042/1M Inputs &middot; Free Outputs)</span>
+            <div class="calc-num" id="calcLeioCost" style="color: var(--green);">$1.26 / mo</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">Cumulative latency: <strong id="calcLeioTime" style="color: var(--green);">&lt; 0.8 seconds</strong> total for all ops</div>
           </div>
         </div>
 
-        <div class="calc-box" style="border-color:#2ea043;box-shadow:0 0 20px rgba(46,160,67,0.1);">
-          <div style="font-size:0.75rem;color:#3fb950;font-weight:700;text-transform:uppercase;">⚡ Leio Managed System 1 API</div>
-          <div class="calc-num" id="calcLeioCost" style="color:#3fb950;">$1.26 / mo</div>
-          <div style="font-size:0.78rem;color:#8b949e;margin-top:0.35rem;">
-            <div>• $0.042 / 1M input tokens (outputs 100% free forever)</div>
-            <div>• Cumulative latency: <strong id="calcLeioTime" style="color:#3fb950;">&lt; 0.8 seconds</strong> total for all 1M ops</div>
-            <div>• Formal axiom verification: 0 schema failures, 0 hallucinations</div>
+        <div class="calc-savings-banner">
+          <div>
+            <div style="font-size: 0.76rem; text-transform: uppercase; color: var(--green); font-weight: 700;">NET COMPUTATIONAL SAVINGS</div>
+            <div style="font-size: 1.45rem; font-weight: 700; color: #ffffff; font-family: var(--font-mono);" id="calcAnnualSavings">$53,984.88 / year saved</div>
           </div>
+          <span style="font-size: 0.82rem; color: var(--green); font-weight: 600;">99.97% cost reduction</span>
         </div>
       </div>
+    </section>
 
-      <div class="calc-savings-banner">
-        <div>
-          <div style="font-size:0.78rem;color:#8b949e;">Your Estimated Annual Savings:</div>
-          <div style="font-size:1.35rem;font-weight:800;color:#3fb950;font-family:ui-monospace,SFMono-Regular,monospace;" id="calcAnnualSavings">$53,984.88 / year saved</div>
-        </div>
-        <div style="text-align:right;">
-          <a href="./playground.html" style="display:inline-flex;align-items:center;gap:0.35rem;background:#238636;color:#fff;border:1px solid #2ea043;border-radius:6px;padding:0.4rem 0.95rem;font-size:0.82rem;font-weight:600;text-decoration:none;">▶ Test in Playground</a>
-        </div>
-      </div>
-    </div>
-</div>
-    </div>
-
-    <h3>⚡ Live Hosted Endpoint: Try with cURL (Exact Jev Spec)</h3>
-    <p>You can execute queries right now against our hosted edge serverless endpoint:</p>
-    <pre><code class="language-bash">curl -X POST https://public-nine-jade-58.vercel.app/api/systemone \
-  -H "Content-Type: application/json" \
-  -d '{
-    "state": "Critical overheating emergency: motor temperature exceeds 85C on conveyor sorter line #2.",
-    "questions": {
-      "triage": {
-        "type": "choice",
-        "instructions": "emergency stop lubricate ignore operator action",
-        "options": ["EMERGENCY_STOP", "SCHEDULE_LUBRICATION", "IGNORE"]
-      },
-      "urgency_score": {
-        "type": "score",
-        "instructions": "operational hazard severity level",
-        "criteria": ["negligible", "low", "medium", "high", "critical"]
-      },
-      "requires_evacuation": {
-        "type": "noul",
-        "instructions": "smoke fire explosion evacuation required"
-      }
-    }
-  }'</code></pre>
-
-    <h2 id="comparison">Direct Architecture &amp; Positioning Comparison</h2>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Dimension</th>
-            <th>TypeSafe AI (Jev)</th>
-            <th>Convai (Laya)</th>
-            <th>Leio</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Core Positioning</strong></td>
-            <td>Hosted System 1 API</td>
-            <td>Open-weights modernBERT</td>
-            <td class="col-leio"><strong>Ontology-grounded System 1 decision engine</strong></td>
-          </tr>
-          <tr>
-            <td><strong>Mathematical Guarantees</strong></td>
-            <td>None (unconstrained flat softmax)</td>
-            <td>None (flat choices)</td>
-            <td class="col-leio"><strong>Rigorous: Subsumption P(child) ≤ P(parent), Disjointness A ⊓ B = ⊥</strong></td>
-          </tr>
-          <tr>
-            <td><strong>Option Scale Limit</strong></td>
-            <td>~20 options before accuracy collapses</td>
-            <td>~20 options max</td>
-            <td class="col-leio"><strong>100,000+ SKUs via microsecond inverted index DAG routing</strong></td>
-          </tr>
-          <tr>
-            <td><strong>Pricing Model</strong></td>
-            <td>$0.042 / 1M input tokens (outputs free)</td>
-            <td>Open source weights (DIY GPU hosting)</td>
-            <td class="col-leio"><strong>Hybrid: Free open-source local runtime + $0.042/1M managed API</strong></td>
-          </tr>
-          <tr>
-            <td><strong>Client Execution</strong></td>
-            <td>Cloud API only (70ms–500ms)</td>
-            <td>Python PyTorch (~13ms–33ms)</td>
-            <td class="col-leio"><strong>Browser WebAssembly / ESModule (&lt;1ms client-side) &amp; MCP</strong></td>
-          </tr>
-          <tr>
-            <td><strong>Ontology Primitives</strong></td>
-            <td>choice, score, noul</td>
-            <td>choice, score, noul</td>
-            <td class="col-leio"><strong>+ concept (leaf taxonomy grounding with full lineage path)</strong></td>
-          </tr>
-          <tr>
-            <td><strong>Scale Guarantee</strong></td>
-            <td>None (re-query API per request)</td>
-            <td>None (re-encode per request)</td>
-            <td class="col-leio"><strong>Inverted index routes 100k+ SKUs in 4.8µs; single DAG in RAM</strong></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <hr/>
-
-    <h2>Summary: When to Use What</h2>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Operational Need</th>
-            <th>Best Tool</th>
-            <th>Why</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Dispute resolution, vendor negotiation emails, custom exception letters</strong></td>
-            <td><strong>LLM (Claude, GPT, Gemini)</strong></td>
-            <td>Expressive autoregressive prose generation</td>
-          </tr>
-          <tr>
-            <td><strong>Simple 3-way email inbox triage (&lt;10 flat strings)</strong></td>
-            <td><strong>Laya / Jev</strong></td>
-            <td>Fast flat classifier</td>
-          </tr>
-          <tr>
-            <td><strong>Barcode/GTIN routing, GS1 compliance, cold-chain gating, conveyor PLC control, warehouse sorters</strong></td>
-            <td><strong>Leio</strong></td>
-            <td><strong>Axiom-verified, P(child) ≤ P(parent), scales to 100k+ SKUs, sub-millisecond latency, MCP-native</strong></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- ── WAITLIST CTA ─────────────────────────────────────────────────── -->
-    <div style="background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border: 1px solid #1f6feb55; border-radius: 10px; padding: 2rem 1.75rem; margin: 2.5rem 0; text-align: center; box-shadow: 0 0 40px rgba(31,111,235,0.1);">
-      <div style="font-size: 0.75rem; text-transform: uppercase; color: #58a6ff; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 0.5rem;">⚡ Managed API — Now Available</div>
-      <h2 style="margin: 0.25rem 0 0.75rem 0; font-size: 1.65rem; letter-spacing: -0.02em;">Start grounding decisions in <span style="color: #58a6ff;">&lt;1ms</span> today.</h2>
-      <p style="color: #8b949e; font-size: 0.95rem; margin: 0 auto 1.25rem auto; max-width: 520px; line-height: 1.55;">
-        Drop-in replacement for <code style="color:#c9d1d9;">api.typesafe.ai/v1/systemone</code>. Same Jev pricing at <strong style="color:#c9d1d9;">$0.042&thinsp;/&thinsp;1M input tokens</strong> — output tokens always free.
+    <!-- ── Chapter 7: Developer Quickstart ── -->
+    <section class="apple-chapter">
+      <div class="apple-kicker">DEVELOPER INTEGRATION</div>
+      <h2 class="apple-section-h2">One command to embed or query.</h2>
+      <p class="apple-section-p">
+        Drop Leio directly into your autonomous agents, CLI tools, or web applications with zero configuration.
       </p>
 
-      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; align-items: center; margin-bottom: 1.5rem;">
-        <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener"
-           style="display: inline-flex; align-items: center; gap: 0.45rem; background: #238636; color: #fff; border: 1px solid #2ea043; border-radius: 6px; padding: 0.55rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: background 0.15s;">
-          ⭐ Star on GitHub
-        </a>
-        <a href="mailto:dionisio.ca@gmail.com?subject=Leio%20Managed%20API%20Access&body=Hi%2C%20I%27d%20like%20early%20access%20to%20the%20Leio%20managed%20API%20(Jev-compatible%20hosted%20endpoint)."
-           style="display: inline-flex; align-items: center; gap: 0.45rem; background: #1f6feb; color: #fff; border: 1px solid #388bfd; border-radius: 6px; padding: 0.55rem 1.25rem; font-size: 0.9rem; font-weight: 600; text-decoration: none;">
-          📬 Get API Access
-        </a>
-        <a href="https://public-nine-jade-58.vercel.app/api/systemone"
-           target="_blank" rel="noopener"
-           style="display: inline-flex; align-items: center; gap: 0.45rem; background: transparent; color: #8b949e; border: 1px solid #30363d; border-radius: 6px; padding: 0.55rem 1.25rem; font-size: 0.9rem; font-weight: 500; text-decoration: none;">
-          🔗 Live API Status
-        </a>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.65rem; max-width: 680px; margin: 0 auto;">
-        <div class="quick-copy-card" onclick="copySnippet('uvx olaya-mcp', this)" style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: #3fb950; font-weight: 700; font-family: monospace;">uvx olaya-mcp</span>
-            <span class="copy-hint" style="font-size: 0.68rem; color: #8b949e;">Copy</span>
+      <div class="quick-copy-grid">
+        <div class="quick-copy-card" onclick="copySnippet('uvx olaya-mcp', this)">
+          <div class="quick-copy-top">
+            <span class="quick-copy-code">uvx olaya-mcp</span>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">Copy</span>
           </div>
-          <div style="color: #6e7681; margin-top: 0.2rem; font-size: 0.76rem;">Zero-install Python agent wedge</div>
+          <div class="quick-copy-desc">Zero-install Python MCP agent server</div>
         </div>
-        <div class="quick-copy-card" onclick="copySnippet('npx @mycelia/olaya-mcp', this)" style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: #3fb950; font-weight: 700; font-family: monospace;">npx @mycelia/olaya-mcp</span>
-            <span class="copy-hint" style="font-size: 0.68rem; color: #8b949e;">Copy</span>
+        <div class="quick-copy-card" onclick="copySnippet('npx @mycelia/olaya-mcp', this)">
+          <div class="quick-copy-top">
+            <span class="quick-copy-code">npx @mycelia/olaya-mcp</span>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">Copy</span>
           </div>
-          <div style="color: #6e7681; margin-top: 0.2rem; font-size: 0.76rem;">Zero-install Node agent wedge</div>
+          <div class="quick-copy-desc">Zero-install Node.js MCP agent server</div>
         </div>
-        <div class="quick-copy-card" onclick="copySnippet('pip install olaya', this)" style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: #3fb950; font-weight: 700; font-family: monospace;">pip install olaya</span>
-            <span class="copy-hint" style="font-size: 0.68rem; color: #8b949e;">Copy</span>
+        <div class="quick-copy-card" onclick="copySnippet('pip install olaya', this)">
+          <div class="quick-copy-top">
+            <span class="quick-copy-code">pip install olaya</span>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">Copy</span>
           </div>
-          <div style="color: #6e7681; margin-top: 0.2rem; font-size: 0.76rem;">Python SDK — open weights</div>
+          <div class="quick-copy-desc">Python SDK with open weights</div>
         </div>
-        <div class="quick-copy-card" onclick="copySnippet('https://public-nine-jade-58.vercel.app/api/systemone', this)" style="background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.8rem; cursor: pointer; transition: all 0.15s ease;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: #58a6ff; font-weight: 700; font-family: monospace;">POST /api/systemone</span>
-            <span class="copy-hint" style="font-size: 0.68rem; color: #8b949e;">Copy</span>
+        <div class="quick-copy-card" onclick="copySnippet('https://public-nine-jade-58.vercel.app/api/systemone', this)">
+          <div class="quick-copy-top">
+            <span class="quick-copy-code" style="color: var(--blue);">POST /api/systemone</span>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">Copy</span>
           </div>
-          <div style="color: #6e7681; margin-top: 0.2rem; font-size: 0.76rem;">Jev-compatible managed API</div>
+          <div class="quick-copy-desc">Jev-compatible hosted edge endpoint</div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <footer style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.95rem;">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-        <div>
-          <strong>Leio</strong> &mdash; Ontology-Grounded System 1 Decision Engine<br>
-          <span style="color: var(--text-muted); font-size: 0.82rem;">Open weights &middot; Apache 2.0 &middot; <a href="mailto:dionisio.ca@gmail.com">dionisio.ca@gmail.com</a></span>
-        </div>
-        <div style="display: flex; gap: 1rem; font-size: 0.88rem;">
-          <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener">GitHub</a>
-          <a href="mailto:dionisio.ca@gmail.com?subject=Leio%20Managed%20API%20Access">API Access</a>
-          <a href="https://public-nine-jade-58.vercel.app/api/systemone" target="_blank" rel="noopener">Live API</a>
-        </div>
+    <!-- ── Serene Apple Footer ── -->
+    <footer class="apple-footer">
+      <div>
+        <strong>Leio</strong> &mdash; Ontology-Grounded System 1 Decision Engine<br>
+        <span style="color: var(--text-tertiary); font-size: 0.78rem;">Open weights &middot; Apache 2.0 &middot; Built by Dionisio Chiuratto Agourakis</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener">GitHub</a>
+        <a href="./playground.html">Playground</a>
+        <a href="https://public-nine-jade-58.vercel.app/api/systemone" target="_blank" rel="noopener">Live API</a>
+        <a href="mailto:dionisio.ca@gmail.com">Contact</a>
       </div>
     </footer>
-  </article>
-
   </div>
 
   <!-- Interactive Live Demo Script -->
-  <script type="module">
+<script type="module">
     import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
     import init, { OlayaWasm } from './wasm/olaya_wasm.js';
 
@@ -2113,6 +1918,23 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
     let currentDomain = 'gs1';
 
     const DOMAIN_CONFIG = {
+      leio: {
+        name: "Leio Product, Model & Pricing",
+        badge: "⚡ Leio System 1 Ecosystem",
+        title: "Interactive Live Demo: Leio Architecture, Formal Axioms & Pricing",
+        inputLabel: "Input Architecture Requirement / Axiom Query / Pricing Scenario",
+        url: "./ontologies/leio_ontology.json",
+        downsetTarget: "leio:Model",
+        downsetLabel: "is_formal_mathematical_kernel",
+        presets: [
+          { id: "wasm", label: "WASM In-Browser Client", text: "Standalone 189 KB WebAssembly in-browser client module running decisions in under 1 microsecond in RAM." },
+          { id: "mono", label: "Subsumption Monotonicity", text: "Mathematical guarantee enforcing that P(child) is less than or equal to P(parent) everywhere in the DAG." },
+          { id: "disjoint", label: "Disjointness Exclusion Kernel", text: "Category-theoretic exclusion kernel enforcing A ⊓ B = ⊥, algebraically zeroing mutually exclusive branches." },
+          { id: "pricing", label: "Transparent $0.042/1M Pricing", text: "Input-only token metering at $0.042 per 1M tokens with 100% free unmetered output decisions." },
+          { id: "sorter", label: "Autonomous Conveyor Agent", text: "Industrial cross-dock warehouse agent listening to 200kHz barcode sensor streams and firing PLC diverter chutes." },
+          { id: "vpc", label: "Dedicated Enterprise VPC", text: "Air-gapped on-premise installation with private custom ontology fine-tuning and 99.999% SLA." }
+        ]
+      },
       gs1: {
         name: "GS1 Supply Chain",
         badge: "📦 GS1 Supply Chain",
@@ -2223,7 +2045,7 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
         sel.value = domainKey;
       }
 
-      ['gs1', 'schemaorg', 'bfo', 'skos', 'incident', 'doid'].forEach(k => {
+      ['leio', 'gs1', 'schemaorg', 'bfo', 'skos', 'incident', 'doid'].forEach(k => {
         const btn = document.getElementById(`tab-${k}`);
         if (!btn) return;
         if (k === domainKey) {
@@ -2752,7 +2574,7 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
   };
 
     // Start with default GS1 domain
-    switchDomain('gs1');
+    switchDomain('leio');
 
   // Copy to clipboard initializer for all pre blocks
   
@@ -2803,6 +2625,5 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
   initCopyButtons();
 
   </script>
-
 </body>
 </html>
