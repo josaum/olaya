@@ -76,6 +76,35 @@ function scoreOptions(stateToks, options, instrToks = []) {
   return softmax(logits, T);
 }
 
+// Bounded English negation: inspect the words attached to each proposition
+// mention, rather than treating every negator in the state as global evidence.
+function propositionPolarity(state, proposition) {
+  const wanted = tokenize(proposition);
+  if (wanted.length === 0) return { positive: false, negative: false };
+  const normalized = state.replace(/([a-z])([A-Z])/g, '$1 $2')
+    .toLowerCase().replace(/[’']/g, "'").replace(/n't\b/g, ' not');
+  let positive = false;
+  let negative = false;
+  for (const clause of normalized.split(/[.,;!?\n]|\b(?:but|and|or|however)\b/)) {
+    const words = clause.match(/[a-z0-9]+/g) || [];
+    const content = words.flatMap((word, index) =>
+      tokenize(word).map((token) => ({ token, index })));
+    for (let start = 0; start <= content.length - wanted.length; start++) {
+      if (!wanted.every((token, i) => content[start + i].token === token)) continue;
+      const first = content[start].index;
+      const last = content[start + wanted.length - 1].index;
+      const before = words.slice(0, first).join(' ');
+      const after = words.slice(last + 1).join(' ');
+      const prefixNegated = /\b(?:no|not|never|without|lack|lacks|lacking|neither)(?:\s+(?:any|a|an|the|actually|currently|really))*$/.test(before);
+      const suffixNegated = /^(?:(?:is|are|was|were)\s+)?(?:absent|false|missing|negative)\b/.test(after)
+        || /^(?:is|are|was|were)\s+not\b/.test(after);
+      if (prefixNegated || suffixNegated) negative = true;
+      else positive = true;
+    }
+  }
+  return { positive, negative };
+}
+
 // ─── Token count estimator ───────────────────────────────────────────────────
 function estimateTokens(input) {
   const str = typeof input === 'string' ? input : JSON.stringify(input);
@@ -165,7 +194,7 @@ export default async function handler(req) {
           : Object.keys(qVal.options || {});
 
         if (options.length === 0) {
-          results[qKey] = { type: 'choice', choice: null, confidence: 0, probabilities: {} };
+          results[qKey] = { type: 'choice', choice: null, abstained: true, reason: 'no_options', confidence: 0, probabilities: {} };
           continue;
         }
 
@@ -180,10 +209,16 @@ export default async function handler(req) {
           probMap[options[i]] = Number(probs[i].toFixed(4));
         }
 
+        const hasEvidence = options.some((option) =>
+          tokenize(option).some((token) => stateToks.includes(token)));
+        const tied = probs.filter((prob) => Math.abs(prob - probs[bestIdx]) < 1e-12).length > 1;
+        const reason = !hasEvidence ? 'no_matching_evidence' : tied ? 'tied_options' : null;
         results[qKey] = {
           type: 'choice',
-          choice: options[bestIdx],
-          confidence: Number(confidence(probs).toFixed(4)),
+          choice: reason ? null : options[bestIdx],
+          abstained: reason !== null,
+          ...(reason ? { reason } : {}),
+          confidence: reason ? 0 : Number(confidence(probs).toFixed(4)),
           probabilities: probMap,
         };
 
@@ -214,30 +249,14 @@ export default async function handler(req) {
 
       // ── noul ──────────────────────────────────────────────────────────────
       } else if (qVal.type === 'noul') {
-        // Binary Bernoulli: yes = semantic match between proposition and state
-        const propToks = tokenize(qVal.instructions || '');
-        const stateSet = new Set(stateToks);
-        const negationWords = new Set(['no', 'not', 'none', 'negative', 'absent', 'false', 'never', 'without', 'lack', 'free']);
-
-        // Score positive: how many proposition tokens appear in state?
-        let yesScore = 0.5;
-        let propMatchCount = 0;
-        for (const tok of propToks) {
-          if (stateSet.has(tok)) propMatchCount++;
-        }
-        if (propToks.length > 0) {
-          yesScore = 0.5 + (propMatchCount / propToks.length) * 3.5;
-        }
-
-        // Score negative: negate if state contains strong negation near proposition keywords
-        let noScore = 0.5;
-        for (const tok of negationWords) {
-          if (stateSet.has(tok)) noScore += 2.0;
-        }
-        // If nothing matched the proposition, strong default to NO
-        if (propMatchCount === 0) noScore += 2.0;
-
-        const probs = softmax([yesScore, noScore], 0.85);
+        const evidence = propositionPolarity(rawState, qVal.instructions || '');
+        // Conflicting mentions are undecided. No matching proposition retains
+        // the existing conservative NO default. These are lexical weights.
+        const probs = evidence.positive && evidence.negative
+          ? [0.5, 0.5]
+          : evidence.negative ? softmax([0.5, 4], 0.85)
+          : evidence.positive ? softmax([4, 0.5], 0.85)
+          : softmax([0.5, 2.5], 0.85);
         results[qKey] = {
           type: 'noul',
           noul: Number(probs[0].toFixed(4)),
