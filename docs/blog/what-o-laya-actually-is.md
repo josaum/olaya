@@ -10,6 +10,19 @@ tags: ["ai", "decision-model", "ontology", "supply-chain", "gs1", "rust", "mcp"]
 
 *A parallel and architectural response to [What Laya Actually Is](https://relay.sparkrouter.com/ai--and--local-models/what-laya-actually-is).*
 
+## Implementation scope and examples
+
+This article describes ontology-enabled runtimes and illustrative warehouse
+workflows. Numerical example responses are illustrative unless tied to a named
+benchmark; they are not acceptance evidence for an automated control system.
+The separately hosted `/api/systemone` demo uses lexical flat matching and does
+not execute the full DAG projection described here. Its source now supports
+explicit choice abstention and bounded English negation. See the
+[edge contract](../../spec/systemone-reliability.md) and
+[current README verification status](../../README.md#system-one-http-edge-api)
+before integrating that endpoint. Historical runtime benchmark figures below
+must not be interpreted as HTTP round-trip latency.
+
 ```mermaid
 flowchart TD
     Start(["Incoming Warehouse & Supply Chain Stream<br/>(GTIN barcode, EPCIS sensor event, packing slip, ASN)"]) --> Input["Structured GS1 Decision Query:<br/>concept, subsumes, choice, score, noul"]
@@ -188,7 +201,7 @@ In modern enterprise warehousing, a standard distribution center manages **50,00
 
 O-Laya solves this using a **Two-Tier Subgraph Routing Architecture**:
 
-1. **Inverted Token Indexing with IDF Weighting (Sub-Microsecond)**:
+1. **Inverted Token Indexing with IDF Weighting (Microsecond)**:
    - All GS1 labels, synonyms, GPC bricks, and semantic descriptions (`rdfs:comment`, `skos:definition`, `schema:description`) are indexed into an Arrow-native memory buffer.
    - Incoming barcodes, OCR text, or shipping manifests are tokenized with CamelCase awareness and matched in **4.8 microseconds**.
 2. **Active Subgraph Extraction**:
