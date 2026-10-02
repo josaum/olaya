@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,38 +17,64 @@
   <meta name="twitter:description" content="Evaluate formal ontologies in < 1ms. $0.042/1M input tokens. Outputs always free.">
   <meta name="twitter:image" content="https://public-nine-jade-58.vercel.app/og-preview.png">
 
-  <!-- Inter Font -->
+  <!-- Inter & JetBrains Mono Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root {
+    /* ── Light Mode Design Tokens (Inspired by TypeSafe AI & Stripe) ── */
+    :root, [data-theme="light"] {
+      --bg: #f8fafc;
+      --bg-alt: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --border: #e2e8f0;
+      --border-hover: #cbd5e1;
+      --border-strong: #94a3b8;
+      --text-main: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --accent-blue: #0284c7;
+      --accent-blue-hover: #0369a1;
+      --accent-blue-glow: rgba(2, 132, 199, 0.12);
+      --accent-green: #03aa5c;
+      --accent-green-glow: rgba(3, 170, 92, 0.12);
+      --accent-purple: #7c3aed;
+      --accent-amber: #d97706;
+      --accent-red: #e11d48;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
+      --shadow-lg: 0 12px 36px rgba(0,0,0,0.08);
+      --shadow-glow: 0 0 30px rgba(2, 132, 199, 0.15);
+    }
+
+    /* ── Optional Dark Mode Override ── */
+    [data-theme="dark"] {
       --bg: #07090e;
+      --bg-alt: #0d1117;
       --bg-card: rgba(17, 24, 39, 0.7);
       --bg-card-hover: rgba(26, 36, 56, 0.85);
       --border: rgba(255, 255, 255, 0.08);
       --border-hover: rgba(56, 139, 253, 0.35);
       --border-strong: rgba(255, 255, 255, 0.16);
       --text-main: #f0f6fc;
-      --text-muted: #8b949e;
       --text-secondary: #c9d1d9;
+      --text-muted: #8b949e;
       --accent-blue: #388bfd;
+      --accent-blue-hover: #1f6feb;
       --accent-blue-glow: rgba(56, 139, 253, 0.18);
       --accent-green: #3fb950;
       --accent-green-glow: rgba(63, 185, 80, 0.18);
       --accent-purple: #bc8cff;
       --accent-amber: #d29922;
       --accent-red: #f85149;
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 18px;
-      --radius-xl: 24px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
-      --shadow-md: 0 4px 20px rgba(0,0,0,0.6);
-      --shadow-glow: 0 0 35px rgba(56, 139, 253, 0.15);
     }
 
     * {
@@ -65,48 +91,43 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
-      selection-background-color: var(--accent-blue);
-      selection-color: #ffffff;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
 
-    /* Ambient Lighting Background */
+    /* Crisp Light Ambient Glow */
     .ambient-glow-top {
       position: absolute;
       top: 0;
       left: 50%;
       transform: translateX(-50%);
       width: 1000px;
-      height: 550px;
-      background: radial-gradient(circle at 50% 10%, rgba(56, 139, 253, 0.15) 0%, rgba(188, 140, 255, 0.05) 45%, transparent 70%);
+      height: 480px;
+      background: radial-gradient(circle at 50% 10%, rgba(2, 132, 199, 0.08) 0%, rgba(124, 58, 237, 0.03) 50%, transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
 
-    .ambient-glow-pricing {
-      position: absolute;
-      width: 800px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(56, 139, 253, 0.12) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Fixed Glassmorphic Navbar */
+    /* Fixed Clean Glassmorphic Navbar */
     .navbar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 56px;
-      background: rgba(7, 9, 14, 0.75);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      height: 58px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       z-index: 100;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 2rem;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    [data-theme="dark"] .navbar {
+      background: rgba(7, 9, 14, 0.85);
     }
 
     .nav-brand {
@@ -115,19 +136,20 @@
       gap: 0.6rem;
       text-decoration: none;
       color: var(--text-main);
-      font-weight: 700;
-      font-size: 1.05rem;
+      font-weight: 800;
+      font-size: 1.1rem;
       letter-spacing: -0.02em;
     }
 
     .nav-badge {
       font-size: 0.68rem;
       font-family: var(--font-mono);
-      background: rgba(56, 139, 253, 0.15);
+      background: rgba(2, 132, 199, 0.1);
       color: var(--accent-blue);
       padding: 0.15rem 0.45rem;
       border-radius: 999px;
-      border: 1px solid rgba(56, 139, 253, 0.3);
+      border: 1px solid rgba(2, 132, 199, 0.25);
+      font-weight: 600;
     }
 
     .nav-links {
@@ -151,11 +173,30 @@
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 0.8rem;
+      gap: 0.75rem;
+    }
+
+    .theme-toggle-btn {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      padding: 0.35rem 0.65rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.15s ease;
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--border-strong);
+      color: var(--text-main);
     }
 
     .btn-nav-secondary {
-      background: transparent;
+      background: var(--bg-alt);
       color: var(--text-secondary);
       border: 1px solid var(--border);
       padding: 0.4rem 0.9rem;
@@ -167,29 +208,28 @@
     }
 
     .btn-nav-secondary:hover {
-      border-color: var(--text-muted);
+      border-color: var(--border-strong);
       color: var(--text-main);
     }
 
     .btn-nav-primary {
-      background: linear-gradient(180deg, #1f6feb 0%, #1158c7 100%);
+      background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 0.4rem 1rem;
       border-radius: var(--radius-sm);
       font-size: 0.82rem;
       font-weight: 600;
       text-decoration: none;
-      box-shadow: 0 2px 8px rgba(31, 111, 235, 0.35);
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
       transition: all 0.15s ease;
     }
 
     .btn-nav-primary:hover {
-      filter: brightness(1.1);
+      filter: brightness(1.08);
       transform: translateY(-1px);
     }
 
-    /* Container & Layout */
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -198,9 +238,9 @@
       z-index: 1;
     }
 
-    /* ── Hero Section ── */
+    /* ── Hero Section (Crisp, High-Contrast Typography) ── */
     .hero {
-      padding-top: 130px;
+      padding-top: 135px;
       padding-bottom: 50px;
       text-align: center;
       position: relative;
@@ -210,13 +250,14 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(255, 255, 255, 0.04);
+      background: var(--bg-alt);
       border: 1px solid var(--border);
       padding: 0.35rem 0.85rem;
       border-radius: 999px;
       font-size: 0.8rem;
       color: var(--text-secondary);
       margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
     }
 
     .hero-eyebrow .pulse-dot {
@@ -228,31 +269,31 @@
     }
 
     .hero-title {
-      font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+      font-size: clamp(2.4rem, 5.5vw, 4.4rem);
       font-weight: 800;
       line-height: 1.08;
-      letter-spacing: -0.035em;
+      letter-spacing: -0.04em;
       margin-bottom: 1.3rem;
-      color: #ffffff;
+      color: var(--text-main);
     }
 
     .hero-title .gradient-text {
-      background: linear-gradient(135deg, #58a6ff 0%, #bc8cff 60%, #ffffff 100%);
+      background: linear-gradient(135deg, #0284c7 0%, #7c3aed 70%, #0f172a 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .hero-subtitle {
       font-size: clamp(1rem, 2vw, 1.25rem);
-      color: var(--text-muted);
-      max-width: 720px;
+      color: var(--text-secondary);
+      max-width: 740px;
       margin: 0 auto 2.2rem;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
     .hero-subtitle strong {
       color: var(--text-main);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .hero-cta-group {
@@ -265,10 +306,10 @@
     }
 
     .btn-hero-primary {
-      background: linear-gradient(180deg, #238636 0%, #1a6f2b 100%);
+      background: linear-gradient(180deg, #03aa5c 0%, #028547 100%);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 0.8rem 1.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 0.85rem 1.9rem;
       border-radius: var(--radius-md);
       font-size: 1rem;
       font-weight: 600;
@@ -276,34 +317,35 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      box-shadow: 0 4px 15px rgba(35, 134, 54, 0.4);
+      box-shadow: 0 4px 14px rgba(3, 170, 92, 0.35);
       transition: all 0.15s ease;
     }
 
     .btn-hero-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 22px rgba(35, 134, 54, 0.55);
-      filter: brightness(1.08);
+      box-shadow: 0 6px 20px rgba(3, 170, 92, 0.45);
+      filter: brightness(1.06);
     }
 
     .btn-hero-secondary {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--bg-alt);
       color: var(--text-main);
-      border: 1px solid var(--border-strong);
-      padding: 0.8rem 1.6rem;
+      border: 1px solid var(--border);
+      padding: 0.85rem 1.7rem;
       border-radius: var(--radius-md);
       font-size: 1rem;
-      font-weight: 500;
+      font-weight: 600;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
+      box-shadow: var(--shadow-sm);
       transition: all 0.15s ease;
     }
 
     .btn-hero-secondary:hover {
-      background: rgba(255, 255, 255, 0.09);
-      border-color: rgba(255, 255, 255, 0.3);
+      background: var(--bg-card-hover);
+      border-color: var(--border-strong);
       transform: translateY(-1px);
     }
 
@@ -312,13 +354,13 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
-      max-width: 960px;
+      max-width: 980px;
       margin: 0 auto;
-      padding: 1.2rem;
-      background: rgba(17, 24, 39, 0.6);
-      backdrop-filter: blur(10px);
+      padding: 1.4rem;
+      background: var(--bg-alt);
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
     }
 
     .metric-item {
@@ -326,9 +368,9 @@
     }
 
     .metric-val {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--text-main);
       font-family: var(--font-mono);
       letter-spacing: -0.03em;
     }
@@ -338,18 +380,19 @@
     .metric-val.purple { color: var(--accent-purple); }
 
     .metric-lbl {
-      font-size: 0.76rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
-      margin-top: 0.2rem;
+      margin-top: 0.25rem;
+      font-weight: 500;
     }
 
     /* ── Head-to-Head Duel Card (Show, Don't Tell) ── */
     .duel-card {
       margin: 3.5rem auto;
-      background: rgba(13, 17, 23, 0.85);
+      background: var(--bg-alt);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
-      padding: 2rem;
+      padding: 2.2rem;
       max-width: 1040px;
       box-shadow: var(--shadow-md);
       position: relative;
@@ -362,7 +405,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 2px;
+      height: 3px;
       background: linear-gradient(90deg, transparent 0%, var(--accent-blue) 50%, transparent 100%);
     }
 
@@ -370,15 +413,15 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.6rem;
       flex-wrap: wrap;
       gap: 1rem;
     }
 
     .duel-title {
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--text-main);
     }
 
     .duel-grid {
@@ -388,58 +431,58 @@
     }
 
     .duel-col {
-      background: rgba(22, 27, 34, 0.6);
+      background: #f8fafc;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 1.4rem;
+      padding: 1.6rem;
     }
 
     .duel-col.winner {
-      border-color: rgba(63, 185, 80, 0.4);
-      background: rgba(63, 185, 80, 0.04);
-      box-shadow: 0 0 25px rgba(63, 185, 80, 0.08);
+      border-color: rgba(3, 170, 92, 0.4);
+      background: rgba(3, 170, 92, 0.04);
+      box-shadow: 0 4px 20px rgba(3, 170, 92, 0.08);
     }
 
     .duel-col-tag {
       font-size: 0.72rem;
       font-family: var(--font-mono);
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.8rem;
       display: inline-block;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
     }
 
     .duel-col-tag.llm {
-      background: rgba(248, 81, 73, 0.15);
+      background: rgba(225, 29, 72, 0.1);
       color: var(--accent-red);
-      border: 1px solid rgba(248, 81, 73, 0.3);
+      border: 1px solid rgba(225, 29, 72, 0.25);
     }
 
     .duel-col-tag.leio {
-      background: rgba(63, 185, 80, 0.15);
+      background: rgba(3, 170, 92, 0.1);
       color: var(--accent-green);
-      border: 1px solid rgba(63, 185, 80, 0.3);
+      border: 1px solid rgba(3, 170, 92, 0.3);
     }
 
     .duel-metric-row {
       display: flex;
       justify-content: space-between;
-      padding: 0.55rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      font-size: 0.88rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
     }
 
     .duel-metric-row:last-child {
       border-bottom: none;
     }
 
-    .duel-metric-lbl { color: var(--text-muted); }
-    .duel-metric-val { font-family: var(--font-mono); font-weight: 600; }
+    .duel-metric-lbl { color: var(--text-secondary); font-weight: 500; }
+    .duel-metric-val { font-family: var(--font-mono); font-weight: 700; }
 
-    /* ── The Centerpiece Interactive Workbench ── */
+    /* ── The Centerpiece Interactive Workbench (Pristine Light Theme) ── */
     .workbench-section {
       padding: 3rem 0;
     }
@@ -457,33 +500,34 @@
       letter-spacing: 0.08em;
       color: var(--accent-blue);
       margin-bottom: 0.5rem;
+      font-weight: 700;
     }
 
     .section-h2 {
       font-size: clamp(1.8rem, 3.5vw, 2.5rem);
       font-weight: 800;
-      letter-spacing: -0.03em;
-      color: #ffffff;
+      letter-spacing: -0.035em;
+      color: var(--text-main);
       margin-bottom: 0.8rem;
     }
 
     .section-p {
-      color: var(--text-muted);
-      font-size: 0.98rem;
+      color: var(--text-secondary);
+      font-size: 1rem;
     }
 
     .studio-window {
-      background: rgba(13, 17, 23, 0.95);
-      border: 1px solid var(--border-strong);
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
       border-radius: var(--radius-xl);
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      box-shadow: var(--shadow-lg);
       position: relative;
     }
 
     .studio-bar {
-      height: 44px;
-      background: rgba(22, 27, 34, 0.95);
+      height: 46px;
+      background: #f1f5f9;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -507,28 +551,30 @@
 
     .studio-title {
       font-size: 0.82rem;
-      color: var(--text-muted);
+      color: var(--text-secondary);
       font-family: var(--font-mono);
+      font-weight: 500;
     }
 
     .studio-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      font-size: 0.74rem;
+      font-size: 0.76rem;
       font-family: var(--font-mono);
-      background: rgba(63, 185, 80, 0.15);
+      background: rgba(3, 170, 92, 0.12);
       color: var(--accent-green);
-      padding: 0.15rem 0.5rem;
+      padding: 0.15rem 0.55rem;
       border-radius: 999px;
-      border: 1px solid rgba(63, 185, 80, 0.3);
+      border: 1px solid rgba(3, 170, 92, 0.3);
+      font-weight: 700;
     }
 
-    /* Segmented Tabs */
+    /* Light Mode Segmented Tabs */
     .segmented-control {
       display: flex;
-      background: rgba(22, 27, 34, 0.8);
-      padding: 0.4rem;
+      background: #f8fafc;
+      padding: 0.45rem;
       border-bottom: 1px solid var(--border);
       overflow-x: auto;
       gap: 0.4rem;
@@ -536,11 +582,11 @@
 
     .tab-btn {
       background: transparent;
-      border: none;
-      color: var(--text-muted);
+      border: 1px solid transparent;
+      color: var(--text-secondary);
       font-size: 0.82rem;
-      font-weight: 500;
-      padding: 0.5rem 0.9rem;
+      font-weight: 600;
+      padding: 0.5rem 0.95rem;
       border-radius: var(--radius-sm);
       cursor: pointer;
       white-space: nowrap;
@@ -549,14 +595,15 @@
 
     .tab-btn:hover {
       color: var(--text-main);
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(0, 0, 0, 0.04);
     }
 
     .tab-btn.active {
-      background: rgba(56, 139, 253, 0.15);
-      color: #ffffff;
-      border: 1px solid rgba(56, 139, 253, 0.35);
-      font-weight: 600;
+      background: #ffffff;
+      color: var(--accent-blue);
+      border-color: var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      font-weight: 700;
     }
 
     .workbench-body {
@@ -567,8 +614,8 @@
     }
 
     .workbench-pane {
-      background: rgba(13, 17, 23, 0.98);
-      padding: 1.8rem;
+      background: var(--bg-alt);
+      padding: 2rem;
     }
 
     .pane-label {
@@ -580,12 +627,13 @@
       margin-bottom: 0.8rem;
       display: flex;
       justify-content: space-between;
+      font-weight: 700;
     }
 
     .state-textarea {
       width: 100%;
       height: 95px;
-      background: rgba(22, 27, 34, 0.8);
+      background: #ffffff;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       color: var(--text-main);
@@ -600,7 +648,7 @@
 
     .state-textarea:focus {
       border-color: var(--accent-blue);
-      box-shadow: 0 0 0 2px rgba(56, 139, 253, 0.2);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
     }
 
     .presets-wrap {
@@ -611,34 +659,35 @@
     }
 
     .preset-btn {
-      background: rgba(255, 255, 255, 0.05);
+      background: #f1f5f9;
       border: 1px solid var(--border);
       color: var(--text-secondary);
-      font-size: 0.74rem;
-      padding: 0.3rem 0.65rem;
+      font-size: 0.76rem;
+      padding: 0.35rem 0.7rem;
       border-radius: 6px;
       cursor: pointer;
+      font-weight: 500;
       transition: all 0.15s ease;
     }
 
     .preset-btn:hover {
-      background: rgba(56, 139, 253, 0.15);
-      border-color: rgba(56, 139, 253, 0.4);
-      color: #ffffff;
+      background: rgba(2, 132, 199, 0.1);
+      border-color: rgba(2, 132, 199, 0.35);
+      color: var(--accent-blue);
     }
 
     /* Ranked Probabilities */
     .prob-bars-wrap {
       display: flex;
       flex-flow: column;
-      gap: 0.55rem;
+      gap: 0.6rem;
     }
 
     .prob-row {
       display: flex;
       align-items: center;
       gap: 0.8rem;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
     }
 
     .prob-curie {
@@ -648,25 +697,26 @@
       white-space: nowrap;
       font-family: var(--font-mono);
       color: var(--text-secondary);
+      font-weight: 600;
     }
 
     .prob-track {
       flex: 1;
-      height: 7px;
-      background: rgba(255, 255, 255, 0.08);
+      height: 8px;
+      background: #e2e8f0;
       border-radius: 999px;
       overflow: hidden;
     }
 
     .prob-fill {
       height: 100%;
-      background: linear-gradient(90deg, #1f6feb 0%, #388bfd 100%);
+      background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);
       border-radius: 999px;
       transition: width 0.25s ease;
     }
 
     .prob-row:first-child .prob-fill {
-      background: linear-gradient(90deg, #238636 0%, #3fb950 100%);
+      background: linear-gradient(90deg, #03aa5c 0%, #34d399 100%);
     }
 
     .prob-pct {
@@ -674,15 +724,16 @@
       text-align: right;
       font-family: var(--font-mono);
       font-size: 0.78rem;
-      color: var(--text-muted);
+      color: var(--text-secondary);
+      font-weight: 600;
     }
 
     /* Output Card / Proof View */
     .grounded-banner {
-      background: rgba(35, 134, 54, 0.12);
-      border: 1px solid rgba(63, 185, 80, 0.3);
+      background: rgba(3, 170, 92, 0.08);
+      border: 1px solid rgba(3, 170, 92, 0.25);
       border-radius: var(--radius-sm);
-      padding: 0.9rem;
+      padding: 0.95rem;
       margin-bottom: 1.2rem;
       display: flex;
       align-items: center;
@@ -691,25 +742,25 @@
 
     .grounded-curie {
       font-family: var(--font-mono);
-      font-weight: 700;
-      color: #ffffff;
-      font-size: 1.05rem;
+      font-weight: 800;
+      color: #065f46;
+      font-size: 1.1rem;
     }
 
     .grounded-conf {
       font-size: 0.76rem;
       font-family: var(--font-mono);
       background: var(--accent-green);
-      color: #000000;
-      padding: 0.15rem 0.5rem;
+      color: #ffffff;
+      padding: 0.2rem 0.55rem;
       border-radius: 999px;
       font-weight: 700;
     }
 
     .lineage-row {
       font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.1rem;
       font-family: var(--font-mono);
       display: flex;
       align-items: center;
@@ -718,9 +769,11 @@
     }
 
     .lineage-step {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 0.15rem 0.45rem;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.5rem;
       border-radius: 4px;
+      font-weight: 500;
     }
 
     .proof-grid {
@@ -731,37 +784,42 @@
     }
 
     .proof-box {
-      background: rgba(22, 27, 34, 0.6);
+      background: #f8fafc;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 0.7rem;
+      padding: 0.75rem;
     }
 
     .proof-box-lbl {
       font-size: 0.7rem;
       color: var(--text-muted);
       margin-bottom: 0.2rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .proof-box-val {
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       font-family: var(--font-mono);
-      font-weight: 600;
+      font-weight: 700;
       color: var(--accent-green);
     }
 
+    /* Contrast Developer Terminal for JSON Output */
     .json-output-wrap {
-      background: #06090f;
-      border: 1px solid var(--border);
+      background: #0f172a;
+      border: 1px solid #1e293b;
       border-radius: var(--radius-sm);
       position: relative;
+      box-shadow: var(--shadow-sm);
     }
 
     .json-output-pre {
-      padding: 0.9rem;
+      padding: 1rem;
       font-family: var(--font-mono);
       font-size: 0.76rem;
-      color: #7ee787;
+      color: #38bdf8;
       max-height: 160px;
       overflow-y: auto;
       white-space: pre-wrap;
@@ -771,13 +829,19 @@
       position: absolute;
       top: 8px;
       right: 8px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f1f5f9;
       font-size: 0.7rem;
-      padding: 0.2rem 0.5rem;
+      padding: 0.2rem 0.55rem;
       border-radius: 4px;
       cursor: pointer;
+      font-weight: 600;
+      transition: background 0.15s ease;
+    }
+
+    .json-copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
 
     /* ── Feature Bento Grid ── */
@@ -788,14 +852,15 @@
     .bento-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.4rem;
+      gap: 1.5rem;
     }
 
     .bento-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 1.8rem;
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
       transition: all 0.2s ease;
       display: flex;
       flex-flow: column;
@@ -804,9 +869,8 @@
 
     .bento-card:hover {
       border-color: var(--border-hover);
-      background: var(--bg-card-hover);
+      box-shadow: var(--shadow-md);
       transform: translateY(-2px);
-      box-shadow: var(--shadow-glow);
     }
 
     .bento-card.col-span-2 {
@@ -814,20 +878,21 @@
     }
 
     .bento-icon {
-      font-size: 1.8rem;
+      font-size: 2rem;
       margin-bottom: 1rem;
     }
 
     .bento-title {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--text-main);
       margin-bottom: 0.6rem;
+      letter-spacing: -0.02em;
     }
 
     .bento-desc {
       color: var(--text-secondary);
-      font-size: 0.92rem;
+      font-size: 0.94rem;
       line-height: 1.6;
     }
 
@@ -840,46 +905,47 @@
       overflow-x: auto;
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      background: rgba(13, 17, 23, 0.7);
+      background: var(--bg-alt);
+      box-shadow: var(--shadow-sm);
     }
 
     .comp-table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
     }
 
     .comp-table th, .comp-table td {
-      padding: 1.1rem 1.4rem;
+      padding: 1.2rem 1.4rem;
       border-bottom: 1px solid var(--border);
     }
 
     .comp-table th {
-      background: rgba(22, 27, 34, 0.9);
+      background: #f1f5f9;
       color: var(--text-muted);
       font-family: var(--font-mono);
-      font-weight: 500;
+      font-weight: 600;
       font-size: 0.78rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
     }
 
     .comp-table th.highlight-col, .comp-table td.highlight-col {
-      background: rgba(56, 139, 253, 0.05);
-      border-left: 1px solid rgba(56, 139, 253, 0.2);
-      border-right: 1px solid rgba(56, 139, 253, 0.2);
+      background: rgba(2, 132, 199, 0.04);
+      border-left: 2px solid rgba(2, 132, 199, 0.3);
+      border-right: 2px solid rgba(2, 132, 199, 0.3);
       font-weight: 600;
-      color: #ffffff;
+      color: var(--text-main);
     }
 
     /* ── ROI Economics Calculator ── */
     .calculator-card {
-      background: rgba(13, 17, 23, 0.85);
+      background: var(--bg-alt);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
-      padding: 2.5rem;
-      margin: 3rem 0;
+      padding: 2.8rem;
+      margin: 3.5rem 0;
       box-shadow: var(--shadow-md);
     }
 
@@ -893,7 +959,7 @@
       border-radius: 4px;
       outline: none;
       -webkit-appearance: none;
-      background: linear-gradient(to right, #0071e3 0%, #2997ff 20%, rgba(255, 255, 255, 0.1) 20%, rgba(255, 255, 255, 0.1) 100%);
+      background: linear-gradient(to right, #0284c7 0%, #38bdf8 20%, #e2e8f0 20%, #e2e8f0 100%);
       cursor: pointer;
     }
 
@@ -903,31 +969,32 @@
       height: 24px;
       border-radius: 50%;
       background: #ffffff;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       cursor: pointer;
-      border: 2px solid #2997ff;
+      border: 2px solid #0284c7;
     }
 
     .slider-presets-row {
       display: flex;
       gap: 0.5rem;
-      margin-top: 1rem;
+      margin-top: 1.2rem;
       flex-wrap: wrap;
     }
 
     .slider-preset-btn {
-      background: rgba(255, 255, 255, 0.05);
+      background: #f1f5f9;
       border: 1px solid var(--border);
       color: var(--text-secondary);
-      font-size: 0.76rem;
-      padding: 0.35rem 0.75rem;
+      font-size: 0.78rem;
+      padding: 0.4rem 0.8rem;
       border-radius: 6px;
       cursor: pointer;
+      font-weight: 600;
       transition: all 0.15s ease;
     }
 
     .slider-preset-btn:hover, .slider-preset-btn.active {
-      background: rgba(56, 139, 253, 0.2);
+      background: var(--accent-blue);
       border-color: var(--accent-blue);
       color: #ffffff;
     }
@@ -940,19 +1007,19 @@
     }
 
     .calc-metric-box {
-      background: rgba(22, 27, 34, 0.6);
+      background: #f8fafc;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 1.2rem;
+      padding: 1.4rem;
       text-align: center;
     }
 
     .calc-metric-box.savings {
-      border-color: rgba(63, 185, 80, 0.4);
-      background: rgba(63, 185, 80, 0.05);
+      border-color: rgba(3, 170, 92, 0.4);
+      background: rgba(3, 170, 92, 0.05);
     }
 
-    /* ── PRICING SECTION (BUILT TO SELL) ── */
+    /* ── PRICING SECTION (BUILT SPECIFICALLY TO SELL) ── */
     .pricing-section {
       padding: 5rem 0;
       position: relative;
@@ -967,67 +1034,71 @@
     }
 
     .pricing-card {
-      background: rgba(17, 24, 39, 0.7);
+      background: var(--bg-alt);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
-      padding: 2.2rem;
+      padding: 2.4rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
+      box-shadow: var(--shadow-sm);
       transition: all 0.2s ease;
     }
 
     .pricing-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      box-shadow: var(--shadow-lg);
     }
 
     .pricing-card.featured {
-      background: rgba(22, 32, 54, 0.85);
+      background: #ffffff;
       border: 2px solid var(--accent-blue);
-      box-shadow: 0 0 45px rgba(56, 139, 253, 0.25);
+      box-shadow: 0 10px 40px rgba(2, 132, 199, 0.15);
     }
 
     .pricing-badge-popular {
       position: absolute;
-      top: -12px;
+      top: -13px;
       right: 24px;
-      background: linear-gradient(135deg, #1f6feb 0%, #388bfd 100%);
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
       color: #ffffff;
       font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      padding: 0.25rem 0.7rem;
+      padding: 0.3rem 0.8rem;
       border-radius: 999px;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
     }
 
     .pricing-tier-name {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #ffffff;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-main);
       margin-bottom: 0.4rem;
+      letter-spacing: -0.02em;
     }
 
     .pricing-tier-desc {
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       color: var(--text-muted);
-      margin-bottom: 1.5rem;
-      min-height: 42px;
+      margin-bottom: 1.6rem;
+      min-height: 44px;
+      line-height: 1.5;
     }
 
     .pricing-price-wrap {
       display: flex;
       align-items: baseline;
-      gap: 0.3rem;
+      gap: 0.35rem;
       margin-bottom: 1.8rem;
     }
 
     .pricing-price {
-      font-size: 2.5rem;
+      font-size: 2.7rem;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--text-main);
       font-family: var(--font-mono);
       letter-spacing: -0.04em;
     }
@@ -1035,6 +1106,7 @@
     .pricing-period {
       color: var(--text-muted);
       font-size: 0.85rem;
+      font-weight: 500;
     }
 
     .pricing-features {
@@ -1042,56 +1114,56 @@
       margin-bottom: 2rem;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.8rem;
     }
 
     .pricing-feature-item {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      font-size: 0.88rem;
+      gap: 0.65rem;
+      font-size: 0.9rem;
       color: var(--text-secondary);
     }
 
     .pricing-check {
       color: var(--accent-green);
       font-weight: 800;
-      font-size: 1rem;
+      font-size: 1.05rem;
     }
 
     .btn-pricing {
       width: 100%;
       text-align: center;
-      padding: 0.8rem;
+      padding: 0.85rem;
       border-radius: var(--radius-md);
       font-weight: 600;
       text-decoration: none;
-      font-size: 0.92rem;
+      font-size: 0.94rem;
       transition: all 0.15s ease;
       display: block;
     }
 
     .btn-pricing.primary {
-      background: linear-gradient(180deg, #1f6feb 0%, #1158c7 100%);
+      background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 4px 14px rgba(31, 111, 235, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
     }
 
     .btn-pricing.primary:hover {
-      filter: brightness(1.1);
+      filter: brightness(1.08);
       transform: translateY(-1px);
     }
 
     .btn-pricing.secondary {
-      background: rgba(255, 255, 255, 0.05);
+      background: #f1f5f9;
       color: var(--text-main);
-      border: 1px solid var(--border-strong);
+      border: 1px solid var(--border);
     }
 
     .btn-pricing.secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.3);
+      background: #e2e8f0;
+      border-color: var(--border-strong);
     }
 
     /* ── Quick Copy Install Block ── */
@@ -1102,21 +1174,23 @@
     .quick-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
+      gap: 1.2rem;
     }
 
     .quick-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 1.2rem;
+      padding: 1.3rem;
       cursor: pointer;
+      box-shadow: var(--shadow-sm);
       transition: all 0.15s ease;
     }
 
     .quick-card:hover {
       border-color: var(--accent-blue);
-      background: var(--bg-card-hover);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
     }
 
     .quick-card-top {
@@ -1128,64 +1202,65 @@
 
     .quick-cmd {
       font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
     }
 
     .quick-desc {
-      font-size: 0.74rem;
+      font-size: 0.76rem;
       color: var(--text-muted);
     }
 
     /* ── Final Conversion CTA ── */
     .cta-banner {
-      background: linear-gradient(135deg, rgba(22, 27, 34, 0.95) 0%, rgba(31, 111, 235, 0.15) 100%);
-      border: 1px solid var(--border-strong);
+      background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+      border: 1px solid #bfdbfe;
       border-radius: var(--radius-xl);
-      padding: 4rem 2rem;
+      padding: 4.5rem 2rem;
       text-align: center;
       margin: 5rem 0;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      box-shadow: var(--shadow-md);
       position: relative;
     }
 
     .cta-title {
       font-size: clamp(2rem, 4vw, 2.8rem);
       font-weight: 800;
-      color: #ffffff;
-      letter-spacing: -0.03em;
+      color: var(--text-main);
+      letter-spacing: -0.035em;
       margin-bottom: 1rem;
     }
 
     .cta-sub {
-      color: var(--text-muted);
+      color: var(--text-secondary);
       max-width: 620px;
-      margin: 0 auto 2rem;
+      margin: 0 auto 2.2rem;
       font-size: 1.05rem;
     }
 
     /* ── Footer ── */
     .footer {
       border-top: 1px solid var(--border);
-      padding: 3rem 0;
+      padding: 3.5rem 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       flex-wrap: wrap;
       gap: 1.5rem;
     }
 
     .footer-links {
       display: flex;
-      gap: 1.5rem;
+      gap: 1.6rem;
     }
 
     .footer-links a {
       color: var(--text-muted);
       text-decoration: none;
+      font-weight: 500;
       transition: color 0.15s ease;
     }
 
@@ -1212,7 +1287,7 @@
 
   <div class="ambient-glow-top"></div>
 
-  <!-- ── Fixed Modern Navbar ── -->
+  <!-- ── Fixed Clean Navbar ── -->
   <nav class="navbar">
     <a href="./index.html" class="nav-brand">
       <span>⚡ LEIO</span>
@@ -1228,13 +1303,16 @@
       <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener" class="nav-link">GitHub</a>
     </div>
     <div class="nav-actions">
+      <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
+        <span id="themeIcon">🌙</span> <span id="themeText">Dark</span>
+      </button>
       <a href="https://public-nine-jade-58.vercel.app/api/systemone" target="_blank" rel="noopener" class="btn-nav-secondary">API Docs</a>
       <a href="#pricing" class="btn-nav-primary">Deploy Now &rarr;</a>
     </div>
   </nav>
 
   <div class="container">
-    <!-- ── Hero Stage (Julian Shapiro Conversion Engine) ── -->
+    <!-- ── Hero Stage (Julian Shapiro Conversion Engine in Light Mode) ── -->
     <header class="hero">
       <div class="hero-eyebrow">
         <span class="pulse-dot"></span>
@@ -1285,7 +1363,7 @@
       <div class="duel-card">
         <div class="duel-header">
           <div class="duel-title">⚖️ Why Engineering Teams Replace LLMs with Leio</div>
-          <div style="font-size:0.8rem;color:var(--text-muted);">Benchmark: Real-Time Application State Classification</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);font-weight:500;">Benchmark: Real-Time Application State Classification</div>
         </div>
         <div class="duel-grid">
           <div class="duel-col">
@@ -1423,7 +1501,7 @@
 
             <div class="pane-label">
               <span>Machine-Native JSON Response</span>
-              <span style="color:var(--accent-blue);font-size:0.7rem;">Free Outputs</span>
+              <span style="color:var(--accent-blue);font-size:0.7rem;font-weight:700;">Free Outputs</span>
             </div>
             <div class="json-output-wrap">
               <button class="json-copy-btn" onclick="copyJsonOutput(this)">Copy JSON</button>
@@ -1454,7 +1532,7 @@
               Zero network latency, zero per-decision cloud costs, and complete offline capability for edge devices.
             </p>
           </div>
-          <div style="margin-top:1.5rem;font-family:var(--font-mono);font-size:0.78rem;color:var(--accent-green);">
+          <div style="margin-top:1.5rem;font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-green);font-weight:700;">
             ✓ Tested on 730 DOID classes in 800 nanoseconds
           </div>
         </div>
@@ -1468,7 +1546,7 @@
               Subsumption monotonicity guarantees that child classes never exceed parent probabilities.
             </p>
           </div>
-          <div style="margin-top:1.5rem;font-family:var(--font-mono);font-size:0.78rem;color:var(--accent-blue);">
+          <div style="margin-top:1.5rem;font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-blue);font-weight:700;">
             ✓ Zero hallucination guaranteed
           </div>
         </div>
@@ -1482,7 +1560,7 @@
               and axiom verification objects are 100% free with zero output token tax.
             </p>
           </div>
-          <div style="margin-top:1.5rem;font-family:var(--font-mono);font-size:0.78rem;color:var(--accent-green);">
+          <div style="margin-top:1.5rem;font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-green);font-weight:700;">
             ✓ 250x cheaper than GPT-4o
           </div>
         </div>
@@ -1496,7 +1574,7 @@
               to massive enterprise product catalogs, medical terminologies, and supply chain graphs.
             </p>
           </div>
-          <div style="margin-top:1.5rem;font-family:var(--font-mono);font-size:0.78rem;color:var(--accent-purple);">
+          <div style="margin-top:1.5rem;font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-purple);font-weight:700;">
             ✓ Sub-linear graph traversal
           </div>
         </div>
@@ -1510,7 +1588,7 @@
               <code>uvx olaya-mcp</code>. Gives any agent a deterministic, high-speed System 1 reflex.
             </p>
           </div>
-          <div style="margin-top:1.5rem;font-family:var(--font-mono);font-size:0.78rem;color:var(--accent-blue);">
+          <div style="margin-top:1.5rem;font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-blue);font-weight:700;">
             ✓ Standard MCP compliant
           </div>
         </div>
@@ -1600,13 +1678,13 @@
 
       <div class="calc-slider-wrap">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;">
-          <span style="font-size:0.9rem;font-weight:600;color:var(--text-secondary);">Monthly Decision Volume:</span>
-          <span id="calcVolumeDisplay" style="font-size:1.4rem;font-weight:800;font-family:var(--font-mono);color:var(--accent-blue);">1,000,000</span>
+          <span style="font-size:0.92rem;font-weight:600;color:var(--text-secondary);">Monthly Decision Volume:</span>
+          <span id="calcVolumeDisplay" style="font-size:1.5rem;font-weight:800;font-family:var(--font-mono);color:var(--accent-blue);">1,000,000</span>
         </div>
         <input type="range" id="calcSlider" class="calc-slider" min="100000" max="50000000" step="100000" value="1000000" oninput="updateCalculator(this.value)">
 
         <div class="slider-presets-row">
-          <span style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;">Quick Presets:</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;font-weight:600;">Quick Presets:</span>
           <button class="slider-preset-btn" onclick="setCalcPreset(100000)">100K / mo</button>
           <button class="slider-preset-btn active" onclick="setCalcPreset(1000000)">1M / mo</button>
           <button class="slider-preset-btn" onclick="setCalcPreset(5000000)">5M / mo</button>
@@ -1617,28 +1695,27 @@
 
       <div class="calc-metrics-grid">
         <div class="calc-metric-box">
-          <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">Standard LLM Cost</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;font-weight:600;">Standard LLM Cost</div>
           <div id="calcLlmCost" style="font-size:1.6rem;font-weight:800;color:var(--accent-red);font-family:var(--font-mono);">$4,500.00 / mo</div>
           <div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.3rem;">~300 input + 150 output tokens</div>
         </div>
 
         <div class="calc-metric-box">
-          <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;">Leio System 1 Cost</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;font-weight:600;">Leio System 1 Cost</div>
           <div id="calcLeioCost" style="font-size:1.6rem;font-weight:800;color:var(--accent-green);font-family:var(--font-mono);">$1.26 / mo</div>
-          <div style="font-size:0.72rem;color:var(--accent-green);margin-top:0.3rem;">Outputs 100% Free</div>
+          <div style="font-size:0.72rem;color:var(--accent-green);margin-top:0.3rem;font-weight:600;">Outputs 100% Free</div>
         </div>
 
         <div class="calc-metric-box savings">
-          <div style="font-size:0.78rem;color:var(--accent-green);margin-bottom:0.3rem;font-weight:600;">Net Annual Savings</div>
+          <div style="font-size:0.78rem;color:var(--accent-green);margin-bottom:0.3rem;font-weight:700;">Net Annual Savings</div>
           <div id="calcAnnualSavings" style="font-size:1.6rem;font-weight:800;color:var(--accent-green);font-family:var(--font-mono);">$53,984.88 / year saved</div>
-          <div id="calcLeioTime" style="font-size:0.72rem;color:var(--text-muted);margin-top:0.3rem;">&lt; 0.80 seconds total time</div>
+          <div id="calcLeioTime" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.3rem;font-weight:600;">&lt; 0.80 seconds total time</div>
         </div>
       </div>
     </section>
 
     <!-- ── PRICING SECTION (BUILT SPECIFICALLY TO SELL) ── -->
     <section class="pricing-section" id="pricing">
-      <div class="ambient-glow-pricing" style="top:50px;left:50%;transform:translateX(-50%);"></div>
       <div class="section-header">
         <div class="section-kicker">Simple, Transparent Pricing</div>
         <h2 class="section-h2">Input-only metering. Outputs are always free.</h2>
@@ -1725,7 +1802,7 @@
         <div class="quick-card" onclick="copySnippet('uvx olaya-mcp', this)">
           <div class="quick-card-top">
             <span class="quick-cmd">uvx olaya-mcp</span>
-            <span style="font-size:0.7rem;color:var(--text-muted);">Copy</span>
+            <span style="font-size:0.7rem;color:var(--text-muted);font-weight:600;">Copy</span>
           </div>
           <div class="quick-desc">Zero-install Python MCP agent server</div>
         </div>
@@ -1733,7 +1810,7 @@
         <div class="quick-card" onclick="copySnippet('npx @mycelia/olaya-mcp', this)">
           <div class="quick-card-top">
             <span class="quick-cmd">npx @mycelia/olaya-mcp</span>
-            <span style="font-size:0.7rem;color:var(--text-muted);">Copy</span>
+            <span style="font-size:0.7rem;color:var(--text-muted);font-weight:600;">Copy</span>
           </div>
           <div class="quick-desc">Zero-install Node.js MCP agent server</div>
         </div>
@@ -1741,7 +1818,7 @@
         <div class="quick-card" onclick="copySnippet('pip install olaya', this)">
           <div class="quick-card-top">
             <span class="quick-cmd">pip install olaya</span>
-            <span style="font-size:0.7rem;color:var(--text-muted);">Copy</span>
+            <span style="font-size:0.7rem;color:var(--text-muted);font-weight:600;">Copy</span>
           </div>
           <div class="quick-desc">Python SDK with local ONNX weights</div>
         </div>
@@ -1749,7 +1826,7 @@
         <div class="quick-card" onclick="copySnippet('https://public-nine-jade-58.vercel.app/api/systemone', this)">
           <div class="quick-card-top">
             <span class="quick-cmd" style="color:var(--accent-blue);">POST /api/systemone</span>
-            <span style="font-size:0.7rem;color:var(--text-muted);">Copy</span>
+            <span style="font-size:0.7rem;color:var(--text-muted);font-weight:600;">Copy</span>
           </div>
           <div class="quick-desc">Jev-compatible hosted edge endpoint</div>
         </div>
@@ -1773,7 +1850,7 @@
     <footer class="footer">
       <div>
         <strong>Leio</strong> &mdash; Sub-Millisecond Decision Infrastructure<br>
-        <span style="color:var(--text-muted);font-size:0.75rem;">Open weights &middot; Apache 2.0 &middot; Built by Dionisio Chiuratto Agourakis</span>
+        <span style="color:var(--text-muted);font-size:0.78rem;">Open weights &middot; Apache 2.0 &middot; Built by Dionisio Chiuratto Agourakis</span>
       </div>
       <div class="footer-links">
         <a href="./playground.html">Playground</a>
@@ -1790,6 +1867,35 @@
     import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
     import init, { OlayaWasm } from './wasm/olaya_wasm.js';
 
+    // ── Theme Switcher Logic (Light Mode by Default) ─────────────────────────
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('leio_theme', newTheme);
+      updateThemeUI(newTheme);
+    }
+
+    function updateThemeUI(theme) {
+      const icon = document.getElementById('themeIcon');
+      const text = document.getElementById('themeText');
+      if (icon && text) {
+        if (theme === 'dark') {
+          icon.textContent = '☀️';
+          text.textContent = 'Light';
+        } else {
+          icon.textContent = '🌙';
+          text.textContent = 'Dark';
+        }
+      }
+    }
+    window.toggleTheme = toggleTheme;
+
+    // Load stored theme or default to light
+    const savedTheme = localStorage.getItem('leio_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeUI(savedTheme);
+
     let wasmEngine = null;
     let wasmReady = false;
     let wasmInitError = null;
@@ -1800,7 +1906,7 @@
       const latencyBadge = document.getElementById('latencyBadge');
       if (latencyBadge) {
         latencyBadge.textContent = 'WASM < 1µs';
-        latencyBadge.style.color = '#30d158';
+        latencyBadge.style.color = '#03aa5c';
       }
       if (rawConcepts && rawConcepts.length > 0) {
         try {
@@ -1992,7 +2098,7 @@
       const jsonOutput = document.getElementById('jsonOutput');
       if (latencyBadge) {
         latencyBadge.textContent = 'Loading domain...';
-        latencyBadge.style.color = '#e3b341';
+        latencyBadge.style.color = '#d97706';
       }
       if (jsonOutput) {
         jsonOutput.textContent = `Loading ${cfg.name} ontology DAG...`;
@@ -2032,10 +2138,10 @@
         if (latencyBadge) {
           if (wasmReady && wasmEngine) {
             latencyBadge.textContent = `🦀 WASM Ready (${dag.size()} Classes, < 1µs)`;
-            latencyBadge.style.color = '#3fb950';
+            latencyBadge.style.color = '#03aa5c';
           } else {
             latencyBadge.textContent = `⚡ JS Engine (${dag.size()} Classes Ready)`;
-            latencyBadge.style.color = '#58a6ff';
+            latencyBadge.style.color = '#0284c7';
           }
         }
 
@@ -2061,7 +2167,7 @@
           if (targetBtn) {
             const orig = targetBtn.textContent;
             targetBtn.textContent = 'Copied!';
-            targetBtn.style.color = '#3fb950';
+            targetBtn.style.color = '#03aa5c';
             setTimeout(() => {
               targetBtn.textContent = orig;
               targetBtn.style.color = '';
@@ -2121,10 +2227,10 @@
       if (latencyBadge) {
         if (usedWasm) {
           latencyBadge.textContent = `WASM < 1µs`;
-          latencyBadge.style.color = '#3fb950';
+          latencyBadge.style.color = '#03aa5c';
         } else {
           latencyBadge.textContent = `${dt} ms (JS Engine)`;
-          latencyBadge.style.color = '#58a6ff';
+          latencyBadge.style.color = '#0284c7';
         }
       }
 
@@ -2165,8 +2271,8 @@
       if (lineageBreadcrumbs) {
         lineageBreadcrumbs.innerHTML = lineage.map((step, idx) => {
           const isLast = idx === lineage.length - 1;
-          return `<span class="lineage-step" style="${isLast ? 'color:#58a6ff; font-weight:600; background:rgba(56, 139, 253, 0.15); border:1px solid rgba(56, 139, 253, 0.35);' : ''}">${step}</span>` +
-            (!isLast ? `<span style="color:#6e7681;margin:0 2px;">&rarr;</span>` : '');
+          return `<span class="lineage-step" style="${isLast ? 'color:#0284c7; font-weight:700; background:rgba(2, 132, 199, 0.1); border:1px solid rgba(2, 132, 199, 0.3);' : ''}">${step}</span>` +
+            (!isLast ? `<span style="color:#94a3b8;margin:0 2px;">&rarr;</span>` : '');
         }).join(' ');
       }
 
@@ -2236,7 +2342,7 @@
       const min = Number(slider.min) || 100000;
       const max = Number(slider.max) || 50000000;
       const pct = Math.max(0, Math.min(100, ((Number(val) - min) / (max - min)) * 100));
-      slider.style.background = `linear-gradient(to right, #0071e3 0%, #2997ff ${pct}%, rgba(255, 255, 255, 0.1) ${pct}%, rgba(255, 255, 255, 0.1) 100%)`;
+      slider.style.background = `linear-gradient(to right, #0284c7 0%, #38bdf8 ${pct}%, #e2e8f0 ${pct}%, #e2e8f0 100%)`;
     }
 
     function updateCalculator(val) {
@@ -2285,7 +2391,7 @@
           if (hint) {
             const oldText = hint.textContent;
             hint.textContent = '✓ Copied';
-            hint.style.color = '#3fb950';
+            hint.style.color = '#03aa5c';
             setTimeout(() => {
               hint.textContent = oldText;
               hint.style.color = '';
