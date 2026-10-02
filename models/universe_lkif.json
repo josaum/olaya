@@ -1,0 +1,2640 @@
+{
+  "name": "--arrow",
+  "concepts": [
+    {
+      "curie": "Absolute:Place",
+      "label": "Absolute Place",
+      "description": "An absolute place is defined without reference to other places.",
+      "parents": [
+        "Place"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Relative:Place"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Abstract:Entity",
+      "label": "Abstract Entity",
+      "description": "An abstract concept is a concept which does not (necessarily) have a referent in either the physical or the mental world. Abstract entities are (proto)mathematical, formal entities, entities which have a purely formal, logical or mathematical meaning. As all concepts are abstractions, one may arg...",
+      "parents": [],
+      "children": [
+        "Atom",
+        "Part",
+        "Whole"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Act:of_Law",
+      "label": "Act of Law",
+      "description": "Act of law: a public act by a legislative body which creates an expression with legal status; the legal status depends on the jurisdiction of the legislative body.",
+      "parents": [
+        "Public:Act",
+        "Legal:Speech_Act"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Action",
+      "label": "Action",
+      "description": "An action is a change which is brought about by a single agent, playing a role. The agent is the holder of some indended outcome of the action: an action is always intentional. The intention of the agent has usually corresponds with an expectation the intended outcome to be brought about: the age...",
+      "parents": [
+        "Process"
+      ],
+      "children": [
+        "Creation",
+        "Public:Act",
+        "Reaction"
+      ],
+      "disjoint_with": [
+        "Plan"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Action:Power",
+      "label": "Action Power",
+      "description": "An action-power consists in a generic power to produce a legal effect through an action determining it. Also called Subjections",
+      "parents": [
+        "Hohfeldian:Power"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Agent",
+      "label": "Agent",
+      "description": "An agent is any owl:Thing which can act, i.e. play the 'actor' role wrt. an action",
+      "parents": [],
+      "children": [
+        "Organisation",
+        "Person"
+      ],
+      "disjoint_with": [
+        "Change",
+        "Role"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Allowed",
+      "label": "Allowed",
+      "description": "See normatively qualified. Alternative labels: permitted, sanctioned, let, licensed.",
+      "parents": [
+        "Normatively:Qualified"
+      ],
+      "children": [
+        "Allowed:And_Disallowed",
+        "Obliged",
+        "Strictly:Allowed"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Allowed:And_Disallowed",
+      "label": "Allowed And Disallowed",
+      "description": "Something which is both allowed and disallowed through some norm",
+      "parents": [
+        "Disallowed",
+        "Allowed"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Annulment",
+      "label": "Annulment",
+      "description": "Class",
+      "parents": [
+        "In:Force_Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Application",
+      "label": "Application",
+      "description": "When a local act applies in the local legal system normative supra-ordered such as when a region applies an EU directive or a decree it applies the normative contant in some act",
+      "parents": [
+        "Modification:of_System"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Application:Date",
+      "label": "Application Date",
+      "description": "The date when a modification is applied to the destination legislative document. The date can be instantaneous, in the future or in the past. Normally this date coincides with the date of efficacy of the text in which the modification takes place.",
+      "parents": [
+        "Dynamic:Temporal_Entity",
+        "Moment"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Application:Interval",
+      "label": "Application Interval",
+      "description": "This is the interval during which a normative document, or fragment, produces the consequences that the normative provision establishes.",
+      "parents": [
+        "Dynamic:Temporal_Entity",
+        "Interval"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Argument",
+      "label": "Argument",
+      "description": "An argument is a reason that is expressed through some medium",
+      "parents": [
+        "Reason",
+        "Rule"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Artifact",
+      "label": "Artifact",
+      "description": "A physical object created by some person to fulfill a particular purpose",
+      "parents": [
+        "Physical:Object"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Natural:Object",
+        "Person"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Assertion",
+      "label": "Assertion",
+      "description": "The assertion is subject to a fit between words and world, in Searle's terms. It's propositional content can be true of false. If it is inconsistent with other assertions, beliefs, observations, it may come to be considered false.",
+      "parents": [
+        "Communicated:Attitude"
+      ],
+      "children": [
+        "Lie"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Assignment",
+      "label": "Assignment",
+      "description": "A public act that attributes a power to perform a public act to a public body.",
+      "parents": [
+        "Legal:Speech_Act",
+        "Public:Act"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Association",
+      "label": "Association",
+      "description": "A voluntary association (also sometimes called an unincorporated association, or just an association) is a group of individuals who voluntarily enter into an agreement to form a body (or organization) to accomplish a purpose.",
+      "parents": [
+        "Private:Legal_Person"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Assumption",
+      "label": "Assumption",
+      "description": "proposes something that usually is the case, although there is no specific evidence that it is true in this particular case",
+      "parents": [
+        "Epistemic:Role",
+        "Atom"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Atom",
+      "label": "Atom",
+      "description": "An atom is the most basic (undivisible) part of an LKIF rule (cf. Deliverable 1.1)",
+      "parents": [
+        "Epistemic:Role",
+        "Abstract:Entity"
+      ],
+      "children": [
+        "Assumption",
+        "Exception",
+        "Moment"
+      ],
+      "disjoint_with": [
+        "Whole"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Belief",
+      "label": "Belief",
+      "description": "Someting an agent 'believes in', i.e. holds as true",
+      "parents": [
+        "Propositional:Attitude"
+      ],
+      "children": [
+        "Belief:In_Violation"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Belief:In_Violation",
+      "label": "Belief In Violation",
+      "description": "A belief in some violation",
+      "parents": [
+        "Belief"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Cause",
+      "label": "Cause",
+      "description": "A cause is an epistemic role played by something which is the outcome of a (chain) of processes",
+      "parents": [
+        "Epistemic:Role"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Change",
+      "label": "Change",
+      "description": "A change is a difference between the situation before and after the change occurs (the event of the change). A change can be instantaneous",
+      "parents": [],
+      "children": [
+        "Continuation",
+        "Initiation",
+        "Process",
+        "Termination"
+      ],
+      "disjoint_with": [
+        "Agent",
+        "Physical:Object"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Co-operative",
+      "label": "Co-operative",
+      "description": "An autonomous association of persons united voluntarily to meet their common economic, social, and cultural needs and aspirations through a jointly-owned and democratically-controlled enterprise.",
+      "parents": [
+        "Society"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Code",
+      "label": "Code",
+      "description": "A legal code bears one or more norms, all of which are uttered by some legislative body. It cannot bear expressions which are not uttered by a legislative body.",
+      "parents": [
+        "Legal:Document"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Code:of_Conduct",
+      "label": "Code of Conduct",
+      "description": "a code outlining the responsibilities of or best practice for an individual or organisation, such as a set of principles of good corporate behaviour adopted by a business\\",
+      "parents": [
+        "Legal:Document",
+        "Soft:Law"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Collaborative:Plan",
+      "label": "Collaborative Plan",
+      "description": "A collaborative plan is a plan which is shared (and executed) between at least two agents a and b.",
+      "parents": [
+        "Plan"
+      ],
+      "children": [
+        "Transaction"
+      ],
+      "disjoint_with": [
+        "Personal:Plan"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Communicated:Attitude",
+      "label": "Communicated Attitude",
+      "description": "A communictated attitude is a propositional attitude involved in an act of communication.",
+      "parents": [
+        "Propositional:Attitude"
+      ],
+      "children": [
+        "Assertion",
+        "Declaration",
+        "Promise",
+        "Statement:In_Writing"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Company",
+      "label": "Company",
+      "description": "A company refers to a legal entity formed which has a separate legal identity from its members, and is ordinarily incorporated to undertake commercial business. Although some jurisdictions refer to unincorporated entities as companies, in most jurisdictions the term refers only to incorporated en...",
+      "parents": [
+        "Private:Legal_Person"
+      ],
+      "children": [
+        "Limited:Company",
+        "Public:Limited_Company"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Composition",
+      "label": "Composition",
+      "description": "A composition has multiple parts, the components should meet",
+      "parents": [
+        "Whole"
+      ],
+      "children": [
+        "Interval",
+        "Pair"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Comprehensive:Place",
+      "label": "Comprehensive Place",
+      "description": "A place is comprehensive if it always covers every place (and thus also every location-complex) and every object.",
+      "parents": [
+        "Location:Complex"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Continuation",
+      "label": "Continuation",
+      "description": "The continuation of a change, once initiated",
+      "parents": [
+        "Change"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Contract",
+      "label": "Contract",
+      "description": "A contract bears one or more norms, all of which are uttered by some natural person or legal person. It cannot bear expressions which are uttered by a different kind of agent.",
+      "parents": [
+        "Legal:Document"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Corporation",
+      "label": "Corporation",
+      "description": "A corporation is a legal entity which, while being composed of natural persons, exists completely separately from them. This separation gives the corporation unique powers which other legal entities lack.",
+      "parents": [
+        "Private:Legal_Person"
+      ],
+      "children": [
+        "Foundation",
+        "Incorporated",
+        "Unincorporated"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Creation",
+      "label": "Creation",
+      "description": "An act which results in the creation of some entity/individual",
+      "parents": [
+        "Action"
+      ],
+      "children": [
+        "Speech:Act"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Custom",
+      "label": "Custom",
+      "description": "The collective memory of some group of agents, i.e. propositions beared by custom are shared (i.e. held) by all members of the group",
+      "parents": [
+        "Medium"
+      ],
+      "children": [
+        "Customary:Law"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Customary:Law",
+      "label": "Customary Law",
+      "description": "In law, custom, or customary law consists of established patterns of behaviour that can be objectively verified within a particular social setting.",
+      "parents": [
+        "Legal:Source",
+        "Custom"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Decision",
+      "label": "Decision",
+      "description": "NOTE: Cannot express that the 'promised' act corresponds to the act qualified by the statement in writing",
+      "parents": [
+        "Legal:Speech_Act"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Declaration",
+      "label": "Declaration",
+      "description": "Searle: the successful performance of a declaration is sufficient to bring about the fit between words and world, to make the propositional content true. In other words, if there is an inconsistency between the declaration and assertions, beliefs, or observations, it is not the declaration that i...",
+      "parents": [
+        "Communicated:Attitude"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Declarative:Power",
+      "label": "Declarative Power",
+      "description": "A declarative power covers the case when an effect is produced through the party’s declaration of it",
+      "parents": [
+        "Potestative:Expression"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Decree",
+      "label": "Decree",
+      "description": "The word decree is often used as a derogative term for any authoritarian decision",
+      "parents": [
+        "Proclamation",
+        "Legal:Document"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Definitional:Expression",
+      "label": "Definitional Expression",
+      "description": "A definition in a legal context (for example “x means y” or “by x it is meant y”);",
+      "parents": [
+        "Legal:Expression"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Delegation",
+      "label": "Delegation",
+      "description": "Delegate: entrust a task or responsibility to some other person",
+      "parents": [
+        "Legal:Speech_Act",
+        "Public:Act"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Delivery:Date",
+      "label": "Delivery Date",
+      "description": "The date when the competent authorities finalise the document by affixing their signatures to it (e.g. promulgation by the president, signature by the queen etc.) This is the date shown on the document itself: it is an objective element and clearly identifyable.",
+      "parents": [
+        "Static:Temporal_Entity",
+        "Moment"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Deregulation",
+      "label": "Deregulation",
+      "description": "When a part of some primary legislative source is delegated to some secondary legislative source (e.g. from act to regulation).",
+      "parents": [
+        "Modification:of_System"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Desire",
+      "label": "Desire",
+      "description": "A feeling of wanting",
+      "parents": [
+        "Propositional:Attitude"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Directive",
+      "label": "Directive",
+      "description": "Examples are European Union directive, a legislative act of the European Union and Directives, used by United States Government agencies (particularly the Department of Defense) to convey policies, responsibilities, and procedures.",
+      "parents": [
+        "Proclamation",
+        "Legal:Document"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Disallowed",
+      "label": "Disallowed",
+      "description": "See Qualified. Alternative labels: violation, prohibited, forbidden",
+      "parents": [
+        "Normatively:Qualified"
+      ],
+      "children": [
+        "Allowed:And_Disallowed",
+        "Strictly:Disallowed"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Disallowed:Intention",
+      "label": "Disallowed Intention",
+      "description": "The propositional content (i.e. that which is intended) of the intention is disallowed. Interesting concept for establishing mens rea (guilty mind), although 'disallowed' is a weaker qualification than criminal. Note the distinction between purposely committing a crime and knowingly committing a ...",
+      "parents": [
+        "Intention"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Document",
+      "label": "Document",
+      "description": "A Document bears some (and only) expression(s) stated by some statement in writing.",
+      "parents": [
+        "Medium"
+      ],
+      "children": [
+        "Legal:Document"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Dynamic:Temporal_Entity",
+      "label": "Dynamic Temporal Entity",
+      "description": "A dynamic temporal entity represents the norm in its evolution over time.",
+      "parents": [
+        "Temporal:Occurrence"
+      ],
+      "children": [
+        "Application:Date",
+        "Application:Interval",
+        "Efficacy:Interval",
+        "In:Force_Interval"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Efficacy:Interval",
+      "label": "Efficacy Interval",
+      "description": "The period during which a normative fragment may be either operative or inoperative, by explicit provision of the document itself. The document is said to be in a period of operation, or enforceability or efficacy, when it may or must be applied or enforced.",
+      "parents": [
+        "Dynamic:Temporal_Entity",
+        "Interval"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Efficacy:Modification",
+      "label": "Efficacy Modification",
+      "description": "Modifies the efficacy period of some norm",
+      "parents": [
+        "Temporal:Modification"
+      ],
+      "children": [
+        "End:efficacy",
+        "Prorogation:Efficacy",
+        "Retroactivity",
+        "Start:Efficacy",
+        "Suspension",
+        "Ultractivity"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Enabling:Power",
+      "label": "Enabling Power",
+      "description": "An enabling power is used in cases where the law aims at enabling some agent to produce an effect in a particular way.",
+      "parents": [
+        "Potestative:Expression"
+      ],
+      "children": [
+        "Potestative:Right"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "End:efficacy",
+      "label": "End efficacy",
+      "description": "Class",
+      "parents": [
+        "Efficacy:Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "End:in_Force",
+      "label": "End in Force",
+      "description": "When an act states the end of the period of enactment, and includes an implicit repealing of the text.",
+      "parents": [
+        "In:Force_Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Enter:in_Force_Date",
+      "label": "Enter in Force Date",
+      "description": "The date when a dnormative document becomes law and enters the legal system for the first time. This is the moment in the doucment's history starting from which the document can be amended, its applicability assessed, and its manner of producing an effect determined.",
+      "parents": [
+        "Static:Temporal_Entity",
+        "Moment"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Epistemic:Role",
+      "label": "Epistemic Role",
+      "description": "The role of something used in a (mental) reasoning/inference process",
+      "parents": [
+        "Role"
+      ],
+      "children": [
+        "Assumption",
+        "Atom",
+        "Cause",
+        "Evidence",
+        "Exception",
+        "Expectation",
+        "Fact",
+        "Negated:Atom",
+        "Observation",
+        "Reason",
+        "Rule"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Evaluative:Attitude",
+      "label": "Evaluative Attitude",
+      "description": "An evaluative attitude expresses e.g. a judgment. The proposition qualified by the evaluative attitude is comparable to something else.",
+      "parents": [
+        "Propositional:Attitude"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Evaluative:Expression",
+      "label": "Evaluative Expression",
+      "description": "A legal evaluative expression asserts that something is good or bad, is a value to be optimised or an evil to be minimised (for example “human dignity is value”, “participation ought to be promoted”);",
+      "parents": [
+        "Evaluative:Proposition",
+        "Legal:Expression"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Evaluative:Proposition",
+      "label": "Evaluative Proposition",
+      "description": "Some thing which is evaluatively qualified, i.e. an evaluation applies to the proposition, the proposition is judged. The proposition is comparable to some other proposition.",
+      "parents": [
+        "Proposition"
+      ],
+      "children": [
+        "Evaluative:Expression"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Evidence",
+      "label": "Evidence",
+      "description": "Observation and/or statement, used as a backing for a belief. Evidence is the role of observation which is qualified by some belief.",
+      "parents": [
+        "Epistemic:Role"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Exception",
+      "label": "Exception",
+      "description": "An exception is something that is excluded from a general statement or does not follow a rule. In LKIF rules, an exception is a rule which has an exception relation to another rule (cf. Deliverable 1.1)",
+      "parents": [
+        "Epistemic:Role",
+        "Atom",
+        "Modification:of_Scope"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Exclusionary:Right",
+      "label": "Exclusionary Right",
+      "description": "An exclusionary right concerns the prohibition against performing certain inferences (against reasoning in certain ways), or against using certain kinds of premises for certain purposes, in the interest of a particular person. This is especially the case with anti-discrimination rules.",
+      "parents": [
+        "Obligative:Right"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Existence:Date",
+      "label": "Existence Date",
+      "description": "The date when the formal act by which a legislative body freezes the document into its final form, it is the time when the document can be said to have begun its existence.",
+      "parents": [
+        "Moment"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Existential:Expression",
+      "label": "Existential Expression",
+      "description": "Establishes or terminates the existence of a legal entity (for example “the company ceases to exist”);",
+      "parents": [
+        "Legal:Expression"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Expectation",
+      "label": "Expectation",
+      "description": "An expectation is a predictive belief held on purely logical grounds, i.e. not based on direct external evidence, like an observation or a statement by another agent. It is also often characterized as a \"belief about the future\", but this isn't very helpful since one may also hold expectations ab...",
+      "parents": [
+        "Epistemic:Role"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Observation"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Expression",
+      "label": "Expression",
+      "description": "An expression is a proposition beared by some medium, e.g. a document, and is stated by some communicated attitude",
+      "parents": [
+        "Proposition"
+      ],
+      "children": [
+        "Legal:Expression"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Extension",
+      "label": "Extension",
+      "description": "Extends the scope of normative content to some particular jurisdiction",
+      "parents": [
+        "Modification:of_Scope"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Fact",
+      "label": "Fact",
+      "description": "A fact is a proposition (about something) which is (commonly) agreed upon to hold as true: it has some backing in evidence",
+      "parents": [
+        "Epistemic:Role"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Foundation",
+      "label": "Foundation",
+      "description": "A kind of (philanthropic) organization, set up as a legal entity either by individuals or institutions, with the purpose of distributing grants to support causes in line with the goals of the foundation",
+      "parents": [
+        "Corporation"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Unincorporated",
+        "Incorporated"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Function",
+      "label": "Function",
+      "description": "The use or purpose of some object as used in some context.",
+      "parents": [
+        "Role"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Social:Role"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Hohfeldian:Power",
+      "label": "Hohfeldian Power",
+      "description": "A hohfeldian power covers any action which determines a legal effect.",
+      "parents": [
+        "Potestative:Expression"
+      ],
+      "children": [
+        "Action:Power",
+        "Immunity"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Immunity",
+      "label": "Immunity",
+      "description": "Also called Disabilities",
+      "parents": [
+        "Hohfeldian:Power"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "In:Force_Interval",
+      "label": "In Force Interval",
+      "description": "The period during which a normative fragment belongs to the normative system. The period of force for each fragment may change over time as a function of the modifications the document goes through.",
+      "parents": [
+        "Dynamic:Temporal_Entity",
+        "Interval"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "In:Force_Modification",
+      "label": "In Force Modification",
+      "description": "Modifies the period of being in force of some norm",
+      "parents": [
+        "Temporal:Modification"
+      ],
+      "children": [
+        "Annulment",
+        "End:in_Force",
+        "Prorogation:in_Force",
+        "Renewal",
+        "Start:in_Force"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Incorporated",
+      "label": "Incorporated",
+      "description": "An organisation formed into a legal corporation",
+      "parents": [
+        "Corporation"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Foundation",
+        "Unincorporated"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Initiation",
+      "label": "Initiation",
+      "description": "The initation of a change",
+      "parents": [
+        "Change"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Integration",
+      "label": "Integration",
+      "description": "Class",
+      "parents": [
+        "Textual:Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Intention",
+      "label": "Intention",
+      "description": "Intention is where the agent expects certain consequences of his or her actions and desires those consequences to occur. This concept must be related to qualification and preference in some way.",
+      "parents": [
+        "Propositional:Attitude"
+      ],
+      "children": [
+        "Disallowed:Intention"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "International:Agreement",
+      "label": "International Agreement",
+      "description": "An agreement entered into by actors in international law, namely states and international organizations.",
+      "parents": [
+        "Legal:Source"
+      ],
+      "children": [
+        "Non-binding:International_Agreement",
+        "Resolution",
+        "Treaty"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "International:Arbitration",
+      "label": "International Arbitration",
+      "description": "International Arbitration is the established method today for resolving disputes between parties to international commercial agreements. As with arbitration generally, it is a creature of contract, i.e., the parties' decision to submit any disputes to private adjudication by one or more arbitrato...",
+      "parents": [
+        "Soft:Law"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Interpretation",
+      "label": "Interpretation",
+      "description": "Modification of the interpretation of normative content by the author or some superior actor",
+      "parents": [
+        "Modification:of_Meaning"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Interval",
+      "label": "Interval",
+      "description": "An interval is a composition of multiple periods of time.",
+      "parents": [
+        "Composition",
+        "Temporal:Occurrence"
+      ],
+      "children": [
+        "Application:Interval",
+        "Efficacy:Interval",
+        "In:Force_Interval"
+      ],
+      "disjoint_with": [
+        "Moment"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Legal:Doctrine",
+      "label": "Legal Doctrine",
+      "description": "Legal doctrine is a framework, set of rules, procedural steps, or test, often established through precedent in the common law, through which judgments can be determined in a given legal cas",
+      "parents": [
+        "Legal:Source"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Legal:Document",
+      "label": "Legal Document",
+      "description": "A legal document is a document bearing norms or normative statements. By virtue of this definition the norm-as-propositional-attitude is reified as norm-as proposition. In other words, the norm being expressed through the legal source is an expression of the propositional attitude.",
+      "parents": [
+        "Legal:Source",
+        "Document"
+      ],
+      "children": [
+        "Code",
+        "Code:of_Conduct",
+        "Contract",
+        "Decree",
+        "Directive",
+        "Regulation",
+        "Statute",
+        "Treaty"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Legal:Expression",
+      "label": "Legal Expression",
+      "description": "Legal expressions are created by  some legal speech act and qualified by a communicated attitude",
+      "parents": [
+        "Expression"
+      ],
+      "children": [
+        "Definitional:Expression",
+        "Evaluative:Expression",
+        "Existential:Expression",
+        "Potestative:Expression",
+        "Qualificatory:Expression"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Legal:Person",
+      "label": "Legal Person",
+      "description": "A legal entity is a natural person or a legal construct through which the law allows a group of natural persons to act as if it were a single composite individual for certain purposes. The most common purposes are lawsuits, property ownership, and contracts. Sometimes referred to as corporate per...",
+      "parents": [
+        "Organisation"
+      ],
+      "children": [
+        "Private:Legal_Person",
+        "Public:Body"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Legal:Role",
+      "label": "Legal Role",
+      "description": "A legal role is a role played in a legal context. Legal role players can be both Agents and other 'things'",
+      "parents": [
+        "Role"
+      ],
+      "children": [
+        "Social:Legal_Role"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Legal:Source",
+      "label": "Legal Source",
+      "description": "A legal source is a source for legal statements, both norms and legal expressions. In a sense it is literally a 'source' of law",
+      "parents": [
+        "Medium"
+      ],
+      "children": [
+        "Customary:Law",
+        "International:Agreement",
+        "Legal:Doctrine",
+        "Legal:Document",
+        "Precedent",
+        "Proclamation",
+        "Soft:Law"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Legal:Speech_Act",
+      "label": "Legal Speech Act",
+      "description": "A legal speech act creates some propositional attitude towards a legal expression.",
+      "parents": [
+        "Speech:Act"
+      ],
+      "children": [
+        "Act:of_Law",
+        "Assignment",
+        "Decision",
+        "Delegation"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Legislative:Body",
+      "label": "Legislative Body",
+      "description": "A legislature is a type of (representative) deliberative assembly with the power to adopt laws.",
+      "parents": [
+        "Public:Body"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Liability:Right",
+      "label": "Liability Right",
+      "description": "A liability right expresses some right to act that brings with it some liability to perform another (compensating) act. For instance, if some k performs the permitted action A, then k will have to perform another action B for the benefit of j.",
+      "parents": [
+        "Right"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Liberty:Right",
+      "label": "Liberty Right",
+      "description": "When, for the benefit of a person, this person is both permitted to perform and to omit an action – that is, when the action is facultative – we can say that he or she has a liberty right with regard to that action.",
+      "parents": [
+        "Right"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Lie",
+      "label": "Lie",
+      "description": "An assertion that is inconsistent with the beliefs of the speaker. It is *intentionally* false.",
+      "parents": [
+        "Assertion"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Limited:Company",
+      "label": "Limited Company",
+      "description": "A limited company is a corporation whose liability is limited by law",
+      "parents": [
+        "Company"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Location:Complex",
+      "label": "Location Complex",
+      "description": "A location complex is a relatively stable complex of places referred to as one: it is the maximal collection of places with the same reference object.",
+      "parents": [
+        "Place"
+      ],
+      "children": [
+        "Comprehensive:Place"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Mandate",
+      "label": "Mandate",
+      "description": "Mandate: give (someone) authority to act in a certain way",
+      "parents": [
+        "Public:Act"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Mandatory:Precedent",
+      "label": "Mandatory Precedent",
+      "description": "In law, a binding precedent (also mandatory precedent or binding authority) is a precedent which must be followed by all lower courts. It is usually created by the decision of a higher court, such as the House of Lords in the United Kingdom. Binding precedent relies on the legal principle of star...",
+      "parents": [
+        "Precedent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Medium",
+      "label": "Medium",
+      "description": "A medium is a bearer of expressions, i.e. externalised propositions. Propositions become expressions once they are externalised through some medium.",
+      "parents": [],
+      "children": [
+        "Custom",
+        "Document",
+        "Legal:Source"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Mental:Entity",
+      "label": "Mental Entity",
+      "description": "We made the assumption that our views of the mental world have been developed in analogy with physical processes. Mental objects like thoughts are made of elementary parts: concepts. The contents (substance) of these objects are representations. The conceptual content of thoughts are intended by ...",
+      "parents": [],
+      "children": [
+        "Mental:Object",
+        "Mental:Process",
+        "Subjective:Entity"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Mental:Object",
+      "label": "Mental Object",
+      "description": "Metaphor of physical concepts, i.e. the things we mentally manipulate, either in thought or memory",
+      "parents": [
+        "Mental:Entity"
+      ],
+      "children": [
+        "Plan",
+        "Proposition",
+        "Propositional:Attitude",
+        "Qualification"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Mental:Process",
+      "label": "Mental Process",
+      "description": "A mental, i.e. non-physical, process that has no physical effects. Examples are (human) thought and reasoning.",
+      "parents": [
+        "Mental:Entity",
+        "Process"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Modification",
+      "label": "Modification",
+      "description": "See ESTRELLA deliverable 3.2",
+      "parents": [
+        "Public:Act"
+      ],
+      "children": [
+        "Semantic:Annotation",
+        "Temporal:Modification",
+        "Textual:Modification"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Modification:of_Meaning",
+      "label": "Modification of Meaning",
+      "description": "A modification that changes the meaning of some provision without changing its literal text",
+      "parents": [
+        "Semantic:Annotation"
+      ],
+      "children": [
+        "Interpretation",
+        "Modification:of_Term",
+        "Variation"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Modification:of_Scope",
+      "label": "Modification of Scope",
+      "description": "See ESTRELLA deliverable 3.2",
+      "parents": [
+        "Semantic:Annotation"
+      ],
+      "children": [
+        "Exception",
+        "Extension"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Modification:of_System",
+      "label": "Modification of System",
+      "description": "See ESTRELLA deliverable 3.2",
+      "parents": [
+        "Semantic:Annotation"
+      ],
+      "children": [
+        "Application",
+        "Deregulation",
+        "Ratification",
+        "Remaking",
+        "Transposition"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Modification:of_Term",
+      "label": "Modification of Term",
+      "description": "Modification of the term specified by some procedural deadline.",
+      "parents": [
+        "Modification:of_Meaning"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Moment",
+      "label": "Moment",
+      "description": "A moment is an atomic period of time, i.e. it cannot be divided into other parts",
+      "parents": [
+        "Atom",
+        "Temporal:Occurrence"
+      ],
+      "children": [
+        "Application:Date",
+        "Delivery:Date",
+        "Enter:in_Force_Date",
+        "Existence:Date",
+        "Publication:Date"
+      ],
+      "disjoint_with": [
+        "Interval"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Natural:Object",
+      "label": "Natural Object",
+      "description": "A natural object is an object not created by man.",
+      "parents": [
+        "Physical:Object"
+      ],
+      "children": [
+        "Person"
+      ],
+      "disjoint_with": [
+        "Artifact"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Natural:Person",
+      "label": "Natural Person",
+      "description": "A natural person is a human being perceptible through the senses and subject to physical laws, as opposed to an artificial person, i.e., an organization that the law treats for some purposes as if it were a person distinct from its members or owner.",
+      "parents": [
+        "Person"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Negated:Atom",
+      "label": "Negated Atom",
+      "description": "A negated atom is the negation of some other atom (cf. Deliverable 1.1)",
+      "parents": [
+        "Epistemic:Role"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Non-binding:International_Agreement",
+      "label": "Non-binding International Agreement",
+      "description": "Some international agreement that is not binding under international law",
+      "parents": [
+        "International:Agreement",
+        "Soft:Law"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Treaty"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Norm",
+      "label": "Norm",
+      "description": "A norm is a kind of Qualification. A qualification which normatively qualifies some thing (i.e. some normatively qualified): i.e. a qualification which allows or disallows some thing.",
+      "parents": [
+        "Qualification"
+      ],
+      "children": [
+        "Permission",
+        "Right"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Normatively:Qualified",
+      "label": "Normatively Qualified",
+      "description": "Some thing which is qualified (allowed, disallowed) by a norm, i.e. a norm applies to the thing. Taking the principle of deontic choice to mean that the utterer of a normative statement intends to influence choices made by the addressee of the statement, the qualified thing should is comparable t...",
+      "parents": [
+        "Qualified"
+      ],
+      "children": [
+        "Allowed",
+        "Disallowed"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Obligation",
+      "label": "Obligation",
+      "description": "See prohibition",
+      "parents": [
+        "Permission"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Obligative:Right",
+      "label": "Obligative Right",
+      "description": "Directed obligative ought-to-do are also called obligative rights. k has the obligative  right that j does A iff it is obligatory, toward k, that j does A. An example of obligative  right is “it is obligatory, toward Mary, that Tom pays 1,000 euro to John”",
+      "parents": [
+        "Right"
+      ],
+      "children": [
+        "Exclusionary:Right"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Obliged",
+      "label": "Obliged",
+      "description": "Is allowed by an Obligation, i.e. the alternative is strictly_worse according to the Obligation. Alternative labels: directed, commanded.",
+      "parents": [
+        "Allowed"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Observation",
+      "label": "Observation",
+      "description": "An observation is the role played by some proposition believed to be true or false through observation of an agent.",
+      "parents": [
+        "Epistemic:Role"
+      ],
+      "children": [
+        "Problem",
+        "Surprise"
+      ],
+      "disjoint_with": [
+        "Expectation"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Observation:of_Violation",
+      "label": "Observation of Violation",
+      "description": "An observation of a violation, i.e. of something that is Disallowed.",
+      "parents": [
+        "Problem"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Occurrence",
+      "label": "Occurrence",
+      "description": "A consequence of our clear separation of ontology from models of situations (occurrences), is well exemplified in the two ways we look at time and space. Things happen against the canvas of space and time. This 3D canvas moving in time (or whatever metaphor) allows us to index instances of object...",
+      "parents": [],
+      "children": [
+        "Spatio:Temporal_Occurrence"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Organisation",
+      "label": "Organisation",
+      "description": "An organisation is a group of other organisations or persons which acts 'as one'. An organisation can be both formal (i.e. created by law or decree) or informal.",
+      "parents": [
+        "Agent"
+      ],
+      "children": [
+        "Legal:Person"
+      ],
+      "disjoint_with": [
+        "Person"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Organisation:Role",
+      "label": "Organisation Role",
+      "description": "A role which has a meaning in the context of an organisation: i.e. the role defines a 'position' within sthe structure of roles within an organisation",
+      "parents": [
+        "Social:Role"
+      ],
+      "children": [
+        "Professional:Legal_Role"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Pair",
+      "label": "Pair",
+      "description": "A composition of exactly two parts",
+      "parents": [
+        "Composition"
+      ],
+      "children": [
+        "Pair:Of_Periods"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Pair:Of_Periods",
+      "label": "Pair Of Periods",
+      "description": "A pair of two time periods",
+      "parents": [
+        "Pair"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Part",
+      "label": "Part",
+      "description": "A part is a part_of some whole",
+      "parents": [
+        "Abstract:Entity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Permission",
+      "label": "Permission",
+      "description": "Permission allows propositions, to which therefore the predication Allowed applies. The thing(s) allowed is/are a subset of the thing(s) qualified by the permission. If S then P(A) means that S is qualified and S and A is allowed.",
+      "parents": [
+        "Norm"
+      ],
+      "children": [
+        "Obligation",
+        "Prohibition"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Permissive:Right",
+      "label": "Permissive Right",
+      "description": "The  negation of a directed obligation is a directed permission. However, it counts as a right,  namely, a permissive right, only when such negation is aimed at benefitting the author of  the permitted action.",
+      "parents": [
+        "Right"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Person",
+      "label": "Person",
+      "description": "A person is an individual agent. Usually associated with 'human being'.",
+      "parents": [
+        "Agent",
+        "Natural:Object"
+      ],
+      "children": [
+        "Natural:Person"
+      ],
+      "disjoint_with": [
+        "Artifact",
+        "Organisation"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Person:Role",
+      "label": "Person Role",
+      "description": "A role played by some person (i.e. not an organisation)",
+      "parents": [
+        "Social:Role"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Personal:Plan",
+      "label": "Personal Plan",
+      "description": "A personal plan is a plan which is held (and can be executed) by at most one agent.",
+      "parents": [
+        "Plan"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Collaborative:Plan"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Persuasive:Precedent",
+      "label": "Persuasive Precedent",
+      "description": "In law, a persuasive precedent or advisory precedent is a precedent that need not be followed under the legal principle of stare decisis, but is nevertheless followed. Sources of persuasive precedent include the obiter dicta in the judgment of a court whose judgment would otherwise be binding, an...",
+      "parents": [
+        "Precedent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Physical:Entity",
+      "label": "Physical Entity",
+      "description": "The physical world evolves around two main classes: physical objects and processes. In lkif-core, the physical world evolves around two main classes: physical objects and processes. Objects are pieces of matter, while matter is typed by substances. Objects have mass, extension, viz. form and aggr...",
+      "parents": [],
+      "children": [
+        "Physical:Object",
+        "Physical:Process"
+      ],
+      "disjoint_with": [
+        "Role"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Physical:Object",
+      "label": "Physical Object",
+      "description": "A physical object is a physical entity consisting of matter, it has a spatio-temporal extension.",
+      "parents": [
+        "Physical:Entity"
+      ],
+      "children": [
+        "Artifact",
+        "Natural:Object"
+      ],
+      "disjoint_with": [
+        "Change"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Physical:Process",
+      "label": "Physical Process",
+      "description": "Class",
+      "parents": [
+        "Physical:Entity",
+        "Process"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Place",
+      "label": "Place",
+      "description": "A place is a spatio-temporal-occurrence",
+      "parents": [
+        "Spatio:Temporal_Occurrence"
+      ],
+      "children": [
+        "Absolute:Place",
+        "Location:Complex",
+        "Relative:Place"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Plan",
+      "label": "Plan",
+      "description": "A plan is a structure of multiple other plans or actions. These can be both sequential or concurrent. Usually a plan is referred to in the context of the intention to act of some agent, however when executed the plan itself comes into effect.",
+      "parents": [
+        "Mental:Object"
+      ],
+      "children": [
+        "Collaborative:Plan",
+        "Personal:Plan"
+      ],
+      "disjoint_with": [
+        "Action"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Potestative:Expression",
+      "label": "Potestative Expression",
+      "description": "Attributes a power to some agent (for example “a worker has the power to terminate his work contract”);",
+      "parents": [
+        "Legal:Expression"
+      ],
+      "children": [
+        "Declarative:Power",
+        "Enabling:Power",
+        "Hohfeldian:Power"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Potestative:Right",
+      "label": "Potestative Right",
+      "description": "A potestative right is an enabling power which is meant to benefit the holder of the power. For example, if some animal y does not belong to anybody, then x has the potestative-right to start x’s ownership of the animal,  by capturing y.",
+      "parents": [
+        "Enabling:Power"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Precedent",
+      "label": "Precedent",
+      "description": "In law, a precedent or authority is a legal case establishing a principle or rule that a court may need to adopt when deciding subsequent cases with similar issues or facts. The term may also refer to the collective body of case law that a court should consider when interpreting the law. When a p...",
+      "parents": [
+        "Legal:Source"
+      ],
+      "children": [
+        "Mandatory:Precedent",
+        "Persuasive:Precedent"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Private:Legal_Person",
+      "label": "Legal Person (Private Law)",
+      "description": "A legal person as defined in private law",
+      "parents": [
+        "Legal:Person"
+      ],
+      "children": [
+        "Association",
+        "Company",
+        "Corporation",
+        "Society"
+      ],
+      "disjoint_with": [
+        "Public:Body"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Problem",
+      "label": "Problem",
+      "description": "A problem is an observation that deviates from an Intention.",
+      "parents": [
+        "Observation"
+      ],
+      "children": [
+        "Observation:of_Violation"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Process",
+      "label": "Process",
+      "description": "A process is a 'causal' change: any change which can be explained through some known or understood causal structure. Every process has some Time_Period as duration.",
+      "parents": [
+        "Change"
+      ],
+      "children": [
+        "Action",
+        "Mental:Process",
+        "Physical:Process"
+      ],
+      "disjoint_with": [
+        "Role"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Proclamation",
+      "label": "Proclamation",
+      "description": "A proclamation (Lat. proclamare, to make public by announcement) is an official declaration.",
+      "parents": [
+        "Legal:Source"
+      ],
+      "children": [
+        "Decree",
+        "Directive"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Professional:Legal_Role",
+      "label": "Professional Legal Role",
+      "description": "A professional legal role is a legal profession of some person, examples: lawyer, judge etc.",
+      "parents": [
+        "Social:Legal_Role",
+        "Organisation:Role"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Prohibition",
+      "label": "Prohibition",
+      "description": "Prohibition obliges/allows thing(s), to which therefore the predication Obliged applies, and disallows thing(s), to which therefore the predication Disallowed applies. The union of the thing(s) allowed and the thing(s) disallowed is qualified by the prohibition. The things allowed and disallowed ...",
+      "parents": [
+        "Permission"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Promise",
+      "label": "Promise",
+      "description": "A promise is a communicated attitude about some future action or state",
+      "parents": [
+        "Communicated:Attitude"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Proposition",
+      "label": "Proposition",
+      "description": "A (non logical) proposition is a proposition qualified by a propositional attitude. NB: The proposition used here does not correspond to a proposition in proposition logics.",
+      "parents": [
+        "Mental:Object"
+      ],
+      "children": [
+        "Evaluative:Proposition",
+        "Expression"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Propositional:Attitude",
+      "label": "Propositional Attitude",
+      "description": "A propositional attitude connects a person (the holder of the attitude) to some proposition, in fact it expresses some qualification over the proposition. Distinguishing a proposition from the propositional content expressed by it is necessary when properties relating to the thing expressed and p...",
+      "parents": [
+        "Mental:Object"
+      ],
+      "children": [
+        "Belief",
+        "Communicated:Attitude",
+        "Desire",
+        "Evaluative:Attitude",
+        "Intention"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Prorogation:Efficacy",
+      "label": "Prorogation Efficacy",
+      "description": "Prorogation of entry into force, but applied to the efficacy of some norm",
+      "parents": [
+        "Efficacy:Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Prorogation:in_Force",
+      "label": "Prorogation in Force",
+      "description": "Prorogation of the date of enactment of some normative content. The 'life' of the act is lengthened with respect to some previous end of enactment modification.",
+      "parents": [
+        "In:Force_Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Public:Act",
+      "label": "Public Act",
+      "description": "A public act is an act by some Person or Organisation which creates (at least) a communicated attitude (and thereby an expression)",
+      "parents": [
+        "Action"
+      ],
+      "children": [
+        "Act:of_Law",
+        "Assignment",
+        "Delegation",
+        "Mandate",
+        "Modification"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Public:Body",
+      "label": "Public Body",
+      "description": "A public body or body created by an act of law to serve a public interest",
+      "parents": [
+        "Legal:Person"
+      ],
+      "children": [
+        "Legislative:Body"
+      ],
+      "disjoint_with": [
+        "Private:Legal_Person"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Public:Limited_Company",
+      "label": "PLC",
+      "description": "Similar to the US corporation, offers several advantages over trading as sole trader.",
+      "parents": [
+        "Company"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Publication:Date",
+      "label": "Publication Date",
+      "description": "The date when the normative document is published in the official journal designated as the source for making all such documents public and legal.",
+      "parents": [
+        "Static:Temporal_Entity",
+        "Moment"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Qualification",
+      "label": "Qualification",
+      "description": "A qualification expresses e.g. a judgment. The thing qualified by the qualification is comparable to something else.",
+      "parents": [
+        "Mental:Object"
+      ],
+      "children": [
+        "Norm"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Qualificatory:Expression",
+      "label": "Qualificatory Expression",
+      "description": "Ascribes a legal role to a person or an object (for example,  “x is a citizen”, “x is an intellectual work”, “x is a technical invention”);",
+      "parents": [
+        "Legal:Expression"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Qualified",
+      "label": "Qualified",
+      "description": "Something that is qualified by some qualification",
+      "parents": [],
+      "children": [
+        "Normatively:Qualified"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Ratification",
+      "label": "Ratification",
+      "description": "When an international treaty is ratified by local parliament in order to include it in the local legal system. The same thing happens when each local parliament ratifies bilateral or multilateral agreements.",
+      "parents": [
+        "Modification:of_System"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Reaction",
+      "label": "Reaction",
+      "description": "A reaction is an action that is (at least) performed by an agent that has observed some other action (this is an intensional view): Action <-> Reaction",
+      "parents": [
+        "Action"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Reason",
+      "label": "Reason",
+      "description": "Teleological counterpart of cause",
+      "parents": [
+        "Epistemic:Role"
+      ],
+      "children": [
+        "Argument"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Regulation",
+      "label": "Regulation",
+      "description": "A regulation bears one or more norms, all of which are uttered by some legislative body. It cannot bear expressions which are not uttered by a legislative body.",
+      "parents": [
+        "Legal:Document"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Relative:Place",
+      "label": "Relative Place",
+      "description": "A relative place is defined by some reference to some object/thing",
+      "parents": [
+        "Place"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Absolute:Place"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Relocation",
+      "label": "Relocation",
+      "description": "Moving some part of the text to some other place within the same document",
+      "parents": [
+        "Textual:Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Remaking",
+      "label": "Remaking",
+      "description": "When an act is completely rewritten in a new way but the topic remains the same.",
+      "parents": [
+        "Modification:of_System"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Renewal",
+      "label": "Renewal",
+      "description": "Class",
+      "parents": [
+        "In:Force_Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Repeal",
+      "label": "Repeal",
+      "description": "Removal of some part of text or the entire act from the legal system.",
+      "parents": [
+        "Textual:Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Resolution",
+      "label": "Resolution",
+      "description": "A resolution is a written motion adopted by a deliberative body. The substance of the resolution can be anything that can normally be proposed as a motion.",
+      "parents": [
+        "International:Agreement",
+        "Soft:Law"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Retroactivity",
+      "label": "Retroactivity",
+      "description": "When the efficacy or a partial efficacy starts before the entry into force of the document",
+      "parents": [
+        "Efficacy:Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Right",
+      "label": "Right",
+      "description": "A right is the legal or moral entitlement to do or refrain from doing something or to obtain or refrain from obtaining an action, thing or recogition in civil society.",
+      "parents": [
+        "Norm"
+      ],
+      "children": [
+        "Liability:Right",
+        "Liberty:Right",
+        "Obligative:Right",
+        "Permissive:Right"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Role",
+      "label": "Role",
+      "description": "A role is a specification of default behavior and accompanying expectations of the thing 'playing' the role. Similar to actors in a theater who play roles, but are not the roles. Example: student.",
+      "parents": [
+        "Subjective:Entity"
+      ],
+      "children": [
+        "Epistemic:Role",
+        "Function",
+        "Legal:Role",
+        "Social:Role"
+      ],
+      "disjoint_with": [
+        "Physical:Entity",
+        "Process",
+        "Agent"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Rule",
+      "label": "Rule",
+      "description": "An LKIF rule, based on swrl:Impl",
+      "parents": [
+        "Epistemic:Role"
+      ],
+      "children": [
+        "Argument",
+        "Valid:Rule"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Semantic:Annotation",
+      "label": "Semantic Annotation",
+      "description": "See ESTRELLA deliverable 3.2",
+      "parents": [
+        "Modification"
+      ],
+      "children": [
+        "Modification:of_Meaning",
+        "Modification:of_Scope",
+        "Modification:of_System"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Social:Legal_Role",
+      "label": "Social Legal Role",
+      "description": "A social legal role is played by some agent in the context of legal activities.",
+      "parents": [
+        "Legal:Role",
+        "Social:Role"
+      ],
+      "children": [
+        "Professional:Legal_Role"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Social:Role",
+      "label": "Social Role",
+      "description": "A social role is played by some agent in the context of social activities. The social role brings with it some expectation of 'default' behavior of the role-filler.",
+      "parents": [
+        "Role"
+      ],
+      "children": [
+        "Organisation:Role",
+        "Person:Role",
+        "Social:Legal_Role"
+      ],
+      "disjoint_with": [
+        "Function"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Society",
+      "label": "Society",
+      "description": "An organized group of people associated together for religious, benevolent, cultural, scientific, political, patriotic, or other purposes.",
+      "parents": [
+        "Private:Legal_Person"
+      ],
+      "children": [
+        "Co-operative"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Soft:Law",
+      "label": "Soft Law",
+      "description": "The term \"soft law\" refers to quasi-legal instruments which do not have any binding force, or whose binding force is somewhat \"weaker\" than the binding force of traditional law, often referred to as \"hard law\", in this context. The term \"soft law\" initially appeared in the area of international l...",
+      "parents": [
+        "Legal:Source"
+      ],
+      "children": [
+        "Code:of_Conduct",
+        "International:Arbitration",
+        "Non-binding:International_Agreement",
+        "Resolution"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Spatio:Temporal_Occurrence",
+      "label": "Spatio Temporal Occurrence",
+      "description": "An occurrence in space-time",
+      "parents": [
+        "Occurrence"
+      ],
+      "children": [
+        "Place",
+        "Temporal:Occurrence"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Speech:Act",
+      "label": "Speech Act",
+      "description": "A speech act (or illocutionary act) creates some propositional attitude which qualifies an expression (which by default is mediated through some medium). The actor of the speech act is the utterer of the atitude (NB cannot be expressed in OWL DL).",
+      "parents": [
+        "Creation"
+      ],
+      "children": [
+        "Legal:Speech_Act"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Start:Efficacy",
+      "label": "Start Efficacy",
+      "description": "Class",
+      "parents": [
+        "Efficacy:Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Start:in_Force",
+      "label": "Start in Force",
+      "description": "Class",
+      "parents": [
+        "In:Force_Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Statement:In_Writing",
+      "label": "Statement In Writing",
+      "description": "Not to be confused with the actual writing/document itself, which is the medium of the statement.",
+      "parents": [
+        "Communicated:Attitude"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Static:Temporal_Entity",
+      "label": "Static Temporal Entity",
+      "description": "A static temporal entity captures a single moment in the norm's life that is fixed over time.",
+      "parents": [
+        "Temporal:Occurrence"
+      ],
+      "children": [
+        "Delivery:Date",
+        "Enter:in_Force_Date",
+        "Publication:Date"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Statute",
+      "label": "Statute",
+      "description": "A statute bears one or more norms, all of which are uttered by some legal person. It cannot bear expressions which are uttered by a different kind of agent.",
+      "parents": [
+        "Legal:Document"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Strictly:Allowed",
+      "label": "Strictly Allowed",
+      "description": "Loose end.",
+      "parents": [
+        "Allowed"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Strictly:Disallowed",
+      "label": "Strictly Disallowed",
+      "description": "Loose end.",
+      "parents": [
+        "Disallowed"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Subjective:Entity",
+      "label": "Subjective Entity",
+      "description": "A subjective entity is ontologically subjective, i.e. its existence is relative to an observer, that attributes its properties to some other entity, given a context.",
+      "parents": [
+        "Mental:Entity"
+      ],
+      "children": [
+        "Role"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Substitution",
+      "label": "Substitution",
+      "description": "Substitution of a part or entire act or annex",
+      "parents": [
+        "Textual:Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Surprise",
+      "label": "Surprise",
+      "description": "A surprise is an observation that deviates from an expectation.",
+      "parents": [
+        "Observation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Suspension",
+      "label": "Suspension",
+      "description": "When a part of an act or some provisions are suspended in coming to be operative for a period or indefinately",
+      "parents": [
+        "Efficacy:Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Temporal:Modification",
+      "label": "Temporal Modification",
+      "description": "Modifies the efficacy or being in force of some norm",
+      "parents": [
+        "Modification"
+      ],
+      "children": [
+        "Efficacy:Modification",
+        "In:Force_Modification"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Temporal:Occurrence",
+      "label": "Temporal Occurrence",
+      "description": "A period of time, has a duration",
+      "parents": [
+        "Spatio:Temporal_Occurrence"
+      ],
+      "children": [
+        "Dynamic:Temporal_Entity",
+        "Interval",
+        "Moment",
+        "Static:Temporal_Entity"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Termination",
+      "label": "Termination",
+      "description": "The termination of a change.",
+      "parents": [
+        "Change"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Textual:Modification",
+      "label": "Textual Modification",
+      "description": "See ESTRELLA deliverable 3.2",
+      "parents": [
+        "Modification"
+      ],
+      "children": [
+        "Integration",
+        "Relocation",
+        "Repeal",
+        "Substitution"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Trade",
+      "label": "Trade",
+      "description": "A trade is an exchange of some things between two agents a and b. Consists of two actions A and B where a is the actor of action A and the recipient of action B, and vice versa. Usually these actions are performed concurrently, but these may also be done consequently. The ownership of the things ...",
+      "parents": [
+        "Transaction"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Transaction",
+      "label": "Transaction",
+      "description": "A transaction is an exchange or interaction between at least two agents a and b. Consists of two actions A and B where a is the actor of action A and the recipient of action B, and vice versa. Usually these actions are performed concurrently, but these may also be done consequently.",
+      "parents": [
+        "Collaborative:Plan"
+      ],
+      "children": [
+        "Trade"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Transposition",
+      "label": "Transposition",
+      "description": "Interpretation in context of the European Union",
+      "parents": [
+        "Modification:of_System"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Treaty",
+      "label": "Treaty",
+      "description": "A treaty is a binding agreement under international law entered into by actors in international law, namely states and international organizations. Treaties are called by several names: treaties, international agreements, protocols, covenants, conventions, exchanges of letters, exchanges of notes...",
+      "parents": [
+        "International:Agreement",
+        "Legal:Document"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Non-binding:International_Agreement"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Ultractivity",
+      "label": "Ultractivity",
+      "description": "Class",
+      "parents": [
+        "Efficacy:Modification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Unincorporated",
+      "label": "Unincorporated",
+      "description": "Class",
+      "parents": [
+        "Corporation"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Foundation",
+        "Incorporated"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Valid:Rule",
+      "label": "Valid Rule",
+      "description": "A valid LKIF rule",
+      "parents": [
+        "Rule"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Variation",
+      "label": "Variation",
+      "description": "Modification by paraphrasing",
+      "parents": [
+        "Modification:of_Meaning"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Whole",
+      "label": "Whole",
+      "description": "A whole has at least some part",
+      "parents": [
+        "Abstract:Entity"
+      ],
+      "children": [
+        "Composition"
+      ],
+      "disjoint_with": [
+        "Atom"
+      ],
+      "synonyms": []
+    }
+  ]
+}

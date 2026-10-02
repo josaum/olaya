@@ -116,11 +116,15 @@ fn main() {
     println!("{}", "=".repeat(72));
 
     let real_ontos = [
-        ("Master Universe (All)", "models/master_universe.arrow", "Credit default swap hedging acute disease supply chain incident"),
+        ("Master Universe 62k", "models/master_universe.arrow", "Credit default swap hedging acute disease supply chain incident"),
         ("MONDO Disease", "models/mondo.arrow", "Severe neurodegenerative lysosomal storage disorder with sphingomyelinase deficiency"),
         ("FIBO Financial", "models/fibo.arrow", "Credit default swap derivative contract hedging corporate bond default risk"),
+        ("NASA SWEET Earth", "models/sweet_earth.arrow", "Atmospheric pressure climate zone vortex fluid dynamics"),
+        ("WCO HS Codes Trade", "models/hs_codes.arrow", "Pure bred breeding horses live bovine animals"),
+        ("MITRE D3FEND Cyber", "models/d3fend.arrow", "Inbound traffic filtering packet inspection credential dump countermeasure"),
         ("GS1 Supply Chain", "models/gs1_full.arrow", "Refrigerated organic whole milk dairy beverage pasteurized cream"),
         ("Schema.org Web", "models/schemaorg.arrow", "High performance wireless noise cancelling bluetooth headphones with mic"),
+        ("LKIF Core Legal", "models/lkif_legal.arrow", "Legal person contractual obligation statutory liability"),
         ("W3C Reference Core", "models/w3c_core.arrow", "Data provenance activity generating derivative dataset catalog record with historical agent attribution"),
     ];
 
