@@ -256,6 +256,11 @@ impl ArrowCandidateRouter {
         &self.parent_rows[row]
     }
 
+    /// Mutually disjoint rows of `row`.
+    pub fn disjoint_rows(&self, row: usize) -> &[usize] {
+        &self.disjoint_rows[row]
+    }
+
     /// Pre-tokenized text fields of `row`.
     pub fn row_tokens(&self, row: usize) -> &RowTokens {
         &self.row_tokens[row]
