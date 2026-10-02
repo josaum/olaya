@@ -2,11 +2,14 @@
 
 pub mod arrow_schema;
 pub mod axioms;
+pub mod distilled_neural;
 pub mod engine;
 pub mod router;
 
 #[cfg(feature = "onnx")]
 pub mod neural;
+
+pub use distilled_neural::{fnv1a_hash, DistilledNeuralScorer};
 
 pub use arrow_schema::{
     decision_output_schema, extract_curie, ontology_schema, read_ontology_ipc, write_ontology_ipc,
