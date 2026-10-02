@@ -5,6 +5,7 @@ from __future__ import annotations
 import numpy as np
 
 from olaya.ontology import Ontology
+from olaya.owl2_rl import OWL2RLClosure, OWL2RLReasoner
 
 # Disjointness threshold shared by all runtimes (see spec/AXIOMS.md).
 DISJOINT_THRESHOLD = 0.6
@@ -240,3 +241,132 @@ def calibrate_and_project_distribution(
     conf = normalized_entropy_confidence(prob_values)
 
     return prob_map, conf
+
+
+def enforce_owl2_rl_axioms(
+    probs: dict[str, float],
+    ontology: Ontology,
+    threshold: float = DISJOINT_THRESHOLD,
+    closure: OWL2RLClosure | None = None,
+) -> dict[str, float]:
+    """Project a probability distribution onto the full deductive closure of OWL 2 RL.
+
+    Guarantees:
+    1. Unsatisfiability: Any class C <= bot has P(C) = 0.
+    2. Equivalence: For all C1 == C2, P(C1) = P(C2) (isomorphic equivalence).
+    3. Monotonicity: For all C1 <= C2 in the transitive closure, P(C2) >= P(C1).
+    4. Intersection bounds: For C == (C1 and ... and Cn), P(C) <= min_i P(Ci).
+    5. Disjointness exclusion: For all disjoint pairs (C1, C2), if max(P(C1), P(C2)) >= threshold,
+       the lesser side (and its subclasses) is zeroed.
+    """
+    if closure is None:
+        closure = OWL2RLReasoner(ontology).compute_closure()
+
+    adjusted = dict(probs)
+
+    # 1. Unsatisfiable classes (C <= bot) get 0
+    for unsat in closure.unsatisfiable_classes:
+        if unsat in adjusted:
+            adjusted[unsat] = 0.0
+
+    # 2. Equivalence: Harmonize equivalent classes (P(A) = P(B))
+    for c1, c2 in closure.equivalences:
+        if c1 in adjusted and c2 in adjusted:
+            avg_p = 0.5 * (adjusted[c1] + adjusted[c2])
+            adjusted[c1] = avg_p
+            adjusted[c2] = avg_p
+
+    # 3. Transitive SubClassOf Monotonicity
+    changed = True
+    iterations = 0
+    max_iterations = len(adjusted) * 2
+    while changed and iterations < max_iterations:
+        changed = False
+        iterations += 1
+        for child, parent in closure.subclasses:
+            if child in adjusted and parent in adjusted:
+                if adjusted[child] > adjusted[parent]:
+                    adjusted[parent] = adjusted[child]
+                    changed = True
+
+    # 4. Intersection Fréchet bounds (P(C) <= min_i P(Ci))
+    for target, part_list in closure.intersections.items():
+        if target in adjusted:
+            for operands in part_list:
+                present_ops = [adjusted[op] for op in operands if op in adjusted]
+                if present_ops:
+                    max_allowed = min(present_ops)
+                    if adjusted[target] > max_allowed:
+                        adjusted[target] = max_allowed
+
+    # 5. Disjointness Mutual Exclusion
+    curie_list = list(adjusted.keys())
+    for i, a in enumerate(curie_list):
+        for b in curie_list[i + 1:]:
+            if closure.are_disjoint(a, b):
+                p_a, p_b = adjusted[a], adjusted[b]
+                if max(p_a, p_b) >= threshold:
+                    loser = b if p_a >= p_b else a
+                    adjusted[loser] = 0.0
+                    for desc in ontology.get_descendants(loser):
+                        if desc in adjusted:
+                            adjusted[desc] = 0.0
+
+    return adjusted
+
+
+def verify_owl2_rl_axioms(
+    probs: dict[str, float],
+    ontology: Ontology,
+    threshold: float = DISJOINT_THRESHOLD,
+    tol: float = 1e-5,
+    closure: OWL2RLClosure | None = None,
+) -> tuple[bool, list[str]]:
+    """Formally verify that a probability distribution satisfies all OWL 2 RL axioms."""
+    if closure is None:
+        closure = OWL2RLReasoner(ontology).compute_closure()
+
+    violations = []
+
+    # 1. Check Unsatisfiability
+    for unsat in closure.unsatisfiable_classes:
+        if unsat in probs and probs[unsat] > tol:
+            violations.append(f"Unsatisfiable class {unsat} has non-zero probability {probs[unsat]:.4f}")
+
+    # 2. Check Equivalence (P(A) == P(B))
+    for c1, c2 in closure.equivalences:
+        if c1 in probs and c2 in probs:
+            if abs(probs[c1] - probs[c2]) > tol:
+                violations.append(f"Equivalence violation: P({c1})={probs[c1]:.4f} != P({c2})={probs[c2]:.4f}")
+
+    # 3. Check SubClassOf Monotonicity (P(parent) >= P(child))
+    for child, parent in closure.subclasses:
+        if child in probs and parent in probs:
+            if probs[parent] < probs[child] - tol:
+                violations.append(
+                    f"SubClassOf monotonicity violation: P({parent})={probs[parent]:.4f} < P({child})={probs[child]:.4f}"
+                )
+
+    # 4. Check Intersection Bounds (P(C) <= min_i P(Ci))
+    for target, part_list in closure.intersections.items():
+        if target in probs:
+            for operands in part_list:
+                for op in operands:
+                    if op in probs and probs[target] > probs[op] + tol:
+                        violations.append(
+                            f"Intersection bound violation: P({target})={probs[target]:.4f} > P({op})={probs[op]:.4f}"
+                        )
+
+    # 5. Check Disjointness Mutual Exclusion
+    curie_list = list(probs.keys())
+    for i, a in enumerate(curie_list):
+        for b in curie_list[i + 1:]:
+            if closure.are_disjoint(a, b):
+                p_a, p_b = probs[a], probs[b]
+                if max(p_a, p_b) >= threshold and min(p_a, p_b) > tol:
+                    violations.append(
+                        f"Disjointness collision: max(P({a}), P({b})) >= {threshold} but both are active ({p_a:.4f}, {p_b:.4f})"
+                    )
+
+    return len(violations) == 0, violations
+
