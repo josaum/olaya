@@ -2088,9 +2088,14 @@
       transform: rotate(180deg);
     }
 
-    details[open] .faq-item {
+    details.faq-item[open] {
       border-color: var(--accent-blue);
       box-shadow: 0 4px 20px var(--accent-blue-glow);
+    }
+
+    [data-theme="dark"] details.faq-item[open] {
+      border-color: rgba(56, 139, 253, 0.6);
+      box-shadow: 0 4px 20px rgba(56, 139, 253, 0.15);
     }
 
     .faq-content {
@@ -2200,7 +2205,13 @@
       transform: translateY(-1px);
     }
 
-    /* Mobile Responsive */
+    /* Mobile & Tablet Responsive */
+    @media (max-width: 1200px) and (min-width: 901px) {
+      .nav-links { gap: 1.1rem; }
+      .nav-link { font-size: 0.82rem; }
+      .nav-link.secondary-link { display: none; }
+    }
+
     @media (max-width: 900px) {
       .metric-strip { grid-template-columns: repeat(2, 1fr); }
       .duel-grid { grid-template-columns: 1fr; }
@@ -2225,8 +2236,28 @@
       .security-grid { grid-template-columns: 1fr; }
       .quick-grid { grid-template-columns: 1fr; }
       .sticky-bar-left { display: none; }
-      .sticky-conversion-bar { justify-content: center; }
+      .sticky-conversion-bar {
+        width: calc(100% - 24px);
+        bottom: 12px;
+        padding: 0.4rem 0.6rem;
+        justify-content: center;
+      }
+      .sticky-bar-right {
+        width: 100%;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .btn-sticky-primary, .btn-sticky-secondary {
+        font-size: 0.78rem;
+        padding: 0.4rem 0.85rem;
+        white-space: nowrap;
+      }
       .hero-friction-row { gap: 0.75rem; }
+    }
+
+    @media (max-width: 380px) {
+      .btn-sticky-secondary { display: none; }
+      .btn-sticky-primary { width: 100%; text-align: center; }
     }
   </style>
 </head>
@@ -2243,14 +2274,14 @@
     <div class="nav-links">
       <a href="#demo" class="nav-link">Live Demo</a>
       <a href="#solutions" class="nav-link">Solutions</a>
-      <a href="#positioning" class="nav-link">What Leio Is</a>
-      <a href="#benchmarks" class="nav-link">Benchmarks</a>
-      <a href="#calculator" class="nav-link">ROI Calculator</a>
+      <a href="#positioning" class="nav-link secondary-link">What Leio Is</a>
+      <a href="#benchmarks" class="nav-link secondary-link">Benchmarks</a>
+      <a href="#calculator" class="nav-link secondary-link">ROI Calculator</a>
       <a href="#pricing" class="nav-link">Pricing</a>
       <a href="#faq" class="nav-link">FAQ</a>
       <a href="./playground.html" class="nav-link">Playground</a>
-      <a href="./article.html" class="nav-link">Whitepaper</a>
-      <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener" class="nav-link">GitHub</a>
+      <a href="./article.html" class="nav-link secondary-link">Whitepaper</a>
+      <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener" class="nav-link secondary-link">GitHub</a>
     </div>
     <div class="nav-actions">
       <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
@@ -3745,22 +3776,48 @@
       }
     }
 
-    function copyJsonOutput(btn) {
+    async function writeClipboard(text) {
+      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          return true;
+        } catch (e) {}
+      }
+      if (typeof document !== 'undefined') {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          ta.style.top = '-9999px';
+          ta.setAttribute('readonly', '');
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          if (ok) return true;
+        } catch (e) {}
+      }
+      return false;
+    }
+
+    async function copyJsonOutput(btn) {
       const targetBtn = btn || (typeof window !== 'undefined' && window.event ? window.event.target : null);
       const outputEl = document.getElementById('jsonOutput');
       const jsonText = outputEl ? outputEl.textContent : '';
-      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(jsonText).then(() => {
-          if (targetBtn) {
-            const orig = targetBtn.textContent;
-            targetBtn.textContent = 'Copied!';
-            targetBtn.style.color = '#03aa5c';
-            setTimeout(() => {
-              targetBtn.textContent = orig;
-              targetBtn.style.color = '';
-            }, 1500);
-          }
-        }).catch(() => {});
+      if (!jsonText) return;
+      const ok = await writeClipboard(jsonText);
+      if (ok && targetBtn) {
+        if (!targetBtn.dataset.origText) targetBtn.dataset.origText = targetBtn.textContent;
+        targetBtn.textContent = '✓ Copied!';
+        targetBtn.style.color = '#03aa5c';
+        if (targetBtn._copyTimeout) clearTimeout(targetBtn._copyTimeout);
+        targetBtn._copyTimeout = setTimeout(() => {
+          targetBtn.textContent = targetBtn.dataset.origText || 'Copy JSON';
+          targetBtn.style.color = '';
+          delete targetBtn.dataset.origText;
+        }, 1800);
       }
     }
 
@@ -3972,18 +4029,20 @@
 
     async function copySnippet(text, el) {
       try {
-        if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(text);
-          const hint = el.querySelector('span:last-child');
-          if (hint) {
-            const oldText = hint.textContent;
-            hint.textContent = '✓ Copied';
-            hint.style.color = '#03aa5c';
-            setTimeout(() => {
-              hint.textContent = oldText;
-              hint.style.color = '';
-            }, 1800);
-          }
+        const ok = await writeClipboard(text);
+        if (ok && el) {
+          const hint = el.querySelector('.quick-copy-hint') || el.querySelector('.copy-hint') || el.querySelector('span:last-child') || el;
+          if (!hint.dataset.origText) hint.dataset.origText = hint.textContent;
+          hint.textContent = '✓ Copied';
+          hint.style.color = '#03aa5c';
+          if (el.style) el.style.borderColor = '#03aa5c';
+          if (hint._copyTimeout) clearTimeout(hint._copyTimeout);
+          hint._copyTimeout = setTimeout(() => {
+            hint.textContent = hint.dataset.origText;
+            hint.style.color = '';
+            if (el.style) el.style.borderColor = '';
+            delete hint.dataset.origText;
+          }, 1800);
         }
       } catch(e) {}
     }
@@ -4024,62 +4083,85 @@
         `Sent via Leio Enterprise Portal`
       );
 
-      window.location.href = `mailto:dionisio.ca@gmail.com?subject=${subject}&body=${body}`;
-      closeEnterpriseModal();
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.textContent = '✓ Preparing Review Request...';
+        submitBtn.style.background = '#03aa5c';
+      }
+
+      setTimeout(() => {
+        window.location.href = `mailto:dionisio.ca@gmail.com?subject=${subject}&body=${body}`;
+        setTimeout(() => {
+          closeEnterpriseModal();
+          if (submitBtn) {
+            submitBtn.textContent = 'Submit Enterprise Request →';
+            submitBtn.style.background = '';
+          }
+        }, 1000);
+      }, 300);
     }
 
     async function copyCurlExample(btn) {
       const textarea = document.getElementById('stateInput');
       const text = textarea ? textarea.value.trim() : "Grade A pasteurized whole milk 1gal jug";
       const escaped = (text || "Grade A pasteurized whole milk 1gal jug").replace(/"/g, '\\"');
-      const curlCmd = `curl -X POST https://public-nine-jade-58.vercel.app/api/systemone \\\n  -H "Content-Type: application/json" \\\n  -d '{"observation": "${escaped}"}'`;
-      try {
-        if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(curlCmd);
-          if (btn) {
-            const orig = btn.textContent;
-            btn.textContent = '✓ Copied cURL!';
-            btn.style.color = '#03aa5c';
-            setTimeout(() => {
-              btn.textContent = orig;
-              btn.style.color = '';
-            }, 1800);
-          }
-        }
-      } catch(e) {}
+      const host = (typeof window !== 'undefined' && window.location.origin && window.location.origin.startsWith('http'))
+        ? window.location.origin
+        : 'https://public-nine-jade-58.vercel.app';
+      const curlCmd = `curl -X POST ${host}/api/systemone \\\n  -H "Content-Type: application/json" \\\n  -d '{"observation": "${escaped}"}'`;
+      const ok = await writeClipboard(curlCmd);
+      if (ok && btn) {
+        if (!btn.dataset.origText) btn.dataset.origText = btn.textContent;
+        btn.textContent = '✓ Copied cURL!';
+        btn.style.color = '#03aa5c';
+        if (btn._copyTimeout) clearTimeout(btn._copyTimeout);
+        btn._copyTimeout = setTimeout(() => {
+          btn.textContent = btn.dataset.origText;
+          btn.style.color = '';
+          delete btn.dataset.origText;
+        }, 1800);
+      }
     }
 
     async function copyPythonExample(btn) {
       const textarea = document.getElementById('stateInput');
       const text = textarea ? textarea.value.trim() : "Grade A pasteurized whole milk 1gal jug";
       const escaped = (text || "Grade A pasteurized whole milk 1gal jug").replace(/"/g, '\\"');
-      const pyCode = `import requests\n\nresp = requests.post(\n    "https://public-nine-jade-58.vercel.app/api/systemone",\n    json={"observation": "${escaped}"}\n)\nprint(resp.json())`;
-      try {
-        if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(pyCode);
-          if (btn) {
-            const orig = btn.textContent;
-            btn.textContent = '✓ Copied Python!';
-            btn.style.color = '#03aa5c';
-            setTimeout(() => {
-              btn.textContent = orig;
-              btn.style.color = '';
-            }, 1800);
-          }
-        }
-      } catch(e) {}
+      const host = (typeof window !== 'undefined' && window.location.origin && window.location.origin.startsWith('http'))
+        ? window.location.origin
+        : 'https://public-nine-jade-58.vercel.app';
+      const pyCode = `import requests\n\nresp = requests.post(\n    "${host}/api/systemone",\n    json={"observation": "${escaped}"}\n)\nprint(resp.json())`;
+      const ok = await writeClipboard(pyCode);
+      if (ok && btn) {
+        if (!btn.dataset.origText) btn.dataset.origText = btn.textContent;
+        btn.textContent = '✓ Copied Python!';
+        btn.style.color = '#03aa5c';
+        if (btn._copyTimeout) clearTimeout(btn._copyTimeout);
+        btn._copyTimeout = setTimeout(() => {
+          btn.textContent = btn.dataset.origText;
+          btn.style.color = '';
+          delete btn.dataset.origText;
+        }, 1800);
+      }
     }
 
     function initStickyBar() {
       const stickyBar = document.getElementById('stickyConversionBar');
       if (!stickyBar) return;
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 550) {
+      const updateSticky = () => {
+        const scrollY = window.scrollY || window.pageYOffset || 0;
+        const totalHeight = document.documentElement.scrollHeight || 0;
+        const viewportHeight = window.innerHeight || 0;
+        const nearBottom = (scrollY + viewportHeight) >= (totalHeight - 340);
+        if (scrollY > 500 && !nearBottom) {
           stickyBar.classList.add('visible');
         } else {
           stickyBar.classList.remove('visible');
         }
-      }, { passive: true });
+      };
+      window.addEventListener('scroll', updateSticky, { passive: true });
+      window.addEventListener('resize', updateSticky, { passive: true });
+      updateSticky();
     }
 
     // ── Window Bindings ──────────────────────────────────────────────────────
