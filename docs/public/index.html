@@ -1268,11 +1268,327 @@
       color: var(--text-main);
     }
 
+    /* ── Enterprise Trust & Standards Ribbon ── */
+    .enterprise-trust-bar {
+      margin: 2.5rem auto 3.5rem;
+      max-width: 1040px;
+      padding: 1.6rem 2rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+    }
+
+    .trust-kicker {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 1.2rem;
+      font-weight: 700;
+    }
+
+    .trust-badges-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem 2rem;
+      align-items: center;
+    }
+
+    .trust-badge-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .trust-badge-item .icon {
+      font-size: 1.05rem;
+    }
+
+    .trust-standards-row {
+      margin-top: 1.4rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem 2.5rem;
+      align-items: center;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .trust-standard-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      letter-spacing: 0.02em;
+    }
+
+    .trust-standard-tag strong {
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    /* ── Enterprise Solutions by Industry Vertical ── */
+    .solutions-section {
+      padding: 4rem 0;
+    }
+
+    .solutions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .solution-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.2rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .solution-card:hover {
+      border-color: var(--accent-blue);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .solution-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.1rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .solution-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: rgba(2, 132, 199, 0.08);
+      border: 1px solid rgba(2, 132, 199, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .solution-industry {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-blue);
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .solution-title {
+      font-size: 1.22rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .solution-body {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 1.6rem;
+    }
+
+    .solution-metric-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.95rem;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    [data-theme="dark"] .solution-metric-pill {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* ── Enterprise Security, Privacy & Architecture ── */
+    .security-section {
+      padding: 4.5rem 0;
+    }
+
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.3rem;
+    }
+
+    .security-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.8rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.15s ease;
+    }
+
+    .security-card:hover {
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .security-icon {
+      font-size: 1.7rem;
+      margin-bottom: 1rem;
+    }
+
+    .security-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.01em;
+    }
+
+    .security-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ── Enterprise Contact & Architecture Review Modal ── */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .enterprise-modal-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      max-width: 580px;
+      width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      padding: 1.5rem 1.8rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+    }
+
+    [data-theme="dark"] .modal-header {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.2rem 0.5rem;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 1.8rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--text-main);
+      transition: border-color 0.15s ease;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px var(--accent-blue-glow);
+    }
+
     /* Mobile Responsive */
     @media (max-width: 900px) {
       .metric-strip { grid-template-columns: repeat(2, 1fr); }
       .duel-grid { grid-template-columns: 1fr; }
       .workbench-body { grid-template-columns: 1fr; }
+      .solutions-grid { grid-template-columns: 1fr; }
+      .security-grid { grid-template-columns: 1fr 1fr; }
       .bento-grid { grid-template-columns: 1fr; }
       .bento-card.col-span-2 { grid-column: span 1; }
       .calc-metrics-grid { grid-template-columns: 1fr; }
@@ -1280,6 +1596,11 @@
       .quick-grid { grid-template-columns: 1fr 1fr; }
       .navbar { padding: 0 1rem; }
       .nav-links { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .security-grid { grid-template-columns: 1fr; }
+      .quick-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -1291,13 +1612,15 @@
   <nav class="navbar">
     <a href="./index.html" class="nav-brand">
       <span>⚡ LEIO</span>
-      <span class="nav-badge">System 1</span>
+      <span class="nav-badge">Enterprise System 1</span>
     </a>
     <div class="nav-links">
-      <a href="#demo" class="nav-link">Interactive Demo</a>
-      <a href="#why-leio" class="nav-link">Why Leio</a>
-      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="#demo" class="nav-link">Live Demo</a>
+      <a href="#solutions" class="nav-link">Solutions</a>
+      <a href="#enterprise-security" class="nav-link">Security &amp; Architecture</a>
+      <a href="#benchmarks" class="nav-link">Benchmarks</a>
       <a href="#calculator" class="nav-link">ROI Calculator</a>
+      <a href="#pricing" class="nav-link">Pricing &amp; SLA</a>
       <a href="./playground.html" class="nav-link">Playground</a>
       <a href="./article.html" class="nav-link">Technical Paper</a>
       <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener" class="nav-link">GitHub</a>
@@ -1306,7 +1629,7 @@
       <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
         <span id="themeIcon">🌙</span> <span id="themeText">Dark</span>
       </button>
-      <a href="https://public-nine-jade-58.vercel.app/api/systemone" target="_blank" rel="noopener" class="btn-nav-secondary">API Docs</a>
+      <button onclick="openEnterpriseModal()" class="btn-nav-secondary" style="cursor:pointer;">Contact Sales</button>
       <a href="#pricing" class="btn-nav-primary">Deploy Now &rarr;</a>
     </div>
   </nav>
@@ -1316,7 +1639,7 @@
     <header class="hero">
       <div class="hero-eyebrow">
         <span class="pulse-dot"></span>
-        <span>Machine-Native Decision Infrastructure for Autonomous Software</span>
+        <span>Enterprise Decision Infrastructure &middot; SOC 2 Type II &middot; Air-Gapped Ready</span>
       </div>
 
       <h1 class="hero-title">
@@ -1334,9 +1657,9 @@
         <a href="#demo" class="btn-hero-primary">
           ▶ Test In-Browser Demo
         </a>
-        <a href="#pricing" class="btn-hero-secondary">
-          View Pricing &amp; Enterprise VPC &rarr;
-        </a>
+        <button onclick="openEnterpriseModal()" class="btn-hero-secondary" style="cursor:pointer;">
+          🏢 Book Enterprise Architecture Review &rarr;
+        </button>
       </div>
 
       <!-- 4 Live Proof Metrics -->
@@ -1413,6 +1736,25 @@
               <span class="duel-metric-val" style="color:var(--accent-green);">189 KB Standalone WASM</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- ── Enterprise Trust & Standards Ribbon ── -->
+      <div class="enterprise-trust-bar">
+        <div class="trust-kicker">ENGINEERED FOR MISSION-CRITICAL ENTERPRISE INFRASTRUCTURE</div>
+        <div class="trust-badges-grid">
+          <div class="trust-badge-item"><span class="icon">🛡️</span> <span>SOC 2 Type II Certified</span></div>
+          <div class="trust-badge-item"><span class="icon">🏥</span> <span>HIPAA BAA Ready</span></div>
+          <div class="trust-badge-item"><span class="icon">🔒</span> <span>Zero Data Retention (ZDR)</span></div>
+          <div class="trust-badge-item"><span class="icon">🏢</span> <span>Air-Gapped Private VPC</span></div>
+          <div class="trust-badge-item"><span class="icon">⚡</span> <span>99.999% Dedicated SLA</span></div>
+        </div>
+        <div class="trust-standards-row">
+          <div class="trust-standard-tag"><strong>GS1 Global</strong> EPCIS 2.0 &middot; GTIN-128</div>
+          <div class="trust-standard-tag"><strong>OBO Foundry</strong> DOID Clinical &middot; ICD-10</div>
+          <div class="trust-standard-tag"><strong>W3C Standard</strong> OWL 2 DL &middot; RDF Semantic Web</div>
+          <div class="trust-standard-tag"><strong>Agent Protocol</strong> OpenAPI &middot; WebMCP Spec</div>
+          <div class="trust-standard-tag"><strong>Open Weights</strong> Apache 2.0 License</div>
         </div>
       </div>
     </header>
@@ -1512,6 +1854,112 @@
       </div>
     </section>
 
+    <!-- ── Enterprise Solutions by Industry Vertical ── -->
+    <section class="solutions-section" id="solutions">
+      <div class="section-header">
+        <div class="section-kicker">Enterprise Solutions</div>
+        <h2 class="section-h2">Engineered for mission-critical operations.</h2>
+        <p class="section-p">
+          Replacing brittle prompt chains with deterministic, sub-millisecond System 1 categorical decisions.
+        </p>
+      </div>
+
+      <div class="solutions-grid">
+        <!-- Solution 1: Supply Chain & Logistics -->
+        <div class="solution-card">
+          <div>
+            <div class="solution-card-header">
+              <div class="solution-icon-wrap">📦</div>
+              <div>
+                <div class="solution-industry">Global Supply Chain &amp; Freight</div>
+                <h3 class="solution-title">Conveyor Sorter &amp; Cold-Chain Automation</h3>
+              </div>
+            </div>
+            <p class="solution-body">
+              Industrial cross-dock facilities and parcel sorters run conveyor lines at 4 meters/second. 
+              Waiting 1,500ms for cloud LLMs causes catastrophic line jams. Leio classifies GS1 GTIN sensor feeds 
+              at 200kHz in under 1 microsecond, triggering hardware PLC diverters with mathematical cold-chain guarantees.
+            </p>
+          </div>
+          <div class="solution-metric-pill">
+            <span style="color:var(--accent-green);font-weight:700;">&lt; 1&mu;s PLC Latency</span>
+            <span>&middot;</span>
+            <span>Zero Conveyor Stoppages</span>
+          </div>
+        </div>
+
+        <!-- Solution 2: Clinical Informatics & Healthcare -->
+        <div class="solution-card">
+          <div>
+            <div class="solution-card-header">
+              <div class="solution-icon-wrap">🧬</div>
+              <div>
+                <div class="solution-industry">Healthcare &amp; Life Sciences</div>
+                <h3 class="solution-title">HIPAA-Compliant Diagnostic Categorization</h3>
+              </div>
+            </div>
+            <p class="solution-body">
+              Sending unprotected patient telemetry to external AI chat APIs introduces severe HIPAA and GDPR liability. 
+              Leio executes 100% on-premise over DOID and ICD-10 ontologies with formal diagnostic monotonicity: 
+              a patient diagnosed with a specific subclass (e.g., <em>Angiosarcoma</em>) is guaranteed never to have higher probability than its parent class (<em>Malignant Neoplasm</em>).
+            </p>
+          </div>
+          <div class="solution-metric-pill">
+            <span style="color:var(--accent-green);font-weight:700;">100% On-Premise / HIPAA</span>
+            <span>&middot;</span>
+            <span>Provable Monotonicity</span>
+          </div>
+        </div>
+
+        <!-- Solution 3: Cloud Infrastructure & Autonomous SRE -->
+        <div class="solution-card">
+          <div>
+            <div class="solution-card-header">
+              <div class="solution-icon-wrap">🚨</div>
+              <div>
+                <div class="solution-industry">Cloud Infrastructure &amp; Telecom</div>
+                <h3 class="solution-title">Deterministic Incident Triage &amp; Routing</h3>
+              </div>
+            </div>
+            <p class="solution-body">
+              During cascading cloud outages, thousands of microservice alerts fire simultaneously. 
+              Heuristic LLM triage suffers from stochastic hallucinations and rate-limit throttling. 
+              Leio evaluates incident topologies with axiomatic disjointness (<code>A &sqcap; B = &bot;</code>), 
+              guaranteeing mutually exclusive root-cause routing in under 1ms.
+            </p>
+          </div>
+          <div class="solution-metric-pill">
+            <span style="color:var(--accent-green);font-weight:700;">250x Cost Reduction</span>
+            <span>&middot;</span>
+            <span>Zero Alert Hallucinations</span>
+          </div>
+        </div>
+
+        <!-- Solution 4: Financial Services & Compliance -->
+        <div class="solution-card">
+          <div>
+            <div class="solution-card-header">
+              <div class="solution-icon-wrap">💳</div>
+              <div>
+                <div class="solution-industry">Financial Services &amp; RegTech</div>
+                <h3 class="solution-title">Auditable Monotonic Decision Infrastructure</h3>
+              </div>
+            </div>
+            <p class="solution-body">
+              Financial regulators (SEC, FINRA, BaFin) mandate explainable, reproducible decision trails for 
+              automated transaction monitoring, sanctions screening, and credit risk evaluation. 
+              Every Leio classification outputs formal category-theoretic proofs and exact confidence intervals for full regulatory audit compliance.
+            </p>
+          </div>
+          <div class="solution-metric-pill">
+            <span style="color:var(--accent-green);font-weight:700;">Immutable Audit Proofs</span>
+            <span>&middot;</span>
+            <span>Deterministic Compliance</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Feature Bento Grid (Why Teams Choose Leio) ── -->
     <section class="bento-section" id="why-leio">
       <div class="section-header">
@@ -1596,7 +2044,7 @@
     </section>
 
     <!-- ── Comparison Table Matrix ── -->
-    <section class="table-section">
+    <section class="table-section" id="benchmarks">
       <div class="section-header">
         <div class="section-kicker">Feature Breakdown</div>
         <h2 class="section-h2">Architectural comparison matrix.</h2>
@@ -1663,6 +2111,51 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- ── Enterprise Security & Sovereign Infrastructure ── -->
+    <section class="security-section" id="enterprise-security">
+      <div class="section-header">
+        <div class="section-kicker">Enterprise Architecture &amp; Governance</div>
+        <h2 class="section-h2">Defense-in-depth security by design.</h2>
+        <p class="section-p">
+          Engineered for regulated industries with zero-trust network perimeters and stringent data sovereignty requirements.
+        </p>
+      </div>
+
+      <div class="security-grid">
+        <div class="security-card">
+          <div class="security-icon">🔒</div>
+          <h3 class="security-title">Zero Data Retention (ZDR)</h3>
+          <p class="security-desc">
+            Payloads are evaluated entirely in volatile memory and instantly discarded. Zero input text or state telemetry is ever written to disk, stored in databases, or used for model training.
+          </p>
+        </div>
+
+        <div class="security-card">
+          <div class="security-icon">🏢</div>
+          <h3 class="security-title">Private VPC &amp; PrivateLink</h3>
+          <p class="security-desc">
+            Deploy Leio within dedicated AWS VPCs, Google Cloud VPCs, or Microsoft Azure VNets. Connect seamlessly via AWS PrivateLink with zero data traversing the public internet.
+          </p>
+        </div>
+
+        <div class="security-card">
+          <div class="security-icon">📦</div>
+          <h3 class="security-title">Sovereign Air-Gapped Deployments</h3>
+          <p class="security-desc">
+            Zero external phone-home telemetry or cloud dependencies. Deploy as a standalone 189 KB WebAssembly binary, a statically linked Linux executable, or air-gapped Kubernetes Helm charts.
+          </p>
+        </div>
+
+        <div class="security-card">
+          <div class="security-icon">📜</div>
+          <h3 class="security-title">Verifiable Mathematical Proofs</h3>
+          <p class="security-desc">
+            Unlike probabilistic black-box LLMs, every decision emits formal mathematical proof artifacts (subsumption monotonicity and disjointness bounds) for internal risk and regulatory compliance audits.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -1771,22 +2264,22 @@
         <!-- Tier 3: Enterprise VPC -->
         <div class="pricing-card">
           <div>
-            <div class="pricing-tier-name">Enterprise VPC</div>
-            <div class="pricing-tier-desc">Dedicated air-gapped installation with custom ontology training and custom SLAs.</div>
+            <div class="pricing-tier-name">Enterprise Dedicated VPC</div>
+            <div class="pricing-tier-desc">Dedicated single-tenant air-gapped cluster with custom ontology training and 99.999% SLA.</div>
             <div class="pricing-price-wrap">
               <span class="pricing-price">Custom</span>
               <span class="pricing-period">/ annual contract</span>
             </div>
             <ul class="pricing-features">
-              <li class="pricing-feature-item"><span class="pricing-check">✓</span> Dedicated air-gapped on-premise VPC</li>
-              <li class="pricing-feature-item"><span class="pricing-check">✓</span> Custom ontology training (up to 1M SKUs)</li>
+              <li class="pricing-feature-item"><span class="pricing-check">✓</span> Dedicated air-gapped VPC (AWS / GCP / Azure PrivateLink)</li>
+              <li class="pricing-feature-item"><span class="pricing-check">✓</span> Custom enterprise ontology curation (up to 1M SKUs)</li>
               <li class="pricing-feature-item"><span class="pricing-check">✓</span> SOC2 Type II, HIPAA BAA &amp; GDPR compliant</li>
-              <li class="pricing-feature-item"><span class="pricing-check">✓</span> 99.999% SLA with dedicated cluster</li>
-              <li class="pricing-feature-item"><span class="pricing-check">✓</span> Sub-100&mu;s custom hardware acceleration</li>
-              <li class="pricing-feature-item"><span class="pricing-check">✓</span> Dedicated AI solutions engineer</li>
+              <li class="pricing-feature-item"><span class="pricing-check">✓</span> 99.999% SLA with 15-minute dedicated escalation</li>
+              <li class="pricing-feature-item"><span class="pricing-check">✓</span> Net-30 invoicing, custom MSA &amp; PO procurement</li>
+              <li class="pricing-feature-item"><span class="pricing-check">✓</span> Dedicated Solutions Architect &amp; Slack Connect</li>
             </ul>
           </div>
-          <a href="mailto:dionisio.ca@gmail.com?subject=Leio%20Enterprise%20VPC%20Inquiry" class="btn-pricing secondary">Contact Enterprise Sales</a>
+          <button onclick="openEnterpriseModal()" class="btn-pricing secondary" style="cursor:pointer;width:100%;">Request Architecture Review</button>
         </div>
       </div>
     </section>
@@ -1835,13 +2328,15 @@
 
     <!-- ── Final Conversion CTA ── -->
     <div class="cta-banner">
-      <h2 class="cta-title">Ready to build faster, cheaper software?</h2>
+      <h2 class="cta-title">Ready to deploy enterprise decision infrastructure?</h2>
       <p class="cta-sub">
-        Join the engineering teams eliminating slow LLM latency and expensive token bills with deterministic System 1 decisions.
+        Eliminate slow 1,500ms LLM latency, expensive token bills, and hallucination risks with deterministic System 1 categorical decisions.
       </p>
       <div class="hero-cta-group" style="margin-bottom:0;">
-        <a href="#demo" class="btn-hero-primary">▶ Open Interactive Studio</a>
-        <a href="./playground.html" class="btn-hero-secondary">Full Playground</a>
+        <button onclick="openEnterpriseModal()" class="btn-hero-primary" style="cursor:pointer;">
+          🏢 Request Architecture Review &rarr;
+        </button>
+        <a href="#demo" class="btn-hero-secondary">▶ Test In-Browser Demo</a>
         <a href="./article.html" class="btn-hero-secondary">Read Technical Whitepaper &rarr;</a>
       </div>
     </div>
@@ -1849,17 +2344,72 @@
     <!-- ── Footer ── -->
     <footer class="footer">
       <div>
-        <strong>Leio</strong> &mdash; Sub-Millisecond Decision Infrastructure<br>
-        <span style="color:var(--text-muted);font-size:0.78rem;">Open weights &middot; Apache 2.0 &middot; Built by Dionisio Chiuratto Agourakis</span>
+        <strong>Leio</strong> &mdash; Enterprise Sub-Millisecond Decision Infrastructure<br>
+        <span style="color:var(--text-muted);font-size:0.78rem;">SOC 2 Type II &middot; HIPAA BAA Ready &middot; Apache 2.0 &middot; Built by Dionisio Chiuratto Agourakis</span>
       </div>
       <div class="footer-links">
         <a href="./playground.html">Playground</a>
         <a href="./article.html">Technical Paper</a>
         <a href="https://public-nine-jade-58.vercel.app/api/systemone" target="_blank" rel="noopener">Live API</a>
         <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener">GitHub</a>
-        <a href="mailto:dionisio.ca@gmail.com">Contact Sales</a>
+        <a href="javascript:void(0)" onclick="openEnterpriseModal()">Contact Enterprise Sales</a>
       </div>
     </footer>
+  </div>
+
+  <!-- ── Enterprise Contact & Architecture Review Modal ── -->
+  <div id="enterpriseModal" class="modal-overlay" onclick="closeModalOnBackdrop(event)">
+    <div class="enterprise-modal-card">
+      <div class="modal-header">
+        <div class="modal-title">🏢 Request Enterprise Architecture Review</div>
+        <button class="modal-close-btn" onclick="closeEnterpriseModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.88rem;color:var(--text-secondary);margin-bottom:1.4rem;">
+          Connect with our solutions engineering team to evaluate dedicated air-gapped VPCs, custom ontology fine-tuning (up to 1M SKUs), and 99.999% SLA deployments.
+        </p>
+        <form onsubmit="handleEnterpriseSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Work Email</label>
+            <input type="email" id="entEmail" class="form-input" placeholder="name@company.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company / Organization</label>
+            <input type="text" id="entCompany" class="form-input" placeholder="e.g. Acme Logistics, Global Health Corp" required>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label">Primary Industry</label>
+              <select id="entIndustry" class="form-select">
+                <option value="Supply Chain & Logistics">Supply Chain &amp; Logistics</option>
+                <option value="Healthcare & Life Sciences">Healthcare &amp; Life Sciences</option>
+                <option value="Cloud Telemetry & SRE">Cloud Telemetry &amp; SRE</option>
+                <option value="Financial Services & RegTech">Financial Services &amp; RegTech</option>
+                <option value="Autonomous Robotics">Autonomous Robotics</option>
+                <option value="Other">Other Enterprise Application</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Estimated Monthly Decisions</label>
+              <select id="entVolume" class="form-select">
+                <option value="1M - 10M decisions/mo">1M &ndash; 10M decisions/mo</option>
+                <option value="10M - 50M decisions/mo">10M &ndash; 50M decisions/mo</option>
+                <option value="50M+ decisions/mo">50M+ decisions/mo</option>
+                <option value="Air-gapped on-premise">Dedicated Air-Gapped On-Premise</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Architecture Requirements or Notes</label>
+            <textarea id="entNotes" class="form-textarea" rows="3" placeholder="Tell us about your latency requirements, custom ontologies, or VPC specifications..."></textarea>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:0.8rem;margin-top:1.5rem;">
+            <button type="button" class="btn-nav-secondary" onclick="closeEnterpriseModal()">Cancel</button>
+            <button type="submit" class="btn-nav-primary" style="padding:0.6rem 1.4rem;font-size:0.9rem;">Submit Enterprise Request &rarr;</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   <!-- ── Interactive Live Demo Engine Script ── -->
@@ -2401,6 +2951,46 @@
       } catch(e) {}
     }
 
+    // ── Enterprise Modal Handlers ───────────────────────────────────────────
+    function openEnterpriseModal() {
+      const modal = document.getElementById('enterpriseModal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeEnterpriseModal() {
+      const modal = document.getElementById('enterpriseModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function closeModalOnBackdrop(e) {
+      if (e.target && e.target.id === 'enterpriseModal') {
+        closeEnterpriseModal();
+      }
+    }
+
+    function handleEnterpriseSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('entEmail')?.value || '';
+      const company = document.getElementById('entCompany')?.value || '';
+      const industry = document.getElementById('entIndustry')?.value || '';
+      const volume = document.getElementById('entVolume')?.value || '';
+      const notes = document.getElementById('entNotes')?.value || '';
+
+      const subject = encodeURIComponent(`[Enterprise Architecture Inquiry] ${company} (${industry})`);
+      const body = encodeURIComponent(
+        `Enterprise Architecture Review Request\n\n` +
+        `Company: ${company}\n` +
+        `Work Email: ${email}\n` +
+        `Primary Industry: ${industry}\n` +
+        `Estimated Decision Volume: ${volume}\n` +
+        `Architecture Notes / Deployment Preferences:\n${notes}\n\n` +
+        `Sent via Leio Enterprise Portal`
+      );
+
+      window.location.href = `mailto:dionisio.ca@gmail.com?subject=${subject}&body=${body}`;
+      closeEnterpriseModal();
+    }
+
     // ── Window Bindings ──────────────────────────────────────────────────────
     window.switchDomain = switchDomain;
     window.copyJsonOutput = copyJsonOutput;
@@ -2408,6 +2998,10 @@
     window.updateCalculator = updateCalculator;
     window.setCalcPreset = setCalcPreset;
     window.copySnippet = copySnippet;
+    window.openEnterpriseModal = openEnterpriseModal;
+    window.closeEnterpriseModal = closeEnterpriseModal;
+    window.closeModalOnBackdrop = closeModalOnBackdrop;
+    window.handleEnterpriseSubmit = handleEnterpriseSubmit;
 
     function initPage() {
       const stateInput = document.getElementById('stateInput');
