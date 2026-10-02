@@ -93,3 +93,29 @@ def test_train_distilled_head_on_ontology():
     lung_idx = head.curie_to_idx["C_LUNG"]
     # Heart score should be higher than lung score for cardiac query
     assert logits[heart_idx] > logits[lung_idx]
+
+
+def test_create_zero_shot_head_for_ontology():
+    from olaya.distilled_head import create_zero_shot_head_for_ontology
+
+    ont = Ontology(name="zero_shot_test")
+    ont.add_concept(Concept("ANIMAL", "Animal", "living organism", parents=set()))
+    ont.add_concept(Concept("MAMMAL", "Mammal", "warm blooded animal", parents={"ANIMAL"}))
+    ont.add_concept(Concept("DOG", "Canine Dog", "domesticated dog puppy", parents={"MAMMAL"}))
+
+    # Instant zero-shot initialization - ZERO samples, ZERO training epochs
+    head = create_zero_shot_head_for_ontology(ont, dim=32, hidden_dim=48, num_buckets=256)
+    assert head.concept_embeddings.shape == (3, 32)
+    # Vectors should be non-zero and unit normalized
+    norms = torch.norm(head.concept_embeddings, p=2, dim=-1)
+    assert torch.allclose(norms, torch.ones(3), atol=1e-3)
+
+    # Canine puppy query should match DOG highest zero-shot
+    b, idf = [fnv1a_hash("puppy", 256), fnv1a_hash("dog", 256)], [2.0, 2.0]
+    q_vec = head.encode_tokens_and_idfs(b, idf)
+    logits = head(q_vec).squeeze(0)
+    dog_idx = head.curie_to_idx["DOG"]
+    mammal_idx = head.curie_to_idx["MAMMAL"]
+    animal_idx = head.curie_to_idx["ANIMAL"]
+    assert logits[dog_idx] >= logits[mammal_idx]
+    assert logits[dog_idx] >= logits[animal_idx]
