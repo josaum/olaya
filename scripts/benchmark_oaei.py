@@ -29,12 +29,17 @@ def main():
         default="models/oaei_benchmark_results.json",
         help="Output JSON summary path",
     )
+    parser.add_argument(
+        "--use-neural-head",
+        action="store_true",
+        help="Use distilled native neural head with morphism scoring for candidate re-ranking",
+    )
     args = parser.parse_args()
 
-    bench = OAEIBenchmark(args.ontologies_dir, args.alignments_dir)
+    bench = OAEIBenchmark(args.ontologies_dir, args.alignments_dir, use_distilled_neural=args.use_neural_head)
     print("=" * 70)
     print("OAEI (Ontology Alignment Evaluation Initiative) Formal Validation")
-    print("Benchmark Track: Conference (OntoFarm) Reference Alignments")
+    print(f"Benchmark Track: Conference (OntoFarm) Reference Alignments (Neural Head: {args.use_neural_head})")
     print("=" * 70)
 
     results = bench.evaluate_all_available_pairs()

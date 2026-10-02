@@ -6,6 +6,7 @@ formal validation of semantic alignment and axiomatic consistency for O-Laya.
 
 from __future__ import annotations
 
+import math
 import os
 import re
 import xml.etree.ElementTree as ET
@@ -22,6 +23,11 @@ from olaya.axioms import (
     verify_owl2_rl_axioms,
 )
 from olaya.candidate_router import CandidateRouter
+from olaya.distilled_head import (
+    DistilledNeuralHead,
+    fnv1a_hash,
+    train_distilled_head_for_ontology,
+)
 from olaya.ontology import Concept, ObjectProperty, Ontology
 from olaya.owl2_rl import OWL2RLClosure, OWL2RLReasoner
 
@@ -360,10 +366,43 @@ class OAEIEvalResult:
 class OAEIBenchmark:
     """Formal validation benchmark on OAEI tracks."""
 
-    def __init__(self, ontologies_dir: str | Path, alignments_dir: str | Path):
+    def __init__(
+        self,
+        ontologies_dir: str | Path,
+        alignments_dir: str | Path,
+        use_distilled_neural: bool = False,
+    ):
         self.ontologies_dir = Path(ontologies_dir)
         self.alignments_dir = Path(alignments_dir)
+        self.use_distilled_neural = use_distilled_neural
         self._parsed_ontologies: dict[str, Ontology] = {}
+        self._target_heads: dict[str, DistilledNeuralHead] = {}
+
+    def get_target_distilled_head(self, target_onto: Ontology) -> DistilledNeuralHead:
+        name_key = target_onto.name.lower()
+        if name_key not in self._target_heads:
+            samples = []
+            for curie, c in target_onto.concepts.items():
+                samples.append((c.label, curie))
+                if c.description:
+                    samples.append((c.description, curie))
+                for syn in c.synonyms:
+                    samples.append((syn, curie))
+                for p in c.parents:
+                    if p in target_onto.concepts:
+                        samples.append((f"{c.label} {target_onto.concepts[p].label}", curie))
+
+            head = train_distilled_head_for_ontology(
+                target_onto,
+                samples,
+                epochs=15,
+                lr=2e-3,
+                dim=32,
+                hidden_dim=48,
+                num_buckets=2048,
+            )
+            self._target_heads[name_key] = head
+        return self._target_heads[name_key]
 
     def get_ontology(self, name: str) -> Ontology:
         name_lower = name.lower()
@@ -436,14 +475,53 @@ class OAEIBenchmark:
                     query_parts.append(f"type {source_onto.concepts[p].label}")
             query_text = ". ".join(query_parts)
 
-            # Score all candidates in target ontology using router/lexical matching
+            # Score candidates in target ontology using router/lexical matching + optional neural head
             routed = router.route_candidates(query_text, top_k=len(all_target_curies))
-            ranked_curies = [c.curie for c, _ in routed]
-            # Fallback if any missing
-            seen = set(ranked_curies)
-            for tc in all_target_curies:
-                if tc not in seen:
-                    ranked_curies.append(tc)
+
+            if self.use_distilled_neural:
+                head = self.get_target_distilled_head(target_onto)
+                token_doc_count: dict[str, int] = {}
+                for tc in target_onto.concepts.values():
+                    doc_toks = set(tc.label.lower().split() + tc.description.lower().split())
+                    for s in tc.synonyms:
+                        doc_toks.update(s.lower().split())
+                    for t in doc_toks:
+                        token_doc_count[t] = token_doc_count.get(t, 0) + 1
+                total_docs = len(target_onto.concepts)
+
+                tokens = [t.strip(".,;:!?()[]\"'") for t in query_text.lower().split() if len(t) > 2]
+                buckets = [fnv1a_hash(t, head.num_buckets) for t in tokens]
+                idfs = [math.log((total_docs + 1.0) / (token_doc_count.get(t, 0) + 1.0)) + 1.0 for t in tokens]
+                q_vec = head.encode_tokens_and_idfs(buckets, idfs)
+
+                curie_to_idx = head.curie_to_idx
+                cand_indices = [curie_to_idx[c] for c in all_target_curies if c in curie_to_idx]
+                parents_map = {
+                    curie_to_idx[c]: [curie_to_idx[p] for p in target_onto.concepts[c].parents if p in curie_to_idx]
+                    for c in all_target_curies if c in curie_to_idx
+                }
+                disjoint_map = {
+                    curie_to_idx[c]: [curie_to_idx[d] for d in target_onto.concepts[c].disjoint_with if d in curie_to_idx]
+                    for c in all_target_curies if c in curie_to_idx
+                }
+                neural_scores = head.score_with_morphisms(q_vec, cand_indices, parents_map, disjoint_map)
+                neural_score_dict = {all_target_curies[i]: s for i, s in enumerate(neural_scores)}
+
+                lexical_dict = {c.curie: s for c, s in routed}
+                scored_cands = []
+                for tc in all_target_curies:
+                    lex = lexical_dict.get(tc, 0.0)
+                    neu = neural_score_dict.get(tc, 0.0)
+                    scored_cands.append((tc, lex + 2.5 * neu))
+                scored_cands.sort(key=lambda x: x[1], reverse=True)
+                ranked_curies = [c for c, _ in scored_cands]
+            else:
+                ranked_curies = [c.curie for c, _ in routed]
+                # Fallback if any missing
+                seen = set(ranked_curies)
+                for tc in all_target_curies:
+                    if tc not in seen:
+                        ranked_curies.append(tc)
 
             # Rank of ground truth target
             rank = ranked_curies.index(ground_truth_target) + 1 if ground_truth_target in ranked_curies else 999
