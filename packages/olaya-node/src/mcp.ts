@@ -616,6 +616,7 @@ export class OLayaNodeMCPServer {
   private incidentEngine: OLaya;
   private gs1Engine: OLaya;
   private leioEngine: OLaya;
+  private dynamicEngines = new Map<string, OLaya>();
 
   constructor() {
     this.incidentEngine = new OLaya(new OntologyDAG(DEFAULT_INCIDENT_CLASSES));
@@ -624,9 +625,62 @@ export class OLayaNodeMCPServer {
   }
 
   private getEngine(domain: string): OLaya {
-    const d = domain.toLowerCase();
+    const d = domain.toLowerCase().trim();
     if (d === "incident") return this.incidentEngine;
     if (d === "leio" || d === "product" || d === "model" || d === "pricing") return this.leioEngine;
+    if (d === "gs1" || d === "supply_chain") return this.gs1Engine;
+
+    if (this.dynamicEngines.has(d)) {
+      return this.dynamicEngines.get(d)!;
+    }
+
+    const moduleDir = typeof __dirname !== "undefined" ? __dirname : process.cwd();
+    const candidatePaths: string[] = [
+      domain,
+      path.resolve(process.cwd(), domain),
+      path.resolve(process.cwd(), "docs/public/ontologies", `${d}_ontology.json`),
+      path.resolve(process.cwd(), "data", `${d}_ontology.json`),
+      path.resolve(process.cwd(), "../../docs/public/ontologies", `${d}_ontology.json`),
+      path.resolve(process.cwd(), "../../data", `${d}_ontology.json`),
+      path.resolve(moduleDir, "../../../docs/public/ontologies", `${d}_ontology.json`),
+      path.resolve(moduleDir, "../../../data", `${d}_ontology.json`),
+    ];
+
+    if (d === "doid" || d === "disease" || d === "medical" || d === "healthcare" || d === "clinical") {
+      candidatePaths.unshift(
+        path.resolve(process.cwd(), "docs/public/ontologies/doid_ontology.json"),
+        path.resolve(process.cwd(), "../../docs/public/ontologies/doid_ontology.json"),
+        path.resolve(moduleDir, "../../../docs/public/ontologies/doid_ontology.json")
+      );
+    } else if (d === "schemaorg" || d === "schema" || d === "web") {
+      candidatePaths.unshift(
+        path.resolve(process.cwd(), "docs/public/ontologies/schemaorg_ontology.json"),
+        path.resolve(process.cwd(), "../../docs/public/ontologies/schemaorg_ontology.json"),
+        path.resolve(moduleDir, "../../../docs/public/ontologies/schemaorg_ontology.json")
+      );
+    } else if (d === "bfo") {
+      candidatePaths.unshift(
+        path.resolve(process.cwd(), "docs/public/ontologies/bfo_ontology.json"),
+        path.resolve(process.cwd(), "../../docs/public/ontologies/bfo_ontology.json"),
+        path.resolve(moduleDir, "../../../docs/public/ontologies/bfo_ontology.json")
+      );
+    }
+
+    for (const p of candidatePaths) {
+      try {
+        if (p && fs.existsSync(p) && fs.statSync(p).isFile()) {
+          const raw = fs.readFileSync(p, "utf-8");
+          const json = JSON.parse(raw);
+          const dag = OntologyDAG.fromJSON(json);
+          const engine = new OLaya(dag);
+          this.dynamicEngines.set(d, engine);
+          return engine;
+        }
+      } catch {
+        // Continue searching
+      }
+    }
+
     return this.gs1Engine;
   }
 
@@ -634,9 +688,10 @@ export class OLayaNodeMCPServer {
     if (name === "olaya_ground" || name === "leio_ground") {
       const state = String(args.state ?? args.query ?? "");
       const domain = String(args.domain ?? "gs1").toLowerCase();
+      const topK = typeof args.k === "number" ? args.k : (typeof args.top_k === "number" ? args.top_k : 12);
       const engine = this.getEngine(domain);
 
-      const decision = await engine.systemOne(state);
+      const decision = await engine.systemOne(state, topK);
       return {
         domain,
         curie: decision.selectedConcept.curie,
