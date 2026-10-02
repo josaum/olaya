@@ -1,0 +1,1033 @@
+{
+  "name": "--arrow",
+  "concepts": [
+    {
+      "curie": "Abstract",
+      "label": "Abstract",
+      "description": "Any Entity that cannot be located in space-time. E.g. mathematical entities: formal semantics elements, regions within dimensional spaces, etc.",
+      "parents": [
+        "Entity"
+      ],
+      "children": [
+        "FormalEntity",
+        "Region"
+      ],
+      "disjoint_with": [
+        "Event",
+        "Object",
+        "Quality"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Action",
+      "label": "Action",
+      "description": "An Event with at least one Agent that isParticipantIn it, and that executes a Task that typically isDefinedIn a Plan, Workflow, Project, etc.",
+      "parents": [
+        "Event"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Agent",
+      "label": "Agent",
+      "description": "Additional comment: a computational agent can be considered as a PhysicalAgent that realizes a certain class of algorithms (that can be considered as instances of InformationObject) that allow to obtain some behaviors that are considered typical of agents in general. For an ontology of computatio...",
+      "parents": [
+        "Object"
+      ],
+      "children": [
+        "Person",
+        "PhysicalAgent",
+        "SocialAgent"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Amount",
+      "label": "Amount",
+      "description": "A quantity, independently from how it is measured, computed, etc.",
+      "parents": [
+        "Region"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "PhysicalAttribute",
+        "SpaceRegion",
+        "TimeInterval"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "BiologicalObject",
+      "label": "Biological object",
+      "description": "Class",
+      "parents": [
+        "PhysicalBody"
+      ],
+      "children": [
+        "Organism"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ChemicalObject",
+      "label": "Chemical object",
+      "description": "Class",
+      "parents": [
+        "PhysicalBody"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Classification",
+      "label": "Classification",
+      "description": "A special kind of Situation that allows to include time indexing for the classifies relation in situations. For example, if a Situation s 'my old cradle is used in these days as a flower pot' isSettingFor the entity 'my old cradle' and the TimeIntervals '8June2007' and '10June2007', and we know t...",
+      "parents": [
+        "TimeIndexedRelation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Collection",
+      "label": "Collection",
+      "description": "Any container for entities that share one or more common properties. E.g. \"stone objects\", \"the nurses\", \"the Louvre Aegyptian collection\", all the elections for the Italian President of the Republic. A collection is not a logical class: a collection is a first-order entity, while a class is seco...",
+      "parents": [
+        "SocialObject"
+      ],
+      "children": [
+        "Collective",
+        "Configuration",
+        "TypeCollection"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Collective",
+      "label": "Collective",
+      "description": "A Collection whose members are agents, e.g. \"the nurses\", \"the Italian rockabilly fans\". Collectives, facon de parler, can act as agents, although they are not assumed here to be agents (they are even disjoint from the class SocialAgent). This is represented by admitting collectives in the range ...",
+      "parents": [
+        "Collection"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "CollectiveAgent",
+      "label": "Collective agent",
+      "description": "A SocialAgent that is actedBy agents that are (and act as) members of a Collective. A collective agent can have roles that are also roles of those agents. For example, in sociology, a 'group action' is the situation in which a number of people (that result to be members of a collective) in a give...",
+      "parents": [
+        "SocialAgent"
+      ],
+      "children": [
+        "Community",
+        "Group"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Community",
+      "label": "Community",
+      "description": "Class",
+      "parents": [
+        "CollectiveAgent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Concept",
+      "label": "Concept",
+      "description": "A Concept is a SocialObject, and isDefinedIn some Description; once defined, a Concept can be used in other Description(s). If a Concept isDefinedIn exactly one Description, see the LocalConcept class. The classifies relation relates Concept(s) to Entity(s) at some TimeInterval",
+      "parents": [
+        "SocialObject"
+      ],
+      "children": [
+        "EventType",
+        "LocalConcept",
+        "Parameter",
+        "Role"
+      ],
+      "disjoint_with": [
+        "SocialAgent"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Configuration",
+      "label": "Configuration",
+      "description": "A collection whose members are 'unified', i.e. organized according to a certain schema that can be represented by a Description. Typically, a configuration is the collection that emerges out of a composed entity: an industrial artifact, a plan, a discourse, etc. E.g. a physical book has a configu...",
+      "parents": [
+        "Collection"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Contract",
+      "label": "Contract",
+      "description": "(The content of) an agreement between at least two agents that play a Party Role, about some contract object (a Task to be executed).",
+      "parents": [
+        "Description"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Description",
+      "label": "Description",
+      "description": "A Description is a SocialObject that represents a conceptualization. It can be thought also as a 'descriptive context' that uses or defines concepts in order to create a view on a 'relational context' (cf. Situation) out of a set of data or observations. For example, a Plan is a Description of so...",
+      "parents": [
+        "SocialObject"
+      ],
+      "children": [
+        "Contract",
+        "Design",
+        "Diagnosis",
+        "Goal",
+        "Method",
+        "Narrative",
+        "Norm",
+        "Plan",
+        "Relation",
+        "Right",
+        "Theory"
+      ],
+      "disjoint_with": [
+        "SocialAgent"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Design",
+      "label": "Design",
+      "description": "A Description of the Situation, in terms of structure and function, held by an Entity for some reason. A design is usually accompanied by the rationales behind the construction of the designed Entity (i.e. of the reasons why a design is claimed to be as such). For example, the actual design (a Si...",
+      "parents": [
+        "Description"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DesignedArtifact",
+      "label": "Designed artifact",
+      "description": "A PhysicalArtifact that is also described by a Design. This excludes simple recycling or refunctionalization of natural objects. Most common sense 'artifacts' can be included in this class: cars, lamps, houses, chips, etc.",
+      "parents": [
+        "PhysicalArtifact"
+      ],
+      "children": [
+        "DesignedSubstance"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DesignedSubstance",
+      "label": "DesignedSubstance",
+      "description": "Class",
+      "parents": [
+        "DesignedArtifact",
+        "FunctionalSubstance"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Diagnosis",
+      "label": "Diagnosis",
+      "description": "A Description of the Situation of a system, usually applied in order to control a normal behaviour, or to explain a notable behavior (e.g. a functional breakdown).",
+      "parents": [
+        "Description"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Entity",
+      "label": "Entity",
+      "description": "Anything: real, possible, or imaginary, which some modeller wants to talk about for some purpose.",
+      "parents": [],
+      "children": [
+        "Abstract",
+        "Event",
+        "InformationEntity",
+        "Object",
+        "Quality",
+        "Situation"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Event",
+      "label": "Event",
+      "description": "Any physical, social, or mental process, event, or state. More theoretically, events can be classified in different ways, possibly based on 'aspect' (e.g. stative, continuous, accomplishement, achievement, etc.), on 'agentivity' (e.g. intentional, natural, etc.), or on 'typical participants' (e.g...",
+      "parents": [
+        "Entity"
+      ],
+      "children": [
+        "Action",
+        "Process"
+      ],
+      "disjoint_with": [
+        "Abstract",
+        "Object",
+        "Quality"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "EventType",
+      "label": "Event type",
+      "description": "A Concept that classifies an Event . An event type describes how an Event should be interpreted, executed, expected, seen, etc., according to the Description that the EventType isDefinedIn (or used in)",
+      "parents": [
+        "Concept"
+      ],
+      "children": [
+        "Task"
+      ],
+      "disjoint_with": [
+        "Parameter",
+        "Role"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "FormalEntity",
+      "label": "Formal entity",
+      "description": "Entities that are formally defined and are considered independent from the social context in which they are used. They cannot be localized in space or time. Also called 'Platonic entities'. Mathematical and logical entities are included in this class: sets, categories, tuples, costants, variables...",
+      "parents": [
+        "Abstract"
+      ],
+      "children": [
+        "Set"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "FunctionalSubstance",
+      "label": "Functional substance",
+      "description": "Class",
+      "parents": [
+        "Substance"
+      ],
+      "children": [
+        "DesignedSubstance"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Goal",
+      "label": "Goal",
+      "description": "The Description of a Situation that is desired by an Agent, and usually associated to a Plan that describes how to actually achieve it",
+      "parents": [
+        "Description"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Group",
+      "label": "Group",
+      "description": "A CollectiveAgent whose acting agents conceptualize a same SocialRelation .",
+      "parents": [
+        "CollectiveAgent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "InformationEntity",
+      "label": "InformationEntity",
+      "description": "A piece of information, be it concretely realized or not. It is a catchall class, intended to bypass the ambiguities of many data or text that could denote either a an expression or a concrete realization of that expression. In a semiotic model, there is no special reason to distinguish between t...",
+      "parents": [
+        "Entity"
+      ],
+      "children": [
+        "InformationObject",
+        "InformationRealization"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "InformationObject",
+      "label": "Information object",
+      "description": "A piece of information, such as a musical composition, a text, a word, a picture, independently from how it is concretely realized.",
+      "parents": [
+        "InformationEntity",
+        "SocialObject"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "SocialAgent"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "InformationRealization",
+      "label": "Information realization",
+      "description": "A concrete realization of an InformationObject, e.g. the written document (object) containing the text of a law, a poetry reading (event), the dark timbre (quality) of a sound (event) in the execution (event) of a musical composition, realizing a 'misterioso' tempo indication. The realization of ...",
+      "parents": [
+        "InformationEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LocalConcept",
+      "label": "Local concept",
+      "description": "A Concept that isDefinedIn exactly 1 Description. For example, the Concept 'coffee' in a 'preparesCoffee' relation can be defined in that relation, and for all other Description(s) that use it, the isConceptUsedIn property should be applied. Notice therefore that not necessarily all Concept(s) is...",
+      "parents": [
+        "Concept"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Method",
+      "label": "Method",
+      "description": "A method is a Description that defines or uses concepts in order to guide carrying out actions aimed at a solution with respect to a problem. It is different from a Plan, because plans could be carried out in order to follow a method, but a method can be followed by executing alternative plans.",
+      "parents": [
+        "Description"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Narrative",
+      "label": "Narrative",
+      "description": "Class",
+      "parents": [
+        "Description"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "NaturalPerson",
+      "label": "Natural person",
+      "description": "A person in the physical commonsense intuition: 'have you seen that person walking down the street?'",
+      "parents": [
+        "Person",
+        "PhysicalAgent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Norm",
+      "label": "Norm",
+      "description": "A social norm.",
+      "parents": [
+        "Description"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Object",
+      "label": "Object",
+      "description": "Any physical, social, or mental object, or a substance. Following DOLCE Full, objects are always participating in some event (at least their own life), and are spatially located.",
+      "parents": [
+        "Entity"
+      ],
+      "children": [
+        "Agent",
+        "PhysicalObject",
+        "SocialObject"
+      ],
+      "disjoint_with": [
+        "Abstract",
+        "Event",
+        "Quality"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "ObjectAggregate",
+      "label": "ObjectAggregate",
+      "description": "An aggregate of distributed objects, members of a same Collection, e.g. the stars in a constellation, the parts of a car, the employees of a company, the entries from an encyclopedia, the concepts expressed in a speech, etc. It cannot be defined by means of an equivalence axiom, because it'd requ...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Organism",
+      "label": "Organism",
+      "description": "A physical objects with biological characteristics, typically that organisms can self-reproduce.",
+      "parents": [
+        "BiologicalObject",
+        "PhysicalAgent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Organization",
+      "label": "Organization",
+      "description": "An internally structured, conventionally created SocialAgent, needing a specific Role and Agent that plays it, in order to act.",
+      "parents": [
+        "SocialAgent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Parameter",
+      "label": "Parameter",
+      "description": "A Concept that classifies a Region; the difference between a Region and a Parameter is that regions represent sets of observable values, e.g. the height  of a given building, while parameters represent constraints or selections on observable values, e.g. 'VeryHigh'. Therefore, parameters can also...",
+      "parents": [
+        "Concept"
+      ],
+      "children": [
+        "UnitOfMeasure"
+      ],
+      "disjoint_with": [
+        "EventType",
+        "Role"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Parthood",
+      "label": "parthood",
+      "description": "A special kind of Situation that allows to include time indexing for the hasPart relation in situations. For example, if a Situation s 'finally, my bike has a luggage rack' isSettingFor the entity 'my bike' and the TimeIntervals 'now', or more specifically '29March2021', we need to have a time-in...",
+      "parents": [
+        "TimeIndexedRelation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Pattern",
+      "label": "Pattern",
+      "description": "Any invariance detected from a dataset, or from observation; also, any invariance proposed based on top-down considerations. E.g. patterns detected and abstracted by an organism, by pattern recognition algorithms, by machine learning techniques, etc. An occurrence of a pattern is an 'observable',...",
+      "parents": [
+        "Relation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Person",
+      "label": "Person",
+      "description": "Persons in commonsense intuition, which does not apparently distinguish between either natural or social persons.",
+      "parents": [
+        "Agent"
+      ],
+      "children": [
+        "NaturalPerson",
+        "SocialPerson"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Personification",
+      "label": "Personification",
+      "description": "A social entity with agentive features, but whose status is the result of a cultural transformation from e.g. a PhysicalObject, an Event, an Abstract, another SocialObject, etc. For example: the holy grail, deus ex machina, gods, magic wands, etc.",
+      "parents": [
+        "SocialAgent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PhysicalAgent",
+      "label": "Physical agent",
+      "description": "A PhysicalObject that is capable of self-representing (conceptualizing) a Description in order to plan an Action. A PhysicalAgent is a substrate for (actsFor) a Social Agent",
+      "parents": [
+        "Agent",
+        "PhysicalObject"
+      ],
+      "children": [
+        "NaturalPerson",
+        "Organism"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PhysicalArtifact",
+      "label": "Physical artifact",
+      "description": "Any PhysicalObject that isDescribedBy a Plan . This axiomatization is weak, but allows to talk of artifacts in a very general sense, i.e. including recycled objects, objects with an intentional functional change, natural objects that are given a certain function, even though they are not modified...",
+      "parents": [
+        "PhysicalObject"
+      ],
+      "children": [
+        "DesignedArtifact"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PhysicalAttribute",
+      "label": "Physical attribute",
+      "description": "Physical value of a physical object, e.g. density, color, etc.",
+      "parents": [
+        "Region"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Amount",
+        "SpaceRegion",
+        "TimeInterval"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "PhysicalBody",
+      "label": "Physical body",
+      "description": "Physical bodies are PhysicalObject(s), for which we tend to neutralize any possible artifactual character. They can have several granularity levels: geological, chemical, physical, biological, etc.",
+      "parents": [
+        "PhysicalObject"
+      ],
+      "children": [
+        "BiologicalObject",
+        "ChemicalObject",
+        "Substance"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PhysicalObject",
+      "label": "Physical object",
+      "description": "Any Object that has a proper space region. The prototypical physical object has also an associated mass, but the nature of its mass can greatly vary based on the epistemological status of the object (scientifically measured, subjectively possible, imaginary).",
+      "parents": [
+        "Object"
+      ],
+      "children": [
+        "PhysicalAgent",
+        "PhysicalArtifact",
+        "PhysicalBody",
+        "PhysicalPlace"
+      ],
+      "disjoint_with": [
+        "SocialObject"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "PhysicalPlace",
+      "label": "Physical place",
+      "description": "A physical object that is inherently located; for example, a water area.",
+      "parents": [
+        "PhysicalObject"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Place",
+      "label": "Place",
+      "description": "Socially or cognitively dependent locations: political geographic entities (Rome, Lesotho), and non-material locations determined by the presence of other entities (\"the area close to Rome\") or of pivot events or signs (\"the area where the helicopter fell\"), as well as identified as complements t...",
+      "parents": [
+        "SocialObject"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Plan",
+      "label": "Plan",
+      "description": "A Description having an explicit Goal, to be achieved by executing the plan",
+      "parents": [
+        "Description"
+      ],
+      "children": [
+        "Project",
+        "Workflow"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PlanExecution",
+      "label": "Plan execution",
+      "description": "Plan executions are situations that proactively satisfy a plan. Subplan executions are proper parts of the whole plan execution.",
+      "parents": [
+        "Situation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Process",
+      "label": "Process",
+      "description": "This is a placeholder for events that are considered in their evolution, or anyway not strictly dependent on agents, tasks, and plans. See Event class for some thoughts on classifying events. See also 'Transition'.",
+      "parents": [
+        "Event"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Project",
+      "label": "Project",
+      "description": "A Plan that defines Role(s), Task(s), and a specific structure for tasks to be executed in relation to goals to be achieved, in order to achieve the main goal of the project. In other words, a project is a plan with a subgoal structure and multiple roles and tasks.",
+      "parents": [
+        "Plan"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Quality",
+      "label": "Quality",
+      "description": "Any aspect of an Entity (but not a part of it), which cannot exist without that Entity. For example, the way the surface of a specific PhysicalObject looks like, or the specific light of a place at a certain time, are examples of Quality, while the encoding of a Quality into e.g. a PhysicalAttrib...",
+      "parents": [
+        "Entity"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Abstract",
+        "Event",
+        "Object"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Region",
+      "label": "Region",
+      "description": "Any region in a dimensional space (a dimensional space is a maximal Region), which can be used as a value for a quality of an Entity . For example, TimeInterval, SpaceRegion, PhysicalAttribute, Amount, SocialAttribute are all subclasses of Region. Regions are not data values in the ordinary knowl...",
+      "parents": [
+        "Abstract"
+      ],
+      "children": [
+        "Amount",
+        "PhysicalAttribute",
+        "SocialObjectAttribute",
+        "SpaceRegion",
+        "SpatioTemporalRegion",
+        "TimeInterval"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Relation",
+      "label": "Relation",
+      "description": "Relations are descriptions that can be considered as the counterpart of formal relations (that are included in the FormalEntity class). For example, 'givingGrantToInstitution(x,y,z)' with three argument types: Provider(x),Grant(y),Recipient(z), can have a Relation counterpart: 'GivingGrantToInsti...",
+      "parents": [
+        "Description"
+      ],
+      "children": [
+        "Pattern",
+        "SocialRelation"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Right",
+      "label": "Right",
+      "description": "A legal position by which an Agent is entitled to obtain something from another Agent , under specified circumstances, through an enforcement explicited either in a Law, Contract , etc.",
+      "parents": [
+        "Description"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Role",
+      "label": "Role",
+      "description": "A Concept that classifies an Object",
+      "parents": [
+        "Concept"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "EventType",
+        "Parameter"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Set",
+      "label": "Set",
+      "description": "Class",
+      "parents": [
+        "FormalEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Situation",
+      "label": "Situation",
+      "description": "A view, consistent with ('satisfying') a Description, on a set of entities. It can also be seen as a 'relational context' created by an observer on the basis of a 'frame' (i.e. a Description). For example, a PlanExecution is a context including some actions executed by agents according to certain...",
+      "parents": [
+        "Entity"
+      ],
+      "children": [
+        "PlanExecution",
+        "TimeIndexedRelation",
+        "Transition",
+        "WorkflowExecution"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SocialAgent",
+      "label": "Social agent",
+      "description": "Any individual whose existence is granted simply by its social communicability and capability of action (through some PhysicalAgent).",
+      "parents": [
+        "Agent",
+        "SocialObject"
+      ],
+      "children": [
+        "CollectiveAgent",
+        "Organization",
+        "Personification",
+        "SocialPerson"
+      ],
+      "disjoint_with": [
+        "Concept",
+        "Description",
+        "InformationObject"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "SocialObject",
+      "label": "Social object",
+      "description": "Any Object that exists only within some communication Event, in which at least one PhysicalObject participates in. In other words, all objects that have been or are created in the process of social communication: for the sake of communication (InformationObject), for incorporating new individuals...",
+      "parents": [
+        "Object"
+      ],
+      "children": [
+        "Collection",
+        "Concept",
+        "Description",
+        "InformationObject",
+        "Place",
+        "SocialAgent"
+      ],
+      "disjoint_with": [
+        "PhysicalObject"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "SocialObjectAttribute",
+      "label": "Social attribute",
+      "description": "Any Region in a dimensional space that is used to represent some characteristic of a SocialObject, e.g. judgment values, social scalars, statistical attributes over a collection of entities, etc.",
+      "parents": [
+        "Region"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SocialPerson",
+      "label": "Social person",
+      "description": "A SocialAgent that needs the existence of a specific NaturalPerson in order to act (but the lifetime of the NaturalPerson has only to overlap that of the SocialPerson).",
+      "parents": [
+        "Person",
+        "SocialAgent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SocialRelation",
+      "label": "Social relation",
+      "description": "Any social relationship",
+      "parents": [
+        "Relation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SpaceRegion",
+      "label": "Space region",
+      "description": "Any Region in a dimensional space that is used to localize an Entity ; i.e., it is not used to represent some characteristic (e.g. it excludes time intervals, colors, size values, judgment values, etc.). Differently from a Place , a space region has a specific dimensional space.",
+      "parents": [
+        "Region"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Amount",
+        "PhysicalAttribute",
+        "TimeInterval"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "SpatioTemporalRegion",
+      "label": "SpatioTemporalRegion",
+      "description": "Class",
+      "parents": [
+        "Region"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Substance",
+      "label": "Substance",
+      "description": "Any PhysicalBody that has not necessarily specified (designed) boundaries, e.g. a pile of trash, some sand, etc. In this sense, an artistic object made of trash or a dose of medicine in the form of a pill would be a FunctionalSubstance, and a DesignedArtifact, since its boundaries are specified b...",
+      "parents": [
+        "PhysicalBody"
+      ],
+      "children": [
+        "FunctionalSubstance"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Task",
+      "label": "Task",
+      "description": "An EventType that classifies an Action to be executed. For example, reaching a destination is a task that can be executed by performing certain actions, e.g. driving a car, buying a train ticket, etc. The actions to execute a task can also be organized according to a Plan that is not the same as ...",
+      "parents": [
+        "EventType"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Theory",
+      "label": "Theory",
+      "description": "A Theory is a Description that represents a set of assumptions for describing something, usually general. Scientific, philosophical, and commonsense theories can be included here. This class can also be used to act as 'naturalized reifications' of logical theories (of course, they will be necessa...",
+      "parents": [
+        "Description"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "TimeIndexedRelation",
+      "label": "TimeIndexedRelation",
+      "description": "A Situation that includes a time indexing in its setting, so allowing to order any binary relation (property) with time.",
+      "parents": [
+        "Situation"
+      ],
+      "children": [
+        "Classification",
+        "Parthood"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "TimeInterval",
+      "label": "Time interval",
+      "description": "Any Region in a dimensional space that aims at representing time.",
+      "parents": [
+        "Region"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Amount",
+        "PhysicalAttribute",
+        "SpaceRegion"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Transition",
+      "label": "Transition",
+      "description": "A transition is a Situation that creates a context for three TimeInterval(s), two additional different Situation(s), one Event, one Process, and at least one Object: the Event is observed as the cause for the transition, one Situation is the state before the transition, the second Situation is th...",
+      "parents": [
+        "Situation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "TypeCollection",
+      "label": "Type collection",
+      "description": "A Collection whose members are the maximal set of individuals that share the same (named) type, e.g. \"the gem stones\", \"the Italians\". This class is very useful to apply a variety of the so-called \"ClassesAsValues\" design pattern, when it is used to talk about the extensional aspect of a class. A...",
+      "parents": [
+        "Collection"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "UnitOfMeasure",
+      "label": "Unit of measure",
+      "description": "Units of measure are conceptualized here as parameters on regions, which can be valued as datatype values.",
+      "parents": [
+        "Parameter"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Workflow",
+      "label": "Workflow",
+      "description": "A Plan that defines Role(s), Task(s), and a specific structure for tasks to be executed, usually supporting the work of an Organization",
+      "parents": [
+        "Plan"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "WorkflowExecution",
+      "label": "Workflow execution",
+      "description": "Class",
+      "parents": [
+        "Situation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    }
+  ]
+}

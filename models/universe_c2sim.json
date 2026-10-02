@@ -1,0 +1,245 @@
+{
+  "name": "--arrow",
+  "concepts": [
+    {
+      "curie": "AirDefenseBattery",
+      "label": "Short-Range Air Defense Battery (SHORAD)",
+      "description": "Class",
+      "parents": [
+        "MilitaryOrganisation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "AirInterdictionTask",
+      "label": "Close Air Support / Interdiction Task",
+      "description": "Class",
+      "parents": [
+        "TacticalOrder"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ArmoredCompany",
+      "label": "Armored Cavalry Company",
+      "description": "Class",
+      "parents": [
+        "MilitaryOrganisation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "BattalionTaskForce",
+      "label": "Battalion Task Force (BN TF)",
+      "description": "Class",
+      "parents": [
+        "MilitaryOrganisation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "BattleDamageAssessmentBDA",
+      "label": "Battle Damage Assessment (BDA)",
+      "description": "Class",
+      "parents": [
+        "TacticalReport"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "BattlefieldAction",
+      "label": "Battlefield Action / Task",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "TacticalOrder",
+        "TacticalReport"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "EngagementOrder",
+      "label": "Direct Fire Engagement Order",
+      "description": "Class",
+      "parents": [
+        "TacticalOrder"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "InfantryFightingVehicle",
+      "label": "Infantry Fighting Vehicle (IFV)",
+      "description": "Class",
+      "parents": [
+        "MilitaryMateriel"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "InfantryPlatoon",
+      "label": "Mechanized Infantry Platoon",
+      "description": "Class",
+      "parents": [
+        "MilitaryOrganisation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MainBattleTank",
+      "label": "Main Battle Tank (MBT)",
+      "description": "Class",
+      "parents": [
+        "MilitaryMateriel"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MilitaryEntity",
+      "label": "Military Object Item / Entity",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "MilitaryMateriel",
+        "MilitaryOrganisation"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MilitaryMateriel",
+      "label": "Military Materiel / Weapon System",
+      "description": "Class",
+      "parents": [
+        "MilitaryEntity"
+      ],
+      "children": [
+        "InfantryFightingVehicle",
+        "MainBattleTank",
+        "SelfPropelledArtillery"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MilitaryOrganisation",
+      "label": "Military Organisation / Tactical Unit",
+      "description": "Class",
+      "parents": [
+        "MilitaryEntity"
+      ],
+      "children": [
+        "AirDefenseBattery",
+        "ArmoredCompany",
+        "BattalionTaskForce",
+        "InfantryPlatoon",
+        "UnmannedAerialUnit"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MovementOrder",
+      "label": "Tactical March / Movement Order",
+      "description": "Class",
+      "parents": [
+        "TacticalOrder"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ObservationReportSPOTREP",
+      "label": "Enemy Spot Report (SALUTE / SPOTREP)",
+      "description": "Class",
+      "parents": [
+        "TacticalReport"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PositionReportBFT",
+      "label": "Blue Force Tracker Position Report (BFT)",
+      "description": "Class",
+      "parents": [
+        "TacticalReport"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SelfPropelledArtillery",
+      "label": "Self-Propelled Howitzer Artillery (SPH)",
+      "description": "Class",
+      "parents": [
+        "MilitaryMateriel"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "TacticalOrder",
+      "label": "Tactical Order (OPORD / FRAGO)",
+      "description": "Class",
+      "parents": [
+        "BattlefieldAction"
+      ],
+      "children": [
+        "AirInterdictionTask",
+        "EngagementOrder",
+        "MovementOrder"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "TacticalReport",
+      "label": "Tactical Situation Report (SITREP)",
+      "description": "Class",
+      "parents": [
+        "BattlefieldAction"
+      ],
+      "children": [
+        "BattleDamageAssessmentBDA",
+        "ObservationReportSPOTREP",
+        "PositionReportBFT"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "UnmannedAerialUnit",
+      "label": "Tactical UAS Reconnaissance Detachment",
+      "description": "Class",
+      "parents": [
+        "MilitaryOrganisation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    }
+  ]
+}

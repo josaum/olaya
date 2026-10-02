@@ -1,0 +1,311 @@
+{
+  "name": "--arrow",
+  "concepts": [
+    {
+      "curie": "CnpjKey",
+      "label": "CNPJ Key",
+      "description": "Class",
+      "parents": [
+        "PixAddressingKey"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "CpfKey",
+      "label": "CPF Key",
+      "description": "Class",
+      "parents": [
+        "PixAddressingKey"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DICTDirectory",
+      "label": "DICT Central Directory",
+      "description": "Class",
+      "parents": [
+        "PixEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DirectParticipant",
+      "label": "Direct Participant",
+      "description": "Class",
+      "parents": [
+        "PixParticipant"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "EmailKey",
+      "label": "Email Key",
+      "description": "Class",
+      "parents": [
+        "PixAddressingKey"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "EvpRandomKey",
+      "label": "EVP Random Key",
+      "description": "Class",
+      "parents": [
+        "PixAddressingKey"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "IndirectParticipant",
+      "label": "Indirect Participant",
+      "description": "Class",
+      "parents": [
+        "PixParticipant"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Payee",
+      "label": "Payee / Receiver",
+      "description": "Class",
+      "parents": [
+        "PixAccountHolder"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Payer",
+      "label": "Payer",
+      "description": "Class",
+      "parents": [
+        "PixAccountHolder"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PhoneKey",
+      "label": "Mobile Phone Key",
+      "description": "Class",
+      "parents": [
+        "PixAddressingKey"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixAccountHolder",
+      "label": "Pix Account Holder",
+      "description": "Class",
+      "parents": [
+        "PixEntity"
+      ],
+      "children": [
+        "Payee",
+        "Payer"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixAddressingKey",
+      "label": "Pix Addressing Key",
+      "description": "Unique addressing proxy registered in the DICT (Diretório de Identificadores de Contas Transacionais).",
+      "parents": [
+        "PixEntity"
+      ],
+      "children": [
+        "CnpjKey",
+        "CpfKey",
+        "EmailKey",
+        "EvpRandomKey",
+        "PhoneKey"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixAutomatico",
+      "label": "Pix Automático (Recurring Direct Debit)",
+      "description": "Class",
+      "parents": [
+        "PixTransaction"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixBilling",
+      "label": "Pix Billing (QR Code)",
+      "description": "Class",
+      "parents": [
+        "PixTransaction"
+      ],
+      "children": [
+        "PixDynamicQrCode",
+        "PixStaticQrCode"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixCashback",
+      "label": "Pix Troco (Cashback)",
+      "description": "Class",
+      "parents": [
+        "PixTransaction"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixDynamicQrCode",
+      "label": "Dynamic QR Code Billing",
+      "description": "Class",
+      "parents": [
+        "PixBilling"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixEntity",
+      "label": "Pix Entity",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "DICTDirectory",
+        "PixAccountHolder",
+        "PixAddressingKey",
+        "PixParticipant",
+        "SPISystem"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixParticipant",
+      "label": "Pix Participant",
+      "description": "Financial or payment institution authorized by the Central Bank of Brazil (BCB) to operate within the SPI.",
+      "parents": [
+        "PixEntity"
+      ],
+      "children": [
+        "DirectParticipant",
+        "IndirectParticipant"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixScheduled",
+      "label": "Scheduled Pix",
+      "description": "Class",
+      "parents": [
+        "PixTransaction"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixStaticQrCode",
+      "label": "Static QR Code Billing",
+      "description": "Class",
+      "parents": [
+        "PixBilling"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixTransaction",
+      "label": "Pix Transaction",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "PixAutomatico",
+        "PixBilling",
+        "PixCashback",
+        "PixScheduled",
+        "PixTransfer",
+        "PixWithdrawal"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixTransfer",
+      "label": "Standard Pix Instant Transfer",
+      "description": "Class",
+      "parents": [
+        "PixTransaction"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PixWithdrawal",
+      "label": "Pix Saque (Cash Withdrawal)",
+      "description": "Class",
+      "parents": [
+        "PixTransaction"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PrecautionaryBlock",
+      "label": "Precautionary Block",
+      "description": "Up to 72-hour anti-fraud hold applied to high-risk Pix transactions by PSP.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SPISystem",
+      "label": "SPI Real-Time Settlement System",
+      "description": "Class",
+      "parents": [
+        "PixEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SpecialRefundMechanism",
+      "label": "Special Refund Mechanism (MED)",
+      "description": "BCB dispute and fraud resolution mechanism for immediate fund retrieval in case of fraud or operational failure.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    }
+  ]
+}

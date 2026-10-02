@@ -551,10 +551,24 @@ impl OntologyParser {
         format: RdfFormat,
         options: &ParseOptions,
     ) -> Result<Vec<Quad>> {
-        Self::build_parser(format, options)?
-            .for_slice(data)
-            .collect::<std::result::Result<Vec<_>, _>>()
-            .context("RDF parse error")
+        match Self::build_parser(format, options)?.for_slice(data).collect::<std::result::Result<Vec<_>, _>>() {
+            Ok(quads) => Ok(quads),
+            Err(e) => {
+                let alt = match format {
+                    RdfFormat::RdfXml => Some(RdfFormat::Turtle),
+                    RdfFormat::Turtle => Some(RdfFormat::RdfXml),
+                    _ => None,
+                };
+                if let Some(alt_format) = alt {
+                    if let Ok(parser) = Self::build_parser(alt_format, options) {
+                        if let Ok(quads) = parser.for_slice(data).collect::<std::result::Result<Vec<_>, _>>() {
+                            return Ok(quads);
+                        }
+                    }
+                }
+                Err(anyhow::anyhow!("RDF parse error: {e}"))
+            }
+        }
     }
 
     fn parse_to_quads_from_path(
@@ -564,10 +578,26 @@ impl OntologyParser {
     ) -> Result<Vec<Quad>> {
         let file = File::open(path)?;
         let reader = BufReader::new(file);
-        Self::build_parser(format, options)?
-            .for_reader(reader)
-            .collect::<std::result::Result<Vec<_>, _>>()
-            .context("RDF parse error")
+        match Self::build_parser(format, options)?.for_reader(reader).collect::<std::result::Result<Vec<_>, _>>() {
+            Ok(quads) => Ok(quads),
+            Err(e) => {
+                let alt = match format {
+                    RdfFormat::RdfXml => Some(RdfFormat::Turtle),
+                    RdfFormat::Turtle => Some(RdfFormat::RdfXml),
+                    _ => None,
+                };
+                if let Some(alt_format) = alt {
+                    let file = File::open(path)?;
+                    let reader = BufReader::new(file);
+                    if let Ok(parser) = Self::build_parser(alt_format, options) {
+                        if let Ok(quads) = parser.for_reader(reader).collect::<std::result::Result<Vec<_>, _>>() {
+                            return Ok(quads);
+                        }
+                    }
+                }
+                Err(anyhow::anyhow!("RDF parse error: {e}"))
+            }
+        }
     }
 
     // ─── extraction (single-pass over quads) ─────────────────────────────

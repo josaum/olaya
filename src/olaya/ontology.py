@@ -365,7 +365,7 @@ class Ontology:
 
         return sub
 
-    def to_json(self) -> str:
+    def to_dict(self) -> dict[str, Any]:
         d: dict[str, Any] = {
             "name": self.name,
             "concepts": [c.to_dict() for c in self.concepts.values()],
@@ -374,7 +374,10 @@ class Ontology:
             d["properties"] = [p.to_dict() for p in self.properties.values()]
         if self.disjoint_unions:
             d["disjoint_unions"] = self.disjoint_unions
-        return json.dumps(d, indent=2)
+        return d
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2)
 
     @classmethod
     def from_json(cls, json_str_or_dict: Any) -> Ontology:

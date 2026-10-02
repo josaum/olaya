@@ -1,0 +1,289 @@
+{
+  "name": "--arrow",
+  "concepts": [
+    {
+      "curie": "AgriCommodity",
+      "label": "Agricultural Commodity",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "GrainCommodity",
+        "LivestockCommodity",
+        "SoftCommodity",
+        "SoybeanOil"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "AnhydrousEthanol",
+      "label": "Anhydrous Ethanol Fuel (Additive)",
+      "description": "Class",
+      "parents": [
+        "SoftCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ArabicaCoffee",
+      "label": "Arabica Coffee (Coffea arabica)",
+      "description": "Class",
+      "parents": [
+        "SoftCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "B3AgriFutureContract",
+      "label": "B3 Agricultural Futures Contract",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "CepeaEsalqIndex",
+      "label": "CEPEA/ESALQ Spot Price Index",
+      "description": "Class",
+      "parents": [
+        "PriceIndicator"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Corn",
+      "label": "Corn / Maize (Zea mays)",
+      "description": "Class",
+      "parents": [
+        "GrainCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "CottonLint",
+      "label": "Cotton Lint (Pluma)",
+      "description": "Class",
+      "parents": [
+        "SoftCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GrainCommodity",
+      "label": "Grain Commodity",
+      "description": "Class",
+      "parents": [
+        "AgriCommodity"
+      ],
+      "children": [
+        "Corn",
+        "Soybean",
+        "SoybeanMeal",
+        "Wheat"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "HydrousEthanol",
+      "label": "Hydrous Ethanol Fuel",
+      "description": "Class",
+      "parents": [
+        "SoftCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LiveCattleBoiGordo",
+      "label": "Live Cattle / Boi Gordo (15kg / @)",
+      "description": "Class",
+      "parents": [
+        "LivestockCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LivestockCommodity",
+      "label": "Livestock Commodity",
+      "description": "Class",
+      "parents": [
+        "AgriCommodity"
+      ],
+      "children": [
+        "LiveCattleBoiGordo",
+        "PorkMeat",
+        "PoultryMeat"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ParanaguaPortBasis",
+      "label": "Paranaguá Port FOB Export Basis (Premium)",
+      "description": "Class",
+      "parents": [
+        "PriceIndicator"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PorkMeat",
+      "label": "Swine / Pork Meat",
+      "description": "Class",
+      "parents": [
+        "LivestockCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PoultryMeat",
+      "label": "Broiler Chicken / Poultry",
+      "description": "Class",
+      "parents": [
+        "LivestockCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PriceIndicator",
+      "label": "Price Benchmark Indicator",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "CepeaEsalqIndex",
+        "ParanaguaPortBasis",
+        "SantosPortBasis"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "RawSugarVHP",
+      "label": "Raw Centrifugal Sugar (VHP)",
+      "description": "Class",
+      "parents": [
+        "SoftCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "RobustaCoffee",
+      "label": "Robusta / Conilon Coffee",
+      "description": "Class",
+      "parents": [
+        "SoftCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SantosPortBasis",
+      "label": "Santos Port FOB Export Basis",
+      "description": "Class",
+      "parents": [
+        "PriceIndicator"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SoftCommodity",
+      "label": "Soft Commodity",
+      "description": "Class",
+      "parents": [
+        "AgriCommodity"
+      ],
+      "children": [
+        "AnhydrousEthanol",
+        "ArabicaCoffee",
+        "CottonLint",
+        "HydrousEthanol",
+        "RawSugarVHP",
+        "RobustaCoffee",
+        "Sugarcane"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Soybean",
+      "label": "Soybean (Glycine max)",
+      "description": "Class",
+      "parents": [
+        "GrainCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SoybeanMeal",
+      "label": "Soybean Meal",
+      "description": "Class",
+      "parents": [
+        "GrainCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SoybeanOil",
+      "label": "Soybean Crude Oil",
+      "description": "Class",
+      "parents": [
+        "AgriCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Sugarcane",
+      "label": "Sugarcane",
+      "description": "Class",
+      "parents": [
+        "SoftCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Wheat",
+      "label": "Wheat (Triticum aestivum)",
+      "description": "Class",
+      "parents": [
+        "GrainCommodity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    }
+  ]
+}

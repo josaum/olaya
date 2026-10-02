@@ -36,6 +36,17 @@ fn process_ontology<P: AsRef<Path>>(
     full_mode: bool,
 ) -> Result<JsonOntology> {
     let path = input_path.as_ref();
+    if !path.is_dir() && path.extension().and_then(|e| e.to_str()) == Some("json") {
+        let content = fs::read_to_string(path)?;
+        let json_onto: JsonOntology = serde_json::from_str(&content)?;
+        println!(
+            "Loaded {} concepts directly from JSON: {}",
+            json_onto.concepts.len(),
+            path.display()
+        );
+        return Ok(json_onto);
+    }
+
     let mut files = Vec::new();
     if path.is_dir() {
         for entry in fs::read_dir(path)? {
@@ -126,8 +137,10 @@ fn process_ontology<P: AsRef<Path>>(
                 .filter(|l| !l.is_empty())
                 .collect::<Vec<_>>()
                 .join(" ");
-            if cleaned.len() > 300 {
-                format!("{}...", &cleaned[..297])
+            let char_count = cleaned.chars().count();
+            if char_count > 300 {
+                let truncated: String = cleaned.chars().take(297).collect();
+                format!("{}...", truncated)
             } else {
                 cleaned
             }
@@ -273,6 +286,8 @@ fn main() -> Result<()> {
 
     let json_onto = process_ontology(input_path, name, full_mode)?;
 
+    let arrow_output = args.windows(2).find(|w| w[0] == "--arrow").map(|w| w[1].clone());
+
     let out_p = Path::new(output_path);
     if let Some(parent) = out_p.parent() {
         fs::create_dir_all(parent)?;
@@ -291,6 +306,14 @@ fn main() -> Result<()> {
             json_onto.concepts.len(),
             output_path
         );
+    }
+
+    if let Some(arrow_path) = arrow_output {
+        let arrow_p = Path::new(&arrow_path);
+        if let Some(parent) = arrow_p.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        export_to_arrow(&json_onto, arrow_p)?;
     }
 
     Ok(())

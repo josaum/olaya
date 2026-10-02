@@ -1,0 +1,733 @@
+{
+  "name": "--arrow",
+  "concepts": [
+    {
+      "curie": "AbstractIndividual",
+      "label": "AbstractIndividual",
+      "description": "A gufo:Individual that does not exist in space-time in the same way as a gufo:ConcreteIndividual does. A gufo:AbstractIndividual has no spatiotemporal qualities in its own right. Hence, it does not make sense to ask how much space it now occupies (Gideon, 2018) and when it was created or destroye...",
+      "parents": [
+        "Individual"
+      ],
+      "children": [
+        "Instant",
+        "QualityValue"
+      ],
+      "disjoint_with": [
+        "ConcreteIndividual"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "AbstractIndividualType",
+      "label": "AbstractIndividualType",
+      "description": "A gufo:Type whose instances are abstract individuals. Instances of gufo:AbstractIndividualType are subclasses of gufo:AbstractIndividual. Examples include the types \"NaturalNumber\", \"Set\", \"Proposition\".",
+      "parents": [
+        "Type"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "ConcreteIndividualType",
+        "RelationshipType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "AntiRigidType",
+      "label": "AntiRigidType",
+      "description": "A gufo:NonRigidType that applies contingently to all its instances (see Guizzardi, 2005, chapter 4). Examples include the gufo:Phase \"Child\", the gufo:PhaseMixin \"InfantAnimal\", the gufo:Role \"Student\", and the gufo:RoleMixin \"Customer\".",
+      "parents": [
+        "NonRigidType"
+      ],
+      "children": [
+        "Phase",
+        "PhaseMixin",
+        "Role",
+        "RoleMixin"
+      ],
+      "disjoint_with": [
+        "SemiRigidType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Aspect",
+      "label": "Aspect",
+      "description": "A gufo:Endurant that depends on at least one other concrete individual for its existence. A gufo:Aspect is a characteristic or trait of a concrete individual that is itself conceived as an individual. Examples include: intrinsic physical aspects, such as the Moon's mass, Lassie's fur color; menta...",
+      "parents": [
+        "Endurant"
+      ],
+      "children": [
+        "ExtrinsicAspect",
+        "IntrinsicAspect"
+      ],
+      "disjoint_with": [
+        "Object"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Category",
+      "label": "Category",
+      "description": "A gufo:EndurantType that is both non-sortal and rigid. It captures essential properties that apply to instances of different kinds. For example, \"PhysicalObject\" may be considered a gufo:Category, encompassing objects such as cars, planets, trees. \"Agent\" may be a gufo:Category that classifies bo...",
+      "parents": [
+        "NonSortal",
+        "RigidType"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Collection",
+      "label": "Collection",
+      "description": "A complex gufo:Object whose parts (the members of the collection) have a uniform structure (i.e., members are conceived as playing the same role in the collection). Collections may have a fixed or variable membership, which can be asserted using gufo:FixedCollection and gufo:VariableCollection re...",
+      "parents": [
+        "Object"
+      ],
+      "children": [
+        "FixedCollection",
+        "VariableCollection"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ComparativeRelationshipType",
+      "label": "ComparativeRelationshipType",
+      "description": "A gufo:RelationshipType derived from intrinsic aspects of the related entities. For example, \"heavierThan\", \"olderThan\". For a gufo:ComparativeRelationshipType it is recommended to identify the types of intrinsic aspects from which it is derived (see gufo:isDerivedFrom). For example \"heavierThan\"...",
+      "parents": [
+        "RelationshipType"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "MaterialRelationshipType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "ConcreteIndividual",
+      "label": "ConcreteIndividual",
+      "description": "A gufo:Individual that exists in space-time. Concrete individuals comprise not only object-like entities (a car, a mountain, a person, a marriage, a belief), but also events (a business meeting, a soccer match) and situations (the situation in which a person weighs 80 kilograms, the situation in ...",
+      "parents": [
+        "Individual"
+      ],
+      "children": [
+        "Endurant",
+        "Event",
+        "Situation"
+      ],
+      "disjoint_with": [
+        "AbstractIndividual"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "ConcreteIndividualType",
+      "label": "ConcreteIndividualType",
+      "description": "A gufo:Type whose instances are concrete individuals. Instances of gufo:ConcreteIndividualType are subclasses of gufo:ConcreteIndividual. Examples include the gufo:Kind \"Person\", the gufo:Category \"Physical Object\", the gufo:EventType \"Business Meeting\".",
+      "parents": [
+        "Type"
+      ],
+      "children": [
+        "EndurantType",
+        "EventType",
+        "SituationType"
+      ],
+      "disjoint_with": [
+        "AbstractIndividualType",
+        "RelationshipType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Endurant",
+      "label": "Endurant",
+      "description": "A gufo:ConcreteIndividual that endures in time and may change qualitatively while keeping its identity. Examples include: ordinary objects of everyday experience, such as a person, a house, and a car; reified relationships, such as a marriage, a rental contract, and a person's love for another; a...",
+      "parents": [
+        "ConcreteIndividual"
+      ],
+      "children": [
+        "Aspect",
+        "Object"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "EndurantType",
+      "label": "EndurantType",
+      "description": "A gufo:Type whose instances are endurants. Instances of gufo:EndurantType are subclasses of gufo:Endurant. Examples include the object kind \"Person\", the phase \"Child\", the relator kind \"Marriage\". See Guizzardi et al. (2018) for details concerning the taxonomy of endurant types included here.",
+      "parents": [
+        "ConcreteIndividualType"
+      ],
+      "children": [
+        "NonRigidType",
+        "NonSortal",
+        "RigidType",
+        "Sortal"
+      ],
+      "disjoint_with": [
+        "EventType",
+        "SituationType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Event",
+      "label": "Event",
+      "description": "A gufo:ConcreteIndividual that 'occurs' or 'happens' in time. They may be instantaneous or long-running. Events are those \"things that happen to or are performed by\" (Casati and Varzi, 2015) endurants. Examples include actions and processes, such as a business meeting, a communicative act, a socc...",
+      "parents": [
+        "ConcreteIndividual"
+      ],
+      "children": [
+        "Participation"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "EventType",
+      "label": "EventType",
+      "description": "A gufo:Type whose instances are events. Instances of gufo:EventType are subclasses of gufo:Event. Examples include \"Business Meeting\", \"Birth\", \"Musical Performance\".",
+      "parents": [
+        "ConcreteIndividualType"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "EndurantType",
+        "SituationType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "ExtrinsicAspect",
+      "label": "ExtrinsicAspect",
+      "description": "A gufo:Aspect that depends on one or more concrete individuals. Extrinsic (or \"relational\") aspects are reified relationships, e.g., John and Mary's marriage, Mary's employment contract at Nasa, or parts of those relationships, e.g., John's obligations towards Mary in the scope of the marriage, M...",
+      "parents": [
+        "Aspect"
+      ],
+      "children": [
+        "ExtrinsicMode",
+        "Relator"
+      ],
+      "disjoint_with": [
+        "IntrinsicAspect"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "ExtrinsicMode",
+      "label": "ExtrinsicMode",
+      "description": "A gufo:ExtrinsicAspect that inheres in a concrete individual and depends on others for its existence. A gufo:ExtrinsicMode can be understood as a reified one-sided relationship, such as John's admiration for Mary. Corresponds to \"Extrinsic Moment\" in Fonseca et al (2019). Encompasses what \"Extern...",
+      "parents": [
+        "ExtrinsicAspect"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Relator"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "FixedCollection",
+      "label": "FixedCollection",
+      "description": "A gufo:Collection for which no change in membership is possible. Such a collection obeys an extensional principle of identity, i.e., two fixed collections are the same if, and only if, they have the same members. Consider, for example, a group of people understood as a gufo:FixedCollection. In th...",
+      "parents": [
+        "Collection"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "VariableCollection"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "FunctionalComplex",
+      "label": "FunctionalComplex",
+      "description": "A complex gufo:Object whose parts (components) play different roles in its composition. For example, a person could be considered a gufo:FunctionalComplex with the various organs (heart, brain, lungs, etc.) playing different roles. Another example is a scrum team, which is composed by people play...",
+      "parents": [
+        "Object"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Individual",
+      "label": "Individual",
+      "description": "An entity that (unlike a gufo:Type) cannot be instantiated. Individuals may be either concrete (e.g., the Earth, Mick Jagger, Brazil, the 1985 Mexico City Earthquake) or abstract (e.g., the number two, the proposition that 'three is a prime number'). Also known as \"particular\" in the philosophica...",
+      "parents": [],
+      "children": [
+        "AbstractIndividual",
+        "ConcreteIndividual"
+      ],
+      "disjoint_with": [
+        "Type"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Instant",
+      "label": "Instant",
+      "description": "An gufo:AbstractIndividual that reifies time instants. It is used as a target of the gufo:hasBeginPoint and gufo:hasEndPoint object properties.",
+      "parents": [
+        "AbstractIndividual"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "IntrinsicAspect",
+      "label": "IntrinsicAspect",
+      "description": "A gufo:Aspect that depends on a single concrete individual in which it inheres. Examples include intrinsic physical aspects, such as the Moon's mass, Lassie's fur color; the fragility of John Lennon's glasses; mental dispositions, such as Bob's math skills, his belief that the number one is odd. ...",
+      "parents": [
+        "Aspect"
+      ],
+      "children": [
+        "IntrinsicMode",
+        "Quality"
+      ],
+      "disjoint_with": [
+        "ExtrinsicAspect"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "IntrinsicMode",
+      "label": "IntrinsicMode",
+      "description": "A gufo:IntrinsicAspect that is not measurable. For example, Bob's belief that the Eiffel Tower is in Paris, his math skills, his headache. Corresponds to \"Mode\" in Guizzardi (2005).",
+      "parents": [
+        "IntrinsicAspect"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Quality"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Kind",
+      "label": "Kind",
+      "description": "A gufo:EndurantType that is both sortal and rigid. It provides a uniform principle of identity for its instances. Every gufo:Endurant instantiates one and only one gufo:Kind. Examples include kinds of ordinary objects of everyday experience, such as: \"Person\", \"House\", \"Car\"; kinds of relators, s...",
+      "parents": [
+        "RigidType",
+        "Sortal"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "SubKind"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialRelationshipType",
+      "label": "MaterialRelationshipType",
+      "description": "A gufo:RelationshipType derived from extrinsic aspects of the related entities. For example, \"marriedWith\", \"employedBy\", \"enrolledIn\", \"admires\". For a gufo:MaterialRelationshipType it is recommended to identify the type of extrinsic aspect from which the material relationship type is derived (s...",
+      "parents": [
+        "RelationshipType"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "ComparativeRelationshipType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Mixin",
+      "label": "Mixin",
+      "description": "A gufo:EndurantType that is both non-sortal and semi-rigid. As a semi-rigid type, it applies necessarily to some of its instances and contingently to some others. As a non-sortal, it captures properties shared by instances of different kinds. For example, the type \"FemaleAnimal\" may be considered...",
+      "parents": [
+        "NonSortal",
+        "SemiRigidType"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "NonRigidType",
+      "label": "NonRigidType",
+      "description": "A gufo:EndurantType that does not apply necessarily to at least one of its instances (see Guizzardi, 2005, chapter 4). Examples include anti-rigid types, such as the role \"Student\" and the phase \"Child\", and semi-rigid types, such as the mixin \"MusicalArtist\" (which necessarily characterizes band...",
+      "parents": [
+        "EndurantType"
+      ],
+      "children": [
+        "AntiRigidType",
+        "SemiRigidType"
+      ],
+      "disjoint_with": [
+        "RigidType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "NonSortal",
+      "label": "NonSortal",
+      "description": "A gufo:EndurantType that applies to individuals of different kinds (see Guizzardi, 2005, chapter 4). Non-sortals do not provide a uniform principle of identity for their instances; instead, they just classify things that share common properties but which obey different principles of identity. Als...",
+      "parents": [
+        "EndurantType"
+      ],
+      "children": [
+        "Category",
+        "Mixin",
+        "PhaseMixin",
+        "RoleMixin"
+      ],
+      "disjoint_with": [
+        "Sortal"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Object",
+      "label": "Object",
+      "description": "A gufo:Endurant that does not depend on another endurant for its existence (excluding its essential parts and aspects). Examples of objects include ordinary physical entities, such as a dog, a house, a tomato, a car, Alan Turing, but also socially-defined entities such as The Rolling Stones, the ...",
+      "parents": [
+        "Endurant"
+      ],
+      "children": [
+        "Collection",
+        "FunctionalComplex",
+        "Quantity"
+      ],
+      "disjoint_with": [
+        "Aspect"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Participation",
+      "label": "Participation",
+      "description": "A gufo:Event that depends on a single object. Participations can be used to partition an event into portions, each of which depend exclusively on a single object. Consider a business meeting with multiple participants, including John and Mary. John's participation in the meeting encompasses all e...",
+      "parents": [
+        "Event"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Phase",
+      "label": "Phase",
+      "description": "A gufo:EndurantType that is both sortal and anti-rigid. It is defined by intrinsic but contingent instantiation conditions. Phases are relationally independent types that capturec intrinsic properties shared by instances of a given kind. For example, \"Child\" may be considered a gufo:Phase as a su...",
+      "parents": [
+        "AntiRigidType",
+        "Sortal"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Role"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "PhaseMixin",
+      "label": "PhaseMixin",
+      "description": "A gufo:EndurantType that is both non-sortal and anti-rigid. It is defined by intrinsic but contingent instantiation conditions. Phase mixins are relationally independent types that capture intrinsic properties shared by instances of different kinds. For example, \"LivingAnimal\" may be considered a...",
+      "parents": [
+        "AntiRigidType",
+        "NonSortal"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "RoleMixin"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Quality",
+      "label": "Quality",
+      "description": "A gufo:IntrinsicAspect that is measurable by some value spaces. A quality may be used to compare individuals, on the basis of the value it takes in a certain quality space (for instance, a position within the RGB spectrum). Examples include the weight of a person, the name of organization, the co...",
+      "parents": [
+        "IntrinsicAspect"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "IntrinsicMode"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "QualityValue",
+      "label": "QualityValue",
+      "description": "A gufo:AbstractIndividual that can be associated with a gufo:Quality reflecting the perception or conception of the quality in a certain value space. Instances of gufo:QualityValue include the rational number 2.5 when used to conceive of the acidity of a portion of wine (in a pH scale), the tuple...",
+      "parents": [
+        "AbstractIndividual"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "QualityValueAttributionSituation",
+      "label": "QualityValueAttributionSituation",
+      "description": "A gufo:Situation in which a quality value is temporarily attributed to a gufo:Endurant. A gufo:QualityValueAttributionSituation should be used only for mutable qualities, i.e. those whose value can vary in time. Examples include: the situation in which the value of a bitcoin in Euros is 6.526,12,...",
+      "parents": [
+        "Situation"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "TemporaryConstitutionSituation",
+        "TemporaryInstantiationSituation",
+        "TemporaryParthoodSituation",
+        "TemporaryRelationshipSituation"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Quantity",
+      "label": "Quantity",
+      "description": "A complex gufo:Object that is a maximally-connected portion of stuff. A gufo:Quantity has a fixed constitution, and thus, removing or adding a sub-quantity would result in a different quantity. Examples include the portion of wine in a wine tank, a lump of clay, the gold that constitutes a weddin...",
+      "parents": [
+        "Object"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "RelationshipType",
+      "label": "RelationshipType",
+      "description": "A gufo:Type whose instances are ordered pairs of related entities. Instances of gufo:RelationshipType are object properties in UFO-based ontologies. The object properties \"marriedWith\" and \"enrolledIn\" are examples of material relationship types. The object properties \"heavierThan\", \"olderThan\" a...",
+      "parents": [
+        "Type"
+      ],
+      "children": [
+        "ComparativeRelationshipType",
+        "MaterialRelationshipType"
+      ],
+      "disjoint_with": [
+        "AbstractIndividualType",
+        "ConcreteIndividualType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Relator",
+      "label": "Relator",
+      "description": "A gufo:ExtrinsicAspect that connects (involves, mediates) two or more concrete individuals. Relators are reified relationships composed of reciprocal extrinsic modes. Examples of relators include John and Mary's marriage (composed of John's obligations towards Mary in the scope of the marriage, M...",
+      "parents": [
+        "ExtrinsicAspect"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "ExtrinsicMode"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "RigidType",
+      "label": "RigidType",
+      "description": "A gufo:EndurantType which applies necessarily to its instances (see Guizzardi, 2005, chapter 4). Examples include the types \"Agent\", \"Person\", \"Animal\", \"PhysicalObject\", \"Car\", and \"Tree\".",
+      "parents": [
+        "EndurantType"
+      ],
+      "children": [
+        "Category",
+        "Kind",
+        "SubKind"
+      ],
+      "disjoint_with": [
+        "NonRigidType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Role",
+      "label": "Role",
+      "description": "A gufo:EndurantType that both sortal and anti-rigid. It is defined by relational instantiation conditions. Roles are relationally dependent types, capturing relational properties shared by instances of a given kind. For example, \"Student\" may be considered a gufo:Role as a subclass of the gufo:Ki...",
+      "parents": [
+        "AntiRigidType",
+        "Sortal"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Phase"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "RoleMixin",
+      "label": "RoleMixin",
+      "description": "A gufo:EndurantType that is both non-sortal and anti-rigid. It is defined by relational instantiation conditions. Role mixins are relationally dependent types, capturing relational properties shared by instances of different kinds. For example, \"Customer\" may be considered a gufo:RoleMixin as a s...",
+      "parents": [
+        "AntiRigidType",
+        "NonSortal"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "PhaseMixin"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "SemiRigidType",
+      "label": "SemiRigidType",
+      "description": "A gufo:NonRigidType that applies necessarily to some of its instances and contingently to some others (see Guizzardi, 2005, chapter 4).",
+      "parents": [
+        "NonRigidType"
+      ],
+      "children": [
+        "Mixin"
+      ],
+      "disjoint_with": [
+        "AntiRigidType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Situation",
+      "label": "Situation",
+      "description": "A gufo:ConcreteIndividual that is a particular configuration of a part of reality which can be understood as a whole and in which entities stand in relations. A situation may be counterfactual or actual. An actual situation (or in other words, a \"fact\") \"obtains\" in a certain time instant or duri...",
+      "parents": [
+        "ConcreteIndividual"
+      ],
+      "children": [
+        "QualityValueAttributionSituation",
+        "TemporaryConstitutionSituation",
+        "TemporaryInstantiationSituation",
+        "TemporaryParthoodSituation",
+        "TemporaryRelationshipSituation"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SituationType",
+      "label": "SituationType",
+      "description": "A gufo:Type whose instances are situations. Instances of gufo:SituationType are subclasses of gufo:Situation. Examples include \"HazardousSituation\", \"PersonHasFever\",  \"PersonIsStudent\".",
+      "parents": [
+        "ConcreteIndividualType"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "EndurantType",
+        "EventType"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Sortal",
+      "label": "Sortal",
+      "description": "A gufo:EndurantType which carries (or supplies) a principle of identity for its instances  (see Guizzardi, 2005, chapter 4).",
+      "parents": [
+        "EndurantType"
+      ],
+      "children": [
+        "Kind",
+        "Phase",
+        "Role",
+        "SubKind"
+      ],
+      "disjoint_with": [
+        "NonSortal"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "SubKind",
+      "label": "SubKind",
+      "description": "A gufo:EndurantType that is both sortal and rigid. It specializes a gufo:Kind carrying the principle of identity supplied by that kind. Every gufo:SubKind should directly or indirectly specialize a gufo:Kind. For example, the gufo:Kind \"Lion\" may be specialized into the \"Lionness\" and \"Male Lion\"...",
+      "parents": [
+        "RigidType",
+        "Sortal"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Kind"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "TemporaryConstitutionSituation",
+      "label": "TemporaryConstitutionSituation",
+      "description": "A gufo:Situation in which a gufo:Endurant temporarly constitutes another gufo:Endurant. When constitution of an object may change in time, it may be qualified by the period in time in which the relation applies. Examples include: the situation in which the Beatles is constituted by the group comp...",
+      "parents": [
+        "Situation"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "QualityValueAttributionSituation",
+        "TemporaryInstantiationSituation",
+        "TemporaryRelationshipSituation"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "TemporaryInstantiationSituation",
+      "label": "TemporaryInstantiationSituation",
+      "description": "A gufo:Situation in which a gufo:Endurant temporarily instantiates a gufo:NonRigidType. A gufo:TemporaryInstantiationSituation can account for the time period in which a particular instantiation holds. Examples include: the situation in which Obama instantiates the role of president, which began ...",
+      "parents": [
+        "Situation"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "QualityValueAttributionSituation",
+        "TemporaryConstitutionSituation",
+        "TemporaryParthoodSituation",
+        "TemporaryRelationshipSituation"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "TemporaryParthoodSituation",
+      "label": "TemporaryParthoodSituation",
+      "description": "A gufo:Situation in which a gufo:Endurant is temporarily a part of another gufo:Endurant. A gufo:TemporaryParthoodSituation should only be used for mutable parts. It may be qualified by the period in time in which the relation applies. Examples include: the situation in which the United Kingdom i...",
+      "parents": [
+        "Situation"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "QualityValueAttributionSituation",
+        "TemporaryInstantiationSituation",
+        "TemporaryRelationshipSituation"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "TemporaryRelationshipSituation",
+      "label": "TemporaryRelationshipSituation",
+      "description": "A gufo:Situation in which a gufo:Endurant temporarily stands in a relation with another gufo:Endurant (or other endurants in the case of n-ary relationships). Reification of a gufo:TemporaryRelationshipSituation allows qualification of the relationship with the period in time in which it applies....",
+      "parents": [
+        "Situation"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "QualityValueAttributionSituation",
+        "TemporaryConstitutionSituation",
+        "TemporaryInstantiationSituation",
+        "TemporaryParthoodSituation"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Type",
+      "label": "Type",
+      "description": "An entity that may be instantiated by (or predicated over) other entities. Types encompass what we often call \"sorts\", \"kinds\", \"categories\", etc. Examples include the kind \"Person\", the event type \"Earthquake\", and the abstract individual type \"NaturalNumber\". Relations, such as \"marriedTo\" and ...",
+      "parents": [],
+      "children": [
+        "AbstractIndividualType",
+        "ConcreteIndividualType",
+        "RelationshipType"
+      ],
+      "disjoint_with": [
+        "Individual"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "VariableCollection",
+      "label": "VariableCollection",
+      "description": "A gufo:Collection for which change in membership is possible. Such a collection obeys an intensional principle of identity, i.e., change in membership does not necessarily create a different collection. For example, KLM's fleet of airplanes could be understood as a gufo:VariableCollection. In thi...",
+      "parents": [
+        "Collection"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "FixedCollection"
+      ],
+      "synonyms": []
+    }
+  ]
+}
