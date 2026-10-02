@@ -1,18 +1,12 @@
 use anyhow::{Context, Result};
 use olaya_core::{write_ontology_ipc, OntologyBatchBuilder};
 use owl_fast_core::fca::{ConceptLattice, FormalContext};
-use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, HashMap};
+use std::collections::HashMap;
 use std::env;
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::time::Instant;
-
-#[derive(Debug, Serialize, Deserialize)]
-struct JsonContextInput {
-    objects: HashMap<String, Vec<String>>,
-}
 
 fn load_pairs_from_file<P: AsRef<Path>>(path: P) -> Result<Vec<(String, String)>> {
     let p = path.as_ref();

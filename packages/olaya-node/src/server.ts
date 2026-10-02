@@ -11,7 +11,8 @@
 
 import * as http from "node:http";
 import * as crypto from "node:crypto";
-import { OLaya, OntologyDAG } from "./index.js";
+import { OLaya } from "./engine.js";
+import { OntologyDAG } from "./ontology.js";
 import { DEFAULT_GS1_CLASSES, DEFAULT_INCIDENT_CLASSES } from "./mcp.js";
 
 export type OutputFormat = "jev" | "json-rpc" | "json-schema" | "json-ld";

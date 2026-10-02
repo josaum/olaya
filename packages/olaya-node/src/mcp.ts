@@ -7,7 +7,8 @@ import * as readline from "node:readline";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as os from "node:os";
-import { OLaya, OntologyDAG } from "./index.js";
+import { OLaya } from "./engine.js";
+import { OntologyDAG } from "./ontology.js";
 
 // Standard embedded Incident, GS1, and Leio ontologies for instant zero-install execution
 export const DEFAULT_INCIDENT_CLASSES = [
