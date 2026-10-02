@@ -149,7 +149,7 @@
       --border-strong: #94a3b8;
       --text-main: #0f172a;
       --text-secondary: #334155;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --accent-blue: #0284c7;
       --accent-blue-hover: #0369a1;
       --accent-blue-glow: rgba(2, 132, 199, 0.12);
@@ -4289,6 +4289,20 @@
           <summary class="faq-summary">How long does custom enterprise ontology training take?</summary>
           <div class="faq-content">
             Unlike training large language models which takes weeks and millions of dollars, Leio compiles in minutes. Using our contrastive Atlas embedding pipeline and topological subsumption loss, custom enterprise taxonomies (e.g. 50,000 SKUs, custom support categories, internal infrastructure graphs) compile in under 15 minutes on a single GPU or CPU instance.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-summary">What is the memory and cold-start profile in serverless and edge environments?</summary>
+          <div class="faq-content">
+            Zero cold start. Unlike 14GB LLM weights that require container pre-warming and GPU provisioning, Leio's standalone WASM binary is just 189 KB with an in-memory footprint under 8 MB. It instantiates in under 200 microseconds in standard V8 isolates, AWS Lambda, Cloudflare Workers, and mobile browsers.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-summary">Can we bring our own custom schemas or proprietary enterprise taxonomies?</summary>
+          <div class="faq-content">
+            Yes. You can import any W3C OWL 2 ontology, RDF/Turtle, OBO Foundry ontology, or simple JSON hierarchy. Our training pipeline automatically generates hard negatives and topological axioms, or you can use our in-memory candidate compiler directly (as demonstrated in the Custom POC Sandbox above) without offline training.
           </div>
         </details>
       </div>
