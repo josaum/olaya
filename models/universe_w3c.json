@@ -1,0 +1,1189 @@
+{
+  "name": "--arrow",
+  "concepts": [
+    {
+      "curie": "Activity",
+      "label": "Activity",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "ChangeEvent"
+      ],
+      "disjoint_with": [
+        "Entity"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "ActivityInfluence",
+      "label": "ActivityInfluence",
+      "description": "ActivityInfluence provides additional descriptions of an Activity's binary influence upon any other kind of resource. Instances of ActivityInfluence use the prov:activity property to cite the influencing Activity.",
+      "parents": [
+        "Influence"
+      ],
+      "children": [
+        "Communication",
+        "Generation",
+        "Invalidation"
+      ],
+      "disjoint_with": [
+        "EntityInfluence"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Agent",
+      "label": "Agent",
+      "description": "A resource that acts or has the power to act.",
+      "parents": [
+        "AgentClass"
+      ],
+      "children": [
+        "Group",
+        "Organization",
+        "Person",
+        "SoftwareAgent"
+      ],
+      "disjoint_with": [
+        "InstantaneousEvent"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "AgentClass",
+      "label": "Agent Class",
+      "description": "A group of agents.",
+      "parents": [
+        "Class"
+      ],
+      "children": [
+        "Agent"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "AgentInfluence",
+      "label": "AgentInfluence",
+      "description": "AgentInfluence provides additional descriptions of an Agent's binary influence upon any other kind of resource. Instances of AgentInfluence use the prov:agent property to cite the influencing Agent.",
+      "parents": [
+        "Influence"
+      ],
+      "children": [
+        "Association",
+        "Attribution",
+        "Delegation"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Association",
+      "label": "Association",
+      "description": "An instance of prov:Association provides additional descriptions about the binary prov:wasAssociatedWith relation from an prov:Activity to some prov:Agent that had some responsiblity for it. For example, :baking prov:wasAssociatedWith :baker; prov:qualifiedAssociation [ a prov:Association; prov:a...",
+      "parents": [
+        "AgentInfluence"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Attribution",
+      "label": "Attribution",
+      "description": "An instance of prov:Attribution provides additional descriptions about the binary prov:wasAttributedTo relation from an prov:Entity to some prov:Agent that had some responsible for it. For example, :cake prov:wasAttributedTo :baker; prov:qualifiedAttribution [ a prov:Attribution; prov:entity :bak...",
+      "parents": [
+        "AgentInfluence"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "BibliographicResource",
+      "label": "Bibliographic Resource",
+      "description": "A book, article, or other documentary resource.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Bundle",
+      "label": "Bundle",
+      "description": "Note that there are kinds of bundles (e.g. handwritten letters, audio recordings, etc.) that are not expressed in PROV-O, but can be still be described by PROV-O.",
+      "parents": [
+        "Entity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Catalog",
+      "label": "Catalog",
+      "description": "A curated collection of metadata about resources (e.g., datasets and data services in the context of a data catalog).",
+      "parents": [
+        "Dataset"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "CatalogRecord",
+      "label": "Catalog Record",
+      "description": "1つのデータセットを記述したデータ・カタログ内のレコード。",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ChangeEvent",
+      "label": "Change Event",
+      "description": "Represents an event which resulted in a major change to an organization such as a merger or complete restructuring. It is intended for situations where the resulting organization is sufficient distinct from the original organizations that it has a distinct identity and distinct URI. Extension voc...",
+      "parents": [
+        "Activity"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Organization",
+        "Role",
+        "Membership",
+        "Site"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Class",
+      "label": "Class",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "AgentClass"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Collection",
+      "label": "Collection",
+      "description": "A meaningful collection of concepts.",
+      "parents": [
+        "Entity"
+      ],
+      "children": [
+        "EmptyCollection",
+        "OrderedCollection"
+      ],
+      "disjoint_with": [
+        "Concept",
+        "ConceptScheme"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Communication",
+      "label": "Communication",
+      "description": "An instance of prov:Communication provides additional descriptions about the binary prov:wasInformedBy relation from an informed prov:Activity to the prov:Activity that informed it. For example, :you_jumping_off_bridge prov:wasInformedBy :everyone_else_jumping_off_bridge; prov:qualifiedCommunicat...",
+      "parents": [
+        "ActivityInfluence"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Community",
+      "label": "Community",
+      "description": "Community is a high-level concept that defines an online community and what it consists of.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [
+        "Item",
+        "Role",
+        "UserAccount"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Concept",
+      "label": "Concept",
+      "description": "An idea or notion; a unit of thought.",
+      "parents": [],
+      "children": [
+        "Role"
+      ],
+      "disjoint_with": [
+        "ConceptScheme",
+        "Collection"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "ConceptScheme",
+      "label": "Concept Scheme",
+      "description": "A set of concepts, optionally including statements about semantic relationships between those concepts.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [
+        "Concept",
+        "Collection"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Container",
+      "label": "Container",
+      "description": "An area in which content Items are contained.",
+      "parents": [],
+      "children": [
+        "Forum",
+        "Thread"
+      ],
+      "disjoint_with": [
+        "Item",
+        "Role",
+        "UserAccount",
+        "Usergroup"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "DCMIType",
+      "label": "DCMI Type Vocabulary",
+      "description": "The set of classes specified by the DCMI Type Vocabulary, used to categorize the nature or genre of the resource.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DDC",
+      "label": "DDC",
+      "description": "The set of conceptual resources specified by the Dewey Decimal Classification.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DataService",
+      "label": "Data service",
+      "description": "A site or end-point providing operations related to the discovery of, access to, or processing functions on, data or related resources.",
+      "parents": [
+        "Resource"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "Dataservice"
+      ]
+    },
+    {
+      "curie": "Dataset",
+      "label": "Dataset",
+      "description": "1つのエージェントによって公開またはキュレートされ、1つ以上の形式でアクセスまたはダウンロードできるデータの集合。",
+      "parents": [
+        "Resource"
+      ],
+      "children": [
+        "Catalog"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "Datasamling"
+      ]
+    },
+    {
+      "curie": "Delegation",
+      "label": "Delegation",
+      "description": "An instance of prov:Delegation provides additional descriptions about the binary prov:actedOnBehalfOf relation from a performing prov:Agent to some prov:Agent for whom it was performed. For example, :mixing prov:wasAssociatedWith :toddler . :toddler prov:actedOnBehalfOf :mother; prov:qualifiedDel...",
+      "parents": [
+        "AgentInfluence"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Derivation",
+      "label": "Derivation",
+      "description": "An instance of prov:Derivation provides additional descriptions about the binary prov:wasDerivedFrom relation from some derived prov:Entity to another prov:Entity from which it was derived. For example, :chewed_bubble_gum prov:wasDerivedFrom :unwrapped_bubble_gum; prov:qualifiedDerivation [ a pro...",
+      "parents": [
+        "EntityInfluence"
+      ],
+      "children": [
+        "PrimarySource",
+        "Quotation",
+        "Revision"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Distribution",
+      "label": "Distribution",
+      "description": "A specific representation of a dataset. A dataset might be available in multiple serializations that may differ in various ways, including natural language, media-type or format, schematic organization, temporal and spatial resolution, level of detail or profiles (which might specify any or all o...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "Datadistribution",
+        "Datarepræsentation",
+        "Datamanifestation",
+        "Dataudstilling"
+      ]
+    },
+    {
+      "curie": "Document",
+      "label": "Document",
+      "description": "A document.",
+      "parents": [],
+      "children": [
+        "Image",
+        "PersonalProfileDocument",
+        "Post"
+      ],
+      "disjoint_with": [
+        "Organization",
+        "Project"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "EmptyCollection",
+      "label": "EmptyCollection",
+      "description": "Individual",
+      "parents": [
+        "Collection"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "End",
+      "label": "End",
+      "description": "An instance of prov:End provides additional descriptions about the binary prov:wasEndedBy relation from some ended prov:Activity to an prov:Entity that ended it. For example, :ball_game prov:wasEndedBy :buzzer; prov:qualifiedEnd [ a prov:End; prov:entity :buzzer; :foo :bar; prov:atTime '2012-03-0...",
+      "parents": [
+        "EntityInfluence",
+        "InstantaneousEvent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Entity",
+      "label": "Entity",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "Bundle",
+        "Collection",
+        "Plan"
+      ],
+      "disjoint_with": [
+        "Activity",
+        "InstantaneousEvent"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "EntityInfluence",
+      "label": "EntityInfluence",
+      "description": "EntityInfluence provides additional descriptions of an Entity's binary influence upon any other kind of resource. Instances of EntityInfluence use the prov:entity property to cite the influencing Entity.",
+      "parents": [
+        "Influence"
+      ],
+      "children": [
+        "Derivation",
+        "End",
+        "Start",
+        "Usage"
+      ],
+      "disjoint_with": [
+        "ActivityInfluence"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "FileFormat",
+      "label": "File Format",
+      "description": "A digital resource format.",
+      "parents": [
+        "MediaType"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "FormalOrganization",
+      "label": "Formal Organization",
+      "description": "An Organization which is recognized in the world at large, in particular in legal jurisdictions, with associated rights and responsibilities. Examples include a Corporation, Charity, Government or Church. Note that this is a super class of `gr:BusinessEntity` and it is recommended to use the Good...",
+      "parents": [
+        "Organization"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Forum",
+      "label": "Forum",
+      "description": "A discussion area on which Posts or entries are made.",
+      "parents": [
+        "Container"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Frequency",
+      "label": "Frequency",
+      "description": "A rate at which something recurs.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Generation",
+      "label": "Generation",
+      "description": "An instance of prov:Generation provides additional descriptions about the binary prov:wasGeneratedBy relation from a generated prov:Entity to the prov:Activity that generated it. For example, :cake prov:wasGeneratedBy :baking; prov:qualifiedGeneration [ a prov:Generation; prov:activity :baking; :...",
+      "parents": [
+        "ActivityInfluence",
+        "InstantaneousEvent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Group",
+      "label": "Group",
+      "description": "A class of Agents.",
+      "parents": [
+        "Agent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Head",
+      "label": "head",
+      "description": "A role corresponding to the `org:headOf` property",
+      "parents": [
+        "Role"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "IMT",
+      "label": "IMT",
+      "description": "The set of media types specified by the Internet Assigned Numbers Authority.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Image",
+      "label": "Image",
+      "description": "An image.",
+      "parents": [
+        "Document"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Influence",
+      "label": "Influence",
+      "description": "An instance of prov:Influence provides additional descriptions about the binary prov:wasInfluencedBy relation from some influenced Activity, Entity, or Agent to the influencing Activity, Entity, or Agent. For example, :stomach_ache prov:wasInfluencedBy :spoon; prov:qualifiedInfluence [ a prov:Inf...",
+      "parents": [],
+      "children": [
+        "ActivityInfluence",
+        "AgentInfluence",
+        "EntityInfluence"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "InstantaneousEvent",
+      "label": "InstantaneousEvent",
+      "description": "An instantaneous event, or event for short, happens in the world and marks a change in the world, in its activities and in its entities. The term 'event' is commonly used in process algebra with a similar meaning. Events represent communications or interactions; they are assumed to be atomic and ...",
+      "parents": [],
+      "children": [
+        "End",
+        "Generation",
+        "Invalidation",
+        "Start",
+        "Usage"
+      ],
+      "disjoint_with": [
+        "Agent",
+        "Entity"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Invalidation",
+      "label": "Invalidation",
+      "description": "An instance of prov:Invalidation provides additional descriptions about the binary prov:wasInvalidatedBy relation from an invalidated prov:Entity to the prov:Activity that invalidated it. For example, :uncracked_egg prov:wasInvalidatedBy :baking; prov:qualifiedInvalidation [ a prov:Invalidation; ...",
+      "parents": [
+        "ActivityInfluence",
+        "InstantaneousEvent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Item",
+      "label": "Item",
+      "description": "An Item is something which can be in a Container.",
+      "parents": [],
+      "children": [
+        "Post"
+      ],
+      "disjoint_with": [
+        "Community",
+        "Container",
+        "Role",
+        "Space",
+        "UserAccount",
+        "Usergroup"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Jurisdiction",
+      "label": "Jurisdiction",
+      "description": "The extent or range of judicial, law enforcement, or other authority.",
+      "parents": [
+        "LocationPeriodOrJurisdiction"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LCC",
+      "label": "LCC",
+      "description": "The set of conceptual resources specified by the Library of Congress Classification.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LCSH",
+      "label": "LCSH",
+      "description": "The set of labeled concepts specified by the Library of Congress Subject Headings.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LabelProperty",
+      "label": "Label Property",
+      "description": "A foaf:LabelProperty is any RDF property with texual values that serve as labels.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LicenseDocument",
+      "label": "License Document",
+      "description": "A legal document giving official permission to do something with a resource.",
+      "parents": [
+        "RightsStatement"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LinguisticSystem",
+      "label": "Linguistic System",
+      "description": "Written, spoken, sign, and computer languages are linguistic systems.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Location",
+      "label": "Location",
+      "description": "A spatial region or named place.",
+      "parents": [
+        "LocationPeriodOrJurisdiction"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LocationPeriodOrJurisdiction",
+      "label": "Location, Period, or Jurisdiction",
+      "description": "A location, period of time, or jurisdiction.",
+      "parents": [],
+      "children": [
+        "Jurisdiction",
+        "Location",
+        "PeriodOfTime"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MESH",
+      "label": "MeSH",
+      "description": "The set of labeled concepts specified by the Medical Subject Headings.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MediaType",
+      "label": "Media Type",
+      "description": "A file format or physical medium.",
+      "parents": [
+        "MediaTypeOrExtent"
+      ],
+      "children": [
+        "FileFormat",
+        "PhysicalMedium"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MediaTypeOrExtent",
+      "label": "Media Type or Extent",
+      "description": "A media type or extent.",
+      "parents": [],
+      "children": [
+        "MediaType",
+        "SizeOrDuration"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Membership",
+      "label": "Membership",
+      "description": "Indicates the nature of an Agent's membership of an organization. Represents an n-ary relation between an Agent, an Organization and a Role. It is possible to directly indicate membership, independent of the specific Role, through use of the `org:memberOf` property.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [
+        "Organization",
+        "Role",
+        "Site",
+        "ChangeEvent"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "MethodOfAccrual",
+      "label": "Method of Accrual",
+      "description": "A method by which resources are added to a collection.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MethodOfInstruction",
+      "label": "Method of Instruction",
+      "description": "A process that is used to engender knowledge, attitudes, and skills.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "NLM",
+      "label": "NLM",
+      "description": "The set of conceptual resources specified by the National Library of Medicine Classification.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OnlineAccount",
+      "label": "OnlineAccount",
+      "description": "An online account.",
+      "parents": [],
+      "children": [
+        "OnlineChatAccount",
+        "OnlineEcommerceAccount",
+        "OnlineGamingAccount",
+        "UserAccount"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OnlineChatAccount",
+      "label": "Online Chat Account",
+      "description": "An online chat account.",
+      "parents": [
+        "OnlineAccount"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OnlineEcommerceAccount",
+      "label": "Online E-commerce Account",
+      "description": "An online e-commerce account.",
+      "parents": [
+        "OnlineAccount"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OnlineGamingAccount",
+      "label": "Online Gaming Account",
+      "description": "An online gaming account.",
+      "parents": [
+        "OnlineAccount"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OrderedCollection",
+      "label": "Ordered Collection",
+      "description": "An ordered collection of concepts, where both the grouping and the ordering are meaningful.",
+      "parents": [
+        "Collection"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Organization",
+      "label": "Organization",
+      "description": "Represents a collection of people organized together into a community or other social, commercial or political structure. The group has some common purpose or reason for existence which goes beyond the set of people belonging to it and can act as an Agent. Organizations are often decomposable int...",
+      "parents": [
+        "Agent"
+      ],
+      "children": [
+        "FormalOrganization",
+        "OrganizationalCollaboration",
+        "OrganizationalUnit"
+      ],
+      "disjoint_with": [
+        "Role",
+        "Membership",
+        "Site",
+        "ChangeEvent",
+        "Person",
+        "Document"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "OrganizationalCollaboration",
+      "label": "Endeavour",
+      "description": "A collaboration between two or more Organizations such as a project. It meets the criteria for being an Organization in that it has an identity and defining purpose independent of its particular members but is neither a formally recognized legal entity nor a sub-unit within some larger organizati...",
+      "parents": [
+        "Organization"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OrganizationalUnit",
+      "label": "OrganizationalUnit",
+      "description": "An Organization such as a University Support Unit which is part of some larger FormalOrganization and only has full recognition within the context of that FormalOrganization, it is not a Legal Entity in its own right. Units can be large and complex containing other Units and even FormalOrganizati...",
+      "parents": [
+        "Organization"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PeriodOfTime",
+      "label": "Period of Time",
+      "description": "An interval of time that is named or defined by its start and end dates.",
+      "parents": [
+        "LocationPeriodOrJurisdiction"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Person",
+      "label": "Person",
+      "description": "A person.",
+      "parents": [
+        "Agent",
+        "SpatialThing"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Organization",
+        "Project"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "PersonalProfileDocument",
+      "label": "PersonalProfileDocument",
+      "description": "A personal profile RDF document.",
+      "parents": [
+        "Document"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PhysicalMedium",
+      "label": "Physical Medium",
+      "description": "Examples include paper, canvas, or DVD.",
+      "parents": [
+        "MediaType"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PhysicalResource",
+      "label": "Physical Resource",
+      "description": "A material thing.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Plan",
+      "label": "Plan",
+      "description": "There exist no prescriptive requirement on the nature of plans, their representation, the actions or steps they consist of, or their intended goals. Since plans may evolve over time, it may become necessary to track their provenance, so plans themselves are entities. Representing the plan explici...",
+      "parents": [
+        "Entity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Policy",
+      "label": "Policy",
+      "description": "A plan or course of action by an authority, intended to influence and determine decisions, actions, and other matters.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Post",
+      "label": "Post",
+      "description": "A Post represents some position within an organization that exists independently of the person or persons filling it. Posts may be used to represent situations where a person is a member of an organization ex officio (for example the Secretary of State for Scotland is part of UK Cabinet by virtue...",
+      "parents": [
+        "Item",
+        "Document"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PrimarySource",
+      "label": "PrimarySource",
+      "description": "An instance of prov:PrimarySource provides additional descriptions about the binary prov:hadPrimarySource relation from some secondary prov:Entity to an earlier, primary prov:Entity. For example, :blog prov:hadPrimarySource :newsArticle; prov:qualifiedPrimarySource [ a prov:PrimarySource; prov:en...",
+      "parents": [
+        "Derivation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Project",
+      "label": "Project",
+      "description": "A project (a collective endeavour of some kind).",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [
+        "Person",
+        "Document"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "ProvenanceStatement",
+      "label": "Provenance Statement",
+      "description": "Any changes in ownership and custody of a resource since its creation that are significant for its authenticity, integrity, and interpretation.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Quotation",
+      "label": "Quotation",
+      "description": "An instance of prov:Quotation provides additional descriptions about the binary prov:wasQuotedFrom relation from some taken prov:Entity from an earlier, larger prov:Entity. For example, :here_is_looking_at_you_kid prov:wasQuotedFrom :casablanca_script; prov:qualifiedQuotation [ a prov:Quotation; ...",
+      "parents": [
+        "Derivation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Relationship",
+      "label": "Relationship",
+      "description": "An association class for attaching additional information to a relationship between DCAT Resources.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Resource",
+      "label": "Catalogued resource",
+      "description": "Recurso publicado o curado por un agente único.",
+      "parents": [],
+      "children": [
+        "DataService",
+        "Dataset"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Revision",
+      "label": "Revision",
+      "description": "An instance of prov:Revision provides additional descriptions about the binary prov:wasRevisionOf relation from some newer prov:Entity to an earlier prov:Entity. For example, :draft_2 prov:wasRevisionOf :draft_1; prov:qualifiedRevision [ a prov:Revision; prov:entity :draft_1; :foo :bar ].",
+      "parents": [
+        "Derivation"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "RightsStatement",
+      "label": "Rights Statement",
+      "description": "A statement about the intellectual property rights (IPR) held in or over a resource, a legal document giving official permission to do something with a resource, or a statement about access rights.",
+      "parents": [],
+      "children": [
+        "LicenseDocument"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Role",
+      "label": "Role",
+      "description": "Denotes a role that a Person or other Agent can take in an organization. Instances of this class describe the abstract role; to denote a specific instance of a person playing that role in a specific organization use an instance of `org:Membership`. It is common for roles to be arranged in some ta...",
+      "parents": [
+        "Concept"
+      ],
+      "children": [
+        "Head"
+      ],
+      "disjoint_with": [
+        "Organization",
+        "Membership",
+        "Site",
+        "ChangeEvent",
+        "Community",
+        "Container",
+        "Item",
+        "Space",
+        "UserAccount",
+        "Usergroup"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Site",
+      "label": "Site",
+      "description": "An office or other premise at which the organization is located. Many organizations are spread across multiple sites and many sites will host multiple locations. In most cases a Site will be a physical location. However, we don't exclude the possibility of non-physical sites such as a virtual off...",
+      "parents": [
+        "Space"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Organization",
+        "Role",
+        "Membership",
+        "ChangeEvent"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "SizeOrDuration",
+      "label": "Size or Duration",
+      "description": "Examples include a number of pages, a specification of length, width, and breadth, or a period in hours, minutes, and seconds.",
+      "parents": [
+        "MediaTypeOrExtent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SoftwareAgent",
+      "label": "SoftwareAgent",
+      "description": "Class",
+      "parents": [
+        "Agent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Space",
+      "label": "Space",
+      "description": "A Space is a place where data resides, e.g. on a website, desktop, fileshare, etc.",
+      "parents": [],
+      "children": [
+        "Site"
+      ],
+      "disjoint_with": [
+        "Item",
+        "Role",
+        "UserAccount",
+        "Usergroup"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "SpatialThing",
+      "label": "Spatial Thing",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "Person"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Standard",
+      "label": "Standard",
+      "description": "A reference point against which other things can be evaluated or compared.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Start",
+      "label": "Start",
+      "description": "An instance of prov:Start provides additional descriptions about the binary prov:wasStartedBy relation from some started prov:Activity to an prov:Entity that started it. For example, :foot_race prov:wasStartedBy :bang; prov:qualifiedStart [ a prov:Start; prov:entity :bang; :foo :bar; prov:atTime ...",
+      "parents": [
+        "EntityInfluence",
+        "InstantaneousEvent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "TGN",
+      "label": "TGN",
+      "description": "The set of places specified by the Getty Thesaurus of Geographic Names.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Thread",
+      "label": "Thread",
+      "description": "A container for a series of threaded discussion Posts or Items.",
+      "parents": [
+        "Container"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "UDC",
+      "label": "UDC",
+      "description": "The set of conceptual resources specified by the Universal Decimal Classification.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Usage",
+      "label": "Usage",
+      "description": "An instance of prov:Usage provides additional descriptions about the binary prov:used relation from some prov:Activity to an prov:Entity that it used. For example, :keynote prov:used :podium; prov:qualifiedUsage [ a prov:Usage; prov:entity :podium; :foo :bar ].",
+      "parents": [
+        "EntityInfluence",
+        "InstantaneousEvent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "UserAccount",
+      "label": "User Account",
+      "description": "A user account in an online community site.",
+      "parents": [
+        "OnlineAccount"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "Community",
+        "Container",
+        "Item",
+        "Role",
+        "Space",
+        "Usergroup"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "Usergroup",
+      "label": "Usergroup",
+      "description": "A set of UserAccounts whose owners have a common purpose or interest. Can be used for access control purposes.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [
+        "Container",
+        "Item",
+        "Role",
+        "Space",
+        "UserAccount"
+      ],
+      "synonyms": []
+    }
+  ]
+}

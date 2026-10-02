@@ -114,4 +114,49 @@ fn main() {
         );
     }
     println!("{}", "=".repeat(72));
+
+    let real_ontos = [
+        ("Master Universe (All)", "models/master_universe.arrow", "Credit default swap hedging acute disease supply chain incident"),
+        ("MONDO Disease", "models/mondo.arrow", "Severe neurodegenerative lysosomal storage disorder with sphingomyelinase deficiency"),
+        ("FIBO Financial", "models/fibo.arrow", "Credit default swap derivative contract hedging corporate bond default risk"),
+        ("GS1 Supply Chain", "models/gs1_full.arrow", "Refrigerated organic whole milk dairy beverage pasteurized cream"),
+        ("Schema.org Web", "models/schemaorg.arrow", "High performance wireless noise cancelling bluetooth headphones with mic"),
+        ("W3C Reference Core", "models/w3c_core.arrow", "Data provenance activity generating derivative dataset catalog record with historical agent attribution"),
+    ];
+
+    println!("\nReal Standard Ontologies Zero-Copy Arrow IPC Benchmark (10,000 decisions):");
+    println!("{}", "=".repeat(72));
+    println!(
+        "{:<20} {:>10} {:>12} {:>16} {:>18}",
+        "Ontology", "concepts", "file (KB)", "avg latency (us)", "decisions / sec"
+    );
+
+    for (name, path_str, test_query) in real_ontos {
+        let p = std::path::Path::new(path_str);
+        if !p.exists() {
+            continue;
+        }
+        let file_kb = p.metadata().map(|m| m.len() / 1024).unwrap_or(0);
+        let batch = olaya_core::read_ontology_ipc(p).expect("Failed to read IPC");
+        let n_concepts = batch.num_rows();
+        let engine = OlayaEngine::new(batch).expect("Failed to build engine");
+
+        // Warmup
+        engine.system_one(test_query, 8).unwrap();
+
+        let start = Instant::now();
+        for _ in 0..total_decisions {
+            std::hint::black_box(engine.system_one(test_query, 8).unwrap());
+        }
+        let secs = start.elapsed().as_secs_f64();
+        println!(
+            "{:<20} {:>10} {:>12} {:>16.2} {:>18.0}",
+            name,
+            n_concepts,
+            file_kb,
+            secs * 1e6 / total_decisions as f64,
+            total_decisions as f64 / secs
+        );
+    }
+    println!("{}", "=".repeat(72));
 }

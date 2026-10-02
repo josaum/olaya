@@ -1,0 +1,1025 @@
+{
+  "name": "--arrow",
+  "concepts": [
+    {
+      "curie": "ActionSpecification",
+      "label": "action specification",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Agent",
+      "label": "agent",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "Buyer",
+        "Customer",
+        "Manufacturer",
+        "Supplier"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "AgentRole",
+      "label": "agent role",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "BuyerRole",
+        "CustomerRole",
+        "ManufacturerRole",
+        "SupplierRole"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Agreement",
+      "label": "agreement",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [
+        "CommercialServiceAgreement"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Algorithm",
+      "label": "algorithm",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Assembly",
+      "label": "assembly",
+      "description": "Class",
+      "parents": [
+        "MaterialArtifact"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "AssemblyProcess",
+      "label": "assembly process",
+      "description": "Class",
+      "parents": [
+        "ManufacturingProcess"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "BFO:0000144",
+      "label": "process profile",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "BusinessFunction",
+      "label": "business function",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "BusinessOrganization",
+      "label": "business organization",
+      "description": "Class",
+      "parents": [
+        "Organization"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "BusinessProcess",
+      "label": "business process",
+      "description": "Class",
+      "parents": [
+        "PlannedProcess"
+      ],
+      "children": [
+        "BuyingBusinessProcess",
+        "CommercialService",
+        "ProcuringBusinessProcess",
+        "ProductProductionProcess",
+        "SellingBusinessProcess",
+        "SupplyingBusinessProcess"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Buyer",
+      "label": "buyer",
+      "description": "Class",
+      "parents": [
+        "Agent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "BuyerRole",
+      "label": "buyer role",
+      "description": "Class",
+      "parents": [
+        "AgentRole"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "BuyingBusinessProcess",
+      "label": "buying business process",
+      "description": "Class",
+      "parents": [
+        "BusinessProcess"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Capability",
+      "label": "capability",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "MaterialContainmentCapability",
+        "MeasurementCapability"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Classifier",
+      "label": "classifier",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "CommercialService",
+      "label": "commercial service",
+      "description": "Class",
+      "parents": [
+        "BusinessProcess"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "CommercialServiceAgreement",
+      "label": "commercial service agreement",
+      "description": "Class",
+      "parents": [
+        "Agreement"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "CommercialServiceSpecification",
+      "label": "commercial service specification",
+      "description": "Class",
+      "parents": [
+        "PlanSpecification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ComplexMaterialState",
+      "label": "complex material state",
+      "description": "Class",
+      "parents": [
+        "MaterialState"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ComputingProcess",
+      "label": "computing process",
+      "description": "Class",
+      "parents": [
+        "PlannedProcess"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Consumable",
+      "label": "consumable",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ConsumableRole",
+      "label": "consumable role",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Container",
+      "label": "container",
+      "description": "Class",
+      "parents": [
+        "MaterialArtifact"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Customer",
+      "label": "customer",
+      "description": "Class",
+      "parents": [
+        "Agent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "CustomerRole",
+      "label": "customer role",
+      "description": "Class",
+      "parents": [
+        "AgentRole"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Denoter",
+      "label": "denoter",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [
+        "Identifier"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DescriptiveInformationContentEntity",
+      "label": "descriptive information content entity",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DesignSpecification",
+      "label": "design specification",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DesignativeInformationContentEntity",
+      "label": "designative information content entity",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DesignedFunction",
+      "label": "designed function",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "DirectiveInformationContentEntity",
+      "label": "directive information content entity",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "EncodedAlgorithm",
+      "label": "encoded algorithm",
+      "description": "Class",
+      "parents": [
+        "PlanSpecification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "EngineeredSystem",
+      "label": "engineered system",
+      "description": "Class",
+      "parents": [
+        "System"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "EquipmentRole",
+      "label": "equipment role",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Event",
+      "label": "event",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GainOfRole",
+      "label": "gain of role",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GroupOfAgents",
+      "label": "group of agents",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "OrganizedGroupOfAgents"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GroupOfPersons",
+      "label": "group of persons",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Identifier",
+      "label": "identifier",
+      "description": "Class",
+      "parents": [
+        "Denoter"
+      ],
+      "children": [
+        "OrganizationIdentifier",
+        "PhysicalLocationIdentifier"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "InformationContentEntity",
+      "label": "information content entity",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "ActionSpecification",
+        "Agreement",
+        "Algorithm",
+        "Denoter",
+        "DescriptiveInformationContentEntity",
+        "DesignSpecification",
+        "DesignativeInformationContentEntity",
+        "DirectiveInformationContentEntity",
+        "InputSpecification",
+        "MaterialStateSpecification",
+        "MeasurementInformationContentEntity",
+        "ObjectiveSpecification",
+        "PlanSpecification",
+        "RequirementSpecification",
+        "ValueExpression"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "InputSpecification",
+      "label": "input specification",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "LossOfRole",
+      "label": "loss of role",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaintainableMaterialItem",
+      "label": "maintainable material item",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaintainableMaterialItemRole",
+      "label": "maintainable material item role",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Manufacturer",
+      "label": "manufacturer",
+      "description": "Class",
+      "parents": [
+        "Agent"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ManufacturerRole",
+      "label": "manufacturer role",
+      "description": "Class",
+      "parents": [
+        "AgentRole"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ManufacturingProcess",
+      "label": "manufacturing process",
+      "description": "Class",
+      "parents": [
+        "PlannedProcess"
+      ],
+      "children": [
+        "AssemblyProcess"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialArtifact",
+      "label": "material artifact",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "Assembly",
+        "Container"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialComponent",
+      "label": "material component",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialComponentRole",
+      "label": "material component role",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialContainmentCapability",
+      "label": "material containment capability",
+      "description": "Class",
+      "parents": [
+        "Capability"
+      ],
+      "children": [
+        "MaterialContainmentFunction"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialContainmentFunction",
+      "label": "material containment function",
+      "description": "Class",
+      "parents": [
+        "MaterialContainmentCapability"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialLocationChangeProcess",
+      "label": "material location change process",
+      "description": "Class",
+      "parents": [
+        "PlannedProcess"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialProduct",
+      "label": "material product",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialProductRole",
+      "label": "material product role",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialResource",
+      "label": "material resource",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialResourceRole",
+      "label": "material resource role",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialState",
+      "label": "material state",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "ComplexMaterialState"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialStateConditionExpression",
+      "label": "material state condition expression",
+      "description": "Class",
+      "parents": [
+        "ValueExpression"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "MaterialStateSpecification"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "MaterialStateSpecification",
+      "label": "material state specification",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "MaterialStateConditionExpression"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "MeasuredValueExpression",
+      "label": "measured value expression",
+      "description": "Class",
+      "parents": [
+        "ValueExpression"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MeasurementCapability",
+      "label": "measurement capability",
+      "description": "Class",
+      "parents": [
+        "Capability"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MeasurementInformationContentEntity",
+      "label": "measurement information content entity",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "MeasurementProcess",
+      "label": "measurement process",
+      "description": "Class",
+      "parents": [
+        "PlannedProcess"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ObjectiveSpecification",
+      "label": "objective specification",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [
+        "OutputObjectiveSpecification"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Organization",
+      "label": "organization",
+      "description": "Class",
+      "parents": [
+        "OrganizedGroupOfAgents"
+      ],
+      "children": [
+        "BusinessOrganization"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OrganizationIdentifier",
+      "label": "organization identifier",
+      "description": "Class",
+      "parents": [
+        "Identifier"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OrganizedGroupOfAgents",
+      "label": "organized group of agents",
+      "description": "Class",
+      "parents": [
+        "GroupOfAgents"
+      ],
+      "children": [
+        "Organization"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "OutputObjectiveSpecification",
+      "label": "output objective specification",
+      "description": "Class",
+      "parents": [
+        "ObjectiveSpecification"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Person",
+      "label": "person",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PhysicalLocationIdentifier",
+      "label": "physical location identifier",
+      "description": "Class",
+      "parents": [
+        "Identifier"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PieceOfEquipment",
+      "label": "piece of equipment",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PlanSpecification",
+      "label": "plan specification",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [
+        "CommercialServiceSpecification",
+        "EncodedAlgorithm"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "PlannedProcess",
+      "label": "planned process",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "BusinessProcess",
+        "ComputingProcess",
+        "ManufacturingProcess",
+        "MaterialLocationChangeProcess",
+        "MeasurementProcess"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ProcessCharacteristic",
+      "label": "process characteristic",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ProcuringBusinessProcess",
+      "label": "procuring business process",
+      "description": "Class",
+      "parents": [
+        "BusinessProcess"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ProductProductionProcess",
+      "label": "product production process",
+      "description": "Class",
+      "parents": [
+        "BusinessProcess"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "RawMaterial",
+      "label": "raw material",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "RawMaterialRole",
+      "label": "raw material role",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "RequirementSpecification",
+      "label": "requirement specification",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SellingBusinessProcess",
+      "label": "offering for sale business process",
+      "description": "Class",
+      "parents": [
+        "BusinessProcess"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ServiceProvider",
+      "label": "service provider",
+      "description": "Class",
+      "parents": [
+        "Supplier"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "ServiceProviderRole",
+      "label": "service provider role",
+      "description": "Class",
+      "parents": [
+        "SupplierRole"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "Supplier",
+      "label": "supplier",
+      "description": "Class",
+      "parents": [
+        "Agent"
+      ],
+      "children": [
+        "ServiceProvider"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SupplierRole",
+      "label": "supplier role",
+      "description": "Class",
+      "parents": [
+        "AgentRole"
+      ],
+      "children": [
+        "ServiceProviderRole"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "SupplyingBusinessProcess",
+      "label": "supplying business process",
+      "description": "Class",
+      "parents": [
+        "BusinessProcess"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "System",
+      "label": "system",
+      "description": "Class",
+      "parents": [],
+      "children": [
+        "EngineeredSystem"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "TemporalDurationValueExpression",
+      "label": "temporal duration value expression",
+      "description": "Class",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [
+        "TemporalInstantValueExpression"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "TemporalInstantValueExpression",
+      "label": "temporal instant value expression",
+      "description": "Class",
+      "parents": [
+        "ValueExpression"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "TemporalDurationValueExpression"
+      ],
+      "synonyms": []
+    },
+    {
+      "curie": "ValueExpression",
+      "label": "value expression",
+      "description": "Class",
+      "parents": [
+        "InformationContentEntity"
+      ],
+      "children": [
+        "MaterialStateConditionExpression",
+        "MeasuredValueExpression",
+        "TemporalInstantValueExpression"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    }
+  ]
+}

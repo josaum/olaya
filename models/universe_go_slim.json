@@ -1,0 +1,1685 @@
+{
+  "name": "--arrow",
+  "concepts": [
+    {
+      "curie": "GO:0000228",
+      "label": "nuclear chromosome",
+      "description": "A chromosome that encodes the nuclear genome and is found in the nucleus of a eukaryotic cell during the cell cycle phases when the nucleus is intact.",
+      "parents": [
+        "GO:0005694"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0000278",
+      "label": "mitotic cell cycle",
+      "description": "Progression through the phases of the mitotic cell cycle, the most common eukaryotic cell cycle, which canonically comprises four successive phases called G1, S, G2, and M and includes replication of the genome and the subsequent segregation of chromosomes into daughter cells. In some variant cel...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "mitosis"
+      ]
+    },
+    {
+      "curie": "GO:0000910",
+      "label": "cytokinesis",
+      "description": "The division of the cytoplasm and the plasma membrane of a cell and its partitioning into two daughter cells.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cell cycle cytokinesis",
+        "cytokinesis involved in cell cycle"
+      ]
+    },
+    {
+      "curie": "GO:0001618",
+      "label": "virus receptor activity",
+      "description": "Combining with a virus component and mediating entry of the virus into the cell.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "viral receptor activity"
+      ]
+    },
+    {
+      "curie": "GO:0002181",
+      "label": "cytoplasmic translation",
+      "description": "The chemical reactions and pathways resulting in the formation of a protein in the cytoplasm. This is a ribosome-mediated process in which the information in messenger RNA (mRNA) is used to specify the sequence of amino acids in the protein.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0002376",
+      "label": "immune system process",
+      "description": "Any process involved in the development or functioning of the immune system, an organismal system for calibrated responses to potential internal or invasive threats.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0003012",
+      "label": "muscle system process",
+      "description": "An organ system process carried out at the level of a muscle. Muscle tissue is composed of contractile cells or fibers.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "muscle physiological process"
+      ]
+    },
+    {
+      "curie": "GO:0003013",
+      "label": "circulatory system process",
+      "description": "An organ system process carried out by any of the organs or tissues of the circulatory system. The circulatory system is an organ system that moves extracellular fluids to and from tissue within a multicellular organism.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0003014",
+      "label": "renal system process",
+      "description": "An organ system process carried out by any of the organs or tissues of the renal system. The renal system maintains fluid balance, and contributes to electrolyte balance, acid/base balance, and disposal of nitrogenous waste products. In humans, the renal system comprises a pair of kidneys, a pair...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "excretory system process",
+        "kidney system process"
+      ]
+    },
+    {
+      "curie": "GO:0003016",
+      "label": "respiratory system process",
+      "description": "A process carried out by the organs or tissues of the respiratory system. The respiratory system is an organ system responsible for respiratory gaseous exchange.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "respiratory gaseous exchange"
+      ]
+    },
+    {
+      "curie": "GO:0003677",
+      "label": "DNA binding",
+      "description": "Any molecular function by which a gene product interacts selectively and non-covalently with DNA (deoxyribonucleic acid).",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "microtubule/chromatin interaction",
+        "structure specific DNA binding",
+        "structure-specific DNA binding"
+      ]
+    },
+    {
+      "curie": "GO:0003723",
+      "label": "RNA binding",
+      "description": "Binding to an RNA molecule or a portion thereof.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "poly(A) RNA binding",
+        "poly(A)-RNA binding",
+        "poly-A RNA binding"
+      ]
+    },
+    {
+      "curie": "GO:0003774",
+      "label": "cytoskeletal motor activity",
+      "description": "Generation of force resulting in movement, for example along a microfilament or microtubule, or in torque resulting in membrane scission or rotation of a flagellum. The energy required is obtained either from the hydrolysis of a nucleoside triphosphate or by an electrochemical proton gradient (pr...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0003824",
+      "label": "catalytic activity",
+      "description": "Catalysis of a biochemical reaction at physiological temperatures. In biologically catalyzed reactions, the reactants are known as substrates, and the catalysts are naturally occurring macromolecular substances known as enzymes. Enzymes possess specific binding sites for substrates, and are usual...",
+      "parents": [],
+      "children": [
+        "GO:0009975",
+        "GO:0016491",
+        "GO:0016740",
+        "GO:0016787",
+        "GO:0016829",
+        "GO:0016853",
+        "GO:0016874",
+        "GO:0140096",
+        "GO:0140097",
+        "GO:0140098"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "enzyme activity"
+      ]
+    },
+    {
+      "curie": "GO:0003924",
+      "label": "GTPase activity",
+      "description": "Catalysis of the reaction: GTP + H2O = GDP + H+ + phosphate.",
+      "parents": [
+        "GO:0016787"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "GTPase activity, coupled",
+        "heterotrimeric G-protein GTPase, alpha-subunit",
+        "heterotrimeric G-protein GTPase, beta-subunit",
+        "heterotrimeric G-protein GTPase, gamma-subunit"
+      ]
+    },
+    {
+      "curie": "GO:0005198",
+      "label": "structural molecule activity",
+      "description": "The action of a molecule that contributes to the structural integrity of a complex.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0005215",
+      "label": "transporter activity",
+      "description": "Enables the directed movement of substances (such as macromolecules, small molecules, ions) into, out of or within a cell, accross or in between cells.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "carrier"
+      ]
+    },
+    {
+      "curie": "GO:0005576",
+      "label": "extracellular region",
+      "description": "The space external to the outermost structure of a cell. For cells without external protective or external encapsulating structures this refers to space outside of the plasma membrane. This term covers the host cell environment outside an intracellular parasite.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "extracellular"
+      ]
+    },
+    {
+      "curie": "GO:0005618",
+      "label": "cell wall",
+      "description": "The rigid or semi-rigid envelope lying outside the cell membrane of plant, fungal, most prokaryotic cells and some protozoan parasites, maintaining their shape and protecting them from osmotic lysis. In plants it is made of cellulose and, often, lignin; in fungi it is composed largely of polysacc...",
+      "parents": [
+        "GO:0030312"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0005634",
+      "label": "nucleus",
+      "description": "A membrane-bounded organelle of eukaryotic cells in which chromosomes are housed and replicated. In most cells, the nucleus contains all of the cell's chromosomes except the organellar chromosomes, and is the site of RNA synthesis and processing. In some species, or in specialized cell types, RNA...",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cell nucleus"
+      ]
+    },
+    {
+      "curie": "GO:0005635",
+      "label": "nuclear envelope",
+      "description": "The double lipid bilayer that encloses the nucleus, separating its contents from the cytoplasm. It consists of an inner and outer nuclear membrane, with an intermembrane space (20-40 nm wide, also called the perinuclear space) between them. The envelope is supported by the nuclear lamina and cont...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0005654",
+      "label": "nucleoplasm",
+      "description": "That part of the nuclear content other than the chromosomes or the nucleolus.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0005694",
+      "label": "chromosome",
+      "description": "A structure composed of a very long molecule of DNA and associated proteins (e.g. histones) that carries hereditary information.",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [
+        "GO:0000228"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "chromatid"
+      ]
+    },
+    {
+      "curie": "GO:0005730",
+      "label": "nucleolus",
+      "description": "A small, dense body one or more of which are present in the nucleus of eukaryotic cells. It is rich in RNA and protein, is not bounded by a limiting membrane, and is not seen during mitosis. Its prime function is the transcription of the nucleolar DNA into 45S ribosomal-precursor RNA, the process...",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0005739",
+      "label": "mitochondrion",
+      "description": "A semiautonomous, self replicating organelle that occurs in varying numbers, shapes, and sizes in the cytoplasm of virtually all eukaryotic cells. It is notably the site of tissue respiration.",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "mitochondria"
+      ]
+    },
+    {
+      "curie": "GO:0005764",
+      "label": "lysosome",
+      "description": "A small lytic vacuole that has cell cycle-independent morphology found in most animal cells and that contains a variety of hydrolases, most of which have their maximal activities in the pH range 5-6. The contained enzymes display latency if properly isolated. About 40 different lysosomal hydrolas...",
+      "parents": [
+        "GO:0005773"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0005768",
+      "label": "endosome",
+      "description": "A vacuole to which materials ingested by endocytosis are delivered.",
+      "parents": [
+        "GO:0031410"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0005773",
+      "label": "vacuole",
+      "description": "A closed structure, found only in eukaryotic cells, that is completely surrounded by unit membrane and contains liquid material. Cells contain one or several vacuoles, that may have different functions from each other. Vacuoles have a diverse array of functions. They can act as a storage organell...",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [
+        "GO:0005764"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "vacuolar carboxypeptidase Y"
+      ]
+    },
+    {
+      "curie": "GO:0005777",
+      "label": "peroxisome",
+      "description": "A small organelle enclosed by a single membrane, and found in most eukaryotic cells. Contains peroxidases and other enzymes involved in a variety of metabolic processes including free radical detoxification, lipid catabolism and biosynthesis, and hydrogen peroxide metabolism.",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "peroxisomal"
+      ]
+    },
+    {
+      "curie": "GO:0005783",
+      "label": "endoplasmic reticulum",
+      "description": "The irregular network of unit membranes, visible only by electron microscopy, that occurs in the cytoplasm of many eukaryotic cells. The membranes form a complex meshwork of tubular channels, which are often expanded into slitlike cavities called cisternae. The ER takes two forms, rough (or granu...",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "ER"
+      ]
+    },
+    {
+      "curie": "GO:0005794",
+      "label": "Golgi apparatus",
+      "description": "A membrane-bound cytoplasmic organelle of the endomembrane system that further processes the core oligosaccharides (e.g. N-glycans) added to proteins in the endoplasmic reticulum and packages them into membrane-bound vesicles. The Golgi apparatus operates at the intersection of the secretory, lys...",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "Golgi complex"
+      ]
+    },
+    {
+      "curie": "GO:0005811",
+      "label": "lipid droplet",
+      "description": "An intracellular non-membrane-bounded organelle comprising a matrix of coalesced lipids surrounded by a phospholipid monolayer. May include associated proteins.",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "adiposome",
+        "lipid body",
+        "lipid particle"
+      ]
+    },
+    {
+      "curie": "GO:0005815",
+      "label": "microtubule organizing center",
+      "description": "An intracellular structure that can catalyze gamma-tubulin-dependent microtubule nucleation and that can anchor microtubules by interacting with their minus ends, plus ends or sides.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "MTOC",
+        "microtubule organising centre"
+      ]
+    },
+    {
+      "curie": "GO:0005829",
+      "label": "cytosol",
+      "description": "The part of the cytoplasm that does not contain organelles but which does contain other particulate matter, such as protein complexes.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0005840",
+      "label": "ribosome",
+      "description": "An intracellular organelle, about 200 A in diameter, consisting of RNA and protein. It is the site of protein biosynthesis resulting from translation of messenger RNA (mRNA). It consists of two subunits, one large and one small, each containing only protein and RNA. Both the ribosome and its subu...",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "ribosomal RNA"
+      ]
+    },
+    {
+      "curie": "GO:0005856",
+      "label": "cytoskeleton",
+      "description": "A cellular structure that forms the internal framework of eukaryotic and prokaryotic cells. The cytoskeleton includes intermediate filaments, microfilaments, microtubules, the microtrabecular lattice, and other structures characterized by a polymeric filamentous nature and long-range order within...",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0005886",
+      "label": "plasma membrane",
+      "description": "The membrane surrounding a cell that separates the cell from its external environment. It consists of a phospholipid bilayer and associated proteins.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cell membrane",
+        "cellular membrane",
+        "cytoplasmic membrane",
+        "plasmalemma"
+      ]
+    },
+    {
+      "curie": "GO:0005929",
+      "label": "cilium",
+      "description": "A specialized eukaryotic organelle that consists of a filiform extrusion of the cell surface and of some cytoplasmic parts. Each cilium is largely bounded by an extrusion of the cytoplasmic (plasma) membrane, and contains a regular longitudinal array of microtubules, anchored to a basal body.",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "eukaryotic flagellum",
+        "microtubule-based flagellum",
+        "flagellum"
+      ]
+    },
+    {
+      "curie": "GO:0005975",
+      "label": "carbohydrate metabolic process",
+      "description": "The chemical reactions and pathways involving carbohydrates, any of a group of organic compounds based of the general formula Cx(H2O)y.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "carbohydrate metabolism"
+      ]
+    },
+    {
+      "curie": "GO:0006091",
+      "label": "generation of precursor metabolites and energy",
+      "description": "The chemical reactions and pathways resulting in the formation of precursor metabolites, substances from which energy is derived, and any process involved in the liberation of energy from these substances.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "intermediary metabolism",
+        "metabolic energy generation"
+      ]
+    },
+    {
+      "curie": "GO:0006260",
+      "label": "DNA replication",
+      "description": "The cellular metabolic process in which a cell duplicates one or more molecules of DNA. DNA replication begins when specific sequences, known as origins of replication, are recognized and bound by the origin recognition complex, and ends when the original DNA molecule has been completely duplicat...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0006281",
+      "label": "DNA repair",
+      "description": "The process of restoring DNA after damage. Genomes are subject to damage by chemical and physical agents in the environment (e.g. UV and ionizing radiations, chemical mutagens, fungal and bacterial toxins, etc.) and by free radicals or alkylating agents endogenously generated in metabolism. DNA i...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0006310",
+      "label": "DNA recombination",
+      "description": "Any process in which a new genotype is formed by reassortment of genes resulting in gene combinations different from those that were present in the parents. In eukaryotes genetic recombination can occur by chromosome assortment, intrachromosomal recombination, or nonreciprocal interchromosomal re...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0006325",
+      "label": "chromatin organization",
+      "description": "The assembly or remodeling of chromatin composed of DNA complexed with histones, other associated proteins, and sometimes RNA.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "chromatin organisation",
+        "establishment of chromatin architecture",
+        "establishment or maintenance of chromatin architecture",
+        "chromatin assembly or disassembly",
+        "chromatin assembly/disassembly",
+        "chromatin modification"
+      ]
+    },
+    {
+      "curie": "GO:0006351",
+      "label": "DNA-templated transcription",
+      "description": "The synthesis of an RNA transcript from a DNA template.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "DNA-dependent transcription",
+        "transcription, DNA-dependent",
+        "transcription, DNA-templated"
+      ]
+    },
+    {
+      "curie": "GO:0006355",
+      "label": "regulation of DNA-templated transcription",
+      "description": "Any process that modulates the frequency, rate or extent of cellular DNA-templated transcription.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "regulation of cellular transcription, DNA-dependent",
+        "regulation of transcription, DNA-dependent",
+        "regulation of transcription, DNA-templated",
+        "regulation of gene-specific transcription"
+      ]
+    },
+    {
+      "curie": "GO:0006399",
+      "label": "tRNA metabolic process",
+      "description": "The chemical reactions and pathways involving tRNA, transfer RNA, a class of relatively small RNA molecules responsible for mediating the insertion of amino acids into the sequence of nascent polypeptide chains during protein synthesis. Transfer RNA is characterized by the presence of many unusua...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "tRNA metabolism"
+      ]
+    },
+    {
+      "curie": "GO:0006457",
+      "label": "protein folding",
+      "description": "The process of assisting in the covalent and noncovalent assembly of single chain polypeptides or multisubunit complexes into the correct tertiary structure.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "chaperone activity",
+        "chaperonin ATPase activity",
+        "co-chaperone activity",
+        "co-chaperonin activity",
+        "glycoprotein-specific chaperone activity",
+        "non-chaperonin molecular chaperone ATPase activity",
+        "protein complex assembly, multichaperone pathway"
+      ]
+    },
+    {
+      "curie": "GO:0006520",
+      "label": "amino acid metabolic process",
+      "description": "The chemical reactions and pathways involving amino acids, carboxylic acids containing one or more amino groups.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cellular amino acid metabolic process",
+        "cellular amino acid metabolism",
+        "amino acid and derivative metabolism",
+        "cellular amino acid and derivative metabolic process"
+      ]
+    },
+    {
+      "curie": "GO:0006575",
+      "label": "modified amino acid metabolic process",
+      "description": "The chemical reactions and pathways involving compounds derived from amino acids, organic acids containing one or more amino substituents.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "amino acid derivative metabolic process",
+        "cellular amino acid derivative metabolic process",
+        "cellular amino acid derivative metabolism",
+        "cellular modified amino acid metabolic process",
+        "cellular modified amino acid metabolism",
+        "modified amino acid metabolism"
+      ]
+    },
+    {
+      "curie": "GO:0006629",
+      "label": "lipid metabolic process",
+      "description": "The chemical reactions and pathways involving lipids, compounds soluble in an organic solvent but not, or sparingly, in an aqueous solvent. Includes fatty acids; neutral fats, other fatty-acid esters, and soaps; long-chain (fatty) alcohols and waxes; sphingoids and other long-chain bases; glycoli...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "lipid metabolism"
+      ]
+    },
+    {
+      "curie": "GO:0006766",
+      "label": "vitamin metabolic process",
+      "description": "The chemical reactions and pathways involving vitamins. Vitamin is a general term for a number of unrelated organic substances that occur in many foods in small amounts and that are necessary in trace amounts for the normal metabolic functioning of the body. Vitamins may be water-soluble or fat-s...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "vitamin metabolism"
+      ]
+    },
+    {
+      "curie": "GO:0006790",
+      "label": "sulfur compound metabolic process",
+      "description": "The chemical reactions and pathways involving the nonmetallic element sulfur or compounds that contain sulfur, such as the amino acids methionine and cysteine or the tripeptide glutathione.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "sulfur metabolism",
+        "sulphur metabolic process",
+        "sulphur metabolism"
+      ]
+    },
+    {
+      "curie": "GO:0006886",
+      "label": "intracellular protein transport",
+      "description": "The directed movement of proteins in a cell, including the movement of proteins between specific compartments or structures within a cell, such as organelles of a eukaryotic cell.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "copper-induced intracellular protein transport"
+      ]
+    },
+    {
+      "curie": "GO:0006913",
+      "label": "nucleocytoplasmic transport",
+      "description": "The directed movement of molecules between the nucleus and the cytoplasm.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0006914",
+      "label": "autophagy",
+      "description": "The cellular catabolic process in which cells digest cellular materials, such as organelles and other macromolecular constituents, or non-self materials such as intracellular pathogens. Autophagy serves to provide essential nutrients under conditions of cellular stress; or can remodel intracellul...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0006954",
+      "label": "inflammatory response",
+      "description": "The immediate defensive reaction (by vertebrate tissue) to infection or injury caused by chemical or physical agents. The process is characterized by local vasodilation, extravasation of plasma into intercellular spaces and accumulation of white blood cells and macrophages.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0007005",
+      "label": "mitochondrion organization",
+      "description": "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of a mitochondrion; includes mitochondrial morphogenesis and distribution, and replication of the mitochondrial genome as well as synthesis of new mitochondrial comp...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "mitochondria organization",
+        "mitochondrial biogenesis",
+        "mitochondrial organization",
+        "mitochondrion biogenesis",
+        "mitochondrion organisation",
+        "mitochondrion morphogenesis",
+        "mitochondrion organization and biogenesis"
+      ]
+    },
+    {
+      "curie": "GO:0007010",
+      "label": "cytoskeleton organization",
+      "description": "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of cytoskeletal structures.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cytoskeleton organisation",
+        "cytoskeletal organization and biogenesis",
+        "cytoskeletal regulator activity",
+        "cytoskeleton organization and biogenesis"
+      ]
+    },
+    {
+      "curie": "GO:0007018",
+      "label": "microtubule-based movement",
+      "description": "A microtubule-based process that results in the movement of organelles, other microtubules, or other cellular components. Examples include motor-driven movement along microtubules and movement driven by polymerization or depolymerization of microtubules.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0007031",
+      "label": "peroxisome organization",
+      "description": "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of a peroxisome. A peroxisome is a small, membrane-bounded organelle that uses dioxygen (O2) to oxidize organic molecules.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "peroxisome organisation",
+        "peroxisome organization and biogenesis"
+      ]
+    },
+    {
+      "curie": "GO:0007040",
+      "label": "lysosome organization",
+      "description": "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of a lysosome. A lysosome is a cytoplasmic, membrane-bounded organelle that is found in most animal cells and that contains a variety of hydrolases.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "lysosome organisation",
+        "lysosome organization and biogenesis"
+      ]
+    },
+    {
+      "curie": "GO:0007059",
+      "label": "chromosome segregation",
+      "description": "The process in which genetic material, in the form of chromosomes, is organized into specific structures and then physically separated and apportioned to two or more sets. In eukaryotes, chromosome segregation begins with the condensation of chromosomes, includes chromosome separation, and ends w...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "chromosome division",
+        "chromosome transmission"
+      ]
+    },
+    {
+      "curie": "GO:0007155",
+      "label": "cell adhesion",
+      "description": "The attachment of a cell, either to another cell or to an underlying substrate such as the extracellular matrix, via cell adhesion molecules.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cell adhesion molecule activity",
+        "single organism cell adhesion"
+      ]
+    },
+    {
+      "curie": "GO:0007163",
+      "label": "establishment or maintenance of cell polarity",
+      "description": "Any cellular process that results in the specification, formation or maintenance of anisotropic intracellular organization or cell growth patterns.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cell polarity",
+        "establishment and/or maintenance of cell polarity",
+        "establishment and/or maintenance of cell polarization"
+      ]
+    },
+    {
+      "curie": "GO:0008092",
+      "label": "cytoskeletal protein binding",
+      "description": "Binding to a protein component of a cytoskeleton (actin, microtubule, or intermediate filament cytoskeleton).",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0008289",
+      "label": "lipid binding",
+      "description": "Binding to a lipid.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0009101",
+      "label": "glycoprotein biosynthetic process",
+      "description": "The chemical reactions and pathways resulting in the formation of glycoproteins, a protein that contains covalently bound glycose (i.e. monosaccharide) residues; the glycose occurs most commonly as oligosaccharide or fairly small polysaccharide but occasionally as monosaccharide.",
+      "parents": [
+        "GO:1901135"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "glycoprotein anabolism",
+        "glycoprotein biosynthesis",
+        "glycoprotein formation",
+        "glycoprotein synthesis"
+      ]
+    },
+    {
+      "curie": "GO:0009536",
+      "label": "plastid",
+      "description": "Any member of a family of organelles found in the cytoplasm of plants and some protists, which are membrane-bounded and contain DNA. Plant plastids develop from a common type, the proplastid.",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0009579",
+      "label": "thylakoid",
+      "description": "A membranous cellular structure that bears the photosynthetic pigments in plants, algae, and cyanobacteria. In cyanobacteria thylakoids are of various shapes and are attached to, or continuous with, the plasma membrane. In eukaryotes they are flattened, membrane-bounded disk-like structures locat...",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "photosynthetic membrane"
+      ]
+    },
+    {
+      "curie": "GO:0009975",
+      "label": "cyclase activity",
+      "description": "Catalysis of a ring closure reaction.",
+      "parents": [
+        "GO:0003824"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0012501",
+      "label": "programmed cell death",
+      "description": "A process which begins when a cell receives an internal or external signal and activates a series of biochemical events (signaling pathway). The process ends with the death of the cell.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "PCD",
+        "RCD",
+        "caspase-independent apoptosis"
+      ]
+    },
+    {
+      "curie": "GO:0015979",
+      "label": "photosynthesis",
+      "description": "The synthesis by organisms of organic chemical compounds, especially carbohydrates, from carbon dioxide (CO2) using energy obtained from light rather than from the oxidation of chemical compounds.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0016071",
+      "label": "mRNA metabolic process",
+      "description": "The chemical reactions and pathways involving mRNA, messenger RNA, which is responsible for carrying the coded genetic 'message', transcribed from DNA, to sites of protein assembly at the ribosomes.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "mRNA metabolism"
+      ]
+    },
+    {
+      "curie": "GO:0016073",
+      "label": "snRNA metabolic process",
+      "description": "The chemical reactions and pathways involving snRNA, small nuclear RNA, any of various low-molecular-mass RNA molecules found in the eukaryotic nucleus as components of the small nuclear ribonucleoprotein.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "snRNA metabolism"
+      ]
+    },
+    {
+      "curie": "GO:0016192",
+      "label": "vesicle-mediated transport",
+      "description": "A cellular transport process in which transported substances are moved in membrane-bounded vesicles; transported substances are enclosed in the vesicle lumen or located in the vesicle membrane. The process begins with a step that directs a substance to the forming vesicle, and includes vesicle bu...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "vesicle transport",
+        "vesicular transport",
+        "protein sorting along secretory pathway",
+        "vesicle trafficking"
+      ]
+    },
+    {
+      "curie": "GO:0016209",
+      "label": "antioxidant activity",
+      "description": "Inhibition of the reactions brought about by dioxygen (O2) or peroxides. Usually the antioxidant is effective because it can itself be more easily oxidized than the substance protected. The term is often applied to components that can trap free radicals, thereby breaking the chain reaction that n...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0016491",
+      "label": "oxidoreductase activity",
+      "description": "Catalysis of an oxidation-reduction (redox) reaction, a reversible chemical reaction in which the oxidation state of an atom or atoms within a molecule is altered. One substrate acts as a hydrogen or electron donor and becomes oxidized, while the other acts as hydrogen or electron acceptor and be...",
+      "parents": [
+        "GO:0003824"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "redox activity"
+      ]
+    },
+    {
+      "curie": "GO:0016740",
+      "label": "transferase activity",
+      "description": "Catalysis of the transfer of a group, e.g. a methyl group, glycosyl group, acyl group, phosphorus-containing, or other groups, from one compound (generally regarded as the donor) to another compound (generally regarded as the acceptor). Transferase is the systematic name for any enzyme of EC clas...",
+      "parents": [
+        "GO:0003824"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0016787",
+      "label": "hydrolase activity",
+      "description": "Catalysis of the hydrolysis of various bonds, e.g. C-O, C-N, C-C, phosphoric anhydride bonds, etc.",
+      "parents": [
+        "GO:0003824"
+      ],
+      "children": [
+        "GO:0003924"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0016829",
+      "label": "lyase activity",
+      "description": "Catalysis of the cleavage of C-C, C-O, C-N and other bonds by other means than by hydrolysis or oxidation, or conversely adding a group to a double bond. They differ from other enzymes in that two substrates are involved in one reaction direction, but only one in the other direction. When acting ...",
+      "parents": [
+        "GO:0003824"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0016853",
+      "label": "isomerase activity",
+      "description": "Catalysis of the geometric or structural changes within one molecule. Isomerase is the systematic name for any enzyme of EC class 5.",
+      "parents": [
+        "GO:0003824"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0016874",
+      "label": "ligase activity",
+      "description": "Catalysis of the joining of two molecules, or two groups within a single molecule, using the energy from the hydrolysis of ATP, a similar triphosphate, or a pH gradient.",
+      "parents": [
+        "GO:0003824"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "synthetase activity"
+      ]
+    },
+    {
+      "curie": "GO:0022414",
+      "label": "reproductive process",
+      "description": "A biological process that directly contributes to the process of producing new individuals by one or two organisms. The new individuals inherit some proportion of their genetic material from the parent or parents.",
+      "parents": [],
+      "children": [
+        "GO:0140013"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "single organism reproductive process"
+      ]
+    },
+    {
+      "curie": "GO:0022600",
+      "label": "digestive system process",
+      "description": "A physical, chemical, or biochemical process carried out by living organisms to break down ingested nutrients into components that may be easily absorbed and directed into metabolism.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0023052",
+      "label": "signaling",
+      "description": "The entirety of a process in which information is transmitted within a biological system. This process begins with an active signal and ends when a cellular response has been triggered.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "biological signaling",
+        "signaling process",
+        "signalling",
+        "signalling process",
+        "single organism signaling"
+      ]
+    },
+    {
+      "curie": "GO:0030154",
+      "label": "cell differentiation",
+      "description": "The cellular developmental process in which a relatively unspecialized cell, e.g. embryonic or regenerative cell, acquires specialized structural and/or functional features that characterize a specific cell. Differentiation includes the processes involved in commitment of a cell to a specific fat...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0030163",
+      "label": "protein catabolic process",
+      "description": "The chemical reactions and pathways resulting in the breakdown of a protein by the destruction of the native, active configuration, with or without the hydrolysis of peptide bonds.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cellular protein breakdown",
+        "cellular protein catabolic process",
+        "cellular protein catabolism",
+        "cellular protein degradation",
+        "protein breakdown",
+        "protein catabolism",
+        "protein degradation",
+        "pheromone catabolic process",
+        "pheromone catabolism"
+      ]
+    },
+    {
+      "curie": "GO:0030198",
+      "label": "extracellular matrix organization",
+      "description": "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of an extracellular matrix.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "extracellular matrix organisation",
+        "extracellular matrix organization and biogenesis"
+      ]
+    },
+    {
+      "curie": "GO:0030312",
+      "label": "external encapsulating structure",
+      "description": "A structure that lies outside the plasma membrane and surrounds the entire cell or cells. This does not include the periplasmic space.",
+      "parents": [],
+      "children": [
+        "GO:0005618",
+        "GO:0031012"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0031012",
+      "label": "extracellular matrix",
+      "description": "A structure lying external to one or more cells, which provides structural support, biochemical or biomechanical cues for cells or tissues.",
+      "parents": [
+        "GO:0030312"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "proteinaceous extracellular matrix"
+      ]
+    },
+    {
+      "curie": "GO:0031047",
+      "label": "regulatory ncRNA-mediated gene silencing",
+      "description": "A process in which an regulatory non-coding RNA molecule reduces expression of target genes. This can occur pre-transcriptionally by assembly of heterochromatin and prevention of transcription or co- or post-transcriptionally by targeting RNAs for degradation or by interfering with splicing or tr...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "RNA-dependent gene silencing",
+        "RNA-mediated gene silencing",
+        "gene silencing by RNA"
+      ]
+    },
+    {
+      "curie": "GO:0031386",
+      "label": "protein tag activity",
+      "description": "A molecular function exhibited by a protein that is covalently attached (AKA tagged or conjugated) to another protein where it acts as a marker, recognized by the cellular apparatus to target the tagged protein for some cellular process such as modification, sequestration, transport or degradation.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "protein tag",
+        "ubiquitin-like protein modifier",
+        "protein tagging activity",
+        "ubiquitin"
+      ]
+    },
+    {
+      "curie": "GO:0031410",
+      "label": "cytoplasmic vesicle",
+      "description": "A vesicle found in the cytoplasm of a cell.",
+      "parents": [
+        "GO:0043226"
+      ],
+      "children": [
+        "GO:0005768"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "cytoplasmic membrane bounded vesicle",
+        "cytoplasmic membrane-enclosed vesicle",
+        "cytoplasmic, membrane-bounded vesicle"
+      ]
+    },
+    {
+      "curie": "GO:0032200",
+      "label": "telomere organization",
+      "description": "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of telomeres, terminal regions of a linear chromosome that include the telomeric DNA repeats and associated proteins.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "chromosome organization, telomeric",
+        "organization of chromosome, telomeric region",
+        "telomere organisation",
+        "telomere organization and biogenesis"
+      ]
+    },
+    {
+      "curie": "GO:0034330",
+      "label": "cell junction organization",
+      "description": "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of a cell junction. A cell junction is a specialized region of connection between two cells or between a cell and the extracellular matrix.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cell junction assembly and maintenance",
+        "cell junction organisation",
+        "cell junction biogenesis"
+      ]
+    },
+    {
+      "curie": "GO:0038024",
+      "label": "cargo receptor activity",
+      "description": "Binding specifically to a substance (cargo) to deliver it to a transport vesicle. Cargo receptors span membranes (for instance the plasma membrane or the endoplasmic reticulum membrane), binding simultaneously to cargo molecules and coat adaptors, to efficiently recruit the cargo molecules to nas...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0042060",
+      "label": "wound healing",
+      "description": "The series of events that restore integrity to a damaged tissue, following an injury.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0042254",
+      "label": "ribosome biogenesis",
+      "description": "A cellular process that results in the biosynthesis of constituent macromolecules, assembly, and arrangement of constituent parts of ribosome subunits; includes transport to the sites of protein synthesis.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "ribosome biogenesis and assembly"
+      ]
+    },
+    {
+      "curie": "GO:0042393",
+      "label": "histone binding",
+      "description": "Binding to a histone, any of a group of water-soluble proteins found in association with the DNA of eukaryotic or archaeal chromosomes. They are involved in the condensation and coiling of chromosomes during cell division and have also been implicated in gene regulation and DNA replication. They ...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "histone-specific chaperone activity"
+      ]
+    },
+    {
+      "curie": "GO:0043226",
+      "label": "organelle",
+      "description": "Organized structure of distinctive morphology and function. Includes the nucleus, mitochondria, plastids, vacuoles, vesicles, ribosomes and the cytoskeleton, and prokaryotic structures such as anammoxosomes and pirellulosomes. Excludes the plasma membrane.",
+      "parents": [],
+      "children": [
+        "GO:0005634",
+        "GO:0005694",
+        "GO:0005730",
+        "GO:0005739",
+        "GO:0005773",
+        "GO:0005777",
+        "GO:0005783",
+        "GO:0005794",
+        "GO:0005811",
+        "GO:0005840",
+        "GO:0005856",
+        "GO:0005929",
+        "GO:0009536",
+        "GO:0009579",
+        "GO:0031410"
+      ],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0044183",
+      "label": "protein folding chaperone",
+      "description": "Binding to a protein or a protein-containing complex to assist the protein folding process.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "protein binding involved in protein folding"
+      ]
+    },
+    {
+      "curie": "GO:0044782",
+      "label": "cilium organization",
+      "description": "A process that is carried out at the cellular level which results in the assembly, arrangement of constituent parts, or disassembly of a cilium, a specialized eukaryotic organelle that consists of a filiform extrusion of the cell surface. Each cilium is bounded by an extrusion of the cytoplasmic ...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "microtubule-based flagellum organization"
+      ]
+    },
+    {
+      "curie": "GO:0045182",
+      "label": "translation regulator activity",
+      "description": "Any molecular function involved in the regulation of initiation, activation, perpetuation, repression or termination of polypeptide synthesis at the ribosome.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0045735",
+      "label": "nutrient reservoir activity",
+      "description": "Functions in the storage of nutritious substrates.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "storage protein",
+        "storage protein of fat body",
+        "yolk protein"
+      ]
+    },
+    {
+      "curie": "GO:0048018",
+      "label": "receptor ligand activity",
+      "description": "The activity of a gene product that interacts with a receptor to effect a change in the activity of the receptor. Ligands may be produced by the same cell that expresses the receptor. Ligands may also be expressed at the plasma membrane of an adjacent cell (e.g. Notch ligands) or be secreted and ...",
+      "parents": [
+        "GO:0098772"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "signaling receptor ligand activity",
+        "receptor agonist activity"
+      ]
+    },
+    {
+      "curie": "GO:0048856",
+      "label": "anatomical structure development",
+      "description": "The biological process whose specific outcome is the progression of an anatomical structure from an initial condition to its mature state. This process begins with the formation of the structure and ends with the mature structure, whatever form that may be including its natural destruction. An an...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "development of an anatomical structure"
+      ]
+    },
+    {
+      "curie": "GO:0048870",
+      "label": "cell motility",
+      "description": "Any process involved in the controlled self-propelled movement of a cell that results in translocation of the cell from one place to another.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cell locomotion",
+        "movement of a cell",
+        "cell movement"
+      ]
+    },
+    {
+      "curie": "GO:0050877",
+      "label": "nervous system process",
+      "description": "An organ system process carried out by any of the organs or tissues of the neurological system.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "neurological system process",
+        "neurophysiological process",
+        "pan-neural process"
+      ]
+    },
+    {
+      "curie": "GO:0050886",
+      "label": "endocrine process",
+      "description": "The process that involves the secretion of or response to endocrine hormones. An endocrine hormone is a hormone released into the circulatory system.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "endocrine physiological process",
+        "endocrine physiology"
+      ]
+    },
+    {
+      "curie": "GO:0051604",
+      "label": "protein maturation",
+      "description": "Any process leading to the attainment of the full functional capacity of a protein.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0055085",
+      "label": "transmembrane transport",
+      "description": "The process in which a solute is transported across a lipid bilayer, from one side of a membrane to the other.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "membrane transport"
+      ]
+    },
+    {
+      "curie": "GO:0055086",
+      "label": "nucleobase-containing small molecule metabolic process",
+      "description": "The cellular chemical reactions and pathways involving a nucleobase-containing small molecule: a nucleobase, a nucleoside, or a nucleotide.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "nucleobase, nucleoside and nucleotide metabolism",
+        "nucleobase, nucleoside and nucleotide metabolic process"
+      ]
+    },
+    {
+      "curie": "GO:0060089",
+      "label": "molecular transducer activity",
+      "description": "A compound molecular function in which an effector function is controlled by one or more regulatory components.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0060090",
+      "label": "molecular adaptor activity",
+      "description": "The binding activity of a molecule that brings together two or more molecules through a selective, non-covalent, often stoichiometric interaction, permitting those molecules to function in a coordinated way.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "binding, bridging"
+      ]
+    },
+    {
+      "curie": "GO:0061007",
+      "label": "hepaticobiliary system process",
+      "description": "A system process carried out by any of the organs or tissues of the hepaticobiliary system. The hepaticobiliary system is responsible for metabolic and catabolic processing of small molecules absorbed from the blood or gut, hormones and serum proteins, detoxification, storage of glycogen, triglyc...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "hepatobiliary system process"
+      ]
+    },
+    {
+      "curie": "GO:0061024",
+      "label": "membrane organization",
+      "description": "A process which results in the assembly, arrangement of constituent parts, or disassembly of a membrane. A membrane is a double layer of lipid molecules that encloses all cells, and, in eukaryotes, many organelles; may be a single or double lipid bilayer; also includes associated proteins.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cellular membrane organisation",
+        "cellular membrane organization",
+        "membrane organisation",
+        "membrane organization and biogenesis",
+        "single-organism membrane organization"
+      ]
+    },
+    {
+      "curie": "GO:0065003",
+      "label": "protein-containing complex assembly",
+      "description": "The aggregation, arrangement and bonding together of a set of macromolecules to form a protein-containing complex.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cellular protein complex assembly",
+        "cellular macromolecule complex assembly",
+        "cellular protein-containing complex assembly",
+        "chaperone activity",
+        "macromolecular complex assembly",
+        "macromolecule complex assembly",
+        "protein complex assembly",
+        "protein complex formation"
+      ]
+    },
+    {
+      "curie": "GO:0071554",
+      "label": "cell wall organization or biogenesis",
+      "description": "A process that results in the biosynthesis of constituent macromolecules, assembly, arrangement of constituent parts, or disassembly of a cell wall.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cell wall organisation or biogenesis",
+        "cell wall organization or biogenesis at cellular level",
+        "cellular cell wall organisation or biogenesis",
+        "cellular cell wall organization or biogenesis"
+      ]
+    },
+    {
+      "curie": "GO:0071941",
+      "label": "nitrogen cycle metabolic process",
+      "description": "A nitrogen compound metabolic process that contributes to the nitrogen cycle. The nitrogen cycle is a series of metabolic pathways by which nitrogen is converted between various forms and redox states; it encompasses pathways in which nitrogen is acted upon directly, such as nitrification, denitr...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0072659",
+      "label": "protein localization to plasma membrane",
+      "description": "A process in which a protein is transported to, or maintained in, a specific location in the plasma membrane.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "protein localisation in plasma membrane",
+        "protein localization in plasma membrane",
+        "protein targeting to plasma membrane",
+        "protein-plasma membrane targeting"
+      ]
+    },
+    {
+      "curie": "GO:0090729",
+      "label": "toxin activity",
+      "description": "Interacting selectively with one or more biological molecules in another (target) organism, initiating pathogenesis (leading to an abnormal, generally detrimental state) in the target organism. The activity should refer to an evolved function of the active gene product, i.e. one that was selected...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "toxin receptor binding"
+      ]
+    },
+    {
+      "curie": "GO:0098542",
+      "label": "defense response to other organism",
+      "description": "Reactions triggered in response to the presence of another organism that act to protect the cell or organism from damage caused by that organism.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0098631",
+      "label": "cell adhesion mediator activity",
+      "description": "The binding by a cell-adhesion protein on a cell surface to an adhesion molecule on another cell surface or an external substrate, to mediate adhesion of the cell to the external substrate or to another cell.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "cell adhesion molecule",
+        "protein binding involved in cell adhesion"
+      ]
+    },
+    {
+      "curie": "GO:0098754",
+      "label": "detoxification",
+      "description": "Any process that reduces or removes the toxicity of a toxic substance. These may include transport of the toxic substance away from sensitive areas and to compartments or complexes whose purpose is sequestration of the toxic substance.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0098772",
+      "label": "molecular function regulator activity",
+      "description": "A molecular function regulator regulates the activity of its target via non-covalent binding that does not result in covalent modification to the target. Examples of molecular function regulators include regulatory subunits of multimeric enzymes and channels. Mechanisms of regulation include allo...",
+      "parents": [],
+      "children": [
+        "GO:0048018",
+        "GO:0140299"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "molecular function regulator"
+      ]
+    },
+    {
+      "curie": "GO:0120274",
+      "label": "virus coreceptor activity",
+      "description": "Combining with a virus component, and in cooperation with a nearby primary receptor, initiating a change in cell activity.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "viral coreceptor activity"
+      ]
+    },
+    {
+      "curie": "GO:0140013",
+      "label": "meiotic nuclear division",
+      "description": "One of the two nuclear divisions that occur as part of the meiotic cell cycle.",
+      "parents": [
+        "GO:0022414"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "meiosis"
+      ]
+    },
+    {
+      "curie": "GO:0140014",
+      "label": "mitotic nuclear division",
+      "description": "A mitotic cell cycle process comprising the steps by which the nucleus of a eukaryotic cell divides; the process involves condensation of chromosomal DNA into a highly compacted form. Canonically, mitosis produces two daughter nuclei whose chromosome complement is identical to that of the mother ...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "mitosis"
+      ]
+    },
+    {
+      "curie": "GO:0140053",
+      "label": "mitochondrial gene expression",
+      "description": "The process of transcribing and translating the mitochondrial genome (mtDNA) to produce at least a subset of oxidative phosphorylation (OXPHOS) proteins, 2 rRNAs, and mitochondrial tRNAs, which are critical for ATP production. Protein maturation is included when required to form an active form of...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0140096",
+      "label": "catalytic activity, acting on a protein",
+      "description": "Catalytic activity that acts to modify a protein.",
+      "parents": [
+        "GO:0003824"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0140097",
+      "label": "catalytic activity, acting on DNA",
+      "description": "Catalytic activity that acts to modify DNA.",
+      "parents": [
+        "GO:0003824"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0140098",
+      "label": "catalytic activity, acting on RNA",
+      "description": "Catalytic activity that acts to modify RNA.",
+      "parents": [
+        "GO:0003824"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0140104",
+      "label": "molecular carrier activity",
+      "description": "Directly binding to a specific ion or molecule and delivering it either to an acceptor molecule or to a specific location.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0140110",
+      "label": "transcription regulator activity",
+      "description": "A molecular function that controls the rate, timing and/or magnitude of gene transcription. The function of transcriptional regulators is to modulate gene expression at the transcription step so that they are expressed in the right cell at the right time and in the right amount throughout the lif...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0140223",
+      "label": "general transcription initiation factor activity",
+      "description": "A molecular function required for core promoter activity that mediates the assembly of the RNA polymerase holoenzyme at promoter DNA to form the pre-initiation complex (PIC). General transcription factors (GTFs) bind to and open promoter DNA, initiate RNA synthesis and stimulate the escape of the...",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "GTF activity",
+        "basal transcription factor activity",
+        "general transcription factor activity"
+      ]
+    },
+    {
+      "curie": "GO:0140299",
+      "label": "molecular sensor activity",
+      "description": "Binding to a molecule and eliciting a change in the protein's activity in response to the intracellular level of that molecule.",
+      "parents": [
+        "GO:0098772"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "small molecular sensor activity",
+        "small molecule sensing activity"
+      ]
+    },
+    {
+      "curie": "GO:0140313",
+      "label": "molecular sequestering activity",
+      "description": "Binding to a specific molecule to prevent it from interacting with other partners or to inhibit its localization to the area of the cell or complex where it is active.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": []
+    },
+    {
+      "curie": "GO:0140657",
+      "label": "ATP-dependent activity",
+      "description": "A molecular function characterized by the coupling of ATP hydrolysis to other steps of a reaction mechanism to make the reaction energetically favorable, for example to catalyze a reaction or drive transport against a concentration gradient.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "ATP hydrolysis-dependent activity",
+        "ATPase activity",
+        "ATPase activity, coupled",
+        "ATPase-dependent activity"
+      ]
+    },
+    {
+      "curie": "GO:1901135",
+      "label": "carbohydrate derivative metabolic process",
+      "description": "The chemical reactions and pathways involving carbohydrate derivative.",
+      "parents": [],
+      "children": [
+        "GO:0009101"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "carbohydrate derivative metabolism"
+      ]
+    }
+  ]
+}
