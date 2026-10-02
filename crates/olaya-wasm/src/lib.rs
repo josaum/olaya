@@ -312,7 +312,6 @@ impl WasmRouter {
 #[wasm_bindgen]
 pub struct OlayaWasm {
     router: WasmRouter,
-    id_to_slot: HashMap<u32, usize>,
 }
 
 #[derive(Serialize)]
@@ -333,8 +332,7 @@ impl OlayaWasm {
         let concepts: Vec<WasmConcept> = serde_json::from_str(concepts_json)
             .map_err(|e| JsValue::from_str(&e.to_string()))?;
         let router = WasmRouter::build(&concepts);
-        let id_to_slot = router.concepts.iter().enumerate().map(|(i, c)| (c.id, i)).collect();
-        Ok(OlayaWasm { router, id_to_slot })
+        Ok(OlayaWasm { router })
     }
 
     /// Run a System 1 concept decision. Returns JSON DecisionResult.
@@ -348,7 +346,7 @@ impl OlayaWasm {
 
         // Lexical logits using IDF-weighted scores
         let query_toks: HashSet<String> = tokenize(state_text).into_iter().collect();
-        let mut logits: Vec<f32> = slot_ids.iter().map(|&id| {
+        let logits: Vec<f32> = slot_ids.iter().map(|&id| {
             let toks = self.router.tokens.get(&id);
             let mut score = 1.0f32;
             if let Some(t) = toks {

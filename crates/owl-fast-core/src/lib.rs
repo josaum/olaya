@@ -42,7 +42,7 @@
 //! quads can stream via `quads_from_*` without that materialization.
 
 #![deny(missing_docs)]
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, Result};
 use oxrdf::{GraphName, Literal, NamedOrBlankNode, Quad, Term};
 use oxrdfio::RdfParser;
 
