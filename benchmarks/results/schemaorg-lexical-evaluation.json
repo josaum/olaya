@@ -1,0 +1,663 @@
+{
+  "dataset_manifest": {
+    "ontology_sha256": "80973b6cf9893bbccb195086df04bf93b8af072c943c07f7350e62f73491deb9",
+    "schema_version": 1,
+    "splits": {
+      "calibration": {
+        "evidence_sha256": "27c99d32de4d973cf25bd2f239de9999c52ad7e48e55067c29fe66632701e345",
+        "group_ids": [
+          "e274ce3263ba8aa3c342e9f913618592ff92d9569fbc84e97166676ad50e4c38"
+        ],
+        "groups": 1,
+        "observations": 20,
+        "source_ids": [
+          "00ac157ca7751cb29b0fa2d151b3b082a977afdf37bfb3f585b01cb2b26f4722",
+          "11489f7213508209dce99baf0cfaed24b1a3ee0fcfcf8af5f78105cff499fa0d",
+          "18e77bff46cfcb4d5b5f587b16beb5c28025912e85f3f3514b2101a63a2915c2",
+          "1beff4ea4f54af909e335fc7bb438ecc44f000414ca66364a78314d3115cc545",
+          "3e17aa703975b483fcceedf9d1bcdec618e20270ca33908c7779624318f3db98",
+          "4db5bc04c6eb5c4e6551d019e87a3905a11c9f42fe8ec114cf97ff18b90c6592",
+          "547ec7450153042ad0dd847acce97bc28d977b35b810ced833cf582158d162d5",
+          "57707f70c7de7195de506e3e1542598d2f9278c50231aecc35966884eb370472",
+          "7eedec02e003eb872b602643040bf4943a637bd533172ceb3a4934df42f85f8e",
+          "8a9088809899572edb98e827e8f79012f255293035787540ceee21eb581f9b83",
+          "90c3cc3b4a9f43295c5d2e3babdc39cd6fabe9b766b8bb75e596cf4fd323f1e8",
+          "9bc51bd0637406f3c988f1c79505a7f8d5ef10ae0c520dbb036a0b11bd13f1cf",
+          "abbc2e759acade47970a4cd6add4dd2128b9d8751e60b183a8202fd0d94d4304",
+          "bed56ce504e827eefccf265663020bc88aca76ade5833d9e48c22a90c2beeb15",
+          "cfcb25ab5265bbf321b0d41a0dc70c3845a3fe2ea960878b7f10384733e47fdc",
+          "d52f8574b5e9279c7fb33e6fa6bd3862868ca5759d52e0d304704d281437efd5",
+          "dd032013edd80ecf4f61b42d2e23cb11ac9738fc60c56503b7bb668e9ddaee02",
+          "fa4fea42921f67bd67afb842215a65ffb0ee70b9017ba2835f36b65f717c2606",
+          "fbac796462ce3343354056e61dd75694c71cad2f26a7f43c413f4b69634ecd8a",
+          "fde41a83b0656821ca25c041b85998b0335dfefe9465ecc500439f10a0a716f2"
+        ]
+      },
+      "test": {
+        "evidence_sha256": "b47b7c9a1b9ab2e95dcabd473f2ac57f0e319ba8553deb3a731445d05c2d7b13",
+        "group_ids": [
+          "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f"
+        ],
+        "groups": 1,
+        "observations": 20,
+        "source_ids": [
+          "07ce15c161b4133a88adad4d47c3208f4e7dc5ddfca5303628e1034cf45cba6c",
+          "0c8f41674f33b0b84e8d48e081edaea5a6cff453fe6920da0c54e585eb17f2f4",
+          "12fda3e36bb529792b97f53bf5de267bfa3bd997cf684fd35499ebc56b2cbab4",
+          "25010e7f88145827f9bc0452525651cf1d89efe76031ee0410e73cb35d67a385",
+          "32497e584342e8c6522dcb67c0676fcacb54ba5944aa32d006f525a1a5e57236",
+          "368de5c8379a5f4200eb9ea9ecd7f355b3470956135d3c8b60b3da6bf5d1f4f9",
+          "5ef293e4e9f378e5d4a95101ab2e3abfe780a8fd40401538cad374f570929d33",
+          "6f07042a68952f5beee104f0a29745a7c319627676d00c42faac1c9a0cc3661a",
+          "745fb5311527569b3776d2603b6573d924c840d1ff3648fd37f52c563f9011a1",
+          "7da79bebb49e63ed1f8b163717fcc96dfd20edf2c989675254b722c5e409173e",
+          "7e0977538b52f2ca11c1b082d7375019d1d26f7c0a44d93826526ea207e7f5a1",
+          "9c32794c916c5eee8091d964f5246e1a9096124f1d87084104a20aa48cbc5557",
+          "a658b936b1e2c40ff83cfba4bbab6b50f420db4ce9492a868da3e3e940d54cae",
+          "b069e120264201e1aa93720c1462b065dfe0124896df8ce78a0ae51adc67abcb",
+          "bb76481e9f9b21cb8116d7869039e2ace3d1008545f28881a3fc1caa45a1688e",
+          "c72012f029d9e6cac1c00f3e6ba1a4a190f94446ac142c7681a2f27f9197ebfa",
+          "d6c78ee82d32da570db53c0984ef60d373608d88a7e103e16fa41776c732b26b",
+          "ed34ba9ac897dfe07272a8855c16e54cce953ceb18591144f73a3c4fd270b558",
+          "f8b7587b3641239028d94ef1b7e3f68afe4b0ddad6eae26a31c8af924facd6d3",
+          "fc4414971a2d9e3593c9cdc0d66a2b3b681d5a0ad4543381f65fc6f64ddd2250"
+        ]
+      },
+      "train": {
+        "evidence_sha256": "33cc4f0535dec0f16600d5058c8caea2798907a51598658b12418558863a6f14",
+        "group_ids": [
+          "919d13ae66d4ed463dae28d76c210c19208d6a699c8a057b5d8c93424819f5e4",
+          "d6f83824985cd114ffcafdbbe41f3c626b256a9bd60de2c7c2ecf901fa1b28f1"
+        ],
+        "groups": 2,
+        "observations": 40,
+        "source_ids": [
+          "056dc66e2ba66864f160d03feac1de108143146f291cb6fe2024a6268402fecc",
+          "133e8946eaf284219eeb43f4f42796cb203d4b07e185d686dfd4b1d852a3c7e1",
+          "1e590d0dfe490da293bfcf45da39dd9319af34ab607bbd7bc1536caddebe9e25",
+          "23cac2e6ebe832ed5bdb290239c06a5f7f523a74331955b2741510e030055551",
+          "2717446cb4b6f2d5c4c3ce123f9e4f0884e3f3f38a824339a204abbadaf54a06",
+          "2f3e9ac502d7dbc979a4402e97527003f6772993829ebc31a4efc6f3edbc31f4",
+          "31a3f796fdf163384bca7198bfb06d947c2203918358fe8bda3740f2436fe52d",
+          "36bc4ceb1d6696ebc559bd52a11c463567cf82ab1f4166ab1c16ff32fd5c327f",
+          "3a9040d564fc9231f2224f0b3083f1c74705aef21cf6e009eb50eae6319bfa2a",
+          "3fb6b3c28a805070da3738e941136eb48326c5ace1c4f500e27c77f6c2f5003a",
+          "4d87a67cac7b9bc5f01da14da0bd90a9e0d4b66e1c7e2d38ad88e12baa2c9e45",
+          "620caeeb4974833ac2b6536a2ca08b32d32f805b22594778089537a928bc96b4",
+          "6b0fd672d07458f1065fc6d79585904a1593a57f87858b1d4395edf955f68577",
+          "6e691efc440c29fa89cab1eb0a5c19735ec512882fa2c9eb02418d0c054bdc48",
+          "710b01d44fb905706f9cd9cf7a2dfd83066933b27f73695da7d2d77619e0eae3",
+          "7b688446b0b3ef79b490769f33dc2effb1c4a15971991a2a2db3531e4db4d876",
+          "7bd661442390d6a82fed4f086853774b93a062490e40e6841e7751467056c1a9",
+          "7dceb98e4a54b33cdbf09e60628bde5c4ec3b878444b4362811e9ed5212f8134",
+          "91c7c0421e5bd738b672bfebbc7eedf6e8d6a02473baa83fe732c9b922ca72e3",
+          "96040dfdd278d2c4b929e4d68e95f3213473b5c9da92e4b11b145b959fffa465",
+          "9d1d92632febd576128ac4f43b9ec34633ad1cd8af77114ca591bb0551a77fde",
+          "9e888de0dc74e6cf008f2ec330a7331e138ac7e986025098fc0875622b1b6cf2",
+          "b0c56e62eeb52b68bbf4bf90aaada8c15115ca5e4005a09632271026734e4360",
+          "b1533c33789121be429372457152dccd061c7300038c34fd6385b478ca382407",
+          "b7da07d7bafb0c6e8e20c529c2e4a80b0b8b411a00e8e65dc0f3a02c48c303b9",
+          "be96e8a2e906d3156c01a0384b18501d66946486e3d22c26aae9983262e40f0e",
+          "bfc4016f4359ff397d0096ea898aba87dd46ba0a3346adb3b3e5ad4c563a4976",
+          "c2248efafcaca5dec195fd1446290823179ff62fdcd53b009708c2b598c91189",
+          "cac7b7bd802aa6d993ab8db2ccc0e37d41e7a11fd87db22dea7b22491ed279d6",
+          "dc792a393a09de7f91d304e5c158180aed03011c760c5a3fba20f054b075fdb5",
+          "dedee03bc6d5c015ac9e73187f18601305b4272052f403d1391113effba3ef47",
+          "e380454183e8f4b1eabd384715a209eed99f5ce50223e327214c8f4d0ebbe08a",
+          "e3c6834b64ada2b2f22e7f9567197013f6f09ec51e891791cebc88a83b9f2e66",
+          "e52b5e787406a5190822ca64ba2d1a3d8b8afa0d80644d835c0e61bccdcfc163",
+          "e62c51e78f2a02728d6915e5c87a6b06c2206897204d5a70d0f071b9e509de76",
+          "e7ee0361eb8da1774d387def18e18860446cdf4669bfcc24949e8328a17ae34d",
+          "e962aa18a887375d31ee2fef15617718c8955d6f658fdc17a5f2b7e5472e207d",
+          "ee9d1886256cec50024d95095252483aa6050a4573499084f3a423ef2ab3c1f3",
+          "f8b1f45652c782e43bcda127d6a1c49c5b161f834d0f416b794e5a4cfea68232",
+          "fa410a781a031b024bf3732f045b02daeaf6c7d0b236a7e27c32ffbbdec59eba"
+        ]
+      },
+      "validation": {
+        "evidence_sha256": "b394e9f984e6f8e86bab8125c4bf21bc363041556a12559fc58e1dc2f1bdb03c",
+        "group_ids": [
+          "a3fec66bd0aee03b4a1fc0e1d8e4d7610a0fc8db0f04cce8c6c4246d3b4fadf3"
+        ],
+        "groups": 1,
+        "observations": 20,
+        "source_ids": [
+          "01c50176316f2ff1635ded81a6fd1ddb7c5b776c59c0dbf77da6010735ef4346",
+          "0802e0331681418e805f8bb01426137a55f07d818646849157ecf0d34eec48fc",
+          "196db72e7e056a9f29e9b3209aa9c0dd968056f2dd5ea7076e4372bb6658bdd7",
+          "2aad6d0e2663de48c93b9a011d225b232f939faabeffa451139e8fb4a3b31d3b",
+          "364ffc2423a4abed64d33b582052661780d519943b354757b4ecb5a4143105b9",
+          "389619d734dcdb167388eccc7d4fe57e1aae60cf4cc8d1e529bc7d3504c6451f",
+          "5603364c3dce80c0b206afea736398f3a6c10f80b2572a69950dcff2b5332477",
+          "5c3d983b014246e8585a824e63f8f94376c3c5feb9fd1c66f9342316ace61eb2",
+          "5df24b15da571ada51f7258e79d13ec979f5f1f8af0b6267423a73ec7fb251f1",
+          "5e074116fa967b458c52822591c8274374ac723f4e30c1c9c9d8ac66036b8125",
+          "6324cfc20092a4e9aa82ca884a406a686b5b5e1bf60a7bd7281311fdd74d1afd",
+          "6eb20771fbf856f5c6fdc1df39b9ed0dc3fe99967eee36f369877dfaf43ca564",
+          "89b56781f1f57ccffbe0b33ba2848f3ba0c87a0d1adf4c622660a611b749968e",
+          "91e4f8f5b3f571d5920ebb91b9c33df7bd958562a8c067e7d5118e02a02ce658",
+          "98977d6267a3bdbe3fdf281add241de0b5c4ed3d6950db7631247f3167710980",
+          "b291db4ba80ac5b501e3d7a4fe35603f59094a8a17e944cc984acca3a4ebac90",
+          "b4efffc526784088e1df20ec7d4cdae9448a13c118092df3ae1ae4bb94b430ab",
+          "c80d94c0bb18d9490f268fbb34d12336a918c72e04d35c3b7fdeaa145e5a6cd6",
+          "ce556c123b0f91bc22d761276b8a94940adc1c0a1e4896dbc88b3b7d5606777a",
+          "eacf431072e11f017b1a23094122f742650cb8e73efc5e89479cef785e8f885e"
+        ]
+      }
+    }
+  },
+  "domain": "schemaorg",
+  "evaluation": "held_out_template_family_lexical_retrieval",
+  "evaluator_sha256": "ca3ba57d0fe56674f21c0c42a2c03c135445bf3b4e3ff49efa0d6fc70b6a6dd7",
+  "generated_observations": 100,
+  "generator_sha256": "18c1e3f26801e65f20d68db28f73bf3abdf9072ac02d49ddea30fe77fbb2c015",
+  "limitations": [
+    "Targets and query terms derive from ontology templates; these are synthetic, not independently labeled observations.",
+    "Held-out template families do not establish real-world accuracy, cross-ontology transfer or general language understanding.",
+    "Uses query text only with full ontology retrieval, no injected gold target candidate or state metadata.",
+    "No calibration, oracle-shortlist accuracy, decision-task accuracy or deployment performance is measured.",
+    "Real ABox loading is disabled. Report omits raw query text."
+  ],
+  "metrics": {
+    "abstained": 0,
+    "abstention_counts": {},
+    "answered": 20,
+    "coverage": 1.0,
+    "latency_ms": {
+      "median": 0.753833,
+      "p95": 1.340541,
+      "percentile_method": "nearest rank",
+      "samples": 20,
+      "scope": "Query token evidence check, full ontology routing, tie/abstention and top5 selection; excludes index build, generation, split, metrics and file IO",
+      "warmup": "none; includes first query"
+    },
+    "macro_f1": 0.47619047619047616,
+    "macro_label_policy": "Union of test target and non-abstained predicted classes; zero division = 0",
+    "macro_precision": 0.47619047619047616,
+    "macro_recall": 0.47619047619047616,
+    "macro_recall_at_5": 0.9,
+    "observations": [
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:ViewAction",
+        "recall_at_5": true,
+        "source_id": "07ce15c161b4133a88adad4d47c3208f4e7dc5ddfca5303628e1034cf45cba6c",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:ViewAction",
+        "top1_correct": true,
+        "top5_curies": [
+          "schema:ViewAction",
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:OfferCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:SpecialAnnouncement",
+        "recall_at_5": false,
+        "source_id": "0c8f41674f33b0b84e8d48e081edaea5a6cff453fe6920da0c54e585eb17f2f4",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:Role",
+        "top1_correct": false,
+        "top5_curies": [
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:OfferCatalog",
+          "schema:EmployerAggregateRating"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:SpecialAnnouncement",
+        "recall_at_5": true,
+        "source_id": "12fda3e36bb529792b97f53bf5de267bfa3bd997cf684fd35499ebc56b2cbab4",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:ChemicalSubstance",
+        "top1_correct": false,
+        "top5_curies": [
+          "schema:SpecialAnnouncement",
+          "schema:Substance",
+          "schema:MedicalGuideline",
+          "schema:ChemicalSubstance",
+          "schema:Drug"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:ResetPasswordAction",
+        "recall_at_5": true,
+        "source_id": "25010e7f88145827f9bc0452525651cf1d89efe76031ee0410e73cb35d67a385",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:ResetPasswordAction",
+        "top1_correct": true,
+        "top5_curies": [
+          "schema:ResetPasswordAction",
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:OfferCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:SpecialAnnouncement",
+        "recall_at_5": true,
+        "source_id": "32497e584342e8c6522dcb67c0676fcacb54ba5944aa32d006f525a1a5e57236",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:MedicalWebPage",
+        "top1_correct": false,
+        "top5_curies": [
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:MedicalWebPage",
+          "schema:MedicalAudience",
+          "schema:DataCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:SpecialAnnouncement",
+        "recall_at_5": true,
+        "source_id": "368de5c8379a5f4200eb9ea9ecd7f355b3470956135d3c8b60b3da6bf5d1f4f9",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:ShoeStore",
+        "top1_correct": false,
+        "top5_curies": [
+          "schema:SpecialAnnouncement",
+          "schema:ShoeStore",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:OfferCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:ResearchProject",
+        "recall_at_5": true,
+        "source_id": "5ef293e4e9f378e5d4a95101ab2e3abfe780a8fd40401538cad374f570929d33",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:ResearchProject",
+        "top1_correct": true,
+        "top5_curies": [
+          "schema:ResearchProject",
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:OfferCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:AskPublicNewsArticle",
+        "recall_at_5": true,
+        "source_id": "6f07042a68952f5beee104f0a29745a7c319627676d00c42faac1c9a0cc3661a",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:AskPublicNewsArticle",
+        "top1_correct": true,
+        "top5_curies": [
+          "schema:AskPublicNewsArticle",
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:OpinionNewsArticle",
+          "schema:DataCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:CorrectionComment",
+        "recall_at_5": true,
+        "source_id": "745fb5311527569b3776d2603b6573d924c840d1ff3648fd37f52c563f9011a1",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:CorrectionComment",
+        "top1_correct": true,
+        "top5_curies": [
+          "schema:CorrectionComment",
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:OfferCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:SpecialAnnouncement",
+        "recall_at_5": true,
+        "source_id": "7da79bebb49e63ed1f8b163717fcc96dfd20edf2c989675254b722c5e409173e",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:MovieClip",
+        "top1_correct": false,
+        "top5_curies": [
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:MovieClip",
+          "schema:DataCatalog",
+          "schema:OfferCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:InternetCafe",
+        "recall_at_5": true,
+        "source_id": "7e0977538b52f2ca11c1b082d7375019d1d26f7c0a44d93826526ea207e7f5a1",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:InternetCafe",
+        "top1_correct": true,
+        "top5_curies": [
+          "schema:InternetCafe",
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:CafeOrCoffeeShop",
+          "schema:DataCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:TennisComplex",
+        "recall_at_5": true,
+        "source_id": "9c32794c916c5eee8091d964f5246e1a9096124f1d87084104a20aa48cbc5557",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:TennisComplex",
+        "top1_correct": true,
+        "top5_curies": [
+          "schema:TennisComplex",
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:HyperTocEntry"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:SpecialAnnouncement",
+        "recall_at_5": true,
+        "source_id": "a658b936b1e2c40ff83cfba4bbab6b50f420db4ce9492a868da3e3e940d54cae",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:SizeGroupEnumeration",
+        "top1_correct": false,
+        "top5_curies": [
+          "schema:SpecialAnnouncement",
+          "schema:SizeGroupEnumeration",
+          "schema:WearableSizeGroupEnumeration",
+          "schema:MedicalGuideline",
+          "schema:WearableSizeSystemEnumeration"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:SpecialAnnouncement",
+        "recall_at_5": true,
+        "source_id": "b069e120264201e1aa93720c1462b065dfe0124896df8ce78a0ae51adc67abcb",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:Airport",
+        "top1_correct": false,
+        "top5_curies": [
+          "schema:SpecialAnnouncement",
+          "schema:Airport",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:OfferCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:SheetMusic",
+        "recall_at_5": true,
+        "source_id": "bb76481e9f9b21cb8116d7869039e2ace3d1008545f28881a3fc1caa45a1688e",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:SheetMusic",
+        "top1_correct": true,
+        "top5_curies": [
+          "schema:SheetMusic",
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:OfferCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:ShippingRateSettings",
+        "recall_at_5": true,
+        "source_id": "c72012f029d9e6cac1c00f3e6ba1a4a190f94446ac142c7681a2f27f9197ebfa",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:ShippingRateSettings",
+        "top1_correct": true,
+        "top5_curies": [
+          "schema:ShippingRateSettings",
+          "schema:SpecialAnnouncement",
+          "schema:DeliveryTimeSettings",
+          "schema:MedicalGuideline",
+          "schema:ExchangeRateSpecification"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:SpecialAnnouncement",
+        "recall_at_5": false,
+        "source_id": "d6c78ee82d32da570db53c0984ef60d373608d88a7e103e16fa41776c732b26b",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:Season",
+        "top1_correct": false,
+        "top5_curies": [
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:OfferCatalog",
+          "schema:RadioSeason"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:SpecialAnnouncement",
+        "recall_at_5": true,
+        "source_id": "ed34ba9ac897dfe07272a8855c16e54cce953ceb18591144f73a3c4fd270b558",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:TravelAction",
+        "top1_correct": false,
+        "top5_curies": [
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:TravelAction",
+          "schema:OfferCatalog"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:SpecialAnnouncement",
+        "recall_at_5": true,
+        "source_id": "f8b7587b3641239028d94ef1b7e3f68afe4b0ddad6eae26a31c8af924facd6d3",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:SatiricalArticle",
+        "top1_correct": false,
+        "top5_curies": [
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:SatiricalArticle",
+          "schema:DataCatalog",
+          "schema:ReportageNewsArticle"
+        ]
+      },
+      {
+        "abstention_reason": null,
+        "group_id": "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f",
+        "predicted_curie": "schema:PetStore",
+        "recall_at_5": true,
+        "source_id": "fc4414971a2d9e3593c9cdc0d66a2b3b681d5a0ad4543381f65fc6f64ddd2250",
+        "source_kind": "synthetic_template",
+        "target_curie": "schema:PetStore",
+        "top1_correct": true,
+        "top5_curies": [
+          "schema:PetStore",
+          "schema:SpecialAnnouncement",
+          "schema:MedicalGuideline",
+          "schema:DataCatalog",
+          "schema:OfferCatalog"
+        ]
+      }
+    ],
+    "observed_target_classes": 20,
+    "ontology_concepts": 660,
+    "per_class": {
+      "schema:Airport": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1
+      },
+      "schema:AskPublicNewsArticle": {
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "schema:ChemicalSubstance": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1
+      },
+      "schema:CorrectionComment": {
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "schema:InternetCafe": {
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "schema:MedicalWebPage": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1
+      },
+      "schema:MovieClip": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1
+      },
+      "schema:PetStore": {
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "schema:ResearchProject": {
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "schema:ResetPasswordAction": {
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "schema:Role": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1
+      },
+      "schema:SatiricalArticle": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1
+      },
+      "schema:Season": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1
+      },
+      "schema:SheetMusic": {
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "schema:ShippingRateSettings": {
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "schema:ShoeStore": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1
+      },
+      "schema:SizeGroupEnumeration": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1
+      },
+      "schema:SpecialAnnouncement": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 0
+      },
+      "schema:TennisComplex": {
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      },
+      "schema:TravelAction": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1
+      },
+      "schema:ViewAction": {
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 1
+      }
+    },
+    "recall_at_5": 0.9,
+    "test_observations": 20,
+    "tie_policy": "Top1 abstains at equal scores within 1e-12; top5 uses router CURIE tie order",
+    "top1_accuracy_with_abstention": 0.5
+  },
+  "ontology_sha256": "abc5112d312b7ed8362345789b711c0af876a7a0404c4c84ab3b492060a52f14",
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "python": "3.12.10 (main, May 30 2025, 05:53:56) [Clang 20.1.4 ]",
+  "requested_sample_budget": 500,
+  "router_sha256": "2b8e85d61b0d026dd44eb5c372d455df08b30fb4dc425417094444d3914e5b7a",
+  "seed": 42,
+  "splitter_sha256": "751ad4d977d71386b80a1d23135fb8072cded3e1b22dd3ccd954d330fa9159e3"
+}

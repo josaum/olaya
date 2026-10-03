@@ -31,8 +31,8 @@ class HardNegativeSampler:
 
         # Precompute children map for fast sibling / cousin lookup
         self._children: dict[str, list[str]] = {}  # parent -> list of children
-        for curie, concept in ontology.concepts.items():
-            for parent in concept.parents:
+        for curie, concept in sorted(ontology.concepts.items()):
+            for parent in sorted(concept.parents):
                 self._children.setdefault(parent, []).append(curie)
 
     def get_siblings(self, curie: str) -> list[str]:
@@ -41,9 +41,9 @@ class HardNegativeSampler:
         if not concept or not concept.parents:
             return []
         siblings: list[str] = []
-        for parent in concept.parents:
+        for parent in sorted(concept.parents):
             siblings.extend(c for c in self._children.get(parent, []) if c != curie)
-        return list(set(siblings))
+        return sorted(set(siblings))
 
     def get_cousins(self, curie: str) -> list[str]:
         """Return cousin concepts (share a grandparent but not a parent)."""
@@ -51,15 +51,15 @@ class HardNegativeSampler:
         if not concept:
             return []
         cousins: list[str] = []
-        for parent in concept.parents:
+        for parent in sorted(concept.parents):
             parent_concept = self.ontology.concepts.get(parent)
             if not parent_concept:
                 continue
-            for grandparent in parent_concept.parents:
+            for grandparent in sorted(parent_concept.parents):
                 for uncle in self._children.get(grandparent, []):
                     if uncle != parent:
                         cousins.extend(c for c in self._children.get(uncle, []) if c != curie)
-        return list(set(cousins) - {curie})
+        return sorted(set(cousins) - {curie})
 
     def sample_distractors(
         self,
@@ -78,7 +78,7 @@ class HardNegativeSampler:
         descendants = self.ontology.get_descendants(target_curie)
         exclude = exclude | ancestors | descendants
 
-        all_concepts = [c for c in self.ontology.concepts if c not in exclude]
+        all_concepts = sorted(c for c in self.ontology.concepts if c not in exclude)
         if not all_concepts:
             return []
 

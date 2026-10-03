@@ -42,7 +42,7 @@ def format_concept_option(concept: Concept, ontology: Ontology) -> str:
     parts = [f"{concept.curie}: {concept.label}"]
 
     # Add parent context if available
-    parent_labels = [ontology.concepts[p].label for p in concept.parents if p in ontology.concepts]
+    parent_labels = [ontology.concepts[p].label for p in sorted(concept.parents) if p in ontology.concepts]
     if parent_labels:
         parts.append(f"(subClassOf: {', '.join(parent_labels)})")
 
