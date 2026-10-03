@@ -474,3 +474,22 @@ These are targeted acceptance checks, not general accuracy or calibration proof.
 [PR #2](https://github.com/josaum/olaya/pull/2) has passing edge and Node checks;
 Rust formatting and Python Ruff checks fail on unchanged base source. Their later
 test stages were not reached. The PR has not been merged as of this verification.
+
+### Arrow IPC integration coverage
+
+The Rust integration tests resolve the tracked `models/*.arrow` fixtures from
+`CARGO_MANIFEST_DIR`, independent of the test working directory. Missing fixtures
+fail explicitly rather than returning early. Run the 13 ontology IPC cases and
+the procurement/FCA cases with:
+
+```bash
+cargo test -p olaya-core --test test_arrow_ipc_real --test test_fca_integration -- --nocapture
+```
+
+On 2026-10-03 UTC, all 14 fixture-dependent cases actually loaded their Arrow
+batches and executed lexical decisions locally. A separate missing-fixture case
+checks failure behavior. These tests check fixture row counts, loading, execution,
+and axiom flags; they do not assert classification accuracy. For example, the
+headphones query selected `PerformanceRole`, and the procurement query returned
+confidence `0`. Successful IPC integration does not establish trained neural
+inference, calibration, or semantic correctness.

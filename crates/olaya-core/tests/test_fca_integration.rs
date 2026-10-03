@@ -1,3 +1,5 @@
+mod common;
+use common::model_fixture;
 use olaya_core::{OlayaEngine, OntologyBatchBuilder};
 use owl_fast_core::fca::{ConceptLattice, FormalContext};
 
@@ -90,11 +92,8 @@ fn test_fca_concept_lattice_to_arrow_decision_engine() {
 
 #[test]
 fn test_induced_procurement_arrow_decision_engine() {
-    let arrow_path = std::path::Path::new("models/induced_procurement.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
-    let batch = olaya_core::read_ontology_ipc(arrow_path)
+    let arrow_path = model_fixture("induced_procurement.arrow");
+    let batch = olaya_core::read_ontology_ipc(&arrow_path)
         .expect("Failed to read induced_procurement.arrow");
     assert!(batch.num_rows() >= 10);
 
