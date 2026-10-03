@@ -25,7 +25,9 @@ fn load_pairs_from_file<P: AsRef<Path>>(path: P) -> Result<Vec<(String, String)>
         } else if let Ok(list) = serde_json::from_str::<Vec<(String, String)>>(&content) {
             pairs = list;
         } else {
-            anyhow::bail!("Unrecognized JSON structure. Expected {{object: [attrs]}} or [[obj, attr]]");
+            anyhow::bail!(
+                "Unrecognized JSON structure. Expected {{object: [attrs]}} or [[obj, attr]]"
+            );
         }
     } else {
         // Assume CSV/TSV format: object,attribute
@@ -38,7 +40,10 @@ fn load_pairs_from_file<P: AsRef<Path>>(path: P) -> Result<Vec<(String, String)>
                 continue;
             }
             // Skip header if looks like "object,attribute"
-            if line_num == 0 && (trimmed.to_lowercase().contains("object") || trimmed.to_lowercase().contains("item")) {
+            if line_num == 0
+                && (trimmed.to_lowercase().contains("object")
+                    || trimmed.to_lowercase().contains("item"))
+            {
                 continue;
             }
             let delimiter = if trimmed.contains('\t') { '\t' } else { ',' };
@@ -77,7 +82,10 @@ fn main() -> Result<()> {
         .find(|w| w[0] == "--implications")
         .map(|w| w[1].as_str());
 
-    println!("⚡ Loading incidence context from {}...", input_path.display());
+    println!(
+        "⚡ Loading incidence context from {}...",
+        input_path.display()
+    );
     let t0 = Instant::now();
     let raw_pairs = load_pairs_from_file(input_path)
         .with_context(|| format!("Failed to load pairs from {}", input_path.display()))?;
@@ -112,8 +120,16 @@ fn main() -> Result<()> {
     let is_heyting = lattice.is_distributive();
     println!(
         "  * Higher-order algebraic structure: {} (Heyting Algebra = {})",
-        if is_heyting { "Complete Distributive Lattice" } else { "Complete Bounded Lattice" },
-        if is_heyting { "✅ YES" } else { "⚠️ NON-DISTRIBUTIVE" }
+        if is_heyting {
+            "Complete Distributive Lattice"
+        } else {
+            "Complete Bounded Lattice"
+        },
+        if is_heyting {
+            "✅ YES"
+        } else {
+            "⚠️ NON-DISTRIBUTIVE"
+        }
     );
 
     // 4. Compute Canonical Implications
@@ -177,7 +193,9 @@ fn main() -> Result<()> {
         );
     }
 
-    let batch = builder.finish().context("Failed to build Arrow RecordBatch")?;
+    let batch = builder
+        .finish()
+        .context("Failed to build Arrow RecordBatch")?;
 
     if let Some(parent) = output_path.parent() {
         fs::create_dir_all(parent)?;
@@ -186,7 +204,10 @@ fn main() -> Result<()> {
     write_ontology_ipc(&batch, output_path)
         .with_context(|| format!("Failed to write Arrow IPC to {}", output_path.display()))?;
 
-    let file_size_kb = output_path.metadata().map(|m| m.len() as f64 / 1024.0).unwrap_or(0.0);
+    let file_size_kb = output_path
+        .metadata()
+        .map(|m| m.len() as f64 / 1024.0)
+        .unwrap_or(0.0);
     println!(
         "✅ Induced ontology successfully exported to: {} ({:.1} KB)",
         output_path.display(),

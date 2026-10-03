@@ -551,7 +551,10 @@ impl OntologyParser {
         format: RdfFormat,
         options: &ParseOptions,
     ) -> Result<Vec<Quad>> {
-        match Self::build_parser(format, options)?.for_slice(data).collect::<std::result::Result<Vec<_>, _>>() {
+        match Self::build_parser(format, options)?
+            .for_slice(data)
+            .collect::<std::result::Result<Vec<_>, _>>()
+        {
             Ok(quads) => Ok(quads),
             Err(e) => {
                 let alt = match format {
@@ -561,7 +564,10 @@ impl OntologyParser {
                 };
                 if let Some(alt_format) = alt {
                     if let Ok(parser) = Self::build_parser(alt_format, options) {
-                        if let Ok(quads) = parser.for_slice(data).collect::<std::result::Result<Vec<_>, _>>() {
+                        if let Ok(quads) = parser
+                            .for_slice(data)
+                            .collect::<std::result::Result<Vec<_>, _>>()
+                        {
                             return Ok(quads);
                         }
                     }
@@ -578,7 +584,10 @@ impl OntologyParser {
     ) -> Result<Vec<Quad>> {
         let file = File::open(path)?;
         let reader = BufReader::new(file);
-        match Self::build_parser(format, options)?.for_reader(reader).collect::<std::result::Result<Vec<_>, _>>() {
+        match Self::build_parser(format, options)?
+            .for_reader(reader)
+            .collect::<std::result::Result<Vec<_>, _>>()
+        {
             Ok(quads) => Ok(quads),
             Err(e) => {
                 let alt = match format {
@@ -590,7 +599,10 @@ impl OntologyParser {
                     let file = File::open(path)?;
                     let reader = BufReader::new(file);
                     if let Ok(parser) = Self::build_parser(alt_format, options) {
-                        if let Ok(quads) = parser.for_reader(reader).collect::<std::result::Result<Vec<_>, _>>() {
+                        if let Ok(quads) = parser
+                            .for_reader(reader)
+                            .collect::<std::result::Result<Vec<_>, _>>()
+                        {
                             return Ok(quads);
                         }
                     }
@@ -665,7 +677,8 @@ impl OntologyParser {
                             other => {
                                 if variant == ConferenceEvalVariant::Full
                                     && !Self::should_skip(uri)
-                                    && !other.starts_with("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+                                    && !other
+                                        .starts_with("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
                                     && !other.starts_with("http://www.w3.org/2000/01/rdf-schema#")
                                     && !other.starts_with("http://www.w3.org/2002/07/owl#")
                                 {

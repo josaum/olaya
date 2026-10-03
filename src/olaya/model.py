@@ -12,7 +12,6 @@ import torch
 import torch.nn as nn
 from transformers import AutoConfig, AutoModel
 
-
 from olaya.category_theory import CategoricalMorphismLayer
 
 
@@ -50,8 +49,8 @@ class OntologyDecisionHead(nn.Module):
         cls_hidden_state: torch.Tensor,  # [B, H]
         qtype: torch.Tensor,  # [B]
         parent_adj: torch.Tensor | None = None,  # [B, K, K]
-        child_adj: torch.Tensor | None = None,   # [B, K, K]
-        disjoint_adj: torch.Tensor | None = None, # [B, K, K]
+        child_adj: torch.Tensor | None = None,  # [B, K, K]
+        disjoint_adj: torch.Tensor | None = None,  # [B, K, K]
         return_marker_states: bool = False,
     ) -> tuple[torch.Tensor, torch.Tensor] | tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         B, K = marker_pos.shape
@@ -128,8 +127,8 @@ class OntologyDecisionModel(nn.Module):
         marker_mask: torch.Tensor,  # [B, K]
         qtype: torch.Tensor,  # [B]
         parent_adj: torch.Tensor | None = None,  # [B, K, K]
-        child_adj: torch.Tensor | None = None,   # [B, K, K]
-        disjoint_adj: torch.Tensor | None = None, # [B, K, K]
+        child_adj: torch.Tensor | None = None,  # [B, K, K]
+        disjoint_adj: torch.Tensor | None = None,  # [B, K, K]
         return_marker_states: bool = False,
     ) -> tuple[torch.Tensor, torch.Tensor] | tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         # Encode full bidirectional sequence (cross-attention across tokens)

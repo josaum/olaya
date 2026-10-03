@@ -1,13 +1,11 @@
 """Unit tests for Category-Theoretic Neural Architecture, Loss Functions, and Morphism Propagation."""
 
-import numpy as np
 import pytest
 import torch
 import torch.nn as nn
 
 from olaya.category_theory import (
     CategoricalDisjointnessLoss,
-    CategoricalLoss,
     CategoricalMorphismLayer,
     FunctorMonotonicityLoss,
     OrderConeEmbeddingLoss,

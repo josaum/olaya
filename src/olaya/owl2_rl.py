@@ -9,11 +9,10 @@ Implements the standard W3C OWL 2 RL rule table:
 
 from __future__ import annotations
 
-from collections import defaultdict, deque
+from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any
 
-from olaya.ontology import Concept, ObjectProperty, Ontology
+from olaya.ontology import Ontology
 
 
 @dataclass
@@ -109,7 +108,7 @@ class OWL2RLReasoner:
                     closure.subclasses.add((m, parent))
                     closure.rule_firings["scm-dju-sub"] += 1
                 for i, m1 in enumerate(valid):
-                    for m2 in valid[i + 1:]:
+                    for m2 in valid[i + 1 :]:
                         closure.disjointnesses.add((m1, m2))
                         closure.disjointnesses.add((m2, m1))
                         closure.rule_firings["scm-dju-disj"] += 1

@@ -302,7 +302,7 @@ def enforce_owl2_rl_axioms(
     # 5. Disjointness Mutual Exclusion
     curie_list = list(adjusted.keys())
     for i, a in enumerate(curie_list):
-        for b in curie_list[i + 1:]:
+        for b in curie_list[i + 1 :]:
             if closure.are_disjoint(a, b):
                 p_a, p_b = adjusted[a], adjusted[b]
                 if max(p_a, p_b) >= threshold:
@@ -360,7 +360,7 @@ def verify_owl2_rl_axioms(
     # 5. Check Disjointness Mutual Exclusion
     curie_list = list(probs.keys())
     for i, a in enumerate(curie_list):
-        for b in curie_list[i + 1:]:
+        for b in curie_list[i + 1 :]:
             if closure.are_disjoint(a, b):
                 p_a, p_b = probs[a], probs[b]
                 if max(p_a, p_b) >= threshold and min(p_a, p_b) > tol:
@@ -369,4 +369,3 @@ def verify_owl2_rl_axioms(
                     )
 
     return len(violations) == 0, violations
-

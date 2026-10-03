@@ -794,12 +794,18 @@ mod tests {
         let ctx = FormalContext::from_named_pairs(&pairs);
         let lattice = ConceptLattice::build(ctx);
 
-        assert!(lattice.is_distributive(), "Powerset lattice must be distributive");
+        assert!(
+            lattice.is_distributive(),
+            "Powerset lattice must be distributive"
+        );
 
         // 1. Identity of Implication: a -> a = Top
         for a in 0..lattice.concepts.len() {
             let imp = lattice.implies(a, a);
-            assert!(lattice.is_tautology(imp), "a -> a must equal Top for all concepts");
+            assert!(
+                lattice.is_tautology(imp),
+                "a -> a must equal Top for all concepts"
+            );
         }
 
         // 2. Implication to Top: a -> Top = Top
@@ -831,4 +837,3 @@ mod tests {
         }
     }
 }
-
