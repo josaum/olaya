@@ -43,7 +43,7 @@ flowchart TD
     end
     
     subgraph S2["Stage 2: Non-Autoregressive Scoring"]
-        Sub --> Scorer["Cross-Attention Scorer<br/>(Rust Lexical: 4.8µs | Custom BERT: 12.7ms | ModernBERT: 199ms)"]
+        Sub --> Scorer["Scorer<br/>(lexical overlap in every runtime; transformer head in Python when a checkpoint is supplied)"]
     end
     
     subgraph S3["Stage 3: Axiom Projection Kernel"]
@@ -159,7 +159,7 @@ result = olaya.system_one(state, questions)
 ```
 
 ### 1. `concept` (Leaf Taxonomy Grounding with Guaranteed Monotonicity)
-O-Laya identifies the exact leaf concept in the GS1 hierarchy and projects ancestral probabilities:
+O-Laya identifies the exact leaf concept in the GS1 hierarchy and projects ancestral probabilities. The numbers below are an illustration of the response shape, not output from a trained model:
 
 ```json
 {
@@ -212,7 +212,7 @@ O-Laya solves this using a **Two-Tier Subgraph Routing Architecture**:
 
 1. **Inverted Token Indexing with IDF Weighting (Microsecond)**:
    - All GS1 labels, synonyms, GPC bricks, and semantic descriptions (`rdfs:comment`, `skos:definition`, `schema:description`) are indexed into an Arrow-native memory buffer.
-   - Incoming barcodes, OCR text, or shipping manifests are tokenized with CamelCase awareness and matched in **4.8 microseconds**.
+   - Incoming barcodes, OCR text, or shipping manifests are tokenized with CamelCase awareness and matched in microseconds on the Rust router (measure on your own machine with `bench_arrow`).
 2. **Active Subgraph Extraction**:
    - The top-$K$ candidate leaves and their complete ancestor chains are extracted into an active sub-lattice.
 3. **Neural Scorer**:
@@ -220,55 +220,37 @@ O-Laya solves this using a **Two-Tier Subgraph Routing Architecture**:
 
 ---
 
-## Measured Performance & Hardware Benchmarks
+## Measured Performance
 
-Historical repository-reported results; not reproduced for the reliability patch.
-Cross-section workload comparability and probability calibration are unverified.
-
-Measured on consumer hardware (Apple Silicon MPS / single CPU core) on operational GS1 supply chain workloads:
-
-| Runtime / Architecture | Parameters | Dimension & Depth | Median Latency | P95 Latency | Throughput | Role in Warehouse / Supply Chain |
-|---|---|---|---|---|---|---|
-| **Rust Arrow Lexical** (`olaya-core`) | 0 (pure index) | Arrow IPC Buffer | **4.8 µs** | 5.2 µs | **~210,000 qps** | Embedded PLC / Conveyor Chute Divert (<1ms) |
-| **Custom BERT Decision Model** | 15.37M | 4 layers, 256d | **12.71 ms** | **14.52 ms** | **231.7 qps** | Edge Scanner / Handheld Forklift Terminal |
-| **ModernBERT-base Backbone** | 149.91M | 22 layers, 768d | **199.10 ms** | **217.52 ms** | **14.9 qps** | Complex ASN & Customs Document Ingestion |
-| **WebMCP Agent Bridge** (JSON-RPC) | N/A (RPC) | Custom BERT | **11.57 ms** | **12.83 ms** | **86.3 qps** | Autonomous Logistics Agent (MCP 2024-11-05) |
+The repository ships no trained checkpoint, so there are no neural latency or
+accuracy figures to report. The lexical Rust router can be timed on your own
+machine with `cargo run --release -p olaya-core --bin bench_arrow`; the only
+external quality benchmark we publish is the OAEI Conference track run described
+in the [repository README](../../README.md#oaei-conference-track-the-one-external-benchmark),
+reproducible from vendored upstream data with `scripts/benchmark_oaei.py`.
 
 ---
 
-## The Zero-Install Agent Wedge: `olaya-mcp`
+## Using O-Laya from an agent: the MCP servers
 
-If you are building supply chain agents with Claude Desktop, Cursor, LangChain, or CrewAI, you can drop O-Laya into your stack with a single command:
-
-### Run Instantly via uvx or npx
-
-```bash
-# Python runtime (PyPI / uvx)
-uvx olaya-mcp
-
-# Or zero-dependency Node/TypeScript runtime (npm / npx)
-npx @mycelia/olaya-mcp
-```
-
-### Auto-Configure Claude Desktop or Cursor in 1 Second
+Both the Python and Node packages expose a Model Context Protocol server over
+stdio. They are not yet published to PyPI or npm, so run them from a checkout:
 
 ```bash
-# Automatically detects and configures Claude Desktop:
-uvx olaya-mcp install --client claude
+# Python runtime
+uv venv && uv pip install -e ".[dev]"
+.venv/bin/olaya-mcp
 
-# Or Cursor IDE:
-uvx olaya-mcp install --client cursor
+# Node runtime
+cd packages/olaya-node && bun install && bun run src/cli.ts
 ```
 
-### Instant CLI Grounding
-
-```bash
-# Fast sub-millisecond lexical grounding
-olaya-mcp ground "Organic whole milk carton 1 gallon barcode 0614141000036" --domain gs1 --mode fast
-
-# Neural cross-encoder grounding
-olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --domain gs1 --mode neural
-```
+Point Claude Desktop or Cursor at that command in their MCP configuration. The
+tools exposed are `olaya_ground`, `olaya_subsumes`, `olaya_choice` and
+`olaya_extract_and_ground`; each result carries lineage, per-concept
+probabilities and a computed `axioms_verified` flag. Confidence is entropy-based
+and is not an empirically calibrated probability unless the Python server has
+loaded a checkpoint with a fitted temperature.
 
 ---
 
@@ -278,7 +260,7 @@ olaya-mcp ground "Returnable wooden euro pallet 1200x800mm with RFID tag" --doma
 |---|---|---|
 | **Dispute resolution, vendor negotiation emails, custom exception letters** | **LLM (Claude, GPT, Gemini)** | Expressive autoregressive prose generation |
 | **Simple 3-way email inbox triage (<10 flat strings)** | **Laya** | Fast local classifier |
-| **Barcode/GTIN routing, GS1 compliance, cold-chain gating, conveyor PLC control, warehouse sorters** | **O-Laya** | **Axiom-verified, $P(\text{child}) \le P(\text{parent})$, scales to 100k+ SKUs, 4.8µs to 12ms latency, MCP-native** |
+| **Barcode/GTIN routing, GS1 compliance, cold-chain gating, taxonomy-consistent decisions with provenance** | **O-Laya** | **Axiom-verified, $P(\text{child}) \le P(\text{parent})$, routes over large ontologies, MCP-native; needs a trained head and a labelled corpus before it can be trusted for autonomous control** |
 
 ---
 
