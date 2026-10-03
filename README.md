@@ -536,3 +536,26 @@ and axiom flags; they do not assert classification accuracy. For example, the
 headphones query selected `PerformanceRole`, and the procurement query returned
 confidence `0`. Successful IPC integration does not establish trained neural
 inference, calibration, or semantic correctness.
+
+### Complete offline Claude Desktop package
+
+The macOS Apple Silicon release bundles CPython 3.12, PyTorch/Transformers, the
+local tokenizer and the existing neural checkpoint in a double-click `.mcpb`.
+It exposes all five decision primitives, real TBox workflow compilation/execution,
+JSON-LD traces and inference-free replay. Three self-contained `.skill` files
+provide workflow, model-decision and evidence-review guidance; the same guidance
+is included as extension prompts/resources.
+
+Build and verify the extracted release:
+
+```bash
+scripts/build-claude-desktop.sh
+python3 scripts/test-claude-desktop-complete.py
+```
+
+Using the built artifact requires no repository checkout, separate Python
+installation, package downloads or API keys. This native release targets macOS
+ARM64. Its checkpoint's historical validation accuracy is 0.3793; functional
+packaging tests do not establish accuracy or calibration on new TBoxes.
+Workflow terminal intents do not execute external application/infrastructure
+effects. See [packaging, tools and installation](extensions/claude-desktop/README.md).

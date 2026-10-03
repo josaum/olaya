@@ -19,6 +19,7 @@ VERSIONS = {"2024-11-05", "2025-03-26", "2025-06-18", "2025-11-25"}
 MODEL = None
 TOKENIZER = None
 MODEL_ID = None
+TEMPERATURE = 1.0
 
 
 def manifest():
@@ -106,14 +107,19 @@ def ontology(value=None):
 
 
 def engine(tbox):
-    global MODEL, TOKENIZER, MODEL_ID
+    global MODEL, TOKENIZER, MODEL_ID, TEMPERATURE
     import torch
-    from transformers import PreTrainedTokenizerFast
+    from transformers import BertConfig, BertModel, PreTrainedTokenizerFast
+
     from olaya.engine import OLaya
+    from olaya.model import OntologyDecisionModel
     if MODEL is None:
         p = ROOT / "models/olaya_decision_model.pt"
         metadata = manifest()["model"]
         actual_hash = hashlib.sha256(p.read_bytes()).hexdigest()
+        tokenizer_hash = hashlib.sha256((ROOT / "models/tokenizer.json").read_bytes()).hexdigest()
+        if tokenizer_hash != metadata["tokenizer_sha256"]:
+            raise ValueError("Bundled tokenizer hash mismatch")
         if actual_hash != metadata["sha256"]:
             raise ValueError("Bundled checkpoint hash mismatch")
         torch.set_num_threads(2)
@@ -122,13 +128,26 @@ def engine(tbox):
             cls_token="[CLS]", sep_token="[SEP]", mask_token="[MASK]",
             pad_token="[PAD]", unk_token="[UNK]",
         )
-        # Construct architecture from checkpoint, then require every tensor to match.
-        native = OLaya(ontology=tbox, tokenizer=TOKENIZER, device="cpu", weights_path=p)
+        # Load only tensors/primitives; reconstruct the bundled custom-BERT architecture
+        # locally and require every tensor to match. Never resolve a remote backbone.
         checkpoint = torch.load(p, map_location="cpu", weights_only=True)
-        native.model.load_state_dict(checkpoint["model_state_dict"], strict=True)
-        MODEL = native.model
+        config = checkpoint["config"]
+        if config.get("backbone", "custom_bert") != "custom_bert":
+            raise ValueError("Bundle requires a fully local custom-BERT checkpoint")
+        encoder_config = BertConfig(
+            vocab_size=config["vocab_size"], hidden_size=config["hidden_size"],
+            num_hidden_layers=config["num_hidden_layers"],
+            num_attention_heads=config["num_attention_heads"],
+            intermediate_size=config["intermediate_size"],
+            max_position_embeddings=config.get("max_position_embeddings", 512),
+        )
+        model = OntologyDecisionModel(hidden_size=config["hidden_size"], custom_encoder=BertModel(encoder_config))
+        model.load_state_dict(checkpoint["model_state_dict"], strict=True)
+        MODEL = model
+        TEMPERATURE = float(checkpoint.get("temperature", 1.0))
         MODEL_ID = "olaya-checkpoint-sha256:" + actual_hash
     native = OLaya(ontology=tbox, tokenizer=TOKENIZER, model=MODEL, device="cpu")
+    native.calibrated_temperature = TEMPERATURE
     original = native.system_one
     def system_one(state, questions):
         result = original(state, questions)

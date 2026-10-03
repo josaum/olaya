@@ -7,6 +7,7 @@ import { OLaya } from '../../../packages/olaya-node/src/engine';
 import { OntologyDAG, type Concept } from '../../../packages/olaya-node/src/ontology';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const skills = ['olaya-tbox-workflows', 'olaya-evidence-review'];
+function validIri(value:string):boolean { if(/[\s<>"{}|\\^`]/.test(value))return false; if(value.startsWith('urn:'))return /^urn:[A-Za-z0-9][A-Za-z0-9-]{0,31}:.+$/.test(value); try { const u=new URL(value); return (u.protocol==='http:'||u.protocol==='https:') && !!u.host && /^https?:\/\/[^/]/.test(value); } catch { return false; } }
 const caps = {backend:'lexical-node',trained:false,offline:true,workflowExecution:false,workflowReplay:false,description:'Ground text against an explicitly supplied bounded class DAG. Scores are heuristic, not calibrated probabilities. JSON-LD is observation provenance, not a workflow execution trace.'};
 const tools = [
  {name:'olaya_capabilities',description:'Return backend identity and implemented capabilities.',inputSchema:{type:'object',properties:{},additionalProperties:false}},
@@ -19,7 +20,7 @@ function reference(path:string){const entry=resources().find(r=>r.name===path);i
 function validate(concepts:any):Concept[]{
  if(!Array.isArray(concepts)||concepts.length<1||concepts.length>128)throw Error('Supply 1 to 128 classes');
  const ids=new Set(),iris=new Set();
- for(const c of concepts){if(!c||!Number.isSafeInteger(c.id)||typeof c.curie!=='string'||! /^(https?:\/\/[^\s]+|urn:[^\s:]+:[^\s]+)$/.test(c.curie)||typeof c.label!=='string'||!c.label.trim()||c.label.length>1024||ids.has(c.id)||iris.has(c.curie))throw Error('Invalid or duplicate class ID/IRI'); ids.add(c.id);iris.add(c.curie);for(const field of ['parents','disjointWith','synonyms'])if(!Array.isArray(c[field])||c[field].length>128)throw Error('Invalid class arrays');if(!c.synonyms.every((s:any)=>typeof s==='string'&&s.length<=1024))throw Error('Invalid synonyms');}
+ for(const c of concepts){if(!c||!Number.isSafeInteger(c.id)||typeof c.curie!=='string'||!validIri(c.curie)||typeof c.label!=='string'||!c.label.trim()||c.label.length>1024||ids.has(c.id)||iris.has(c.curie))throw Error('Invalid or duplicate class ID/IRI'); ids.add(c.id);iris.add(c.curie);for(const field of ['parents','disjointWith','synonyms'])if(!Array.isArray(c[field])||c[field].length>128)throw Error('Invalid class arrays');if(!c.synonyms.every((s:any)=>typeof s==='string'&&s.length<=1024))throw Error('Invalid synonyms');}
  const byId=new Map(concepts.map(c=>[c.id,c]));
  for(const c of concepts)for(const id of [...c.parents,...c.disjointWith])if(!Number.isSafeInteger(id)||!ids.has(id)||id===c.id)throw Error('Invalid class reference');
  const visiting=new Set(),visited=new Set(); function visit(id:number){if(visiting.has(id))throw Error('Cyclic class hierarchy');if(visited.has(id))return;visiting.add(id);for(const p of (byId.get(id) as Concept).parents)visit(p);visiting.delete(id);visited.add(id);}for(const c of concepts)visit(c.id);
