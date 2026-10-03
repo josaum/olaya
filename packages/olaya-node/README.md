@@ -58,6 +58,14 @@ const { accepted, selected } = await olaya.noul("Out of domain prompt", ["Option
 
 ## HTTP edge API boundary
 
+The edge `noul` contract now distinguishes supported/contradicted evidence from
+`unmatched`, `conflicting`, `ambiguous_scope`, and `unsupported_question`.
+Unknown cases return `abstained: true`, `noul: 0.5`, and confidence `0`.
+Structured-state evidence uses separate string values, excluding keys and scalar
+booleans/numbers, with no proposition matches spanning fields. This edge-only
+behavior does not change the runtime/package/parser APIs described here.
+
+
 The separately deployed [edge handler](../../docs/public/api/systemone.js) uses
 `state` and a named `questions` object. Edge `choice` accepts `options`; edge
 `score` accepts ordered `criteria`; edge `noul` takes a proposition in

@@ -55,3 +55,41 @@ test('score response remains compatible', async () => {
   assert.equal(result.level, 'urgent');
   assert.equal(result.score, 1);
 });
+
+for (const [state, instructions, status] of [
+  ['Office stationery.', 'frozen seafood', 'unmatched'],
+  ['Not chilled or frozen seafood.', 'frozen seafood', 'ambiguous_scope'],
+  ['The shipment does not contain frozen seafood.', 'frozen seafood', 'ambiguous_scope'],
+  ['There is no evidence of frozen seafood.', 'frozen seafood', 'ambiguous_scope'],
+  ['Frozen seafood is not absent.', 'frozen seafood', 'ambiguous_scope'],
+  ['Frozen seafood is not missing.', 'frozen seafood', 'ambiguous_scope'],
+  ['Frozen seafood is not necessarily absent.', 'frozen seafood', 'ambiguous_scope'],
+  ['Frozen seafood may be absent.', 'frozen seafood', 'ambiguous_scope'],
+  ['Frozen not seafood.', 'frozen seafood', 'ambiguous_scope'],
+  ['Not without frozen seafood.', 'frozen seafood', 'ambiguous_scope'],
+  ['Frozen seafood not present.', 'frozen seafood', 'ambiguous_scope'],
+  ['No ice and frozen seafood.', 'frozen seafood', 'ambiguous_scope'],
+  ['Frozen seafood.', 'not frozen seafood', 'unsupported_question'],
+  [{ frozen_seafood: false }, 'frozen seafood', 'unmatched'],
+  [{ first: 'frozen', second: 'seafood' }, 'frozen seafood', 'unmatched'],
+  [{ description: 'Frozen seafood.', paperwork: 'No paperwork.' }, 'frozen seafood', 'supported'],
+  [{ description: 'Not frozen seafood.' }, 'frozen seafood', 'contradicted'],
+  [{ first: 'Frozen seafood.', second: 'No frozen seafood.' }, 'frozen seafood', 'conflicting'],
+]) {
+  test(`noul evidence status: ${status}, ${JSON.stringify(state)}`, async () => {
+    const result = await ask(state, { type: 'noul', instructions });
+    assert.equal(result.evidence_status, status);
+    const abstained = !['supported', 'contradicted'].includes(status);
+    assert.equal(result.abstained, abstained);
+    if (abstained) {
+      assert.equal(result.noul, 0.5);
+      assert.equal(result.confidence, 0);
+    } else assert.ok(status === 'supported' ? result.noul > 0.9 : result.noul < 0.1);
+  });
+}
+
+test('choice does not use JSON keys or boolean values as evidence', async () => {
+  const result = await ask({ cold_storage: false }, { type: 'choice', options: ['cold storage', 'ambient storage'] });
+  assert.equal(result.choice, null);
+  assert.equal(result.reason, 'no_matching_evidence');
+});

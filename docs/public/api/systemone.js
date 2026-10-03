@@ -78,6 +78,13 @@ function scoreOptions(stateToks, options, instrToks = []) {
 
 // Bounded English negation: inspect the words attached to each proposition
 // mention, rather than treating every negator in the state as global evidence.
+function stateTextValues(state) {
+  if (typeof state === 'string') return [state];
+  if (Array.isArray(state)) return state.flatMap(stateTextValues);
+  if (state && typeof state === 'object') return Object.values(state).flatMap(stateTextValues);
+  return [];
+}
+
 function propositionPolarity(state, proposition) {
   const wanted = tokenize(proposition);
   if (wanted.length === 0) return { positive: false, negative: false };
@@ -85,6 +92,11 @@ function propositionPolarity(state, proposition) {
     .toLowerCase().replace(/[’']/g, "'").replace(/n't\b/g, ' not');
   let positive = false;
   let negative = false;
+  // Negation across coordination is outside this heuristic's supported scope.
+  let ambiguous = normalized.split(/[.,;!?\n]/).some((sentence) =>
+    /\b(?:no|not|never|without|neither)\b/.test(sentence.replace(/\bnot only\b/g, ''))
+    && /\b(?:and|or|nor)\b/.test(sentence)
+    && wanted.some((token) => tokenize(sentence).includes(token)));
   for (const clause of normalized.split(/[.,;!?\n]|\b(?:but|and|or|however)\b/)) {
     const words = clause.match(/[a-z0-9]+/g) || [];
     const content = words.flatMap((word, index) =>
@@ -93,16 +105,23 @@ function propositionPolarity(state, proposition) {
       if (!wanted.every((token, i) => content[start + i].token === token)) continue;
       const first = content[start].index;
       const last = content[start + wanted.length - 1].index;
+      const within = words.slice(first, last + 1).join(' ');
+      if (/\b(?:no|not|never|without|neither)\b/.test(within)) ambiguous = true;
       const before = words.slice(0, first).join(' ');
       const after = words.slice(last + 1).join(' ');
       const prefixNegated = /\b(?:no|not|never|without|lack|lacks|lacking|neither)(?:\s+(?:any|a|an|the|actually|currently|really))*$/.test(before);
       const suffixNegated = /^(?:(?:is|are|was|were)\s+)?(?:absent|false|missing|negative)\b/.test(after)
         || /^(?:is|are|was|were)\s+not\b/.test(after);
+      if (/\b(?:not|never)\s+(?:without|no|not)\b/.test(before)) ambiguous = true;
+      if (/^not\b/.test(after) || /^(?:is|are|was|were)\s+not\b.*\b(?:absent|missing|false|negative)\b/.test(after)) ambiguous = true;
+      const scopedBefore = before.replace(/\bnot only\b/g, '');
+      if (!prefixNegated && /\b(?:no|not|never|without|neither)\b/.test(scopedBefore)) ambiguous = true;
+      if (!suffixNegated && /^(?:may|might|could|would|should|possibly)\b.*\b(?:absent|false|missing|not)\b/.test(after)) ambiguous = true;
       if (prefixNegated || suffixNegated) negative = true;
       else positive = true;
     }
   }
-  return { positive, negative };
+  return { positive, negative, ambiguous };
 }
 
 // ─── Token count estimator ───────────────────────────────────────────────────
@@ -178,7 +197,8 @@ export default async function handler(req) {
     const rawState = typeof body.state === 'string' ? body.state : JSON.stringify(body.state || '');
     const questions = body.questions || {};
 
-    const stateToks = tokenize(rawState);
+    // JSON keys and boolean/number values are not natural language evidence.
+    const stateToks = tokenize(stateTextValues(body.state).join(' '));
     const inputTokens = estimateTokens(rawState) + estimateTokens(questions);
     const costUsd = Number(((inputTokens / 1_000_000) * RATE_PER_MILLION_INPUT).toFixed(8));
 
@@ -249,18 +269,24 @@ export default async function handler(req) {
 
       // ── noul ──────────────────────────────────────────────────────────────
       } else if (qVal.type === 'noul') {
-        const evidence = propositionPolarity(rawState, qVal.instructions || '');
-        // Conflicting mentions are undecided. No matching proposition retains
-        // the existing conservative NO default. These are lexical weights.
-        const probs = evidence.positive && evidence.negative
-          ? [0.5, 0.5]
-          : evidence.negative ? softmax([0.5, 4], 0.85)
-          : evidence.positive ? softmax([4, 0.5], 0.85)
-          : softmax([0.5, 2.5], 0.85);
+        const proposition = qVal.instructions || '';
+        const unsupportedQuestion = /\b(?:no|not|never|without|neither|absent|false)\b|n['’]t\b/i.test(proposition);
+        const mentions = stateTextValues(body.state).map((text) => propositionPolarity(text, proposition));
+        const positive = mentions.some((evidence) => evidence.positive);
+        const negative = mentions.some((evidence) => evidence.negative);
+        const evidenceStatus = unsupportedQuestion ? 'unsupported_question'
+          : mentions.some((evidence) => evidence.ambiguous) ? 'ambiguous_scope'
+          : positive && negative ? 'conflicting'
+          : positive ? 'supported' : negative ? 'contradicted' : 'unmatched';
+        const abstained = !['supported', 'contradicted'].includes(evidenceStatus);
+        const probs = abstained ? [0.5, 0.5]
+          : negative ? softmax([0.5, 4], 0.85) : softmax([4, 0.5], 0.85);
         results[qKey] = {
           type: 'noul',
           noul: Number(probs[0].toFixed(4)),
-          confidence: Number(confidence([probs[0], probs[1]]).toFixed(4)),
+          confidence: Number(confidence(probs).toFixed(4)),
+          abstained,
+          evidence_status: evidenceStatus,
         };
 
       // ── concept (ontology grounding via lexical subgraph) ─────────────────

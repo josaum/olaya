@@ -1,0 +1,118 @@
+{
+  "benchmark": "systemone-local-handler",
+  "measured_at": "2026-10-03T00:26:53.313Z",
+  "node": "v24.13.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "os_release": "25.5.0",
+  "cpu": "Apple M1",
+  "logical_cpus": 8,
+  "baseline_ref": "7989f31^",
+  "baseline_revision": "64b25565a7ad6da7fb60e6d525ed681167abe60d",
+  "original_source_sha256": "40318f974ed758891219aefa113f928105746090968e80c6de389e054d46718e",
+  "patched_source_sha256": "cf55932401fd674dbf77386471c5b180a6507b0a694f300ac40edba10cd0ff97",
+  "warmups_per_handler_per_run": 200,
+  "samples_per_handler_per_run": 2000,
+  "independent_process_runs": 5,
+  "order": "Alternate each sample; reverse initial order each run",
+  "percentile_method": "Nearest rank",
+  "units": "milliseconds",
+  "workload": {
+    "state": "Urgent frozen seafood shipment requires cold storage.",
+    "questions": {
+      "storage": {
+        "type": "choice",
+        "options": [
+          "cold storage",
+          "ambient storage"
+        ]
+      },
+      "priority": {
+        "type": "score",
+        "criteria": [
+          "routine",
+          "urgent",
+          "critical"
+        ]
+      },
+      "frozen": {
+        "type": "noul",
+        "instructions": "frozen seafood"
+      }
+    }
+  },
+  "timed_scope": "Request construction, handler execution, response decoding, and identical result assertions; body serialization excluded",
+  "limitations": "Single workload in local Node. Includes runtime noise and GC. No network, cold start, deployed latency, general accuracy, calibration, or statistical significance claim.",
+  "results": [
+    {
+      "run": 1,
+      "first_handler": "original",
+      "original": {
+        "median_ms": 0.033833000000001334,
+        "p95_ms": 0.06416700000002606
+      },
+      "patched": {
+        "median_ms": 0.03945800000002464,
+        "p95_ms": 0.08058300000000429
+      },
+      "patched_source_sha256": "cf55932401fd674dbf77386471c5b180a6507b0a694f300ac40edba10cd0ff97",
+      "original_source_sha256": "40318f974ed758891219aefa113f928105746090968e80c6de389e054d46718e"
+    },
+    {
+      "run": 2,
+      "first_handler": "patched",
+      "original": {
+        "median_ms": 0.0347500000000025,
+        "p95_ms": 0.08262500000000728
+      },
+      "patched": {
+        "median_ms": 0.04099999999999682,
+        "p95_ms": 0.09854099999999733
+      },
+      "patched_source_sha256": "cf55932401fd674dbf77386471c5b180a6507b0a694f300ac40edba10cd0ff97",
+      "original_source_sha256": "40318f974ed758891219aefa113f928105746090968e80c6de389e054d46718e"
+    },
+    {
+      "run": 3,
+      "first_handler": "original",
+      "original": {
+        "median_ms": 0.03350000000000364,
+        "p95_ms": 0.05908300000001532
+      },
+      "patched": {
+        "median_ms": 0.039041999999994914,
+        "p95_ms": 0.06408299999998235
+      },
+      "patched_source_sha256": "cf55932401fd674dbf77386471c5b180a6507b0a694f300ac40edba10cd0ff97",
+      "original_source_sha256": "40318f974ed758891219aefa113f928105746090968e80c6de389e054d46718e"
+    },
+    {
+      "run": 4,
+      "first_handler": "patched",
+      "original": {
+        "median_ms": 0.0332909999999913,
+        "p95_ms": 0.054541000000000395
+      },
+      "patched": {
+        "median_ms": 0.03904100000002586,
+        "p95_ms": 0.06791599999999676
+      },
+      "patched_source_sha256": "cf55932401fd674dbf77386471c5b180a6507b0a694f300ac40edba10cd0ff97",
+      "original_source_sha256": "40318f974ed758891219aefa113f928105746090968e80c6de389e054d46718e"
+    },
+    {
+      "run": 5,
+      "first_handler": "original",
+      "original": {
+        "median_ms": 0.033084000000002334,
+        "p95_ms": 0.049207999999993035
+      },
+      "patched": {
+        "median_ms": 0.03875000000000739,
+        "p95_ms": 0.056291000000001645
+      },
+      "patched_source_sha256": "cf55932401fd674dbf77386471c5b180a6507b0a694f300ac40edba10cd0ff97",
+      "original_source_sha256": "40318f974ed758891219aefa113f928105746090968e80c6de389e054d46718e"
+    }
+  ]
+}
