@@ -119,3 +119,17 @@ request construction/parsing and response decoding, rather than Vercel or networ
 latency. The earlier 2,000-sample comparison was an ad hoc historical run against
 the initial patch: original/patched median 0.0274/0.0317 ms and p95
 0.0377/0.0420 ms. Those numbers do not describe the expanded handler.
+
+### Subsequent production verification
+
+On 2026-10-03 UTC, deployment `dpl_3yrTp5w3afrnmyamw7E8XFj8zqtK` reached READY,
+with production alias `https://public-nine-jade-58.vercel.app`. All 34 focused
+cases passed against that endpoint using:
+
+```bash
+SYSTEMONE_TEST_URL=https://public-nine-jade-58.vercel.app/api/systemone node --test tests/systemone-edge.test.mjs
+```
+
+This supersedes the earlier connectivity blocker. It verifies these cases only,
+not arbitrary input semantics or model calibration. PR #2 remains unmerged with
+passing edge/Node CI and failing Rust formatting/Python lint on unchanged source.

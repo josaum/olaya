@@ -5,7 +5,14 @@ import { webcrypto } from 'node:crypto';
 
 globalThis.crypto ??= webcrypto;
 const source = await readFile(new URL('../docs/public/api/systemone.js', import.meta.url), 'utf8');
-const { default: handler } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+const { default: localHandler } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+// Set SYSTEMONE_TEST_URL to run these same cases against a deployed endpoint.
+const handler = process.env.SYSTEMONE_TEST_URL
+  ? async (request) => fetch(process.env.SYSTEMONE_TEST_URL, {
+      method: request.method, headers: request.headers, body: await request.text(),
+      signal: AbortSignal.timeout(25000),
+    })
+  : localHandler;
 async function ask(state, question) {
   const response = await handler(new Request('http://localhost/api/systemone', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
