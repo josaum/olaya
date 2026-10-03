@@ -88,6 +88,9 @@ def main():
             "runtime": {"python": platform.python_version(), "architecture": platform.machine(),
                         "packages": {name: d.version for name, d in sorted(dependencies.items())}},
             "source_revision": revision,
+            "source_revision_scope": "Base Git commit; bundled source hashes identify the exact packaged working-tree files.",
+            "source_worktree_tracked_dirty": bool(subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT, text=True).strip()),
+            "packaging_transformations": ["Focused runtime package __init__", "Host-specific real_abox harvester excluded"],
             "source_files_sha256": {p.name: sha(p) for p in sorted((stage / "src/olaya").glob("*.py"))},
             "server_sha256": sha(stage / "server/complete.py"),
         }
@@ -111,6 +114,9 @@ def main():
                     if source.is_file():
                         archive.write(source, source.relative_to(stage / "skills"))
             artifacts.append(path)
+            skill_path = OUT / (skill.name + "-0.2.0.skill")
+            shutil.copy2(path, skill_path)
+            artifacts.append(skill_path)
         # Full companion Code plugin includes the same embedded interpreter and package payload.
         plugin_path = OUT / "olaya-complete-claude-code-macos-arm64-0.2.0.zip"
         with zipfile.ZipFile(OUT / (NAME + ".mcpb")) as source, zipfile.ZipFile(plugin_path, "w", zipfile.ZIP_DEFLATED) as target:

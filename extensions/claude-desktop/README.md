@@ -60,3 +60,24 @@ import each named skill archive through Claude Desktop's skills interface. Each
 ZIP contains one skill folder with `SKILL.md` and `references/`; a skill ZIP is
 not an MCPB extension. All guidance is also exposed as prompts/resources in the
 complete bundle, so those remain available without native skill import.
+
+## Double-click skill files and rebuild
+
+The release also includes three `.skill` files (standard skill ZIP containers).
+The installed Claude Desktop app registers this file type, so double-click one to
+open its skill import flow. ZIP copies are supplied for the documented upload
+route through Customize → Skills. The extension itself already contains the same
+skill content as prompts/resources; native skill import enables skill discovery.
+
+Build the complete release with `.venv/bin/python scripts/build-claude-desktop-complete.py`
+on the tested macOS ARM64 Python 3.12 environment, then run
+`python3 scripts/test-claude-desktop-complete.py`. The build copies a relocatable
+standalone Python distribution, the dependency closure (with license metadata),
+the source runtime, the tokenizer and the checkpoint. Build tooling uses the
+pinned MCPB CLI 2.1.2; the resulting extension does not run npm, pip or uv.
+
+`olaya_workflow_run` and `olaya_workflow_replay` return their JSON-LD document in
+`structuredContent.trace`; pass that trace object into replay. Direct model
+inference returns `structuredContent.result`, `jsonld`, and model provenance.
+The neural workflow trace model identifier includes the checkpoint SHA-256.
+The release is unsigned. Build provenance and artifact checksums accompany it.
