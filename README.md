@@ -58,6 +58,23 @@ numbers do not measure the expanded handler. Commit `7989f31` contains that init
 patch. Deployment and GitHub push were connectivity-blocked in that verification
 session; verify the current release and live cases independently.
 
+## Local TBox-bound workflows
+
+The Python JSON workflow compiler/interpreter binds workflow and decision types,
+option classes, and terminal intent properties to a supplied ontology. It emits
+JSON-LD execution records with TBox identity/hash and decision provenance, without
+asserting predicted input membership or performing external actions. See the
+[implemented version 1 contract](spec/workflow-dsl-proposal.md) and
+[storage example](examples/workflows/storage.json).
+
+```bash
+python examples/workflows/run_storage.py
+```
+
+The example explicitly uses an untrained local engine. It demonstrates policy
+execution and abstention gates, not calibrated classification or warehouse
+control. Training evaluation and HTTP edge semantics remain separate.
+
 ## Project status: read this first
 
 The model accuracy, ECE, WASM, and performance figures below are historical
