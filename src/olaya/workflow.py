@@ -48,10 +48,11 @@ def _number(value: Any, low: float | None = None, high: float | None = None) -> 
 
 def compile_workflow(document: dict, ontology: Ontology) -> CompiledWorkflow:
     """Validate the whole graph and snapshot its workflow and supplied TBox."""
+    ontology = Ontology.from_json(json.loads(ontology.to_json()))
     doc = json.loads(_canonical(document))
     _fields(
         doc,
-        {"version", "id", "type", "prefixes", "tbox", "start", "steps"},
+        {"version", "id", "type", "prefixes", "tbox", "start", "steps", "resources"},
         {"version", "id", "type", "prefixes", "tbox", "start", "steps"},
     )
     if type(doc["version"]) is not int or doc["version"] != 1:
@@ -95,6 +96,60 @@ def compile_workflow(document: dict, ontology: Ontology) -> CompiledWorkflow:
     definition_ids = [doc["id"], doc["tbox"]] + [doc["id"] + "/steps/" + quote(name, safe="") for name in steps]
     if len(set(definition_ids)) != len(definition_ids):
         raise ValueError("Workflow definition identifiers collide")
+    resources = doc.get("resources", [])
+    if not isinstance(resources, list) or len(resources) > 128:
+        raise ValueError("Resources must be a list of at most 128 declarations")
+    resource_types = {}
+    for resource in resources:
+        _fields(resource, {"id", "type", "properties"}, {"id", "type"})
+        resource["id"] = expand_iri(resource["id"], prefixes)
+        resource["type"] = cls(resource["type"])
+        if resource["id"] in resource_types or resource["id"] in definition_ids:
+            raise ValueError("Declared resource identifiers collide")
+        resource_types[resource["id"]] = resource["type"]
+
+    def validate_properties(owner_type: str, properties: Any) -> dict:
+        if not isinstance(properties, dict):
+            raise ValueError("Typed resource properties must be a map")
+        ancestors = ontology.get_ancestors(owner_type)
+        normalized_properties = {}
+        for prop, value in properties.items():
+            prop = properties_index.get(expand_iri(prop, prefixes))
+            if prop not in ontology.properties:
+                raise ValueError("Unknown TBox property")
+            if any(expand_iri(prop, prefixes).startswith(namespace) for namespace in PREFIXES.values()):
+                raise ValueError("Property cannot modify reserved trace vocabulary")
+            if prop in normalized_properties:
+                raise ValueError("Repeated expanded property")
+            definition = ontology.properties[prop]
+            if not {cls(domain) for domain in definition.domains} <= ancestors:
+                raise ValueError("Declared type violates property domain")
+            if isinstance(value, dict):
+                _fields(value, {"@id"}, {"@id"})
+                value["@id"] = expand_iri(value["@id"], prefixes)
+            elif not isinstance(value, (str, int, float, bool)):
+                raise ValueError("Property values must be literals or IRI references")
+            # Only known class ranges are checked. Datatype facets and unknown
+            # ranges are not a datatype-reasoning implementation.
+            known_ranges = set()
+            for range_id in definition.ranges:
+                try:
+                    known_class = classes.get(expand_iri(range_id, prefixes))
+                except ValueError:
+                    known_class = None
+                if known_class is not None:
+                    known_ranges.add(known_class)
+            if known_ranges:
+                if not isinstance(value, dict) or value["@id"] not in resource_types:
+                    raise ValueError("Class-range properties require a declared typed resource reference")
+                target_ancestors = ontology.get_ancestors(resource_types[value["@id"]])
+                if not known_ranges <= target_ancestors:
+                    raise ValueError("Declared target violates property class range")
+            normalized_properties[prop] = value
+        return normalized_properties
+
+    for resource in resources:
+        resource["properties"] = validate_properties(resource["type"], resource.get("properties", {}))
     edges: dict[str, list[str]] = {}
     for name, node in steps.items():
         if not isinstance(node, dict):
@@ -105,28 +160,7 @@ def compile_workflow(document: dict, ontology: Ontology) -> CompiledWorkflow:
             _fields(emit, {"type", "properties"}, {"type"})
             emit_type = cls(emit["type"])
             emit["type"] = emit_type
-            properties = emit.get("properties", {})
-            if not isinstance(properties, dict):
-                raise ValueError("Terminal properties must be a map")
-            ancestors = ontology.get_ancestors(emit_type)
-            normalized_properties = {}
-            for prop, value in properties.items():
-                prop = properties_index.get(expand_iri(prop, prefixes))
-                if prop not in ontology.properties:
-                    raise ValueError("Unknown TBox property")
-                if any(expand_iri(prop, prefixes).startswith(namespace) for namespace in PREFIXES.values()):
-                    raise ValueError("Terminal property cannot modify reserved trace vocabulary")
-                if prop in normalized_properties:
-                    raise ValueError("Repeated expanded property")
-                if not ontology.properties[prop].domains <= ancestors:
-                    raise ValueError("Terminal type violates property domain")
-                if isinstance(value, dict):
-                    _fields(value, {"@id"}, {"@id"})
-                    value["@id"] = expand_iri(value["@id"], prefixes)
-                elif not isinstance(value, (str, int, float, bool)):
-                    raise ValueError("Property values must be literals or IRI references")
-                normalized_properties[prop] = value
-            emit["properties"] = normalized_properties
+            emit["properties"] = validate_properties(emit_type, emit.get("properties", {}))
             edges[name] = []
             continue
         _fields(

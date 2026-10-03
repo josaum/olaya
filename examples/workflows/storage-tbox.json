@@ -59,6 +59,42 @@
       "parents": [
         "ex:ActionIntent"
       ]
+    },
+    {
+      "curie": "ex:Infrastructure",
+      "label": "Infrastructure"
+    },
+    {
+      "curie": "ex:ColdStorageService",
+      "label": "Cold storage service",
+      "parents": [
+        "ex:Infrastructure"
+      ]
+    },
+    {
+      "curie": "ex:AmbientStorageService",
+      "label": "Ambient storage service",
+      "parents": [
+        "ex:Infrastructure"
+      ]
+    },
+    {
+      "curie": "ex:ReviewQueue",
+      "label": "Review queue",
+      "parents": [
+        "ex:Infrastructure"
+      ]
+    },
+    {
+      "curie": "ex:Application",
+      "label": "Application"
+    },
+    {
+      "curie": "ex:ShipmentApplication",
+      "label": "Shipment application",
+      "parents": [
+        "ex:Application"
+      ]
     }
   ],
   "properties": [
@@ -67,6 +103,36 @@
       "label": "Intent note",
       "domains": [
         "ex:ActionIntent"
+      ]
+    },
+    {
+      "curie": "ex:target",
+      "label": "target",
+      "domains": [
+        "ex:ActionIntent"
+      ],
+      "ranges": [
+        "ex:Infrastructure"
+      ]
+    },
+    {
+      "curie": "ex:handledBy",
+      "label": "handledBy",
+      "domains": [
+        "ex:ActionIntent"
+      ],
+      "ranges": [
+        "ex:Application"
+      ]
+    },
+    {
+      "curie": "ex:hosts",
+      "label": "hosts",
+      "domains": [
+        "ex:Infrastructure"
+      ],
+      "ranges": [
+        "ex:Application"
       ]
     }
   ]
