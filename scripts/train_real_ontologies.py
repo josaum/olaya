@@ -83,7 +83,7 @@ def train_single_domain(
         if backbone != "custom_bert":
             tokenizer = AutoTokenizer.from_pretrained(backbone)
         else:
-            from tests.conftest import load_local_tokenizer
+            from olaya.tokenizer import load_local_tokenizer
 
             tokenizer = load_local_tokenizer()
 

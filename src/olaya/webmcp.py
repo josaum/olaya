@@ -28,6 +28,29 @@ ROOT = PACKAGE_DIR.parent.parent
 ONTOLOGY_CACHE: dict[str, Ontology] = {}
 ENGINE_CACHE: dict[str, OLaya] = {}
 
+# Stated on every tool and resource: confidence is normalized-entropy confidence of the projected
+# distribution, not an empirically calibrated probability unless the loaded checkpoint carries a
+# fitted temperature (see ``olaya.engine``).
+CONFIDENCE_CAVEAT = "entropy-based confidence (not empirically calibrated unless a fitted temperature is loaded)"
+
+
+def bundled_class_count(domain: str) -> int | None:
+    """Number of classes in the bundled ontology JSON for ``domain`` (None when not bundled)."""
+    path = find_ontology_file(domain)
+    if path is None:
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    concepts = data.get("concepts")
+    return len(concepts) if isinstance(concepts, list) else None
+
+
+def _class_count_text(domain: str) -> str:
+    count = bundled_class_count(domain)
+    return f"{count} classes" if count is not None else "class count unavailable"
+
 
 def find_ontology_file(domain: str) -> Path | None:
     """Resolve an ontology JSON file from package data or local repository."""
@@ -137,7 +160,7 @@ def extract_jsonld_or_microdata(html_or_text: str) -> dict[str, Any]:
 TOOLS = [
     {
         "name": "olaya_ground",
-        "description": "Ground raw text, web observations, or logs into a formal ontology class (GS1, Schema.org, DOID, or Incident) with calibrated confidence and axiom verification.",
+        "description": f"Ground raw text, web observations, or logs into a formal ontology class (GS1, Schema.org, DOID, or Incident) with {CONFIDENCE_CAVEAT} and axiom verification.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -161,7 +184,7 @@ TOOLS = [
     },
     {
         "name": "olaya_subsumes",
-        "description": "Test whether an observation is an instance of a target ontology class or any of its subclasses (principal down-set test). Returns calibrated probability P(state in downset C).",
+        "description": f"Test whether an observation is an instance of a target ontology class or any of its subclasses (principal down-set test). Returns P(state in downset C) with {CONFIDENCE_CAVEAT}.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -185,7 +208,7 @@ TOOLS = [
     },
     {
         "name": "olaya_choice",
-        "description": "Multi-criteria decision ranking across user-specified discrete alternatives with calibrated normalized probabilities.",
+        "description": f"Multi-criteria decision ranking across user-specified discrete alternatives with normalized probabilities and {CONFIDENCE_CAVEAT}.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -208,7 +231,7 @@ TOOLS = [
     },
     {
         "name": "olaya_score",
-        "description": "Evaluate an observation on an ordered rating/severity scale with calibrated uncertainty.",
+        "description": f"Evaluate an observation on an ordered rating/severity scale (expected level plus per-level probabilities) with {CONFIDENCE_CAVEAT}.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -231,13 +254,13 @@ TOOLS = [
     },
     {
         "name": "leio_inspect_ecosystem",
-        "description": "Ground questions or requirements about Leio's product architecture, model mathematical axioms (subsumption monotonicity, disjointness kernel), and pricing economics ($0.042/1M tokens, developer free tier, enterprise VPC).",
+        "description": f"Classify a question or requirement against the bundled Leio product ontology ({_class_count_text('leio')}: product components, model axiom classes and billing classes). Returns the grounded class with {CONFIDENCE_CAVEAT}.",
         "inputSchema": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "User question, product requirement, pricing inquiry, or architectural scenario.",
+                    "description": "Question, requirement, or scenario text to classify.",
                 }
             },
             "required": ["query"],
@@ -259,35 +282,40 @@ TOOLS = [
     },
 ]
 
+RESOURCE_SUMMARY_NOTE = (
+    "resources/read returns the bundled class list summary (name, class count, sample classes) and the "
+    f"weight provenance of the engine serving it; tool outputs carry {CONFIDENCE_CAVEAT}."
+)
+
 RESOURCES = [
     {
         "uri": "ontology://gs1",
-        "name": "GS1 Web Vocabulary",
-        "description": "Official GS1 Web standard class hierarchy for trade items, packaging, and supply chain.",
+        "name": "GS1 Web Vocabulary subset",
+        "description": f"Bundled subset of the GS1 Web Vocabulary class hierarchy ({_class_count_text('gs1')}) for trade items, packaging and supply chain. {RESOURCE_SUMMARY_NOTE}",
         "mimeType": "application/json",
     },
     {
         "uri": "ontology://schemaorg",
-        "name": "Schema.org Ontology",
-        "description": "Schema.org web entity, product, and e-commerce vocabulary.",
+        "name": "Schema.org subset",
+        "description": f"Bundled subset of Schema.org web entity, product and e-commerce classes ({_class_count_text('schemaorg')}). {RESOURCE_SUMMARY_NOTE}",
         "mimeType": "application/json",
     },
     {
         "uri": "ontology://doid",
-        "name": "Human Disease Ontology (DOID)",
-        "description": "Open biomedical and clinical pathology classification.",
+        "name": "Human Disease Ontology (DOID) subset",
+        "description": f"Bundled subset of the Human Disease Ontology ({_class_count_text('doid')}). {RESOURCE_SUMMARY_NOTE}",
         "mimeType": "application/json",
     },
     {
         "uri": "ontology://incident",
         "name": "Operational Incident Ontology",
-        "description": "System 1 operational reliability and incident triage taxonomy.",
+        "description": f"Bundled operational incident triage taxonomy ({_class_count_text('incident')}). {RESOURCE_SUMMARY_NOTE}",
         "mimeType": "application/json",
     },
     {
         "uri": "ontology://leio",
-        "name": "Leio Product, Model & Pricing Ontology",
-        "description": "Comprehensive formal ontology defining Leio System 1 product components, mathematical kernel guarantees, and $0.042/1M input pricing tiers.",
+        "name": "Leio Product Ontology",
+        "description": f"Bundled ontology of Leio product components, model axiom classes and billing classes ({_class_count_text('leio')}). {RESOURCE_SUMMARY_NOTE}",
         "mimeType": "application/json",
     },
 ]
@@ -316,12 +344,12 @@ PROMPTS = [
         ],
     },
     {
-        "name": "explain_leio_architecture_and_pricing",
-        "description": "Explain how Leio System 1 compares to generative LLMs, its mathematical axiom guarantees, and transparent token pricing.",
+        "name": "classify_leio_requirement",
+        "description": "Classify a requirement against the bundled Leio product ontology using the leio_inspect_ecosystem tool.",
         "arguments": [
             {
                 "name": "customer_requirement",
-                "description": "Description of the use case, throughput need, or budget constraint.",
+                "description": "Description of the use case or requirement to classify.",
                 "required": True,
             }
         ],
@@ -366,6 +394,7 @@ class OLayaMCPServer:
                 "lineage": ans.lineage,
                 "probabilities": {k: round(v, 4) for k, v in ans.candidate_probabilities.items()},
                 "axioms_verified": ans.axioms_verified,
+                "model": res.model,
                 "latency_ms": res.latency_ms,
             }
 
@@ -398,6 +427,7 @@ class OLayaMCPServer:
                 "probability": ans.subsumes,  # alias for compatibility
                 "confidence": ans.confidence,
                 "axioms_verified": ans.axioms_verified,
+                "model": res.model,
                 "latency_ms": res.latency_ms,
             }
 
@@ -423,6 +453,8 @@ class OLayaMCPServer:
                 "selected_choice": ans.choice,
                 "confidence": ans.confidence,
                 "probabilities": {k: round(v, 4) for k, v in ans.probabilities.items()},
+                "axioms_verified": ans.axioms_verified,
+                "model": res.model,
                 "latency_ms": res.latency_ms,
             }
 
@@ -446,8 +478,9 @@ class OLayaMCPServer:
             return {
                 "score": ans.score,
                 "confidence": ans.confidence,
-                "probabilities": {k: round(v, 4) for k, v in ans.candidate_probabilities.items()},
+                "probabilities": {k: round(v, 4) for k, v in ans.probabilities.items()},
                 "axioms_verified": ans.axioms_verified,
+                "model": res.model,
                 "latency_ms": res.latency_ms,
             }
 
@@ -503,6 +536,7 @@ class OLayaMCPServer:
                     "lineage": ans_schema.lineage,
                     "axioms_verified": ans_schema.axioms_verified,
                 },
+                "models": {"gs1": res_gs1.model, "schemaorg": res_schema.model},
                 "total_latency_ms": res_gs1.latency_ms + res_schema.latency_ms,
             }
 
@@ -514,7 +548,7 @@ class OLayaMCPServer:
                 questions={
                     "ecosystem_ground": {
                         "type": "concept",
-                        "instructions": "Classify requirement under Leio product components, mathematical model axioms, or pricing tiers.",
+                        "instructions": "Classify the requirement under the Leio product ontology classes.",
                     }
                 },
             )
@@ -527,6 +561,7 @@ class OLayaMCPServer:
                 "lineage": ans.lineage,
                 "probabilities": {k: round(v, 4) for k, v in ans.candidate_probabilities.items()},
                 "axioms_verified": ans.axioms_verified,
+                "model": res.model,
                 "latency_ms": res.latency_ms,
             }
 
@@ -644,9 +679,9 @@ class OLayaMCPServer:
             elif prompt_name == "triage_operational_incident":
                 lp = p_args.get("log_payload", "")
                 text = f"Please classify the following operational incident telemetry using O-Laya tools:\n\n{lp}"
-            elif prompt_name == "explain_leio_architecture_and_pricing":
+            elif prompt_name == "classify_leio_requirement":
                 cr = p_args.get("customer_requirement", "")
-                text = f"Please evaluate the following system requirement against Leio System 1 architecture, formal axioms, and $0.042/1M pricing:\n\n{cr}"
+                text = f"Please classify the following requirement against the bundled Leio product ontology using the leio_inspect_ecosystem tool:\n\n{cr}"
             else:
                 text = f"Prompt: {prompt_name}"
 
@@ -679,6 +714,8 @@ class OLayaMCPServer:
                 "domain": domain,
                 "name": engine.ontology.name,
                 "num_concepts": len(engine.ontology.concepts),
+                "model": engine.model_id,
+                "confidence": CONFIDENCE_CAVEAT,
                 "sample_concepts": [
                     {"curie": c.curie, "label": c.label, "description": c.description}
                     for c in list(engine.ontology.concepts.values())[:15]
@@ -796,7 +833,7 @@ class OLayaMCPServer:
                         "status": "ready",
                         "supportedDomains": ["gs1", "schemaorg", "doid", "incident", "leio"],
                         "capabilities": {"tools": True, "resources": True, "prompts": True},
-                        "pricing": "$0.042 / 1M input tokens (outputs 100% free)",
+                        "confidence": CONFIDENCE_CAVEAT,
                     }
                     self.wfile.write(json.dumps(status_info, indent=2).encode("utf-8"))
 
