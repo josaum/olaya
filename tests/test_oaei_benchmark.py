@@ -1,15 +1,16 @@
 """Unit and regression tests for OAEI formal validation benchmark."""
 
 from pathlib import Path
+
 from olaya.benchmarks.oaei import (
-    OWLParser,
     OAEIAlignmentParser,
     OAEIBenchmark,
+    OWLParser,
 )
 
 
 def test_owl_parser():
-    cmt_file = Path("data/benchmarks/oaei/ontologies/cmt.owl")
+    cmt_file = Path("tests/fixtures/oaei/ontologies/cmt.owl")
     assert cmt_file.exists(), "cmt.owl not found"
     onto = OWLParser.parse(cmt_file)
     assert onto.name == "cmt"
@@ -24,7 +25,7 @@ def test_owl_parser():
 
 
 def test_oaei_alignment_parser():
-    rdf_file = Path("data/benchmarks/oaei/reference_alignments/cmt-ekaw.rdf")
+    rdf_file = Path("tests/fixtures/oaei/reference_alignments/cmt-ekaw.rdf")
     assert rdf_file.exists(), "cmt-ekaw.rdf not found"
     alignments = OAEIAlignmentParser.parse(rdf_file)
     assert len(alignments) == 11
@@ -35,13 +36,13 @@ def test_oaei_alignment_parser():
 
 def test_oaei_benchmark_evaluation():
     bench = OAEIBenchmark(
-        "data/benchmarks/oaei/ontologies",
-        "data/benchmarks/oaei/reference_alignments",
+        "tests/fixtures/oaei/ontologies",
+        "tests/fixtures/oaei/reference_alignments",
     )
     res = bench.evaluate_pair(
         "cmt",
         "ekaw",
-        "data/benchmarks/oaei/reference_alignments/cmt-ekaw.rdf",
+        "tests/fixtures/oaei/reference_alignments/cmt-ekaw.rdf",
     )
     assert res.evaluated_classes > 0
     assert res.hits_at_1 >= 4

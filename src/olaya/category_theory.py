@@ -26,7 +26,7 @@ Formal Category Theory Mapping:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import numpy as np
 import torch
@@ -111,7 +111,9 @@ class FunctorMonotonicityLoss(nn.Module):
         """Returns: (loss, violation_rate)"""
         # Exclude masked options from softmax
         if marker_mask is not None:
-            logits_clean = torch.where(marker_mask, logits, torch.tensor(-1e4, device=logits.device, dtype=logits.dtype))
+            logits_clean = torch.where(
+                marker_mask, logits, torch.tensor(-1e4, device=logits.device, dtype=logits.dtype)
+            )
         else:
             logits_clean = logits
 
@@ -129,7 +131,7 @@ class FunctorMonotonicityLoss(nn.Module):
         masked_violations = violations * subsumption_mask
 
         # Sum of squared violations
-        loss = (masked_violations ** 2).sum() / (subsumption_mask.sum() + self.eps)
+        loss = (masked_violations**2).sum() / (subsumption_mask.sum() + self.eps)
 
         # Compute empirical violation rate
         with torch.no_grad():
@@ -160,7 +162,9 @@ class CategoricalDisjointnessLoss(nn.Module):
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """Returns: (loss, collision_rate)"""
         if marker_mask is not None:
-            logits_clean = torch.where(marker_mask, logits, torch.tensor(-1e4, device=logits.device, dtype=logits.dtype))
+            logits_clean = torch.where(
+                marker_mask, logits, torch.tensor(-1e4, device=logits.device, dtype=logits.dtype)
+            )
         else:
             logits_clean = logits
 
@@ -245,11 +249,7 @@ class CategoricalLoss(nn.Module):
         loss_disj, disj_coll = self.disj_loss_fn(logits, disjoint_mask, marker_mask)
         loss_cone = self.cone_loss_fn(marker_states, subsumption_mask)
 
-        total_loss = (
-            self.weight_mono * loss_mono
-            + self.weight_disj * loss_disj
-            + self.weight_cone * loss_cone
-        )
+        total_loss = self.weight_mono * loss_mono + self.weight_disj * loss_disj + self.weight_cone * loss_cone
 
         metrics = {
             "loss_cat_total": float(total_loss.item()),
@@ -319,7 +319,7 @@ class CategoricalMorphismLayer(nn.Module):
             return adj / (degrees + 1e-7)
 
         p_norm = norm_adj(parent_adj)  # [B, K, K]
-        c_norm = norm_adj(child_adj)   # [B, K, K]
+        c_norm = norm_adj(child_adj)  # [B, K, K]
         d_norm = norm_adj(disjoint_adj)  # [B, K, K]
 
         # Check if graph is completely empty

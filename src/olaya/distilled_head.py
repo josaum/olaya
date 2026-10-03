@@ -19,7 +19,6 @@ import json
 import math
 import struct
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
 
 import torch
 import torch.nn as nn
@@ -43,35 +42,39 @@ def fnv1a_hash(text: str, num_buckets: int = 4096) -> int:
 @dataclass
 class DistilledWeights:
     """Serializable weights for native Rust / WASM inference."""
+
     num_buckets: int
     dim: int
     hidden_dim: int
-    concept_curies: List[str]
-    token_embeddings: List[List[float]]       # [num_buckets, dim]
-    mlp_w1: List[List[float]]                 # [hidden_dim, dim]
-    mlp_b1: List[float]                       # [hidden_dim]
-    mlp_w2: List[List[float]]                 # [dim, hidden_dim]
-    mlp_b2: List[float]                       # [dim]
-    concept_embeddings: List[List[float]]     # [num_concepts, dim]
+    concept_curies: list[str]
+    token_embeddings: list[list[float]]  # [num_buckets, dim]
+    mlp_w1: list[list[float]]  # [hidden_dim, dim]
+    mlp_b1: list[float]  # [hidden_dim]
+    mlp_w2: list[list[float]]  # [dim, hidden_dim]
+    mlp_b2: list[float]  # [dim]
+    concept_embeddings: list[list[float]]  # [num_concepts, dim]
     alpha_parent: float = 0.25
     beta_disjoint: float = 0.35
 
     def to_json(self) -> str:
-        return json.dumps({
-            "format": "leio-cone-v1",
-            "num_buckets": self.num_buckets,
-            "dim": self.dim,
-            "hidden_dim": self.hidden_dim,
-            "alpha_parent": self.alpha_parent,
-            "beta_disjoint": self.beta_disjoint,
-            "concept_curies": self.concept_curies,
-            "token_embeddings": self.token_embeddings,
-            "mlp_w1": self.mlp_w1,
-            "mlp_b1": self.mlp_b1,
-            "mlp_w2": self.mlp_w2,
-            "mlp_b2": self.mlp_b2,
-            "concept_embeddings": self.concept_embeddings,
-        }, separators=(',', ':'))
+        return json.dumps(
+            {
+                "format": "leio-cone-v1",
+                "num_buckets": self.num_buckets,
+                "dim": self.dim,
+                "hidden_dim": self.hidden_dim,
+                "alpha_parent": self.alpha_parent,
+                "beta_disjoint": self.beta_disjoint,
+                "concept_curies": self.concept_curies,
+                "token_embeddings": self.token_embeddings,
+                "mlp_w1": self.mlp_w1,
+                "mlp_b1": self.mlp_b1,
+                "mlp_w2": self.mlp_w2,
+                "mlp_b2": self.mlp_b2,
+                "concept_embeddings": self.concept_embeddings,
+            },
+            separators=(",", ":"),
+        )
 
     def to_binary(self) -> bytes:
         """
@@ -96,14 +99,25 @@ class DistilledWeights:
         """
         buf = bytearray()
         buf.extend(b"LEIO")
-        buf.extend(struct.pack("<HHHIIff", 1, self.dim, self.hidden_dim, self.num_buckets, len(self.concept_curies), self.alpha_parent, self.beta_disjoint))
+        buf.extend(
+            struct.pack(
+                "<HHHIIff",
+                1,
+                self.dim,
+                self.hidden_dim,
+                self.num_buckets,
+                len(self.concept_curies),
+                self.alpha_parent,
+                self.beta_disjoint,
+            )
+        )
 
-        def pack_flat_2d(matrix: List[List[float]]):
+        def pack_flat_2d(matrix: list[list[float]]):
             for row in matrix:
                 for val in row:
                     buf.extend(struct.pack("<f", val))
 
-        def pack_flat_1d(vec: List[float]):
+        def pack_flat_1d(vec: list[float]):
             for val in vec:
                 buf.extend(struct.pack("<f", val))
 
@@ -132,7 +146,7 @@ class DistilledNeuralHead(nn.Module):
 
     def __init__(
         self,
-        concept_curies: List[str],
+        concept_curies: list[str],
         dim: int = 64,
         hidden_dim: int = 96,
         num_buckets: int = 4096,
@@ -161,8 +175,8 @@ class DistilledNeuralHead(nn.Module):
 
     def encode_tokens_and_idfs(
         self,
-        token_bucket_ids: List[int],
-        idf_weights: List[float],
+        token_bucket_ids: list[int],
+        idf_weights: list[float],
     ) -> torch.Tensor:
         """
         Embed a single query represented as bucket IDs and IDF weights.
@@ -190,7 +204,7 @@ class DistilledNeuralHead(nn.Module):
     def forward(
         self,
         query_vecs: torch.Tensor,
-        candidate_indices: Optional[torch.Tensor] = None,
+        candidate_indices: torch.Tensor | None = None,
     ) -> torch.Tensor:
         """
         Score query vectors against concept embeddings.
@@ -210,10 +224,10 @@ class DistilledNeuralHead(nn.Module):
     def score_with_morphisms(
         self,
         query_vec: torch.Tensor,
-        candidate_indices: List[int],
-        parents_map: Dict[int, List[int]],
-        disjoint_map: Dict[int, List[int]],
-    ) -> List[float]:
+        candidate_indices: list[int],
+        parents_map: dict[int, list[int]],
+        disjoint_map: dict[int, list[int]],
+    ) -> list[float]:
         """
         Score a set of candidate concepts applying ontological morphisms:
         s(c) = s0(c) + alpha * sum_{p in parents} s0(p) - beta * sum_{d in disjoint} max(0, s0(d))
@@ -229,7 +243,7 @@ class DistilledNeuralHead(nn.Module):
         idx_tensor = torch.tensor(idx_list, dtype=torch.long, device=norm_concepts.device)
         vecs = norm_concepts[idx_tensor]
         raw_dots = (query_vec.squeeze(0) * vecs).sum(dim=-1).tolist()
-        raw_score_dict = {idx: s for idx, s in zip(idx_list, raw_dots)}
+        raw_score_dict = {idx: s for idx, s in zip(idx_list, raw_dots, strict=True)}
 
         final_scores = []
         for c in candidate_indices:
@@ -241,7 +255,7 @@ class DistilledNeuralHead(nn.Module):
 
         return final_scores
 
-    def compute_order_cone_loss(self, subsumption_pairs: List[Tuple[int, int]]) -> torch.Tensor:
+    def compute_order_cone_loss(self, subsumption_pairs: list[tuple[int, int]]) -> torch.Tensor:
         """
         Order cone constraint: C1 <= C2 implies E_{C1} <= E_{C2} in cone coordinates.
         Penalize max(0, E_{C1} - E_{C2}).
@@ -249,17 +263,21 @@ class DistilledNeuralHead(nn.Module):
         if not subsumption_pairs:
             return torch.tensor(0.0, device=self.concept_embeddings.device)
 
-        c1_idx = torch.tensor([p[0] for p in subsumption_pairs], dtype=torch.long, device=self.concept_embeddings.device)
-        c2_idx = torch.tensor([p[1] for p in subsumption_pairs], dtype=torch.long, device=self.concept_embeddings.device)
+        c1_idx = torch.tensor(
+            [p[0] for p in subsumption_pairs], dtype=torch.long, device=self.concept_embeddings.device
+        )
+        c2_idx = torch.tensor(
+            [p[1] for p in subsumption_pairs], dtype=torch.long, device=self.concept_embeddings.device
+        )
 
         e1 = F.relu(self.concept_embeddings[c1_idx])
         e2 = F.relu(self.concept_embeddings[c2_idx])
 
         # Violations where child > parent in any coordinate
         violation = F.relu(e1 - e2)
-        return (violation ** 2).sum(dim=-1).mean()
+        return (violation**2).sum(dim=-1).mean()
 
-    def compute_disjoint_loss(self, disjoint_pairs: List[Tuple[int, int]]) -> torch.Tensor:
+    def compute_disjoint_loss(self, disjoint_pairs: list[tuple[int, int]]) -> torch.Tensor:
         """Disjointness orthogonality constraint: <E_{C1}, E_{C2}> <= 0."""
         if not disjoint_pairs:
             return torch.tensor(0.0, device=self.concept_embeddings.device)
@@ -314,8 +332,8 @@ class DistilledNeuralHead(nn.Module):
 
 def train_distilled_head_for_ontology(
     ontology: Ontology,
-    samples: List[Tuple[str, str]],  # (query_text, target_curie)
-    teacher_logits: Optional[List[List[float]]] = None,
+    samples: list[tuple[str, str]],  # (query_text, target_curie)
+    teacher_logits: list[list[float]] | None = None,
     epochs: int = 15,
     lr: float = 1e-3,
     dim: int = 64,
@@ -356,7 +374,7 @@ def train_distilled_head_for_ontology(
                     disj_pairs.append((c_idx, curie_to_idx[d]))
 
     # Tokenizer & IDF from ontology concept text
-    token_doc_count: Dict[str, int] = {}
+    token_doc_count: dict[str, int] = {}
     for c in ontology.concepts.values():
         doc_tokens = set(c.label.lower().split() + c.description.lower().split())
         for syn in c.synonyms:
@@ -366,7 +384,7 @@ def train_distilled_head_for_ontology(
 
     total_docs = len(ontology.concepts)
 
-    def get_query_buckets_and_idfs(text: str) -> Tuple[List[int], List[float]]:
+    def get_query_buckets_and_idfs(text: str) -> tuple[list[int], list[float]]:
         tokens = [t.strip(".,;:!?()[]\"'") for t in text.lower().split() if len(t) > 2]
         buckets = []
         idfs = []
@@ -390,7 +408,7 @@ def train_distilled_head_for_ontology(
     head.train()
     batch_size = 32
 
-    for epoch in range(epochs):
+    for _epoch in range(epochs):
         perm = torch.randperm(len(encoded_samples))
         total_loss = 0.0
 
@@ -427,7 +445,7 @@ def train_distilled_head_for_ontology(
 
 def create_zero_shot_head_for_ontology(
     ontology: Ontology,
-    base_head: Optional[DistilledNeuralHead] = None,
+    base_head: DistilledNeuralHead | None = None,
     dim: int = 64,
     hidden_dim: int = 96,
     num_buckets: int = 4096,
@@ -465,7 +483,7 @@ def create_zero_shot_head_for_ontology(
             head.mlp_w2.bias.copy_(base_head.mlp_w2.bias)
 
     # Compute term frequencies / IDF from ontology
-    token_doc_count: Dict[str, int] = {}
+    token_doc_count: dict[str, int] = {}
     for c in ontology.concepts.values():
         doc_tokens = set(c.label.lower().split() + c.description.lower().split())
         for syn in c.synonyms:
@@ -484,7 +502,7 @@ def create_zero_shot_head_for_ontology(
             return head.encode_tokens_and_idfs(buckets, idfs)
 
     # Step 1: Base text embeddings for each concept
-    raw_concept_vecs: List[torch.Tensor] = []
+    raw_concept_vecs: list[torch.Tensor] = []
     for curie in curies:
         concept = ontology.concepts[curie]
         text_parts = [concept.label, concept.label]

@@ -262,7 +262,9 @@ fn export_to_arrow(json_onto: &JsonOntology, output_path: &Path) -> Result<()> {
         );
     }
 
-    let batch = builder.finish().context("Failed to build Arrow RecordBatch")?;
+    let batch = builder
+        .finish()
+        .context("Failed to build Arrow RecordBatch")?;
     write_ontology_ipc(&batch, output_path).context("Failed to write Arrow IPC")?;
     println!(
         "⚡ Successfully exported {} concepts to zero-copy Arrow IPC: {}",
@@ -286,7 +288,10 @@ fn main() -> Result<()> {
 
     let json_onto = process_ontology(input_path, name, full_mode)?;
 
-    let arrow_output = args.windows(2).find(|w| w[0] == "--arrow").map(|w| w[1].clone());
+    let arrow_output = args
+        .windows(2)
+        .find(|w| w[0] == "--arrow")
+        .map(|w| w[1].clone());
 
     let out_p = Path::new(output_path);
     if let Some(parent) = out_p.parent() {

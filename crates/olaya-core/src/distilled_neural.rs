@@ -3,9 +3,9 @@
 //! Ultra-lightweight, zero-external-dependency neural scorer.
 //! Runs in pure native Rust and WebAssembly in < 5 microseconds without PyTorch or ONNX Runtime.
 
-use std::collections::HashMap;
 use anyhow::{bail, Context, Result};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 const FNV_PRIME: u64 = 0x100000001B3;
 const FNV_OFFSET: u64 = 0xCBF29CE484222325;
@@ -61,8 +61,8 @@ pub struct DistilledNeuralScorer {
 impl DistilledNeuralScorer {
     /// Load from a JSON weights string.
     pub fn from_json(json_str: &str) -> Result<Self> {
-        let data: DistilledModelData = serde_json::from_str(json_str)
-            .context("Failed to parse DistilledModelData JSON")?;
+        let data: DistilledModelData =
+            serde_json::from_str(json_str).context("Failed to parse DistilledModelData JSON")?;
 
         let num_concepts = data.concept_curies.len();
         let dim = data.dim;
@@ -94,7 +94,11 @@ impl DistilledNeuralScorer {
             for &v in row {
                 norm_sq += v * v;
             }
-            let inv_norm = if norm_sq > 1e-12 { 1.0 / norm_sq.sqrt() } else { 0.0 };
+            let inv_norm = if norm_sq > 1e-12 {
+                1.0 / norm_sq.sqrt()
+            } else {
+                0.0
+            };
             for &v in row {
                 flat_concepts.push(v * inv_norm);
             }
@@ -201,7 +205,11 @@ impl DistilledNeuralScorer {
                 let v = read_f32(bytes, &mut cursor);
                 norm_sq += v * v;
             }
-            let inv_norm = if norm_sq > 1e-12 { 1.0 / norm_sq.sqrt() } else { 0.0 };
+            let inv_norm = if norm_sq > 1e-12 {
+                1.0 / norm_sq.sqrt()
+            } else {
+                0.0
+            };
             let mut read_c = start;
             for _ in 0..dim {
                 let v = read_f32(bytes, &mut read_c);
@@ -267,46 +275,58 @@ impl DistilledNeuralScorer {
             }
         }
 
-        let inv_weight = if weight_sum > 1e-6 { 1.0 / weight_sum } else { 1.0 };
+        let inv_weight = if weight_sum > 1e-6 {
+            1.0 / weight_sum
+        } else {
+            1.0
+        };
         let mut norm_sq = 0.0f32;
-        for d in 0..dim {
-            pooled[d] *= inv_weight;
-            norm_sq += pooled[d] * pooled[d];
+        for value in &mut pooled {
+            *value *= inv_weight;
+            norm_sq += *value * *value;
         }
-        let inv_norm = if norm_sq > 1e-12 { 1.0 / norm_sq.sqrt() } else { 0.0 };
-        for d in 0..dim {
-            pooled[d] *= inv_norm;
+        let inv_norm = if norm_sq > 1e-12 {
+            1.0 / norm_sq.sqrt()
+        } else {
+            0.0
+        };
+        for value in &mut pooled {
+            *value *= inv_norm;
         }
 
         // Step 2: Layer 1: hidden = ReLU(W1 * pooled + b1)
         let mut h1 = vec![0.0f32; hidden_dim];
-        for h in 0..hidden_dim {
+        for (h, value) in h1.iter_mut().enumerate() {
             let row_offset = h * dim;
             let mut dot = self.mlp_b1[h];
             let w_row = &self.mlp_w1[row_offset..row_offset + dim];
             for d in 0..dim {
                 dot += w_row[d] * pooled[d];
             }
-            h1[h] = if dot > 0.0 { dot } else { 0.0 }; // ReLU
+            *value = if dot > 0.0 { dot } else { 0.0 }; // ReLU
         }
 
         // Step 3: Layer 2: out = W2 * h1 + b2
         let mut out_norm_sq = 0.0f32;
-        for d in 0..dim {
+        for (d, value) in out_vec.iter_mut().take(dim).enumerate() {
             let row_offset = d * hidden_dim;
             let mut dot = self.mlp_b2[d];
             let w_row = &self.mlp_w2[row_offset..row_offset + hidden_dim];
             for h in 0..hidden_dim {
                 dot += w_row[h] * h1[h];
             }
-            out_vec[d] = dot;
+            *value = dot;
             out_norm_sq += dot * dot;
         }
 
         // Final L2 normalization
-        let inv_out_norm = if out_norm_sq > 1e-12 { 1.0 / out_norm_sq.sqrt() } else { 0.0 };
-        for d in 0..dim {
-            out_vec[d] *= inv_out_norm;
+        let inv_out_norm = if out_norm_sq > 1e-12 {
+            1.0 / out_norm_sq.sqrt()
+        } else {
+            0.0
+        };
+        for value in out_vec.iter_mut().take(dim) {
+            *value *= inv_out_norm;
         }
     }
 
@@ -437,7 +457,8 @@ mod tests {
         let candidates = vec![0, 1];
         let parents = vec![vec![2], vec![]];
         let disjoint = vec![vec![], vec![0]];
-        let scores = scorer.score_candidates_with_morphisms(&q_vec, &candidates, &parents, &disjoint);
+        let scores =
+            scorer.score_candidates_with_morphisms(&q_vec, &candidates, &parents, &disjoint);
         assert_eq!(scores.len(), 2);
     }
 
@@ -468,7 +489,8 @@ mod tests {
         model.mlp_b2 = vec![0.01; 32];
         model.concept_embeddings = vec![vec![0.1; 32]; 8];
 
-        let scorer = DistilledNeuralScorer::from_json(&serde_json::to_string(&model).unwrap()).unwrap();
+        let scorer =
+            DistilledNeuralScorer::from_json(&serde_json::to_string(&model).unwrap()).unwrap();
 
         let tokens = ["acute", "myocardial", "infarction", "syndrome"];
         let idfs = [3.2, 4.1, 4.5, 2.1];
@@ -486,11 +508,15 @@ mod tests {
         let iters = 10_000;
         for _ in 0..iters {
             scorer.encode_query_into(&tokens, &idfs, &mut q_buf);
-            let _ = scorer.score_candidates_with_morphisms(&q_buf, &candidates, &parents, &disjoint);
+            let _ =
+                scorer.score_candidates_with_morphisms(&q_buf, &candidates, &parents, &disjoint);
         }
         let elapsed = start.elapsed();
         let per_query_micros = elapsed.as_micros() as f64 / iters as f64;
-        println!("🚀 Distilled Native Scorer Latency: {:.3} µs / query", per_query_micros);
+        println!(
+            "🚀 Distilled Native Scorer Latency: {:.3} µs / query",
+            per_query_micros
+        );
         // Must be under 50 microseconds even in debug mode unoptimized!
         assert!(per_query_micros < 50.0);
     }

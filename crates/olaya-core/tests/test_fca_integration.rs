@@ -94,12 +94,16 @@ fn test_induced_procurement_arrow_decision_engine() {
     if !arrow_path.exists() {
         return;
     }
-    let batch = olaya_core::read_ontology_ipc(arrow_path).expect("Failed to read induced_procurement.arrow");
+    let batch = olaya_core::read_ontology_ipc(arrow_path)
+        .expect("Failed to read induced_procurement.arrow");
     assert!(batch.num_rows() >= 10);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build engine");
     let res = engine
-        .system_one("High value serialized laptop with lithium ion UN3481 battery", 4)
+        .system_one(
+            "High value serialized laptop with lithium ion UN3481 battery",
+            4,
+        )
         .expect("Decision failed");
 
     println!(
@@ -108,4 +112,3 @@ fn test_induced_procurement_arrow_decision_engine() {
     );
     assert!(res.axioms_verified);
 }
-

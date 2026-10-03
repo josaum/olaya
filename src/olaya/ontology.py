@@ -175,7 +175,7 @@ class Ontology:
         for m in valid_members:
             self.add_subsumption(m, parent_curie)
         for i, m1 in enumerate(valid_members):
-            for m2 in valid_members[i + 1:]:
+            for m2 in valid_members[i + 1 :]:
                 self.add_disjointness(m1, m2)
 
     def add_intersection(self, target_curie: str, operand_curies: list[str]) -> None:
