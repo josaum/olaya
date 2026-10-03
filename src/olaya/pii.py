@@ -22,7 +22,7 @@ from enum import Enum
 from typing import Any
 
 
-class ObfuscationMode(str, Enum):
+class ObfuscationMode(str, Enum):  # noqa: UP042 - preserve existing Enum string representation
     REDACT = "redact"
     MASK = "mask"
     PSEUDONYMIZE = "pseudonymize"
@@ -69,18 +69,10 @@ class ObfuscationResult:
 
 
 # High-precision regular expressions
-EMAIL_REGEX = re.compile(
-    r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
-)
-PHONE_REGEX = re.compile(
-    r"(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b"
-)
-SSN_REGEX = re.compile(
-    r"\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b"
-)
-CREDIT_CARD_REGEX = re.compile(
-    r"\b(?:\d{4}[-\s]?){3}\d{4}\b"
-)
+EMAIL_REGEX = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b")
+PHONE_REGEX = re.compile(r"(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b")
+SSN_REGEX = re.compile(r"\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b")
+CREDIT_CARD_REGEX = re.compile(r"\b(?:\d{4}[-\s]?){3}\d{4}\b")
 IPV4_REGEX = re.compile(
     r"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b"
 )
@@ -95,9 +87,7 @@ STREET_ADDRESS_REGEX = re.compile(
 HONORIFIC_NAME_REGEX = re.compile(
     r"\b(?:Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.|CEO|CFO|COO|President)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b"
 )
-DEAL_CODENAME_REGEX = re.compile(
-    r"\b(?:Project|Operation)\s+([A-Z][A-Za-z0-9_-]+)\b"
-)
+DEAL_CODENAME_REGEX = re.compile(r"\b(?:Project|Operation)\s+([A-Z][A-Za-z0-9_-]+)\b")
 
 
 class PIIObfuscator:
@@ -292,7 +282,7 @@ class PIIObfuscator:
             rep = f"[{entity_type}_{idx}]"
 
         elif mode == ObfuscationMode.HASH:
-            h = hashlib.sha256(f"{self.salt}:{original}".encode("utf-8")).hexdigest()[:8]
+            h = hashlib.sha256(f"{self.salt}:{original}".encode()).hexdigest()[:8]
             rep = f"[{entity_type}_{h}]"
 
         else:

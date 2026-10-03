@@ -580,6 +580,7 @@ class OLayaMCPServer:
 
         if name == "olaya_obfuscate_pii":
             from olaya.pii import PIIObfuscator
+
             obfuscator = PIIObfuscator()
             res = obfuscator.obfuscate(
                 text=args["text"],
@@ -591,6 +592,7 @@ class OLayaMCPServer:
 
         if name == "olaya_deanonymize_pii":
             from olaya.pii import PIIObfuscator
+
             obfuscator = PIIObfuscator()
             restored = obfuscator.deanonymize(
                 sanitized_text=args["sanitized_text"],

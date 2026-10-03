@@ -24,27 +24,21 @@ TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "prompt": {
-                    "type": "string",
-                    "description": "The input text or prompt to send to the local model."
-                },
+                "prompt": {"type": "string", "description": "The input text or prompt to send to the local model."},
                 "model": {
                     "type": "string",
                     "description": f"Name of local model (defaults to '{DEFAULT_MODEL}').",
-                    "default": DEFAULT_MODEL
+                    "default": DEFAULT_MODEL,
                 },
-                "system": {
-                    "type": "string",
-                    "description": "Optional system prompt instruction."
-                },
+                "system": {"type": "string", "description": "Optional system prompt instruction."},
                 "temperature": {
                     "type": "number",
                     "description": "Sampling temperature (default 0.7). Lower for deterministic/factual, higher for creative.",
-                    "default": 0.7
-                }
+                    "default": 0.7,
+                },
             },
-            "required": ["prompt"]
-        }
+            "required": ["prompt"],
+        },
     },
     {
         "name": "ollama_chat",
@@ -58,33 +52,26 @@ TOOLS = [
                         "type": "object",
                         "properties": {
                             "role": {"type": "string", "enum": ["system", "user", "assistant"]},
-                            "content": {"type": "string"}
+                            "content": {"type": "string"},
                         },
-                        "required": ["role", "content"]
+                        "required": ["role", "content"],
                     },
-                    "description": "Array of chat message objects: [{'role': 'user', 'content': '...'}]"
+                    "description": "Array of chat message objects: [{'role': 'user', 'content': '...'}]",
                 },
                 "model": {
                     "type": "string",
                     "description": f"Name of local model (defaults to '{DEFAULT_MODEL}').",
-                    "default": DEFAULT_MODEL
+                    "default": DEFAULT_MODEL,
                 },
-                "temperature": {
-                    "type": "number",
-                    "description": "Sampling temperature (default 0.7).",
-                    "default": 0.7
-                }
+                "temperature": {"type": "number", "description": "Sampling temperature (default 0.7).", "default": 0.7},
             },
-            "required": ["messages"]
-        }
+            "required": ["messages"],
+        },
     },
     {
         "name": "ollama_list_models",
         "description": "List all local models currently downloaded and available in the Ollama instance.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {}
-        }
+        "inputSchema": {"type": "object", "properties": {}},
     },
     {
         "name": "ollama_embeddings",
@@ -92,19 +79,16 @@ TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "prompt": {
-                    "type": "string",
-                    "description": "Text to embed."
-                },
+                "prompt": {"type": "string", "description": "Text to embed."},
                 "model": {
                     "type": "string",
                     "description": f"Embedding model (defaults to '{DEFAULT_MODEL}').",
-                    "default": DEFAULT_MODEL
-                }
+                    "default": DEFAULT_MODEL,
+                },
             },
-            "required": ["prompt"]
-        }
-    }
+            "required": ["prompt"],
+        },
+    },
 ]
 
 
@@ -131,7 +115,7 @@ def execute_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
             "model": model,
             "prompt": prompt,
             "stream": False,
-            "options": {"temperature": temperature}
+            "options": {"temperature": temperature},
         }
         if system:
             req_body["system"] = system
@@ -144,7 +128,7 @@ def execute_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
             "eval_duration_ms": round(res.get("eval_duration", 0) / 1e6, 2),
             "prompt_tokens": res.get("prompt_eval_count", 0),
             "eval_tokens": res.get("eval_count", 0),
-            "done": res.get("done", True)
+            "done": res.get("done", True),
         }
 
     elif name == "ollama_chat":
@@ -152,12 +136,7 @@ def execute_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
         messages = args.get("messages", [])
         temperature = args.get("temperature", 0.7)
 
-        req_body = {
-            "model": model,
-            "messages": messages,
-            "stream": False,
-            "options": {"temperature": temperature}
-        }
+        req_body = {"model": model, "messages": messages, "stream": False, "options": {"temperature": temperature}}
         res = _call_ollama("/api/chat", req_body)
         msg = res.get("message", {})
         return {
@@ -165,7 +144,7 @@ def execute_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
             "message": msg,
             "content": msg.get("content", ""),
             "total_duration_ms": round(res.get("total_duration", 0) / 1e6, 2),
-            "eval_tokens": res.get("eval_count", 0)
+            "eval_tokens": res.get("eval_count", 0),
         }
 
     elif name == "ollama_list_models":
@@ -176,7 +155,7 @@ def execute_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
                 "size_gb": round(m.get("size", 0) / (1024**3), 2),
                 "modified_at": m.get("modified_at"),
                 "parameter_size": m.get("details", {}).get("parameter_size", "unknown"),
-                "quantization": m.get("details", {}).get("quantization_level", "unknown")
+                "quantization": m.get("details", {}).get("quantization_level", "unknown"),
             }
             for m in res.get("models", [])
         ]
@@ -186,11 +165,7 @@ def execute_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
         model = args.get("model") or DEFAULT_MODEL
         prompt = args.get("prompt", "")
         res = _call_ollama("/api/embeddings", {"model": model, "prompt": prompt})
-        return {
-            "model": model,
-            "embedding": res.get("embedding", []),
-            "dimensions": len(res.get("embedding", []))
-        }
+        return {"model": model, "embedding": res.get("embedding", []), "dimensions": len(res.get("embedding", []))}
 
     else:
         raise ValueError(f"Unknown tool: {name}")
@@ -207,14 +182,9 @@ def handle_message(msg: dict[str, Any]) -> dict[str, Any] | None:
             "id": req_id,
             "result": {
                 "protocolVersion": "2024-11-05",
-                "capabilities": {
-                    "tools": {"listChanged": False}
-                },
-                "serverInfo": {
-                    "name": "ollama-local",
-                    "version": "1.0.0"
-                }
-            }
+                "capabilities": {"tools": {"listChanged": False}},
+                "serverInfo": {"name": "ollama-local", "version": "1.0.0"},
+            },
         }
 
     if method == "notifications/initialized":
@@ -224,11 +194,7 @@ def handle_message(msg: dict[str, Any]) -> dict[str, Any] | None:
         return {"jsonrpc": "2.0", "id": req_id, "result": {}}
 
     if method == "tools/list":
-        return {
-            "jsonrpc": "2.0",
-            "id": req_id,
-            "result": {"tools": TOOLS}
-        }
+        return {"jsonrpc": "2.0", "id": req_id, "result": {"tools": TOOLS}}
 
     if method == "tools/call":
         tool_name = params.get("name")
@@ -238,31 +204,13 @@ def handle_message(msg: dict[str, Any]) -> dict[str, Any] | None:
             return {
                 "jsonrpc": "2.0",
                 "id": req_id,
-                "result": {
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": json.dumps(result, indent=2)
-                        }
-                    ]
-                }
+                "result": {"content": [{"type": "text", "text": json.dumps(result, indent=2)}]},
             }
         except Exception as e:
-            return {
-                "jsonrpc": "2.0",
-                "id": req_id,
-                "error": {
-                    "code": -32000,
-                    "message": str(e)
-                }
-            }
+            return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32000, "message": str(e)}}
 
     if req_id is not None:
-        return {
-            "jsonrpc": "2.0",
-            "id": req_id,
-            "error": {"code": -32601, "message": f"Method not found: {method}"}
-        }
+        return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32601, "message": f"Method not found: {method}"}}
     return None
 
 
@@ -278,11 +226,7 @@ def main() -> None:
                 sys.stdout.write(json.dumps(resp) + "\n")
                 sys.stdout.flush()
         except Exception as e:
-            err_resp = {
-                "jsonrpc": "2.0",
-                "id": None,
-                "error": {"code": -32700, "message": f"Parse error: {e}"}
-            }
+            err_resp = {"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": f"Parse error: {e}"}}
             sys.stdout.write(json.dumps(err_resp) + "\n")
             sys.stdout.flush()
 

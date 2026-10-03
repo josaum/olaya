@@ -80,4 +80,23 @@ pinned MCPB CLI 2.1.2; the resulting extension does not run npm, pip or uv.
 `structuredContent.trace`; pass that trace object into replay. Direct model
 inference returns `structuredContent.result`, `jsonld`, and model provenance.
 The neural workflow trace model identifier includes the checkpoint SHA-256.
-The release is unsigned. Build provenance and artifact checksums accompany it.
+Build output is unsigned; Keychain signing produces a separate `-signed.mcpb` variant. Build provenance and artifact checksums accompany it.
+
+## Sign with an existing Keychain identity
+
+Use `security find-identity -v -p codesigning` to select a valid certificate
+fingerprint, then run:
+
+```bash
+.venv/bin/python scripts/sign-claude-desktop-keychain.py dist/olaya-desktop-complete-macos-arm64-0.2.0.mcpb --identity-sha1 CERTIFICATE_SHA1
+```
+
+The helper matches the identity by its exact certificate fingerprint, signs through
+macOS Security.framework and appends the supported MCPB detached CMS signature.
+It never exports the private key or changes Keychain ACLs. OpenSSL checks the
+content signature, macOS checks the certificate for code-signing trust, and an
+altered-payload test must fail. A signature report and checksum accompany the
+signed artifact. MCPB CLI 2.1.2 reports unsigned because its node-forge PKCS#7
+verification function is unimplemented; native verification is recorded separately.
+Do not interpret that CLI result as evidence that the native signature is absent,
+or claim that Desktop's publisher UI was verified from native verification alone.
