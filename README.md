@@ -459,3 +459,18 @@ and identical assertions; it excludes network transport and body serialization.
 It does not establish production latency, general accuracy, or calibration.
 [Raw results and source hashes](benchmarks/results/systemone-edge-2026-10-03.json)
 are saved alongside the [benchmark script](benchmarks/bench_systemone_edge.mjs).
+
+### Production acceptance, 2026-10-03 UTC
+
+Deployment `dpl_3yrTp5w3afrnmyamw7E8XFj8zqtK` reached READY and was aliased to
+<https://public-nine-jade-58.vercel.app>. All 34 focused regression cases passed
+against the public `/api/systemone` endpoint. Reproduce them with:
+
+```bash
+SYSTEMONE_TEST_URL=https://public-nine-jade-58.vercel.app/api/systemone node --test tests/systemone-edge.test.mjs
+```
+
+These are targeted acceptance checks, not general accuracy or calibration proof.
+[PR #2](https://github.com/josaum/olaya/pull/2) has passing edge and Node checks;
+Rust formatting and Python Ruff checks fail on unchanged base source. Their later
+test stages were not reached. The PR has not been merged as of this verification.
