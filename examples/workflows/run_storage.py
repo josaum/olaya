@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+# ruff: noqa: E402 - bootstrap the local src tree before importing O-Laya.
 import argparse
 import json
 import sys
@@ -28,7 +29,11 @@ def main() -> None:
     compiled = compile_workflow(document, ontology)
     tokenizer = PreTrainedTokenizerFast(
         tokenizer_file=str(ROOT / "models/tokenizer.json"),
-        cls_token="[CLS]", sep_token="[SEP]", mask_token="[MASK]", pad_token="[PAD]", unk_token="[UNK]",
+        cls_token="[CLS]",
+        sep_token="[SEP]",
+        mask_token="[MASK]",
+        pad_token="[PAD]",
+        unk_token="[UNK]",
     )
     torch.manual_seed(42)
     engine = OLaya(ontology=ontology, tokenizer=tokenizer, device="cpu", weights_path=False)
