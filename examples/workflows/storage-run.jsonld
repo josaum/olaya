@@ -97,19 +97,19 @@
       }
     },
     {
-      "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0/answer",
+      "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649/steps/0/answer",
       "@type": [
         "wf:DecisionRecord",
         "prov:Entity"
       ],
       "prov:wasGeneratedBy": {
-        "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0"
+        "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649/steps/0"
       },
       "wf:status": "abstained",
       "wf:confidence": 0.0037
     },
     {
-      "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0",
+      "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649/steps/0",
       "@type": [
         "prov:Activity",
         "wf:DecisionActivity",
@@ -133,7 +133,7 @@
         }
       ],
       "prov:wasInformedBy": {
-        "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc"
+        "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649"
       },
       "wf:nextStep": {
         "@id": "https://example.org/storage/workflows/shipment/steps/review"
@@ -153,18 +153,18 @@
         ]
       },
       "prov:generated": {
-        "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0/answer"
+        "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649/steps/0/answer"
       }
     },
     {
-      "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/intent",
+      "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649/intent",
       "@type": [
         "wf:ActionIntent",
         "prov:Entity",
         "https://example.org/storage#Review"
       ],
       "prov:wasGeneratedBy": {
-        "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc"
+        "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649"
       },
       "wf:tbox": {
         "@id": "https://example.org/storage/ontology"
@@ -175,13 +175,14 @@
       "https://example.org/storage#note": "Human review requested"
     },
     {
-      "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc",
+      "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649",
       "@type": [
         "prov:Activity",
         "wf:WorkflowRun",
         "https://example.org/storage#Workflow"
       ],
       "wf:modelIdentifier": "o-laya-incident-v1",
+      "wf:executionMode": "live",
       "wf:workflow": {
         "@id": "https://example.org/storage/workflows/shipment"
       },
@@ -191,7 +192,7 @@
       "wf:steps": {
         "@list": [
           {
-            "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0"
+            "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649/steps/0"
           }
         ]
       },
@@ -206,10 +207,10 @@
       ],
       "prov:generated": [
         {
-          "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0/answer"
+          "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649/steps/0/answer"
         },
         {
-          "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/intent"
+          "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649/intent"
         }
       ]
     }
