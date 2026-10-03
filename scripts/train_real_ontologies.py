@@ -3,8 +3,14 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
+import platform
 import sys
+from dataclasses import asdict
+from importlib.metadata import version
 from pathlib import Path
+from typing import Any
 
 # Add repo root and src to python path
 ROOT = Path(__file__).resolve().parent.parent
@@ -18,11 +24,13 @@ from scripts.export_onnx_ort import export_olaya
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, PreTrainedTokenizerFast
 
-from olaya.calibration import fit_temperature, pad_and_cat_logits
+from olaya.calibration import compute_ece, fit_temperature, pad_and_cat_logits
 from olaya.category_theory import CategoricalLoss
-from olaya.real_ontology_train import generate_real_ontology_samples, load_ontology_file
+from olaya.evaluation import dataset_manifest, split_observations
+from olaya.real_ontology_train import expand_observations, generate_real_ontology_observations, load_ontology_file
 from olaya.train import (
     DecisionDataset,
+    TrainingSample,
     collate_decision_batch,
     create_trainable_model,
 )
@@ -48,9 +56,9 @@ def train_single_domain(
     lr: float = 2e-4,
     device: str | None = None,
     output_dir: Path = ROOT / "models",
-    export_onnx: bool = True,
+    export_onnx: bool = False,
     seed: int = 42,
-) -> dict[str, float]:
+) -> dict[str, Any]:
     print("\n=======================================================")
     print(f"Training O-Laya on Domain: {domain.upper()} ({ontology_path})")
     print(f"Backbone: {backbone} | Real ABox: {use_real_abox} | Calibrate: {calibrate}")
@@ -86,20 +94,35 @@ def train_single_domain(
         "pad": getattr(tokenizer, "pad_token_id", 50283) or 0,
     }
 
-    print(f"Generating {num_samples} domain-grounded training samples for {domain}...")
-    samples = generate_real_ontology_samples(
+    if epochs < 1:
+        raise ValueError("epochs must be at least 1")
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    observations = generate_real_ontology_observations(
         ontology=ontology,
         domain=domain,
         num_samples=num_samples,
-        tokenizer_encode=lambda t: tokenizer.encode(t, add_special_tokens=False),
-        special_ids=special_ids,
         use_real_abox=use_real_abox,
         seed=seed,
     )
-
-    split = int(0.85 * len(samples))
-    train_samples, val_samples = samples[:split], samples[split:]
-    print(f"Dataset assembled: {len(train_samples)} training, {len(val_samples)} validation samples")
+    source_splits = split_observations(observations, seed=seed)
+    manifest = dataset_manifest(ontology, source_splits)
+    split_samples = {
+        name: expand_observations(
+            ontology=ontology,
+            observations=records,
+            domain=domain,
+            tokenizer_encode=lambda text: tokenizer.encode(text, add_special_tokens=False),
+            special_ids=special_ids,
+            seed=seed,
+        )
+        for name, records in source_splits.items()
+    }
+    if any(not samples for samples in split_samples.values()):
+        raise ValueError("Every source split must expand into at least one task")
+    train_samples = split_samples["train"]
+    val_samples = split_samples["validation"]
+    print("Disjoint grouped splits:", {name: len(samples) for name, samples in split_samples.items()})
 
     train_loader = DataLoader(
         DecisionDataset(train_samples),
@@ -124,12 +147,10 @@ def train_single_domain(
     criterion_act = nn.NLLLoss()
     criterion_cat = CategoricalLoss(weight_mono=0.5, weight_disj=0.3, weight_cone=0.1)
 
-    best_val_acc = 0.0
+    best_val_acc = -1.0
     output_dir.mkdir(parents=True, exist_ok=True)
     suffix = "_modernbert" if "ModernBERT" in backbone else ""
     ckpt_path = output_dir / f"olaya_{domain}{suffix}.pt"
-    best_val_logits: list[torch.Tensor] = []
-    best_val_targets: list[torch.Tensor] = []
 
     print(f"Starting domain training on {dev} for {epochs} epochs with Category-Theoretic Loss...")
     for epoch in range(1, epochs + 1):
@@ -199,8 +220,6 @@ def train_single_domain(
         val_disj_colls: list[float] = []
         val_correct = 0
         val_items = 0
-        epoch_val_logits: list[torch.Tensor] = []
-        epoch_val_targets: list[torch.Tensor] = []
 
         with torch.no_grad():
             for batch in val_loader:
@@ -246,9 +265,6 @@ def train_single_domain(
                 val_correct += int((preds == targets).sum().item())
                 val_items += len(targets)
 
-                epoch_val_logits.append(logits.cpu())
-                epoch_val_targets.append(targets.cpu())
-
         val_loss /= val_items
         val_cat_loss /= val_items
         val_acc = val_correct / val_items
@@ -262,8 +278,6 @@ def train_single_domain(
 
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-            best_val_logits = epoch_val_logits
-            best_val_targets = epoch_val_targets
 
             checkpoint = {
                 "model_state_dict": model.state_dict(),
@@ -278,28 +292,118 @@ def train_single_domain(
             torch.save(checkpoint, str(ckpt_path))
             print(f"  -> Saved best checkpoint (acc: {val_acc:.2%}) to {ckpt_path}")
 
-    # Calibration & ECE computation on best validation outputs
-    cal_results = {"temperature": 1.0, "ece": 0.0, "uncalibrated_ece": 0.0}
-    if calibrate and best_val_logits:
-        all_logits = pad_and_cat_logits(best_val_logits)
-        all_targets = torch.cat(best_val_targets, dim=0)
-        opt_temp, uncal_metrics, cal_metrics = fit_temperature(all_logits, all_targets)
-        print(f"\n--- Model Calibration for {domain.upper()} ---")
-        print(f"  Raw (uncalibrated):  {uncal_metrics.summary()}")
-        print(f"  Fitted Temperature: {opt_temp:.4f}")
-        print(f"  Calibrated:          {cal_metrics.summary()}")
+    # Reload the checkpoint chosen ONLY on validation before touching calibration.
+    checkpoint = torch.load(str(ckpt_path), map_location=dev, weights_only=False)
+    model.load_state_dict(checkpoint["model_state_dict"])
+    model.eval()
 
-        cal_results["temperature"] = opt_temp
-        cal_results["ece"] = cal_metrics.ece
-        cal_results["uncalibrated_ece"] = uncal_metrics.ece
+    def collect_logits(samples: list[TrainingSample]) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        loader = DataLoader(
+            DecisionDataset(samples),
+            batch_size=batch_size,
+            shuffle=False,
+            collate_fn=lambda items: collate_decision_batch(items, pad_id=special_ids["pad"]),
+        )
+        outputs, targets, masks = [], [], []
+        with torch.no_grad():
+            for batch in loader:
+                logits, _ = model(
+                    batch["input_ids"].to(dev),
+                    batch["attention_mask"].to(dev),
+                    batch["marker_pos"].to(dev),
+                    batch["marker_mask"].to(dev),
+                    batch["qtype"].to(dev),
+                    parent_adj=batch["parent_adj"].to(dev),
+                    child_adj=batch["child_adj"].to(dev),
+                    disjoint_adj=batch["disjoint_adj"].to(dev),
+                )
+                outputs.append(logits.cpu())
+                masks.append(batch["marker_mask"].cpu())
+                targets.append(batch["targets"].cpu())
+        return pad_and_cat_logits(outputs), torch.cat(targets), pad_and_cat_logits(masks, pad_value=False)
 
-        # Re-save best checkpoint with calibration metadata
-        if ckpt_path.exists():
-            ckpt = torch.load(str(ckpt_path), map_location="cpu")
-            ckpt["temperature"] = opt_temp
-            ckpt["ece"] = cal_metrics.ece
-            ckpt["uncalibrated_ece"] = uncal_metrics.ece
-            torch.save(ckpt, str(ckpt_path))
+    temperature = 1.0
+    calibration_fit = None
+    if calibrate:
+        calibration_logits, calibration_targets, calibration_mask = collect_logits(split_samples["calibration"])
+        temperature, before, after = fit_temperature(
+            calibration_logits, calibration_targets, candidate_mask=calibration_mask
+        )
+        temperature = max(temperature, 1e-3)
+        calibration_fit = {"before": asdict(before), "after": asdict(after), "scope": "calibration_fit_set"}
+
+    # Final test is evaluated once after checkpoint selection and calibration.
+    test_logits, test_targets, test_mask = collect_logits(split_samples["test"])
+    test_metrics = compute_ece(
+        torch.softmax((test_logits / temperature).masked_fill(~test_mask, -torch.inf), dim=-1), test_targets
+    )
+    test_raw_metrics = compute_ece(torch.softmax(test_logits.masked_fill(~test_mask, -torch.inf), dim=-1), test_targets)
+    probabilities = torch.softmax((test_logits / temperature).masked_fill(~test_mask, -torch.inf), dim=-1)
+    test_one_hot = torch.nn.functional.one_hot(test_targets, num_classes=probabilities.shape[1])
+    test_brier = float(((probabilities - test_one_hot) ** 2).sum(dim=1).mean())
+    per_task_metrics = {}
+    for task in sorted({sample.qtype_name for sample in split_samples["test"]}):
+        indices = [i for i, sample in enumerate(split_samples["test"]) if sample.qtype_name == task]
+        per_task_metrics[task] = {
+            "count": len(indices),
+            **asdict(compute_ece(probabilities[indices], test_targets[indices])),
+        }
+    manifest["expanded_task_counts"] = {name: len(samples) for name, samples in split_samples.items()}
+    report = {
+        "seed": seed,
+        "domain": domain,
+        "backbone": backbone,
+        "training_parameters": {
+            "epochs": epochs,
+            "batch_size": batch_size,
+            "learning_rate": lr,
+            "requested_sample_budget": num_samples,
+            "calibrate": calibrate,
+            "use_real_abox": use_real_abox,
+        },
+        "environment": {
+            "python": platform.python_version(),
+            "platform": platform.platform(),
+            "torch": torch.__version__,
+            "numpy": np.__version__,
+            "transformers": version("transformers"),
+            "device": str(dev),
+            "torch_cpu_threads": torch.get_num_threads(),
+        },
+        "tokenizer_sha256": hashlib.sha256(tokenizer.backend_tokenizer.to_str().encode()).hexdigest(),
+        "special_token_ids": special_ids,
+        "training_source_sha256": {
+            str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in (
+                Path(__file__),
+                ROOT / "src/olaya/evaluation.py",
+                ROOT / "src/olaya/real_ontology_train.py",
+                ROOT / "src/olaya/calibration.py",
+                ROOT / "src/olaya/train.py",
+                ROOT / "src/olaya/model.py",
+                ROOT / "src/olaya/sequence.py",
+            )
+        },
+        "exported_artifacts_evaluated": False,
+        "ontology_file_sha256": hashlib.sha256(ontology_path.read_bytes()).hexdigest(),
+        "dataset_manifest": manifest,
+        "selection_validation_accuracy": best_val_acc,
+        "temperature": temperature,
+        "calibration_fit": calibration_fit,
+        "test_raw_metrics": asdict(test_raw_metrics),
+        "test_metrics": asdict(test_metrics),
+        "test_brier_score": test_brier,
+        "test_metrics_by_task": per_task_metrics,
+        "limitations": "Template-derived supervision; not independently labeled real-world accuracy. "
+        "Calibration metrics concern raw model logits, not ontology-projected deployed outputs. "
+        "Concept/choice samples contain oracle-included gold candidates, not end-to-end retrieval.",
+    }
+    report_path = output_dir / f"olaya_{domain}{suffix}_evaluation.json"
+    checkpoint.update({"temperature": temperature, "evaluation_report": report_path.name, "dataset_manifest": manifest})
+    torch.save(checkpoint, str(ckpt_path))
+    report["checkpoint_sha256"] = hashlib.sha256(ckpt_path.read_bytes()).hexdigest()
+    report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    print("Held-out test:", test_metrics.summary())
 
     print(f"\nCompleted {domain} training! Best Validation Accuracy: {best_val_acc:.2%}")
 
@@ -316,13 +420,18 @@ def train_single_domain(
     return {
         "val_acc": best_val_acc,
         "domain": domain,
-        "temperature": cal_results["temperature"],
-        "ece": cal_results["ece"],
+        "temperature": temperature,
+        "ece": test_metrics.ece,
+        "test_acc": test_metrics.accuracy,
+        "evaluation_report": str(report_path),
     }
 
 
 def main():
     parser = argparse.ArgumentParser(description="Train O-Laya on real ontologies: Atlas, DOID, Schema.org, GS1")
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--ontology-path", type=Path, help="Override ontology file for one explicit domain")
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "models")
     parser.add_argument("--domain", choices=["atlas", "doid", "schemaorg", "gs1", "all"], default="all")
     parser.add_argument("--backbone", default="custom_bert", help="Backbone model name or 'custom_bert'")
     parser.add_argument("--samples", "--num-samples", dest="samples", type=int, default=3000)
@@ -330,17 +439,22 @@ def main():
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--lr", type=float, default=2e-4)
     parser.add_argument("--device", default=None)
-    parser.add_argument("--no-export-onnx", action="store_true")
+    parser.add_argument(
+        "--export-onnx", action="store_true", help="Opt in to legacy export; tokenizer/calibration parity is unverified"
+    )
+    parser.add_argument("--no-export-onnx", action="store_true", help="Explicitly disable legacy export")
     parser.add_argument("--no-calibrate", action="store_true", help="Skip temperature calibration")
     parser.add_argument("--no-real-abox", action="store_true", help="Skip real ABox evidence ingestion")
     args = parser.parse_args()
 
+    if args.ontology_path and args.domain == "all":
+        parser.error("--ontology-path requires a single --domain")
     domains = ["atlas", "doid", "schemaorg", "gs1"] if args.domain == "all" else [args.domain]
 
     results = {}
 
     for d in domains:
-        path = DATA_PATHS[d]
+        path = args.ontology_path or DATA_PATHS[d]
         res = train_single_domain(
             domain=d,
             ontology_path=path,
@@ -352,7 +466,9 @@ def main():
             batch_size=args.batch_size,
             lr=args.lr,
             device=args.device,
-            export_onnx=not args.no_export_onnx,
+            export_onnx=args.export_onnx and not args.no_export_onnx,
+            seed=args.seed,
+            output_dir=args.output_dir,
         )
         results[d] = res
 
@@ -361,7 +477,7 @@ def main():
     print("=======================================================")
     for d, res in results.items():
         print(
-            f"Domain: {d:<12} | Validation Accuracy: {res['val_acc']:.2%} | Calibrated ECE: {res.get('ece', 0.0):.4f}"
+            f"Domain: {d:<12} | Validation Accuracy: {res['val_acc']:.2%} | Held-out Test Acc: {res['test_acc']:.2%} | Test ECE: {res.get('ece', 0.0):.4f}"
         )
 
 

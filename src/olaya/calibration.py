@@ -142,6 +142,7 @@ def fit_temperature(
     targets: torch.Tensor,
     init_temp: float = 1.0,
     max_iter: int = 50,
+    candidate_mask: torch.Tensor | None = None,
 ) -> tuple[float, CalibrationMetrics, CalibrationMetrics]:
     """Fit temperature parameter via L-BFGS to minimize Negative Log-Likelihood.
 
@@ -160,15 +161,20 @@ def fit_temperature(
     logits = logits.detach()
     targets = targets.detach()
 
-    # Calculate initial uncalibrated metrics
-    init_probs = torch.softmax(logits, dim=-1)
+    def scaled_logits() -> torch.Tensor:
+        scaled = scaler(logits)
+        return scaled.masked_fill(~candidate_mask, -torch.inf) if candidate_mask is not None else scaled
+
+    # Mask after scaling so invalid slots never acquire mass at large temperatures.
+    initial = logits.masked_fill(~candidate_mask, -torch.inf) if candidate_mask is not None else logits
+    init_probs = torch.softmax(initial, dim=-1)
     uncalibrated_metrics = compute_ece(init_probs, targets)
 
     optimizer = torch.optim.LBFGS([scaler.temperature], lr=0.01, max_iter=max_iter)
 
     def eval_loss():
         optimizer.zero_grad()
-        loss = criterion(scaler(logits), targets)
+        loss = criterion(scaled_logits(), targets)
         loss.backward()
         return loss
 
@@ -178,7 +184,7 @@ def fit_temperature(
 
     # Calculate post-calibration metrics
     with torch.no_grad():
-        calibrated_logits = scaler(logits)
+        calibrated_logits = scaled_logits()
         calibrated_probs = torch.softmax(calibrated_logits, dim=-1)
         calibrated_metrics = compute_ece(calibrated_probs, targets)
 

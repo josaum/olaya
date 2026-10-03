@@ -1,0 +1,504 @@
+{
+  "seed": 42,
+  "domain": "schemaorg",
+  "backbone": "custom_bert",
+  "training_parameters": {
+    "epochs": 1,
+    "batch_size": 4,
+    "learning_rate": 0.0002,
+    "requested_sample_budget": 40,
+    "calibrate": true,
+    "use_real_abox": false
+  },
+  "environment": {
+    "python": "3.12.10",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "torch": "2.14.1",
+    "numpy": "2.5.3",
+    "transformers": "5.18.0",
+    "device": "cpu",
+    "torch_cpu_threads": 2
+  },
+  "tokenizer_sha256": "f64652c0d4292921662f8a34068ed38c9db4a8e78daae667eaff88a30494ef8b",
+  "special_token_ids": {
+    "cls": 50281,
+    "sep": 50282,
+    "mask": 50284,
+    "pad": 50283
+  },
+  "training_source_sha256": {
+    "scripts/train_real_ontologies.py": "a3e41de678e2208b00b877f858fd8344df4f13aafc6756a3e7f529da786e1821",
+    "src/olaya/evaluation.py": "751ad4d977d71386b80a1d23135fb8072cded3e1b22dd3ccd954d330fa9159e3",
+    "src/olaya/real_ontology_train.py": "18c1e3f26801e65f20d68db28f73bf3abdf9072ac02d49ddea30fe77fbb2c015",
+    "src/olaya/calibration.py": "febe6a0d729f9e7e2453b2e4ac8a2d953fa61c1c197ec1fd4fbf8b8da68eea89",
+    "src/olaya/train.py": "7e40274b1f7e8e790936b7d92b005ccd0c22a6c57760f7bc394326950183dc4c",
+    "src/olaya/model.py": "324560062c1cf34d2b7c8d2752753b2806969a746eaac5b1947fb14944b14f81",
+    "src/olaya/sequence.py": "f9a6bf875c43cc7e8ab6a2feed9928be81c0e5ad4f084e6299c9d9a3dbc76a31"
+  },
+  "exported_artifacts_evaluated": false,
+  "ontology_file_sha256": "abc5112d312b7ed8362345789b711c0af876a7a0404c4c84ab3b492060a52f14",
+  "dataset_manifest": {
+    "schema_version": 1,
+    "ontology_sha256": "80973b6cf9893bbccb195086df04bf93b8af072c943c07f7350e62f73491deb9",
+    "splits": {
+      "train": {
+        "observations": 4,
+        "groups": 2,
+        "source_ids": [
+          "b7da07d7bafb0c6e8e20c529c2e4a80b0b8b411a00e8e65dc0f3a02c48c303b9",
+          "e7ee0361eb8da1774d387def18e18860446cdf4669bfcc24949e8328a17ae34d",
+          "e962aa18a887375d31ee2fef15617718c8955d6f658fdc17a5f2b7e5472e207d",
+          "fa410a781a031b024bf3732f045b02daeaf6c7d0b236a7e27c32ffbbdec59eba"
+        ],
+        "group_ids": [
+          "919d13ae66d4ed463dae28d76c210c19208d6a699c8a057b5d8c93424819f5e4",
+          "d6f83824985cd114ffcafdbbe41f3c626b256a9bd60de2c7c2ecf901fa1b28f1"
+        ],
+        "evidence_sha256": "fcd1ceedc9560a0830c0d81da57048d9810a0bbd5b3ade668e75eeb6406f07e2"
+      },
+      "validation": {
+        "observations": 2,
+        "groups": 1,
+        "source_ids": [
+          "6eb20771fbf856f5c6fdc1df39b9ed0dc3fe99967eee36f369877dfaf43ca564",
+          "89b56781f1f57ccffbe0b33ba2848f3ba0c87a0d1adf4c622660a611b749968e"
+        ],
+        "group_ids": [
+          "a3fec66bd0aee03b4a1fc0e1d8e4d7610a0fc8db0f04cce8c6c4246d3b4fadf3"
+        ],
+        "evidence_sha256": "aafef14d1aac2406ce0f1d809dca6cf0467e798529068a28fda7f35cffdfe105"
+      },
+      "calibration": {
+        "observations": 1,
+        "groups": 1,
+        "source_ids": [
+          "3e17aa703975b483fcceedf9d1bcdec618e20270ca33908c7779624318f3db98"
+        ],
+        "group_ids": [
+          "e274ce3263ba8aa3c342e9f913618592ff92d9569fbc84e97166676ad50e4c38"
+        ],
+        "evidence_sha256": "fdbbd18cf92e90e66e9f18a724e82b584bac2639fd851c1c82881bf2b3b620f2"
+      },
+      "test": {
+        "observations": 1,
+        "groups": 1,
+        "source_ids": [
+          "7e0977538b52f2ca11c1b082d7375019d1d26f7c0a44d93826526ea207e7f5a1"
+        ],
+        "group_ids": [
+          "7efa062df0243cf42f254c95a25b3afdd955ce993bbf39e1abc03e1ccdd5f98f"
+        ],
+        "evidence_sha256": "9254ca872a317af012262d12eb81f6740bb206308b8be0a190ff961d5a068ec4"
+      }
+    },
+    "expanded_task_counts": {
+      "train": 20,
+      "validation": 10,
+      "calibration": 5,
+      "test": 5
+    }
+  },
+  "selection_validation_accuracy": 0.5,
+  "temperature": 0.001,
+  "calibration_fit": {
+    "before": {
+      "ece": 0.4287799179553986,
+      "mce": 0.5251756012439728,
+      "avg_confidence": 0.4594271183013916,
+      "accuracy": 0.6,
+      "nll": 1.0575095415115356,
+      "bin_accuracies": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bin_confidences": [
+        0.05,
+        0.15000000000000002,
+        0.25,
+        0.3602587580680847,
+        0.4748243987560272,
+        0.5508967638015747,
+        0.6500000000000001,
+        0.75,
+        0.8500000000000001,
+        0.95
+      ],
+      "bin_counts": [
+        0,
+        0,
+        0,
+        2,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "after": {
+      "ece": 0.4,
+      "mce": 0.4,
+      "avg_confidence": 1.0,
+      "accuracy": 0.6,
+      "nll": 11.052408218383789,
+      "bin_accuracies": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6
+      ],
+      "bin_confidences": [
+        0.05,
+        0.15000000000000002,
+        0.25,
+        0.35000000000000003,
+        0.45,
+        0.55,
+        0.6500000000000001,
+        0.75,
+        0.8500000000000001,
+        1.0
+      ],
+      "bin_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5
+      ]
+    },
+    "scope": "calibration_fit_set"
+  },
+  "test_raw_metrics": {
+    "ece": 0.33836750984191893,
+    "mce": 0.6208192706108093,
+    "avg_confidence": 0.4802704453468323,
+    "accuracy": 0.6,
+    "nll": 1.0096075534820557,
+    "bin_accuracies": [
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bin_confidences": [
+      0.05,
+      0.15000000000000002,
+      0.25163233280181885,
+      0.3791807293891907,
+      0.47557657957077026,
+      0.55,
+      0.6474812626838684,
+      0.75,
+      0.8500000000000001,
+      0.95
+    ],
+    "bin_counts": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      0,
+      2,
+      0,
+      0,
+      0
+    ]
+  },
+  "test_metrics": {
+    "ece": 0.4,
+    "mce": 0.4,
+    "avg_confidence": 1.0,
+    "accuracy": 0.6,
+    "nll": 11.052408218383789,
+    "bin_accuracies": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.6
+    ],
+    "bin_confidences": [
+      0.05,
+      0.15000000000000002,
+      0.25,
+      0.35000000000000003,
+      0.45,
+      0.55,
+      0.6500000000000001,
+      0.75,
+      0.8500000000000001,
+      1.0
+    ],
+    "bin_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      5
+    ]
+  },
+  "test_brier_score": 0.800000011920929,
+  "test_metrics_by_task": {
+    "choice": {
+      "count": 1,
+      "ece": 0.0,
+      "mce": 0.0,
+      "avg_confidence": 1.0,
+      "accuracy": 1.0,
+      "nll": -0.0,
+      "bin_accuracies": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bin_confidences": [
+        0.05,
+        0.15000000000000002,
+        0.25,
+        0.35000000000000003,
+        0.45,
+        0.55,
+        0.6500000000000001,
+        0.75,
+        0.8500000000000001,
+        1.0
+      ],
+      "bin_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "concept": {
+      "count": 1,
+      "ece": 1.0,
+      "mce": 1.0,
+      "avg_confidence": 1.0,
+      "accuracy": 0.0,
+      "nll": 27.63102149963379,
+      "bin_accuracies": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bin_confidences": [
+        0.05,
+        0.15000000000000002,
+        0.25,
+        0.35000000000000003,
+        0.45,
+        0.55,
+        0.6500000000000001,
+        0.75,
+        0.8500000000000001,
+        1.0
+      ],
+      "bin_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "noul": {
+      "count": 1,
+      "ece": 0.0,
+      "mce": 0.0,
+      "avg_confidence": 1.0,
+      "accuracy": 1.0,
+      "nll": -0.0,
+      "bin_accuracies": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bin_confidences": [
+        0.05,
+        0.15000000000000002,
+        0.25,
+        0.35000000000000003,
+        0.45,
+        0.55,
+        0.6500000000000001,
+        0.75,
+        0.8500000000000001,
+        1.0
+      ],
+      "bin_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "score": {
+      "count": 1,
+      "ece": 0.0,
+      "mce": 0.0,
+      "avg_confidence": 1.0,
+      "accuracy": 1.0,
+      "nll": -0.0,
+      "bin_accuracies": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "bin_confidences": [
+        0.05,
+        0.15000000000000002,
+        0.25,
+        0.35000000000000003,
+        0.45,
+        0.55,
+        0.6500000000000001,
+        0.75,
+        0.8500000000000001,
+        1.0
+      ],
+      "bin_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "subsumes": {
+      "count": 1,
+      "ece": 1.0,
+      "mce": 1.0,
+      "avg_confidence": 1.0,
+      "accuracy": 0.0,
+      "nll": 27.63102149963379,
+      "bin_accuracies": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bin_confidences": [
+        0.05,
+        0.15000000000000002,
+        0.25,
+        0.35000000000000003,
+        0.45,
+        0.55,
+        0.6500000000000001,
+        0.75,
+        0.8500000000000001,
+        1.0
+      ],
+      "bin_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    }
+  },
+  "limitations": "Template-derived supervision; not independently labeled real-world accuracy. Calibration metrics concern raw model logits, not ontology-projected deployed outputs. Concept/choice samples contain oracle-included gold candidates, not end-to-end retrieval. Tiny one-epoch boundary verification; not competitive model performance.",
+  "checkpoint_sha256": "e9e4e670d646f0a3933a82a473b8ccd2b692245079d7860d509f236af8b7d72f",
+  "smoke_only": true
+}

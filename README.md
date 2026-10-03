@@ -82,6 +82,22 @@ evidence or as performance/calibration evidence for the HTTP edge handler.
 - `axioms_verified` on every result is computed (monotonicity and exclusion are checked on the
   final distribution), not hard-coded.
 
+## Evaluation integrity
+
+The training pipeline now splits source observations before task expansion into disjoint
+train, validation, calibration, and test groups. Checkpoint selection uses validation;
+temperature fitting uses calibration; final metrics use test. Target CURIE metadata and
+question-wording label shortcuts have been removed. Unjustified property templates are
+excluded. Historical model figures above predate these repairs and should be re-evaluated.
+
+A fresh full-ontology lexical baseline over 660 Schema.org classes scored 10/20 top1
+and 18/20 recall@5 on twenty held-out synthetic observations from one template family.
+This small label-derived sample does not establish real-world accuracy or SOTA.
+The one-epoch training smoke test verifies pipeline execution only.
+See [evaluation boundaries and reproduction](spec/evaluation-integrity.md),
+[raw lexical results](benchmarks/results/schemaorg-lexical-evaluation.json), and
+[training smoke evidence](benchmarks/results/schemaorg-training-smoke.json).
+
 ## Measured performance
 
 Historical repository-reported results; not reproduced for this patch. Workload

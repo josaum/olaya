@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from olaya.engine import _flat_subgraph
+from olaya.evaluation import SourceObservation, normalized_text, stable_id
 from olaya.hard_negative_sampler import HardNegativeSampler
 from olaya.ontology import Concept, Ontology
 from olaya.real_abox import load_custom_abox
@@ -142,6 +143,28 @@ def load_ontology_file(path_or_onto: str | Path | Ontology, name: str | None = N
     return Ontology.from_json(data)
 
 
+def _specificity_depth(ontology: Ontology, target_curie: str) -> int:
+    """Longest parent path depth, capped at three; cycles fail closed."""
+    visiting: set[str] = set()
+    memo: dict[str, int] = {}
+
+    def depth(curie: str) -> int:
+        if curie in visiting:
+            raise ValueError("Ontology parent cycle prevents specificity scoring")
+        if curie in memo:
+            return memo[curie]
+        visiting.add(curie)
+        parents = sorted(ontology.concepts[curie].parents)
+        if any(parent not in ontology.concepts for parent in parents):
+            raise ValueError("Ontology parent is absent from specificity graph")
+        value = 1 + max((depth(parent) for parent in parents), default=-1)
+        visiting.remove(curie)
+        memo[curie] = value
+        return value
+
+    return min(3, depth(target_curie))
+
+
 def _generate_tasks_for_concept_query(
     ontology: Ontology,
     target_curie: str,
@@ -159,12 +182,10 @@ def _generate_tasks_for_concept_query(
         sampler: Optional :class:`HardNegativeSampler` for structured hard-negative
             distractor selection.  When *None* the legacy random sampling is used.
     """
-    concept = ontology.concepts[target_curie]
     ancestors = ontology.get_ancestors(target_curie)
     state = {
         "domain": domain,
         "query": query_text,
-        "curie": target_curie,
     }
     samples: list[TrainingSample] = []
 
@@ -283,7 +304,7 @@ def _generate_tasks_for_concept_query(
         )
 
     # 4. Score task: relevance / hierarchy depth level (0..3)
-    score_level = min(3, max(0, len(ancestors) - 1))
+    score_level = _specificity_depth(ontology, target_curie)
     score_criteria = [
         "high-level category: top domain partition",
         "domain branch: broad conceptual family",
@@ -312,18 +333,17 @@ def _generate_tasks_for_concept_query(
     )
 
     # 5. Noul task: boolean assertion holds
-    is_valid_assertion = rng.random() < 0.5
+    negative_queries = sorted(c for c in pool if c not in ancestors)
+    is_valid_assertion = rng.random() < 0.5 or not negative_queries
+    assertion_curie = target_curie if is_valid_assertion else rng.choice(negative_queries)
+    assertion_concept = ontology.concepts[assertion_curie]
     noul_options = [
         Concept(curie="false", label="false", description="Assertion does not hold"),
         Concept(curie="true", label="true", description="Assertion holds"),
     ]
     noul_subgraph = _flat_subgraph("real_noul", noul_options)
-    c_desc = f" ({concept.description})" if concept.description else ""
-    noul_text = (
-        f"Is this entity accurately classified as {concept.label} ({concept.curie}){c_desc}?"
-        if is_valid_assertion
-        else f"Is this entity completely unrelated to {concept.label} ({concept.curie})?"
-    )
+    c_desc = f" ({assertion_concept.description})" if assertion_concept.description else ""
+    noul_text = f"Is this entity accurately classified as {assertion_concept.label} ({assertion_curie}){c_desc}?"
     bundle_noul = build_ontology_sequence(
         tokenizer_encode=tokenizer_encode,
         special_ids=special_ids,
@@ -346,6 +366,98 @@ def _generate_tasks_for_concept_query(
     return samples
 
 
+def _eligible_pool(ontology: Ontology) -> list[str]:
+    labelled = sorted(
+        c
+        for c, concept in ontology.concepts.items()
+        if concept.label and len(concept.label.strip()) > 1 and not concept.label.strip().isdigit()
+    )
+    if not labelled:
+        raise ValueError(f"Ontology {ontology.name} has no concepts with labels.")
+    hierarchical = [c for c in labelled if ontology.concepts[c].parents or ontology.concepts[c].children]
+    return hierarchical if len(hierarchical) >= 8 else labelled
+
+
+def generate_real_ontology_observations(
+    ontology: Ontology,
+    domain: str = "atlas",
+    num_samples: int = 1500,
+    use_real_abox: bool = True,
+    seed: int = 42,
+    synonym_aug_prob: float = 0.3,
+) -> list[SourceObservation]:
+    """Generate source records before task expansion or dataset partitioning.
+
+    Synthetic template families stay together across targets and synonyms.
+    Unlabelled property templates are ineligible: they cannot justify arbitrary targets.
+    """
+    rng = random.Random(seed)
+    pool = _eligible_pool(ontology)
+    templates = [t for t in DOMAIN_QUERY_TEMPLATES.get(domain, DOMAIN_QUERY_TEMPLATES["atlas"]) if "{term}" in t]
+    budget = max(0, num_samples // 5)
+    rows: list[SourceObservation] = []
+    seen: set[str] = set()
+    if domain == "atlas" and use_real_abox:
+        facts = [fact for fact in load_custom_abox() if fact.target_curie in ontology.concepts]
+        rng.shuffle(facts)
+        for fact in facts:
+            source = stable_id(domain, fact.target_curie, normalized_text(fact.text))
+            if source not in seen and len(rows) < budget:
+                rows.append(
+                    SourceObservation(
+                        source, stable_id("abox", normalized_text(fact.text)), fact.target_curie, fact.text, "real_abox"
+                    )
+                )
+                seen.add(source)
+    # Bounded attempts avoid infinite loops when the finite template space is exhausted.
+    rng.shuffle(pool)
+    rng.shuffle(templates)
+    candidates = [(target, template) for target in pool for template in templates]
+    for target, template in candidates:
+        if len(rows) >= budget:
+            break
+        concept = ontology.concepts[target]
+        term = rng.choice(concept.synonyms) if concept.synonyms and rng.random() < synonym_aug_prob else concept.label
+        query = template.format(term=term)
+        source = stable_id(domain, target, normalized_text(query))
+        if source not in seen:
+            rows.append(
+                SourceObservation(
+                    source, stable_id("synthetic_template", domain, template), target, query, "synthetic_template"
+                )
+            )
+            seen.add(source)
+    return rows
+
+
+def expand_observations(
+    ontology: Ontology,
+    observations: list[SourceObservation],
+    domain: str,
+    tokenizer_encode: Any,
+    special_ids: dict[str, int],
+    seed: int = 42,
+) -> list[TrainingSample]:
+    """Expand only the already selected source partition into five derived tasks."""
+    pool = _eligible_pool(ontology)
+    sampler = HardNegativeSampler(ontology)
+    samples: list[TrainingSample] = []
+    for row in observations:
+        if row.target_curie not in ontology.concepts:
+            raise ValueError("Observation target is absent from ontology")
+        rng = random.Random(stable_id(str(seed), row.source_id))
+        derived = _generate_tasks_for_concept_query(
+            ontology, row.target_curie, row.query_text, domain, pool, tokenizer_encode, special_ids, rng, sampler
+        )
+        for sample in derived:
+            sample.source_id = row.source_id
+            sample.group_id = row.group_id
+            sample.state_text = row.query_text
+            sample.source_kind = row.source_kind
+        samples.extend(derived)
+    return samples
+
+
 def generate_real_ontology_samples(
     ontology: Ontology,
     domain: str = "atlas",
@@ -356,90 +468,9 @@ def generate_real_ontology_samples(
     seed: int = 42,
     synonym_aug_prob: float = 0.3,
 ) -> list[TrainingSample]:
-    """Generate diverse training samples across all 5 decision tasks for any real ontology.
-
-    Args:
-        synonym_aug_prob: Probability (0–1) of substituting a concept's canonical label with
-            one of its synonyms when building a ``{term}``-template query.  Set to 0 to disable.
-    """
-    rng = random.Random(seed)
+    """Legacy unsplit expansion; evaluation callers must split observations first."""
+    observations = generate_real_ontology_observations(
+        ontology, domain, num_samples, use_real_abox, seed, synonym_aug_prob
+    )
     special = special_ids or {"cls": 50281, "sep": 50282, "mask": 50284, "pad": 50283}
-    templates = DOMAIN_QUERY_TEMPLATES.get(domain, DOMAIN_QUERY_TEMPLATES["atlas"])
-
-    # Eligible concepts with valid labels (filter out numeric identifiers like SNOMED codes)
-    all_curies = [
-        c
-        for c, concept in ontology.concepts.items()
-        if concept.label and len(concept.label.strip()) > 1 and not concept.label.strip().isdigit()
-    ]
-    if not all_curies:
-        raise ValueError(f"Ontology {ontology.name} has no concepts with labels.")
-
-    # Select candidate pool (prioritize concepts with parents/children)
-    hierarchy_curies = [c for c in all_curies if ontology.concepts[c].parents or ontology.concepts[c].children]
-    pool = hierarchy_curies if len(hierarchy_curies) >= 8 else all_curies
-
-    # Build hard-negative sampler once so the children map is shared across all calls
-    sampler = HardNegativeSampler(ontology)
-
-    samples: list[TrainingSample] = []
-
-    # 1. Ingest real ABox facts when domain is custom and use_real_abox is enabled
-    if domain == "atlas" and use_real_abox:
-        abox_facts = load_custom_abox()
-        valid_abox = [f for f in abox_facts if f.target_curie in ontology.concepts]
-        print(f"Ingested {len(valid_abox)} real enterprise ABox facts for Atlas grounding.")
-        rng.shuffle(valid_abox)
-        for fact in valid_abox:
-            generated = _generate_tasks_for_concept_query(
-                ontology=ontology,
-                target_curie=fact.target_curie,
-                query_text=fact.text,
-                domain=domain,
-                pool=pool,
-                tokenizer_encode=tokenizer_encode,
-                special_ids=special,
-                rng=rng,
-                sampler=sampler,
-            )
-            samples.extend(generated)
-            if len(samples) >= num_samples:
-                break
-
-    # 2. Complete remaining required sample volume via domain templates across full pool
-    per_concept = max(1, (num_samples - len(samples)) // len(pool) + 1)
-    for target_curie in pool:
-        if len(samples) >= num_samples * 2:
-            break
-        concept = ontology.concepts[target_curie]
-
-        for _ in range(per_concept):
-            tmpl = rng.choice(templates)
-
-            # Build query text: property-based templates have no {term} placeholder
-            if "{term}" in tmpl:
-                # Synonym augmentation: with some probability use a synonym instead of the label
-                if synonym_aug_prob > 0 and concept.synonyms and rng.random() < synonym_aug_prob:
-                    term = rng.choice(concept.synonyms)
-                else:
-                    term = concept.label
-                state_text = tmpl.format(term=term)
-            else:
-                # Property-based template — use directly; it already encodes observable attributes
-                state_text = tmpl
-
-            generated = _generate_tasks_for_concept_query(
-                ontology=ontology,
-                target_curie=target_curie,
-                query_text=state_text,
-                domain=domain,
-                pool=pool,
-                tokenizer_encode=tokenizer_encode,
-                special_ids=special,
-                rng=rng,
-                sampler=sampler,
-            )
-            samples.extend(generated)
-
-    rng.shuffle(samples)
-    return samples[:num_samples]
+    return expand_observations(ontology, observations, domain, tokenizer_encode, special, seed)[:num_samples]
