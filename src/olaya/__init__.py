@@ -9,8 +9,12 @@ from olaya.ontology import Concept, Ontology, create_incident_ontology
 from olaya.real_abox import RealABoxFact, load_atlas_real_abox
 from olaya.sequence import SequenceBundle, build_ontology_sequence
 from olaya.train import train_olaya
+from olaya.workflow import CompiledWorkflow, compile_workflow, run_workflow
 
 __all__ = [
+    "CompiledWorkflow",
+    "compile_workflow",
+    "run_workflow",
     "Ontology",
     "Concept",
     "create_incident_ontology",

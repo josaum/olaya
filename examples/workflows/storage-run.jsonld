@@ -1,0 +1,217 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "wf": "urn:olaya:workflow:",
+    "prov": "http://www.w3.org/ns/prov#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "ex": "https://example.org/storage#"
+  },
+  "@graph": [
+    {
+      "@id": "https://example.org/storage/ontology",
+      "@type": [
+        "owl:Ontology",
+        "prov:Entity"
+      ],
+      "wf:sha256": "fdeb336b9b6242684854a642fa4b0fa60ee20754890e782ef1b6f87095c69c2d"
+    },
+    {
+      "@id": "https://example.org/storage/workflows/shipment",
+      "@type": [
+        "wf:WorkflowDefinition",
+        "prov:Entity"
+      ],
+      "wf:declaredType": {
+        "@id": "https://example.org/storage#Workflow"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:sha256": "3853205ddeb732d094c2cd2449d91fc7946c26087517b9e99446ee59167234f2"
+    },
+    {
+      "@id": "https://example.org/storage/workflows/shipment/steps/ambient_dispatch",
+      "@type": [
+        "wf:StepDefinition",
+        "prov:Entity"
+      ],
+      "wf:declaredType": {
+        "@id": "https://example.org/storage#DispatchAmbient"
+      },
+      "wf:inWorkflow": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/workflows/shipment/steps/cold_dispatch",
+      "@type": [
+        "wf:StepDefinition",
+        "prov:Entity"
+      ],
+      "wf:declaredType": {
+        "@id": "https://example.org/storage#DispatchCold"
+      },
+      "wf:inWorkflow": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/workflows/shipment/steps/review",
+      "@type": [
+        "wf:StepDefinition",
+        "prov:Entity"
+      ],
+      "wf:declaredType": {
+        "@id": "https://example.org/storage#Review"
+      },
+      "wf:inWorkflow": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/workflows/shipment/steps/storage",
+      "@type": [
+        "wf:StepDefinition",
+        "prov:Entity"
+      ],
+      "wf:declaredType": {
+        "@id": "https://example.org/storage#StorageDecision"
+      },
+      "wf:inWorkflow": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      }
+    },
+    {
+      "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0/answer",
+      "@type": [
+        "wf:DecisionRecord",
+        "prov:Entity"
+      ],
+      "prov:wasGeneratedBy": {
+        "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0"
+      },
+      "wf:status": "abstained",
+      "wf:confidence": 0.0037
+    },
+    {
+      "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0",
+      "@type": [
+        "prov:Activity",
+        "wf:DecisionActivity",
+        "https://example.org/storage#StorageDecision"
+      ],
+      "wf:sequence": 0,
+      "wf:status": "abstained",
+      "wf:reason": "insufficient_confidence",
+      "wf:step": {
+        "@id": "https://example.org/storage/workflows/shipment/steps/storage"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "prov:used": [
+        {
+          "@id": "https://example.org/storage/workflows/shipment/steps/storage"
+        },
+        {
+          "@id": "https://example.org/storage/ontology"
+        }
+      ],
+      "prov:wasInformedBy": {
+        "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc"
+      },
+      "wf:nextStep": {
+        "@id": "https://example.org/storage/workflows/shipment/steps/review"
+      },
+      "wf:primitive": "choice",
+      "wf:scope": {
+        "@id": "https://example.org/storage#StorageMode"
+      },
+      "wf:options": {
+        "@list": [
+          {
+            "@id": "https://example.org/storage#Cold"
+          },
+          {
+            "@id": "https://example.org/storage#Ambient"
+          }
+        ]
+      },
+      "prov:generated": {
+        "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0/answer"
+      }
+    },
+    {
+      "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/intent",
+      "@type": [
+        "wf:ActionIntent",
+        "prov:Entity",
+        "https://example.org/storage#Review"
+      ],
+      "prov:wasGeneratedBy": {
+        "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:step": {
+        "@id": "https://example.org/storage/workflows/shipment/steps/review"
+      },
+      "https://example.org/storage#note": "Human review requested"
+    },
+    {
+      "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc",
+      "@type": [
+        "prov:Activity",
+        "wf:WorkflowRun",
+        "https://example.org/storage#Workflow"
+      ],
+      "wf:modelIdentifier": "o-laya-incident-v1",
+      "wf:workflow": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:steps": {
+        "@list": [
+          {
+            "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0"
+          }
+        ]
+      },
+      "wf:status": "completed",
+      "prov:used": [
+        {
+          "@id": "https://example.org/storage/workflows/shipment"
+        },
+        {
+          "@id": "https://example.org/storage/ontology"
+        }
+      ],
+      "prov:generated": [
+        {
+          "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/steps/0/answer"
+        },
+        {
+          "@id": "urn:uuid:b722e15a-60c6-4d58-9c11-fe015077cacc/intent"
+        }
+      ]
+    }
+  ]
+}
