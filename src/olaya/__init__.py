@@ -11,13 +11,25 @@ from olaya.workflow_replay import replay_workflow
 
 try:
     from olaya.calibration import CalibrationMetrics, compute_ece, fit_temperature
-    from olaya.engine import ChoiceAnswer, ConceptAnswer, NoulAnswer, OLaya, ScoreAnswer, SubsumesAnswer, SystemOneResult
+    from olaya.engine import (
+        ChoiceAnswer,
+        ConceptAnswer,
+        NoulAnswer,
+        OLaya,
+        ScoreAnswer,
+        SubsumesAnswer,
+        SystemOneResult,
+    )
     from olaya.model import OntologyDecisionHead, OntologyDecisionModel
     from olaya.train import train_olaya
 except ImportError:
     pass
 
 __all__ = [
+    "ObfuscationMode",
+    "ObfuscationResult",
+    "PIIEntity",
+    "PIIObfuscator",
     "CompiledWorkflow",
     "compile_workflow",
     "run_workflow",

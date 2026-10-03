@@ -559,3 +559,5 @@ ARM64. Its checkpoint's historical validation accuracy is 0.3793; functional
 packaging tests do not establish accuracy or calibration on new TBoxes.
 Workflow terminal intents do not execute external application/infrastructure
 effects. See [packaging, tools and installation](extensions/claude-desktop/README.md).
+
+Release builds are opt-in: include `[release]` in a commit pushed to `main`, or dispatch the Release workflow with `build_release=true`. See [release instructions](docs/release.md) for Python wheels, npm packages, complete Claude Desktop bundles, and Keychain signing.
