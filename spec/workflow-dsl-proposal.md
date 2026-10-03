@@ -108,6 +108,7 @@ From the repository root with its Python dependencies installed:
 ```bash
 python examples/workflows/run_storage.py
 python examples/workflows/run_storage.py --shipment "Office stationery for ambient storage."
+python examples/workflows/run_storage.py --replay examples/workflows/storage-run.jsonld
 ```
 
 [run_storage.py](../examples/workflows/run_storage.py) reads fixture paths relative
@@ -122,6 +123,45 @@ routing, abstention/error fallbacks, typed property checks, and JSON-LD referenc
 structure. Independently labeled end-to-end cases and trained-model evaluation
 remain necessary before claiming operational decision accuracy. No deployment,
 SOTA comparison, or calibrated warehouse automation claim follows from this demo.
+
+## Replay recorded decisions without inference
+
+`replay_workflow(compiled, trace)` in `olaya.workflow_replay` accepts the exact
+first-generation live inline-context execution document emitted by this implementation.
+Expanded or differently compacted JSON-LD, reordered graph arrays, and replay-of-replay
+documents are outside this replay contract. It requires
+no engine, trained weights, tokenizer, raw shipment input, or model call. It
+reconstructs recorded sanitized decisions and recorded backend-error outcomes,
+then reruns policy gates and transitions against the supplied compiled workflow.
+
+Replay regenerates the complete original trace under its recorded run ID and
+checks equality with the supplied trace. A mismatch in answers, gates,
+transitions, intent, context, identities, or provenance rejects replay. On
+success it emits a new run UUID with `wf:executionMode: "replay"` and an IRI
+reference `wf:replayOf` to the original run. Live execution records use
+`wf:executionMode: "live"`.
+
+```python
+import json
+from pathlib import Path
+from olaya import Ontology
+from olaya.workflow import compile_workflow
+from olaya.workflow_replay import replay_workflow
+
+fixtures = Path("examples/workflows")
+ontology = Ontology.from_json((fixtures / "storage-tbox.json").read_text())
+compiled = compile_workflow(json.loads((fixtures / "storage.json").read_text()), ontology)
+trace = json.loads((fixtures / "storage-run.jsonld").read_text())
+print(json.dumps(replay_workflow(compiled, trace), indent=2))
+```
+
+The checked-in trace demonstrates recorded decisions from the explicitly
+untrained engine. Replay checks consistency with compiled policy; it does not
+rerun inference or certify the original observation, model result, or occurrence
+of a recorded backend error. Workflow and TBox hashes identify content. They
+are not signatures and do not authenticate a trace. An internally consistent
+fabricated trace can pass these checks. Use independent authenticity controls
+if provenance must prove who actually performed an execution.
 
 ## Format and provenance references
 

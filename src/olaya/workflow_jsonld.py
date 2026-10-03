@@ -235,6 +235,7 @@ def build_trace(
             "@id": run_id,
             "@type": ["prov:Activity", "wf:WorkflowRun", expand_iri(document["type"], prefixes)],
             "wf:modelIdentifier": str(model_id),
+            "wf:executionMode": "live",
             "wf:workflow": _ref(workflow_id),
             "wf:tbox": _ref(tbox_id),
             "wf:steps": {"@list": step_ids},
