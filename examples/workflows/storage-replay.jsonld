@@ -16,7 +16,7 @@
         "owl:Ontology",
         "prov:Entity"
       ],
-      "wf:sha256": "fdeb336b9b6242684854a642fa4b0fa60ee20754890e782ef1b6f87095c69c2d"
+      "wf:sha256": "90cc7ade90b867abc48e0d44b16b1ca85af6d62eccdd962e70be16a298b8c4a7"
     },
     {
       "@id": "https://example.org/storage/workflows/shipment",
@@ -30,7 +30,7 @@
       "wf:tbox": {
         "@id": "https://example.org/storage/ontology"
       },
-      "wf:sha256": "3853205ddeb732d094c2cd2449d91fc7946c26087517b9e99446ee59167234f2"
+      "wf:sha256": "d948c5689b354798312fe3101ec06b1bf12cbe9e48094ca02dc895b2ccb7c25d"
     },
     {
       "@id": "https://example.org/storage/workflows/shipment/steps/ambient_dispatch",
@@ -97,19 +97,100 @@
       }
     },
     {
-      "@id": "urn:uuid:c20a1d7a-1510-428c-9711-f2bd08980c78/steps/0/answer",
+      "@id": "https://example.org/storage/resources/cold-service",
+      "@type": [
+        "wf:DeclaredResource",
+        "prov:Entity",
+        "https://example.org/storage#ColdStorageService"
+      ],
+      "wf:resourceState": "declared",
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:declaredIn": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "prov:wasDerivedFrom": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "https://example.org/storage#hosts": {
+        "@id": "https://example.org/storage/resources/shipment-application"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/resources/ambient-service",
+      "@type": [
+        "wf:DeclaredResource",
+        "prov:Entity",
+        "https://example.org/storage#AmbientStorageService"
+      ],
+      "wf:resourceState": "declared",
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:declaredIn": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "prov:wasDerivedFrom": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "https://example.org/storage#hosts": {
+        "@id": "https://example.org/storage/resources/shipment-application"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/resources/review-queue",
+      "@type": [
+        "wf:DeclaredResource",
+        "prov:Entity",
+        "https://example.org/storage#ReviewQueue"
+      ],
+      "wf:resourceState": "declared",
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:declaredIn": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "prov:wasDerivedFrom": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "https://example.org/storage#hosts": {
+        "@id": "https://example.org/storage/resources/shipment-application"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/resources/shipment-application",
+      "@type": [
+        "wf:DeclaredResource",
+        "prov:Entity",
+        "https://example.org/storage#ShipmentApplication"
+      ],
+      "wf:resourceState": "declared",
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:declaredIn": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "prov:wasDerivedFrom": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      }
+    },
+    {
+      "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0/answer",
       "@type": [
         "wf:DecisionRecord",
         "prov:Entity"
       ],
       "prov:wasGeneratedBy": {
-        "@id": "urn:uuid:c20a1d7a-1510-428c-9711-f2bd08980c78/steps/0"
+        "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0"
       },
       "wf:status": "abstained",
       "wf:confidence": 0.0037
     },
     {
-      "@id": "urn:uuid:c20a1d7a-1510-428c-9711-f2bd08980c78/steps/0",
+      "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0",
       "@type": [
         "prov:Activity",
         "wf:DecisionActivity",
@@ -133,7 +214,7 @@
         }
       ],
       "prov:wasInformedBy": {
-        "@id": "urn:uuid:c20a1d7a-1510-428c-9711-f2bd08980c78"
+        "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0"
       },
       "wf:nextStep": {
         "@id": "https://example.org/storage/workflows/shipment/steps/review"
@@ -153,18 +234,18 @@
         ]
       },
       "prov:generated": {
-        "@id": "urn:uuid:c20a1d7a-1510-428c-9711-f2bd08980c78/steps/0/answer"
+        "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0/answer"
       }
     },
     {
-      "@id": "urn:uuid:c20a1d7a-1510-428c-9711-f2bd08980c78/intent",
+      "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/intent",
       "@type": [
         "wf:ActionIntent",
         "prov:Entity",
         "https://example.org/storage#Review"
       ],
       "prov:wasGeneratedBy": {
-        "@id": "urn:uuid:c20a1d7a-1510-428c-9711-f2bd08980c78"
+        "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0"
       },
       "wf:tbox": {
         "@id": "https://example.org/storage/ontology"
@@ -172,10 +253,16 @@
       "wf:step": {
         "@id": "https://example.org/storage/workflows/shipment/steps/review"
       },
-      "https://example.org/storage#note": "Human review requested"
+      "https://example.org/storage#handledBy": {
+        "@id": "https://example.org/storage/resources/shipment-application"
+      },
+      "https://example.org/storage#note": "Human review requested",
+      "https://example.org/storage#target": {
+        "@id": "https://example.org/storage/resources/review-queue"
+      }
     },
     {
-      "@id": "urn:uuid:c20a1d7a-1510-428c-9711-f2bd08980c78",
+      "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0",
       "@type": [
         "prov:Activity",
         "wf:WorkflowRun",
@@ -192,7 +279,7 @@
       "wf:steps": {
         "@list": [
           {
-            "@id": "urn:uuid:c20a1d7a-1510-428c-9711-f2bd08980c78/steps/0"
+            "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0"
           }
         ]
       },
@@ -207,14 +294,14 @@
       ],
       "prov:generated": [
         {
-          "@id": "urn:uuid:c20a1d7a-1510-428c-9711-f2bd08980c78/steps/0/answer"
+          "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0/answer"
         },
         {
-          "@id": "urn:uuid:c20a1d7a-1510-428c-9711-f2bd08980c78/intent"
+          "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/intent"
         }
       ],
       "wf:replayOf": {
-        "@id": "urn:uuid:dca0a5b6-aa3d-49db-83c6-3f115dc35649"
+        "@id": "urn:uuid:4fe689f2-fd98-4fad-aaeb-a7f38948cf22"
       }
     }
   ]

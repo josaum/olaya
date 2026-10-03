@@ -135,7 +135,7 @@ def replay_workflow(compiled: CompiledWorkflow, trace: dict) -> dict:
     if trace["@context"] != {"@version": 1.1, **PREFIXES, **doc["prefixes"]}:
         raise ValueError("Trace context differs from compiled mappings")
     graph = trace["@graph"]
-    if not isinstance(graph, list) or len(graph) > 3 * len(doc["steps"]) + 4:
+    if not isinstance(graph, list) or len(graph) > 3 * len(doc["steps"]) + 4 + len(doc.get("resources", [])):
         raise ValueError("Invalid or oversized trace graph")
     entities = {}
     for entity in graph:

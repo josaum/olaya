@@ -81,6 +81,10 @@ def execution_id(document: dict[str, Any], run_id: str | None) -> str:
     candidate = absolute_iri(run_id) if run_id is not None else f"urn:uuid:{uuid4()}"
     prefixes = document["prefixes"]
     reserved = {document["id"], document["tbox"], expand_iri(document["type"], prefixes)}
+    for resource in document.get("resources", []):
+        reserved.add(absolute_iri(resource["id"]))
+        reserved.add(expand_iri(resource["type"], prefixes))
+        reserved.update(expand_iri(prop, prefixes) for prop in resource.get("properties", {}))
     for name, node in document["steps"].items():
         reserved.add(document["id"] + "/steps/" + quote(name, safe=""))
         if "emit" in node:
@@ -148,6 +152,18 @@ def build_trace(
                 "wf:tbox": _ref(tbox_id),
             }
         )
+    for resource in document.get("resources", []):
+        declared: dict[str, Any] = {
+            "@id": absolute_iri(resource["id"]),
+            "@type": ["wf:DeclaredResource", "prov:Entity", expand_iri(resource["type"], prefixes)],
+            "wf:resourceState": "declared",
+            "wf:tbox": _ref(tbox_id),
+            "wf:declaredIn": _ref(workflow_id),
+            "prov:wasDerivedFrom": _ref(workflow_id),
+        }
+        for prop, value in resource.get("properties", {}).items():
+            declared[expand_iri(prop, prefixes)] = value
+        graph.append(declared)
     generated = []
     for index, record in enumerate(records):
         step_id = workflow_id + "/steps/" + quote(record["node"], safe="")
