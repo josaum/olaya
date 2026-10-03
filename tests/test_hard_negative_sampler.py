@@ -1,7 +1,6 @@
 """Unit tests for HardNegativeSampler."""
 
 import random
-import pytest
 
 from olaya.hard_negative_sampler import HardNegativeSampler
 from olaya.ontology import Concept, Ontology, create_incident_ontology

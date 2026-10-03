@@ -1,6 +1,5 @@
 """Comprehensive unit tests for W3C OWL 2 RL Reasoner, Deductive Closure, and Axiomatic Projection."""
 
-import pytest
 from olaya.axioms import enforce_owl2_rl_axioms, verify_owl2_rl_axioms
 from olaya.ontology import Concept, ObjectProperty, Ontology
 from olaya.owl2_rl import OWL2RLReasoner
@@ -115,19 +114,25 @@ def test_property_hierarchy_and_characteristics():
     onto.add_concept(Concept("Person", "Person"))
     onto.add_concept(Concept("Paper", "Paper"))
 
-    onto.add_property(ObjectProperty(
-        curie="writes",
-        domains={"Person"},
-        ranges={"Paper"},
-        inverses={"writtenBy"},
-    ))
-    onto.add_property(ObjectProperty(
-        curie="firstAuthorOf",
-        parents={"writes"},
-    ))
+    onto.add_property(
+        ObjectProperty(
+            curie="writes",
+            domains={"Person"},
+            ranges={"Paper"},
+            inverses={"writtenBy"},
+        )
+    )
+    onto.add_property(
+        ObjectProperty(
+            curie="firstAuthorOf",
+            parents={"writes"},
+        )
+    )
 
     closure = OWL2RLReasoner(onto).compute_closure()
-    assert ("writtenBy", "writes") in closure.property_inverses["writtenBy"] or "writes" in closure.property_inverses["writtenBy"]
+    assert ("writtenBy", "writes") in closure.property_inverses["writtenBy"] or "writes" in closure.property_inverses[
+        "writtenBy"
+    ]
     # Domain inheritance (firstAuthorOf inherits Person domain)
     assert "Person" in closure.property_domains["firstAuthorOf"]
     # Range inheritance (firstAuthorOf inherits Paper range)

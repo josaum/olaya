@@ -5,9 +5,11 @@
 //!
 //! API surface matches olaya-engine.js exports for a drop-in neural upgrade path.
 
-use std::collections::{HashMap, HashSet};
 use serde::{Deserialize, Serialize};
+use std::collections::{HashMap, HashSet};
 use wasm_bindgen::prelude::*;
+
+type ConceptSubgraph = (Vec<u32>, Vec<(usize, usize)>, Vec<(usize, usize)>);
 
 // ── Concept types ─────────────────────────────────────────────────────────────
 
@@ -25,8 +27,8 @@ pub struct WasmConcept {
 // ── Axiom constants (must match spec/AXIOMS.md) ────────────────────────────────
 
 const DISJOINT_THRESHOLD: f32 = 0.6;
-const K1_LABEL: f32 = 1.5;      // BM25 saturation for label tokens
-const K1_DESC: f32 = 2.0;       // BM25 saturation for description tokens
+const K1_LABEL: f32 = 1.5; // BM25 saturation for label tokens
+const K1_DESC: f32 = 2.0; // BM25 saturation for description tokens
 const LABEL_BOOST: f32 = 4.0;
 const SYNONYM_BOOST: f32 = 2.0;
 const DESC_BOOST: f32 = 1.0;
@@ -34,12 +36,13 @@ const DESC_BOOST: f32 = 1.0;
 // ── Tokenizer ─────────────────────────────────────────────────────────────────
 
 const STOPWORDS: &[&str] = &[
-    "a","an","the","and","or","but","in","on","at","to","for","with","by","about","between",
-    "into","through","before","after","above","below","from","up","down","out","off","over",
-    "under","then","once","here","there","when","where","why","how","all","any","both","each",
-    "few","more","most","other","some","such","no","nor","not","only","own","same","so","than",
-    "too","very","can","will","just","should","now","is","are","was","were","be","been","being",
-    "have","has","had","do","does","did","of","it","its","that","this","also","made",
+    "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for", "with", "by", "about",
+    "between", "into", "through", "before", "after", "above", "below", "from", "up", "down", "out",
+    "off", "over", "under", "then", "once", "here", "there", "when", "where", "why", "how", "all",
+    "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not",
+    "only", "own", "same", "so", "than", "too", "very", "can", "will", "just", "should", "now",
+    "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "do", "does", "did",
+    "of", "it", "its", "that", "this", "also", "made",
 ];
 
 fn tokenize(text: &str) -> Vec<String> {
@@ -48,12 +51,13 @@ fn tokenize(text: &str) -> Vec<String> {
     let mut spaced = String::with_capacity(text.len() + 16);
     let chars: Vec<char> = text.chars().collect();
     for i in 0..chars.len() {
-        if i > 0 && chars[i].is_uppercase() && chars[i-1].is_lowercase() {
+        if i > 0 && chars[i].is_uppercase() && chars[i - 1].is_lowercase() {
             spaced.push(' ');
         }
         spaced.push(chars[i]);
     }
-    spaced.to_lowercase()
+    spaced
+        .to_lowercase()
         .split(|c: char| !c.is_alphanumeric())
         .filter(|t| t.len() > 2 && !stopset.contains(*t))
         .map(|t| t.to_string())
@@ -84,16 +88,22 @@ fn temperature_by_cardinality(k: usize) -> f32 {
 
 fn normalized_entropy_confidence(probs: &[f32]) -> f32 {
     let n = probs.len();
-    if n <= 1 { return 1.0; }
+    if n <= 1 {
+        return 1.0;
+    }
     let sum: f32 = probs.iter().sum();
-    if sum <= 0.0 { return 0.0; }
+    if sum <= 0.0 {
+        return 0.0;
+    }
     let mut h = 0.0f32;
     for &p in probs {
         let pn = p / sum;
-        if pn > 1e-12 { h -= pn * pn.ln(); }
+        if pn > 1e-12 {
+            h -= pn * pn.ln();
+        }
     }
     let max_h = (n as f32).ln();
-    (1.0 - h / max_h).max(0.0).min(1.0)
+    (1.0 - h / max_h).clamp(0.0, 1.0)
 }
 
 // ── Axiom projection ──────────────────────────────────────────────────────────
@@ -108,7 +118,9 @@ fn enforce_subsumption_monotonicity(probs: &mut [f32], parent_edges: &[(usize, u
                 changed = true;
             }
         }
-        if !changed { break; }
+        if !changed {
+            break;
+        }
     }
 }
 
@@ -117,7 +129,9 @@ fn zero_subtree(probs: &mut [f32], loser: usize, parent_edges: &[(usize, usize)]
     let mut visited = HashSet::new();
     visited.insert(loser);
     while let Some(node) = queue.pop() {
-        if node < probs.len() { probs[node] = 0.0; }
+        if node < probs.len() {
+            probs[node] = 0.0;
+        }
         for &(child, parent) in parent_edges {
             if parent == node && !visited.contains(&child) {
                 visited.insert(child);
@@ -127,9 +141,15 @@ fn zero_subtree(probs: &mut [f32], loser: usize, parent_edges: &[(usize, usize)]
     }
 }
 
-fn enforce_disjointness(probs: &mut [f32], disjoint_edges: &[(usize, usize)], parent_edges: &[(usize, usize)]) {
+fn enforce_disjointness(
+    probs: &mut [f32],
+    disjoint_edges: &[(usize, usize)],
+    parent_edges: &[(usize, usize)],
+) {
     for &(a, b) in disjoint_edges {
-        if a >= probs.len() || b >= probs.len() { continue; }
+        if a >= probs.len() || b >= probs.len() {
+            continue;
+        }
         let pa = probs[a];
         let pb = probs[b];
         if pa.max(pb) >= DISJOINT_THRESHOLD {
@@ -139,7 +159,11 @@ fn enforce_disjointness(probs: &mut [f32], disjoint_edges: &[(usize, usize)], pa
     }
 }
 
-fn verify_axioms(probs: &[f32], parent_edges: &[(usize, usize)], disjoint_edges: &[(usize, usize)]) -> bool {
+fn verify_axioms(
+    probs: &[f32],
+    parent_edges: &[(usize, usize)],
+    disjoint_edges: &[(usize, usize)],
+) -> bool {
     for &(child, parent) in parent_edges {
         if child < probs.len() && parent < probs.len() && probs[parent] < probs[child] - 1e-6 {
             return false;
@@ -188,19 +212,24 @@ impl WasmRouter {
             let desc_toks = tokenize(&concept.description);
 
             // Build inverted index
-            let all_toks: HashSet<String> = label_toks.iter()
+            let all_toks: HashSet<String> = label_toks
+                .iter()
                 .chain(syn_toks.iter())
                 .chain(desc_toks.iter())
-                .cloned().collect();
+                .cloned()
+                .collect();
             for tok in all_toks {
                 inverted.entry(tok).or_default().push(concept.id);
             }
 
-            tokens_map.insert(concept.id, ConceptTokens {
-                label: label_toks,
-                synonyms: syn_toks,
-                description: desc_toks,
-            });
+            tokens_map.insert(
+                concept.id,
+                ConceptTokens {
+                    label: label_toks,
+                    synonyms: syn_toks,
+                    description: desc_toks,
+                },
+            );
         }
 
         // Compute smooth IDF
@@ -232,9 +261,12 @@ impl WasmRouter {
                     let desc_tf = toks.description.iter().filter(|t| *t == tok).count() as f32;
 
                     // BM25-style saturation
-                    let label_score = idf * LABEL_BOOST * (label_tf * (K1_LABEL + 1.0)) / (label_tf + K1_LABEL);
-                    let syn_score = idf * SYNONYM_BOOST * (syn_tf * (K1_DESC + 1.0)) / (syn_tf + K1_DESC);
-                    let desc_score = idf * DESC_BOOST * (desc_tf * (K1_DESC + 1.0)) / (desc_tf + K1_DESC);
+                    let label_score =
+                        idf * LABEL_BOOST * (label_tf * (K1_LABEL + 1.0)) / (label_tf + K1_LABEL);
+                    let syn_score =
+                        idf * SYNONYM_BOOST * (syn_tf * (K1_DESC + 1.0)) / (syn_tf + K1_DESC);
+                    let desc_score =
+                        idf * DESC_BOOST * (desc_tf * (K1_DESC + 1.0)) / (desc_tf + K1_DESC);
 
                     *scores.entry(id).or_insert(0.0) += label_score + syn_score + desc_score;
                 }
@@ -257,12 +289,13 @@ impl WasmRouter {
         ranked
     }
 
-    fn extract_subgraph(&self, query_text: &str, top_k: usize) -> (Vec<u32>, Vec<(usize, usize)>, Vec<(usize, usize)>) {
+    fn extract_subgraph(&self, query_text: &str, top_k: usize) -> ConceptSubgraph {
         let top = self.score_candidates(query_text, top_k);
         let mut slot_ids: Vec<u32> = top.iter().map(|(id, _)| *id).collect();
 
         // Include all ancestors of top-k
-        let id_to_concept: HashMap<u32, &WasmConcept> = self.concepts.iter().map(|c| (c.id, c)).collect();
+        let id_to_concept: HashMap<u32, &WasmConcept> =
+            self.concepts.iter().map(|c| (c.id, c)).collect();
         let mut in_slots: HashSet<u32> = slot_ids.iter().cloned().collect();
 
         for &(id, _) in &top {
@@ -281,7 +314,11 @@ impl WasmRouter {
         }
 
         // Build slot index
-        let slot_index: HashMap<u32, usize> = slot_ids.iter().enumerate().map(|(i, &id)| (id, i)).collect();
+        let slot_index: HashMap<u32, usize> = slot_ids
+            .iter()
+            .enumerate()
+            .map(|(i, &id)| (id, i))
+            .collect();
 
         // Build edges
         let mut parent_edges = vec![];
@@ -329,8 +366,8 @@ impl OlayaWasm {
     /// Concepts must have: id, curie, label, description, synonyms, parents, disjoint_with.
     #[wasm_bindgen(constructor)]
     pub fn new(concepts_json: &str) -> Result<OlayaWasm, JsValue> {
-        let concepts: Vec<WasmConcept> = serde_json::from_str(concepts_json)
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
+        let concepts: Vec<WasmConcept> =
+            serde_json::from_str(concepts_json).map_err(|e| JsValue::from_str(&e.to_string()))?;
         let router = WasmRouter::build(&concepts);
         Ok(OlayaWasm { router })
     }
@@ -338,7 +375,8 @@ impl OlayaWasm {
     /// Run a System 1 concept decision. Returns JSON DecisionResult.
     #[wasm_bindgen]
     pub fn system_one(&self, state_text: &str, top_k: usize) -> Result<JsValue, JsValue> {
-        let (slot_ids, parent_edges, disjoint_edges) = self.router.extract_subgraph(state_text, top_k);
+        let (slot_ids, parent_edges, disjoint_edges) =
+            self.router.extract_subgraph(state_text, top_k);
         let k = slot_ids.len();
         if k == 0 {
             return Err(JsValue::from_str("Empty subgraph"));
@@ -346,23 +384,31 @@ impl OlayaWasm {
 
         // Lexical logits using IDF-weighted scores
         let query_toks: HashSet<String> = tokenize(state_text).into_iter().collect();
-        let logits: Vec<f32> = slot_ids.iter().map(|&id| {
-            let toks = self.router.tokens.get(&id);
-            let mut score = 1.0f32;
-            if let Some(t) = toks {
-                let idf_score = |tok_list: &[String], boost: f32| -> f32 {
-                    tok_list.iter().map(|t| {
-                        if query_toks.contains(t) {
-                            boost * self.router.idf.get(t).cloned().unwrap_or(1.0)
-                        } else { 0.0 }
-                    }).sum::<f32>()
-                };
-                score += idf_score(&t.label, LABEL_BOOST);
-                score += idf_score(&t.synonyms, SYNONYM_BOOST);
-                score += idf_score(&t.description, DESC_BOOST);
-            }
-            score
-        }).collect();
+        let logits: Vec<f32> = slot_ids
+            .iter()
+            .map(|&id| {
+                let toks = self.router.tokens.get(&id);
+                let mut score = 1.0f32;
+                if let Some(t) = toks {
+                    let idf_score = |tok_list: &[String], boost: f32| -> f32 {
+                        tok_list
+                            .iter()
+                            .map(|t| {
+                                if query_toks.contains(t) {
+                                    boost * self.router.idf.get(t).cloned().unwrap_or(1.0)
+                                } else {
+                                    0.0
+                                }
+                            })
+                            .sum::<f32>()
+                    };
+                    score += idf_score(&t.label, LABEL_BOOST);
+                    score += idf_score(&t.synonyms, SYNONYM_BOOST);
+                    score += idf_score(&t.description, DESC_BOOST);
+                }
+                score
+            })
+            .collect();
 
         // Axiom projection
         let t = temperature_by_cardinality(k);
@@ -381,17 +427,30 @@ impl OlayaWasm {
         }
 
         let best_id = slot_ids[best_slot];
-        let best_concept = self.router.concepts.iter().find(|c| c.id == best_id)
+        let best_concept = self
+            .router
+            .concepts
+            .iter()
+            .find(|c| c.id == best_id)
             .ok_or_else(|| JsValue::from_str("Concept not found"))?;
 
         let confidence = normalized_entropy_confidence(&probs);
         let verified = verify_axioms(&probs, &parent_edges, &disjoint_edges);
 
-        let probabilities: Vec<(String, f32)> = slot_ids.iter().zip(probs.iter()).map(|(&id, &p)| {
-            let curie = self.router.concepts.iter().find(|c| c.id == id)
-                .map(|c| c.curie.clone()).unwrap_or_default();
-            (curie, p)
-        }).collect();
+        let probabilities: Vec<(String, f32)> = slot_ids
+            .iter()
+            .zip(probs.iter())
+            .map(|(&id, &p)| {
+                let curie = self
+                    .router
+                    .concepts
+                    .iter()
+                    .find(|c| c.id == id)
+                    .map(|c| c.curie.clone())
+                    .unwrap_or_default();
+                (curie, p)
+            })
+            .collect();
 
         let result = WasmDecisionResult {
             curie: best_concept.curie.clone(),
@@ -413,28 +472,41 @@ impl OlayaWasm {
     /// Score a query against named options (choice primitive).
     #[wasm_bindgen]
     pub fn choice(&self, state_text: &str, options_json: &str) -> Result<JsValue, JsValue> {
-        let options: Vec<String> = serde_json::from_str(options_json)
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
+        let options: Vec<String> =
+            serde_json::from_str(options_json).map_err(|e| JsValue::from_str(&e.to_string()))?;
         let query_toks: HashSet<String> = tokenize(state_text).into_iter().collect();
 
-        let logits: Vec<f32> = options.iter().map(|opt| {
-            let toks = tokenize(opt);
-            let score: f32 = toks.iter().map(|t| {
-                if query_toks.contains(t) {
-                    LABEL_BOOST * self.router.idf.get(t).cloned().unwrap_or(1.0)
-                } else { 0.0 }
-            }).sum();
-            1.0 + score
-        }).collect();
+        let logits: Vec<f32> = options
+            .iter()
+            .map(|opt| {
+                let toks = tokenize(opt);
+                let score: f32 = toks
+                    .iter()
+                    .map(|t| {
+                        if query_toks.contains(t) {
+                            LABEL_BOOST * self.router.idf.get(t).cloned().unwrap_or(1.0)
+                        } else {
+                            0.0
+                        }
+                    })
+                    .sum();
+                1.0 + score
+            })
+            .collect();
 
         let t = temperature_by_cardinality(options.len());
         let probs = softmax(&logits, t);
-        let best = probs.iter().enumerate().max_by(|a, b| a.1.partial_cmp(b.1).unwrap()).map(|(i, _)| i).unwrap_or(0);
+        let best = probs
+            .iter()
+            .enumerate()
+            .max_by(|a, b| a.1.partial_cmp(b.1).unwrap())
+            .map(|(i, _)| i)
+            .unwrap_or(0);
 
         let result = serde_json::json!({
             "choice": options[best],
             "confidence": normalized_entropy_confidence(&probs),
-            "probabilities": options.iter().zip(probs.iter()).map(|(o, p)| (o, p)).collect::<Vec<_>>()
+            "probabilities": options.iter().zip(probs.iter()).collect::<Vec<_>>()
         });
         serde_wasm_bindgen::to_value(&result).map_err(|e| JsValue::from_str(&e.to_string()))
     }

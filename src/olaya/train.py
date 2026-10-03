@@ -268,9 +268,7 @@ def collate_decision_batch(batch: list[TrainingSample], pad_id: int = 0) -> dict
 
             # Extract category morphism matrices if ontology is available
             if s.ontology is not None and len(b.candidate_curies) > 0:
-                sub_m, p_m, c_m, disj_m = extract_morphism_matrices(
-                    b.candidate_curies, s.ontology, max_k=num_m
-                )
+                sub_m, p_m, c_m, disj_m = extract_morphism_matrices(b.candidate_curies, s.ontology, max_k=num_m)
                 subsumption_adj[i, :num_m, :num_m] = torch.from_numpy(sub_m)
                 parent_adj[i, :num_m, :num_m] = torch.from_numpy(p_m)
                 child_adj[i, :num_m, :num_m] = torch.from_numpy(c_m)

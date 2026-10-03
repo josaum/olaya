@@ -15,17 +15,16 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Set
+from typing import Any
 
 from olaya.ontology import Concept, Ontology
-from olaya.owl2_rl import OWL2RLReasoner
 
 MODELS_DIR = Path("models")
 DATA_DIR = Path("data")
 
 
-def load_json(path: Path) -> Dict[str, Any]:
-    with open(path, "r", encoding="utf-8") as f:
+def load_json(path: Path) -> dict[str, Any]:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -96,7 +95,7 @@ def export_master(master: Ontology):
     print(f"💾 Serializing master JSON to {out_json}...")
     with open(out_json, "w", encoding="utf-8") as f:
         json.dump(master.to_dict(), f)
-    print(f"  -> JSON size: {out_json.stat().st_size / (1024*1024):.2f} MB")
+    print(f"  -> JSON size: {out_json.stat().st_size / (1024 * 1024):.2f} MB")
 
 
 if __name__ == "__main__":

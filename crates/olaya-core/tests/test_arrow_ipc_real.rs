@@ -1,5 +1,5 @@
-use std::path::Path;
 use olaya_core::{read_ontology_ipc, OlayaEngine};
+use std::path::Path;
 
 #[test]
 fn test_real_schemaorg_arrow_ipc_inference() {
@@ -14,7 +14,10 @@ fn test_real_schemaorg_arrow_ipc_inference() {
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from schemaorg.arrow");
 
     let decision = engine
-        .system_one("High performance wireless noise cancelling bluetooth headphones with mic", 8)
+        .system_one(
+            "High performance wireless noise cancelling bluetooth headphones with mic",
+            8,
+        )
         .expect("Decision failed");
 
     println!(
@@ -37,7 +40,10 @@ fn test_real_doid_arrow_ipc_inference() {
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from doid.arrow");
 
     let decision = engine
-        .system_one("Patient diagnosed with acute lymphoblastic leukemia of bone marrow", 8)
+        .system_one(
+            "Patient diagnosed with acute lymphoblastic leukemia of bone marrow",
+            8,
+        )
         .expect("Decision failed");
 
     println!(
@@ -60,7 +66,10 @@ fn test_real_gs1_full_arrow_ipc_inference() {
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from gs1_full.arrow");
 
     let decision = engine
-        .system_one("Refrigerated organic whole milk dairy beverage with pasteurized cream", 8)
+        .system_one(
+            "Refrigerated organic whole milk dairy beverage with pasteurized cream",
+            8,
+        )
         .expect("Decision failed");
 
     println!(
@@ -83,7 +92,10 @@ fn test_real_fibo_arrow_ipc_inference() {
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from fibo.arrow");
 
     let decision = engine
-        .system_one("Credit default swap derivative contract hedging corporate bond default risk", 8)
+        .system_one(
+            "Credit default swap derivative contract hedging corporate bond default risk",
+            8,
+        )
         .expect("Decision failed");
 
     println!(
@@ -129,7 +141,10 @@ fn test_real_apto_arrow_ipc_inference() {
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from apto.arrow");
 
     let decision = engine
-        .system_one("Contrato futuro de boi gordo B3 com base no indicador Cepea Esalq", 8)
+        .system_one(
+            "Contrato futuro de boi gordo B3 com base no indicador Cepea Esalq",
+            8,
+        )
         .expect("Decision failed");
 
     println!(
@@ -152,7 +167,10 @@ fn test_real_c2sim_arrow_ipc_inference() {
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from c2sim.arrow");
 
     let decision = engine
-        .system_one("Blue force tracker position report from armored mechanized company", 8)
+        .system_one(
+            "Blue force tracker position report from armored mechanized company",
+            8,
+        )
         .expect("Decision failed");
 
     println!(
@@ -264,7 +282,8 @@ fn test_real_sweet_earth_arrow_ipc_inference() {
     let batch = read_ontology_ipc(arrow_path).expect("Failed to read sweet_earth.arrow");
     assert!(batch.num_rows() >= 12000);
 
-    let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from sweet_earth.arrow");
+    let engine =
+        OlayaEngine::new(batch).expect("Failed to build OlayaEngine from sweet_earth.arrow");
 
     let decision = engine
         .system_one("Atmospheric pressure climate zone vortex fluid dynamics", 8)
@@ -287,7 +306,8 @@ fn test_real_lkif_legal_arrow_ipc_inference() {
     let batch = read_ontology_ipc(arrow_path).expect("Failed to read lkif_legal.arrow");
     assert!(batch.num_rows() >= 200);
 
-    let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from lkif_legal.arrow");
+    let engine =
+        OlayaEngine::new(batch).expect("Failed to build OlayaEngine from lkif_legal.arrow");
 
     let decision = engine
         .system_one("Legal person contractual obligation statutory liability", 8)
@@ -299,6 +319,3 @@ fn test_real_lkif_legal_arrow_ipc_inference() {
     );
     assert!(decision.axioms_verified);
 }
-
-
-

@@ -738,7 +738,9 @@ class OLayaMCPServer:
             def send_cors_headers(self):
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD")
-                self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-Key, mcp-session-id")
+                self.send_header(
+                    "Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-Key, mcp-session-id"
+                )
 
             def do_OPTIONS(self):
                 self.send_response(204)
@@ -765,11 +767,11 @@ class OLayaMCPServer:
                     self.send_cors_headers()
                     self.send_header("Content-Type", "application/json")
                     self.end_headers()
-                    self.wfile.write(json.dumps({
-                        "jsonrpc": "2.0",
-                        "id": None,
-                        "error": {"code": -32700, "message": f"Parse error: {e}"}
-                    }).encode("utf-8"))
+                    self.wfile.write(
+                        json.dumps(
+                            {"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": f"Parse error: {e}"}}
+                        ).encode("utf-8")
+                    )
 
             def do_GET(self):
                 if self.path in ("/sse", "/events"):
@@ -794,7 +796,7 @@ class OLayaMCPServer:
                         "status": "ready",
                         "supportedDomains": ["gs1", "schemaorg", "doid", "incident", "leio"],
                         "capabilities": {"tools": True, "resources": True, "prompts": True},
-                        "pricing": "$0.042 / 1M input tokens (outputs 100% free)"
+                        "pricing": "$0.042 / 1M input tokens (outputs 100% free)",
                     }
                     self.wfile.write(json.dumps(status_info, indent=2).encode("utf-8"))
 
