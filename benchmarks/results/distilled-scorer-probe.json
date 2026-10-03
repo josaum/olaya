@@ -1,0 +1,23 @@
+{
+  "scope": "encode_query_into plus score_candidates_with_morphisms; excludes model loading, workflow execution, JSON-LD, network and deployment",
+  "build": "release",
+  "architecture": "aarch64",
+  "os": "macos",
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+  "iterations": 10000,
+  "warmup_iterations": 1,
+  "trials": 1,
+  "mean_microseconds_per_query": 1.14,
+  "fixture": {
+    "synthetic_uniform_weights": true,
+    "token_buckets": 64,
+    "dimension": 32,
+    "hidden_dimension": 48,
+    "tokens": 4,
+    "candidates": 5
+  },
+  "source_sha256": "12b7396fcf72bc85e1aa5836c40c4b624ea644e6e742155783848e4c7dbad46f",
+  "command": "cargo test --release -p olaya-core --lib bench_distilled_scorer_latency -- --ignored --nocapture",
+  "limitations": "Single local synthetic trial; no median/p95, trained accuracy, deployed latency, hardware-normalized comparison or sub-microsecond claim."
+}

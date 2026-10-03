@@ -68,3 +68,21 @@ The next meaningful accuracy gate is a frozen human-labeled corpus with source-d
 and ontology-family separation, ambiguity/no-answer cases, full-ontology retrieval,
 independent calibration, and deployed inference parity. Model upgrades should be
 compared on that corpus with fixed latency and memory budgets.
+
+## Explicit native scorer timing probe
+
+The synthetic distilled-scorer timing test is an opt-in measurement, separate
+from correctness CI. A fixed 50 microsecond debug-build assertion failed on
+shared GitHub runners at 51.869 and 58.750 microseconds; rerunning until it passed
+would not establish a reliable performance gate. The probe now reports its build
+profile, architecture, OS, and iteration count and uses black-box inputs/outputs.
+It retains finite-score checks and makes no sub-microsecond claim.
+
+```bash
+cargo test --release -p olaya-core --lib bench_distilled_scorer_latency \
+  -- --ignored --nocapture
+```
+
+This is a 32-dimensional synthetic uniform-weight fixture with five candidates,
+not a trained-model accuracy test, a deployed request benchmark, or a fixed-hardware
+regression threshold. A performance gate needs a specified host and repeated trials.
