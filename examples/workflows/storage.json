@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "id": "https://example.org/storage/workflows/shipment",
+  "type": "ex:Workflow",
+  "prefixes": {
+    "ex": "https://example.org/storage#"
+  },
+  "tbox": "https://example.org/storage/ontology",
+  "start": "storage",
+  "steps": {
+    "storage": {
+      "type": "ex:StorageDecision",
+      "decide": {
+        "state": "input.shipment",
+        "question": {
+          "type": "choice",
+          "root": "ex:StorageMode",
+          "options": [
+            "ex:Cold",
+            "ex:Ambient"
+          ]
+        }
+      },
+      "accept": {
+        "min_confidence": 0.8,
+        "min_margin": 0.15
+      },
+      "route": {
+        "ex:Cold": "cold_dispatch",
+        "ex:Ambient": "ambient_dispatch"
+      },
+      "on_abstain": "review",
+      "on_error": "review"
+    },
+    "cold_dispatch": {
+      "emit": {
+        "type": "ex:DispatchCold",
+        "properties": {
+          "ex:note": "Cold dispatch requested"
+        }
+      }
+    },
+    "ambient_dispatch": {
+      "emit": {
+        "type": "ex:DispatchAmbient",
+        "properties": {
+          "ex:note": "Ambient dispatch requested"
+        }
+      }
+    },
+    "review": {
+      "emit": {
+        "type": "ex:Review",
+        "properties": {
+          "ex:note": "Human review requested"
+        }
+      }
+    }
+  }
+}

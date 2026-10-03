@@ -1,0 +1,73 @@
+{
+  "name": "StorageWorkflowExample",
+  "concepts": [
+    {
+      "curie": "ex:Workflow",
+      "label": "Storage workflow"
+    },
+    {
+      "curie": "ex:StorageDecision",
+      "label": "Storage decision"
+    },
+    {
+      "curie": "ex:StorageMode",
+      "label": "Storage mode"
+    },
+    {
+      "curie": "ex:Cold",
+      "label": "Cold storage",
+      "description": "Frozen or refrigerated goods requiring cold storage",
+      "parents": [
+        "ex:StorageMode"
+      ],
+      "disjoint_with": [
+        "ex:Ambient"
+      ]
+    },
+    {
+      "curie": "ex:Ambient",
+      "label": "Ambient storage",
+      "description": "Ambient dry goods storage",
+      "parents": [
+        "ex:StorageMode"
+      ],
+      "disjoint_with": [
+        "ex:Cold"
+      ]
+    },
+    {
+      "curie": "ex:ActionIntent",
+      "label": "Action intent"
+    },
+    {
+      "curie": "ex:DispatchCold",
+      "label": "Cold dispatch intent",
+      "parents": [
+        "ex:ActionIntent"
+      ]
+    },
+    {
+      "curie": "ex:DispatchAmbient",
+      "label": "Ambient dispatch intent",
+      "parents": [
+        "ex:ActionIntent"
+      ]
+    },
+    {
+      "curie": "ex:Review",
+      "label": "Human review intent",
+      "parents": [
+        "ex:ActionIntent"
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "curie": "ex:note",
+      "label": "Intent note",
+      "domains": [
+        "ex:ActionIntent"
+      ]
+    }
+  ]
+}
