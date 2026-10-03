@@ -15,6 +15,14 @@ Implementations:
 
 ## Scope boundary: HTTP edge demo
 
+The edge `noul` contract now distinguishes supported/contradicted evidence from
+`unmatched`, `conflicting`, `ambiguous_scope`, and `unsupported_question`.
+Unknown cases return `abstained: true`, `noul: 0.5`, and confidence `0`.
+Structured-state evidence uses separate string values, excluding keys and scalar
+booleans/numbers, with no proposition matches spanning fields. This edge-only
+behavior does not change the runtime/package/parser APIs described here.
+
+
 `docs/public/api/systemone.js` does not implement the complete projection kernel
 specified here. It has lexical flat scoring, entropy confidence, choice
 abstention, and bounded English negation. Its temperature scaling is not evidence
