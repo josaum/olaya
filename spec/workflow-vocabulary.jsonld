@@ -236,6 +236,20 @@
       "rdfs:range": {
         "@id": "xsd:string"
       }
+    },
+    {
+      "@id": "wf:replayOf",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "wf:WorkflowRun"
+      }
+    },
+    {
+      "@id": "wf:executionMode",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:string"
+      }
     }
   ]
 }

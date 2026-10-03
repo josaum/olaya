@@ -73,7 +73,13 @@ python examples/workflows/run_storage.py
 
 The example explicitly uses an untrained local engine. It demonstrates policy
 execution and abstention gates, not calibrated classification or warehouse
-control. Training evaluation and HTTP edge semantics remain separate.
+control. Training evaluation and HTTP edge semantics remain separate. Replay via
+`olaya.workflow_replay.replay_workflow(compiled, trace)` verifies recorded
+answers, gates, routing, and emitted intent against the compiled policy without
+model inference or raw input. It emits a new run linked to the original. These
+consistency checks and content hashes do not authenticate the original trace or
+establish the truth of its decisions. See the contract's
+[replay example](spec/workflow-dsl-proposal.md#replay-recorded-decisions-without-inference).
 
 ## Project status: read this first
 

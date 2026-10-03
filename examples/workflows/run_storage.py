@@ -1,4 +1,4 @@
-"""Run the local storage policy with an explicitly untrained Python engine."""
+"""Run or replay the storage policy; live demonstrations use an untrained engine."""
 
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ from transformers import PreTrainedTokenizerFast
 
 from olaya import OLaya, Ontology
 from olaya.workflow import compile_workflow, run_workflow
+from olaya.workflow_replay import replay_workflow
 
 
 def main() -> None:
@@ -23,10 +24,15 @@ def main() -> None:
     parser.add_argument("--shipment", default="Frozen seafood requires cold storage.")
     parser.add_argument("--workflow", type=Path, default=Path(__file__).with_name("storage.json"))
     parser.add_argument("--tbox", type=Path, default=Path(__file__).with_name("storage-tbox.json"))
+    parser.add_argument("--replay", type=Path, help="Replay a recorded JSON-LD trace without running the model")
     args = parser.parse_args()
     document = json.loads(args.workflow.read_text(encoding="utf-8"))
     ontology = Ontology.from_json(args.tbox.read_text(encoding="utf-8"))
     compiled = compile_workflow(document, ontology)
+    if args.replay:
+        trace = json.loads(args.replay.read_text(encoding="utf-8"))
+        print(json.dumps(replay_workflow(compiled, trace), indent=2, allow_nan=False))
+        return
     tokenizer = PreTrainedTokenizerFast(
         tokenizer_file=str(ROOT / "models/tokenizer.json"),
         cls_token="[CLS]",
