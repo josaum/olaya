@@ -250,6 +250,27 @@
       "rdfs:range": {
         "@id": "xsd:string"
       }
+    },
+    {
+      "@id": "wf:DeclaredResource",
+      "@type": "owl:Class",
+      "rdfs:subClassOf": {
+        "@id": "prov:Entity"
+      }
+    },
+    {
+      "@id": "wf:resourceState",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:string"
+      }
+    },
+    {
+      "@id": "wf:declaredIn",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "wf:WorkflowDefinition"
+      }
     }
   ]
 }

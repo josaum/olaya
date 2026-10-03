@@ -61,7 +61,11 @@ session; verify the current release and live cases independently.
 ## Local TBox-bound workflows
 
 The Python JSON workflow compiler/interpreter binds workflow and decision types,
-option classes, and terminal intent properties to a supplied ontology. It emits
+option classes, terminal intent properties, and declared infrastructure/application
+resources to a supplied ontology. The storage example connects typed cold/ambient
+services and a review queue to a shipment application. Intent targets and handlers
+are declared resource references checked against TBox class ranges; declarations
+do not discover resources or prove deployment, reachability, or authorization. It emits
 JSON-LD execution records with TBox identity/hash and decision provenance, without
 asserting predicted input membership or performing external actions. See the
 [implemented version 1 contract](spec/workflow-dsl-proposal.md) and
