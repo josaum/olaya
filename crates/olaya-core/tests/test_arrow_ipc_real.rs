@@ -1,14 +1,12 @@
 use olaya_core::{read_ontology_ipc, OlayaEngine};
-use std::path::Path;
+mod common;
+use common::model_fixture;
 
 #[test]
 fn test_real_schemaorg_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/schemaorg.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("schemaorg.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read schemaorg.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read schemaorg.arrow");
     assert!(batch.num_rows() > 900);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from schemaorg.arrow");
@@ -29,12 +27,9 @@ fn test_real_schemaorg_arrow_ipc_inference() {
 
 #[test]
 fn test_real_doid_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/doid.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("doid.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read doid.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read doid.arrow");
     assert!(batch.num_rows() >= 700);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from doid.arrow");
@@ -55,12 +50,9 @@ fn test_real_doid_arrow_ipc_inference() {
 
 #[test]
 fn test_real_gs1_full_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/gs1_full.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("gs1_full.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read gs1_full.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read gs1_full.arrow");
     assert!(batch.num_rows() >= 1900);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from gs1_full.arrow");
@@ -81,12 +73,9 @@ fn test_real_gs1_full_arrow_ipc_inference() {
 
 #[test]
 fn test_real_fibo_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/fibo.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("fibo.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read fibo.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read fibo.arrow");
     assert!(batch.num_rows() >= 17000);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from fibo.arrow");
@@ -107,12 +96,9 @@ fn test_real_fibo_arrow_ipc_inference() {
 
 #[test]
 fn test_real_ontopix_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/ontopix.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("ontopix.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read ontopix.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read ontopix.arrow");
     assert!(batch.num_rows() >= 20);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from ontopix.arrow");
@@ -130,12 +116,9 @@ fn test_real_ontopix_arrow_ipc_inference() {
 
 #[test]
 fn test_real_apto_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/apto.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("apto.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read apto.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read apto.arrow");
     assert!(batch.num_rows() >= 20);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from apto.arrow");
@@ -156,12 +139,9 @@ fn test_real_apto_arrow_ipc_inference() {
 
 #[test]
 fn test_real_c2sim_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/c2sim.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("c2sim.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read c2sim.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read c2sim.arrow");
     assert!(batch.num_rows() >= 20);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from c2sim.arrow");
@@ -182,12 +162,9 @@ fn test_real_c2sim_arrow_ipc_inference() {
 
 #[test]
 fn test_real_mondo_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/mondo.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("mondo.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read mondo.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read mondo.arrow");
     assert!(batch.num_rows() >= 18000);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from mondo.arrow");
@@ -205,12 +182,9 @@ fn test_real_mondo_arrow_ipc_inference() {
 
 #[test]
 fn test_real_w3c_core_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/w3c_core.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("w3c_core.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read w3c_core.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read w3c_core.arrow");
     assert!(batch.num_rows() >= 90);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from w3c_core.arrow");
@@ -228,12 +202,9 @@ fn test_real_w3c_core_arrow_ipc_inference() {
 
 #[test]
 fn test_real_d3fend_cyber_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/d3fend.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("d3fend.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read d3fend.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read d3fend.arrow");
     assert!(batch.num_rows() >= 5000);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from d3fend.arrow");
@@ -251,12 +222,9 @@ fn test_real_d3fend_cyber_arrow_ipc_inference() {
 
 #[test]
 fn test_real_hs_codes_trade_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/hs_codes.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("hs_codes.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read hs_codes.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read hs_codes.arrow");
     assert!(batch.num_rows() >= 6900);
 
     let engine = OlayaEngine::new(batch).expect("Failed to build OlayaEngine from hs_codes.arrow");
@@ -274,12 +242,9 @@ fn test_real_hs_codes_trade_arrow_ipc_inference() {
 
 #[test]
 fn test_real_sweet_earth_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/sweet_earth.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("sweet_earth.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read sweet_earth.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read sweet_earth.arrow");
     assert!(batch.num_rows() >= 12000);
 
     let engine =
@@ -298,12 +263,9 @@ fn test_real_sweet_earth_arrow_ipc_inference() {
 
 #[test]
 fn test_real_lkif_legal_arrow_ipc_inference() {
-    let arrow_path = Path::new("models/lkif_legal.arrow");
-    if !arrow_path.exists() {
-        return;
-    }
+    let arrow_path = model_fixture("lkif_legal.arrow");
 
-    let batch = read_ontology_ipc(arrow_path).expect("Failed to read lkif_legal.arrow");
+    let batch = read_ontology_ipc(&arrow_path).expect("Failed to read lkif_legal.arrow");
     assert!(batch.num_rows() >= 200);
 
     let engine =
@@ -318,4 +280,10 @@ fn test_real_lkif_legal_arrow_ipc_inference() {
         decision.selected_label, decision.selected_curie, decision.confidence
     );
     assert!(decision.axioms_verified);
+}
+
+#[test]
+#[should_panic(expected = "Required tracked Arrow fixture is missing")]
+fn missing_model_fixture_fails_instead_of_skipping() {
+    model_fixture("__intentionally_missing_fixture__.arrow");
 }
