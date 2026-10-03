@@ -463,7 +463,8 @@ mod tests {
     }
 
     #[test]
-    fn test_distilled_scorer_sub_microsecond_latency() {
+    #[ignore = "Hardware-dependent timing probe; run explicitly with --release --ignored --nocapture"]
+    fn bench_distilled_scorer_latency() {
         let json_data = r#"{
             "format": "leio-cone-v1",
             "num_buckets": 64,
@@ -501,23 +502,42 @@ mod tests {
         // Warmup
         let mut q_buf = vec![0.0f32; 32];
         scorer.encode_query_into(&tokens, &idfs, &mut q_buf);
-        let _ = scorer.score_candidates_with_morphisms(&q_buf, &candidates, &parents, &disjoint);
+        let scores =
+            scorer.score_candidates_with_morphisms(&q_buf, &candidates, &parents, &disjoint);
+        assert_eq!(scores.len(), candidates.len());
+        assert!(scores.iter().all(|value| value.is_finite()));
 
         // Measure 10,000 iterations
         let start = std::time::Instant::now();
         let iters = 10_000;
         for _ in 0..iters {
-            scorer.encode_query_into(&tokens, &idfs, &mut q_buf);
-            let _ =
-                scorer.score_candidates_with_morphisms(&q_buf, &candidates, &parents, &disjoint);
+            scorer.encode_query_into(
+                std::hint::black_box(&tokens),
+                std::hint::black_box(&idfs),
+                &mut q_buf,
+            );
+            std::hint::black_box(scorer.score_candidates_with_morphisms(
+                &q_buf,
+                &candidates,
+                &parents,
+                &disjoint,
+            ));
         }
         let elapsed = start.elapsed();
         let per_query_micros = elapsed.as_micros() as f64 / iters as f64;
         println!(
-            "🚀 Distilled Native Scorer Latency: {:.3} µs / query",
-            per_query_micros
+            "Synthetic scorer probe: {:.3} µs/query; profile={}; arch={}; os={}; iterations={}",
+            per_query_micros,
+            if cfg!(debug_assertions) {
+                "debug"
+            } else {
+                "release"
+            },
+            std::env::consts::ARCH,
+            std::env::consts::OS,
+            iters
         );
-        // Must be under 50 microseconds even in debug mode unoptimized!
-        assert!(per_query_micros < 50.0);
+        // Shared-runner wall time is an observation, not a correctness assertion.
+        assert!(per_query_micros.is_finite());
     }
 }
