@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "id": "https://example.org/storage/workflows/shipment",
+  "type": "ex:Workflow",
+  "prefixes": {
+    "ex": "https://example.org/storage#"
+  },
+  "tbox": "https://example.org/storage/ontology",
+  "start": "storage",
+  "steps": {
+    "storage": {
+      "type": "ex:StorageDecision",
+      "decide": {
+        "state": "input.shipment",
+        "question": {
+          "type": "choice",
+          "root": "ex:StorageMode",
+          "options": [
+            "ex:Cold",
+            "ex:Ambient"
+          ]
+        }
+      },
+      "accept": {
+        "min_confidence": 0.8,
+        "min_margin": 0.15
+      },
+      "route": {
+        "ex:Cold": "cold_dispatch",
+        "ex:Ambient": "ambient_dispatch"
+      },
+      "on_abstain": "review",
+      "on_error": "review"
+    },
+    "cold_dispatch": {
+      "emit": {
+        "type": "ex:DispatchCold",
+        "properties": {
+          "ex:note": "Cold dispatch requested",
+          "ex:target": {
+            "@id": "https://example.org/storage/resources/cold-service"
+          },
+          "ex:handledBy": {
+            "@id": "https://example.org/storage/resources/shipment-application"
+          }
+        }
+      }
+    },
+    "ambient_dispatch": {
+      "emit": {
+        "type": "ex:DispatchAmbient",
+        "properties": {
+          "ex:note": "Ambient dispatch requested",
+          "ex:target": {
+            "@id": "https://example.org/storage/resources/ambient-service"
+          },
+          "ex:handledBy": {
+            "@id": "https://example.org/storage/resources/shipment-application"
+          }
+        }
+      }
+    },
+    "review": {
+      "emit": {
+        "type": "ex:Review",
+        "properties": {
+          "ex:note": "Human review requested",
+          "ex:target": {
+            "@id": "https://example.org/storage/resources/review-queue"
+          },
+          "ex:handledBy": {
+            "@id": "https://example.org/storage/resources/shipment-application"
+          }
+        }
+      }
+    }
+  },
+  "resources": [
+    {
+      "id": "https://example.org/storage/resources/cold-service",
+      "type": "ex:ColdStorageService",
+      "properties": {
+        "ex:hosts": {
+          "@id": "https://example.org/storage/resources/shipment-application"
+        }
+      }
+    },
+    {
+      "id": "https://example.org/storage/resources/ambient-service",
+      "type": "ex:AmbientStorageService",
+      "properties": {
+        "ex:hosts": {
+          "@id": "https://example.org/storage/resources/shipment-application"
+        }
+      }
+    },
+    {
+      "id": "https://example.org/storage/resources/review-queue",
+      "type": "ex:ReviewQueue",
+      "properties": {
+        "ex:hosts": {
+          "@id": "https://example.org/storage/resources/shipment-application"
+        }
+      }
+    },
+    {
+      "id": "https://example.org/storage/resources/shipment-application",
+      "type": "ex:ShipmentApplication",
+      "properties": {}
+    }
+  ]
+}
