@@ -1,0 +1,276 @@
+{
+  "@context": {
+    "wf": "urn:olaya:workflow:",
+    "prov": "http://www.w3.org/ns/prov#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@graph": [
+    {
+      "@id": "urn:olaya:workflow:",
+      "@type": "owl:Ontology",
+      "rdfs:label": "O-Laya workflow execution vocabulary, version 1"
+    },
+    {
+      "@id": "wf:WorkflowDefinition",
+      "@type": "owl:Class",
+      "rdfs:subClassOf": {
+        "@id": "prov:Entity"
+      }
+    },
+    {
+      "@id": "wf:StepDefinition",
+      "@type": "owl:Class",
+      "rdfs:subClassOf": {
+        "@id": "prov:Entity"
+      }
+    },
+    {
+      "@id": "wf:WorkflowRun",
+      "@type": "owl:Class",
+      "rdfs:subClassOf": {
+        "@id": "prov:Activity"
+      }
+    },
+    {
+      "@id": "wf:DecisionActivity",
+      "@type": "owl:Class",
+      "rdfs:subClassOf": {
+        "@id": "prov:Activity"
+      }
+    },
+    {
+      "@id": "wf:DecisionRecord",
+      "@type": "owl:Class",
+      "rdfs:subClassOf": {
+        "@id": "prov:Entity"
+      }
+    },
+    {
+      "@id": "wf:ActionIntent",
+      "@type": "owl:Class",
+      "rdfs:subClassOf": {
+        "@id": "prov:Entity"
+      }
+    },
+    {
+      "@id": "wf:CandidateProbability",
+      "@type": "owl:Class",
+      "rdfs:subClassOf": {
+        "@id": "prov:Entity"
+      }
+    },
+    {
+      "@id": "wf:declaredType",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "owl:Class"
+      }
+    },
+    {
+      "@id": "wf:tbox",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "owl:Ontology"
+      }
+    },
+    {
+      "@id": "wf:inWorkflow",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "wf:WorkflowDefinition"
+      }
+    },
+    {
+      "@id": "wf:nextStep",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "wf:StepDefinition"
+      }
+    },
+    {
+      "@id": "wf:step",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "wf:StepDefinition"
+      }
+    },
+    {
+      "@id": "wf:scope",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "owl:Class"
+      }
+    },
+    {
+      "@id": "wf:options",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "rdf:List"
+      }
+    },
+    {
+      "@id": "wf:predictedType",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "owl:Class"
+      }
+    },
+    {
+      "@id": "wf:candidateType",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "owl:Class"
+      }
+    },
+    {
+      "@id": "wf:candidateProbabilities",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "wf:CandidateProbability"
+      }
+    },
+    {
+      "@id": "wf:workflow",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "wf:WorkflowDefinition"
+      }
+    },
+    {
+      "@id": "wf:steps",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "rdf:List"
+      }
+    },
+    {
+      "@id": "wf:sha256",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:string"
+      }
+    },
+    {
+      "@id": "wf:sequence",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:integer"
+      }
+    },
+    {
+      "@id": "wf:status",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:string"
+      }
+    },
+    {
+      "@id": "wf:reason",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:string"
+      }
+    },
+    {
+      "@id": "wf:primitive",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:string"
+      }
+    },
+    {
+      "@id": "wf:confidence",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:double"
+      }
+    },
+    {
+      "@id": "wf:score",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:double"
+      }
+    },
+    {
+      "@id": "wf:noul",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:double"
+      }
+    },
+    {
+      "@id": "wf:subsumes",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:double"
+      }
+    },
+    {
+      "@id": "wf:axioms_verified",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:boolean"
+      }
+    },
+    {
+      "@id": "wf:probability",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:double"
+      }
+    },
+    {
+      "@id": "wf:option",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:string"
+      }
+    },
+    {
+      "@id": "wf:modelIdentifier",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:string"
+      }
+    },
+    {
+      "@id": "wf:replayOf",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "wf:WorkflowRun"
+      }
+    },
+    {
+      "@id": "wf:executionMode",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:string"
+      }
+    },
+    {
+      "@id": "wf:DeclaredResource",
+      "@type": "owl:Class",
+      "rdfs:subClassOf": {
+        "@id": "prov:Entity"
+      }
+    },
+    {
+      "@id": "wf:resourceState",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:range": {
+        "@id": "xsd:string"
+      }
+    },
+    {
+      "@id": "wf:declaredIn",
+      "@type": "owl:ObjectProperty",
+      "rdfs:range": {
+        "@id": "wf:WorkflowDefinition"
+      }
+    }
+  ]
+}
