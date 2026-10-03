@@ -30,13 +30,16 @@ from olaya.data_gen import (
     generate_synthetic_incidents,
 )
 from olaya.engine import _flat_subgraph
+from olaya.evaluation import SourceObservation, normalized_text, split_observations, stable_id
 from olaya.model import OntologyDecisionModel
 from olaya.ontology import Concept, Ontology, create_incident_ontology
 from olaya.sequence import (
     QTYPE_IDS,
     SequenceBundle,
     build_ontology_sequence,
+    serialize_state,
 )
+from olaya.tokenizer import load_local_tokenizer
 
 
 @dataclass
@@ -229,6 +232,50 @@ def build_training_samples(
     return samples
 
 
+def incident_observations(instances: list[IncidentInstance]) -> list[SourceObservation]:
+    """Describe synthetic incidents as source observations grouped by their generating template.
+
+    Instances created from the same ``INCIDENT_TEMPLATES`` entry (same target, service, log level and
+    error text) share a group id, so a group-disjoint split never places a template's rewordings on both
+    sides of the train/validation boundary.
+    """
+    rows: list[SourceObservation] = []
+    for inst in instances:
+        state = inst.state
+        text = serialize_state(state)
+        group_id = stable_id(
+            "incident_template",
+            inst.target_curie,
+            str(state.get("service", "")),
+            str(state.get("log_level", "")),
+            str(state.get("error", "")),
+        )
+        rows.append(
+            SourceObservation(
+                source_id=stable_id("incident", inst.target_curie, normalized_text(text)),
+                group_id=group_id,
+                target_curie=inst.target_curie,
+                query_text=text,
+                source_kind="synthetic_incident",
+            )
+        )
+    return rows
+
+
+def split_incident_instances(instances: list[IncidentInstance], seed: int = 42) -> dict[str, list[IncidentInstance]]:
+    """Group-disjoint partition of incidents via :func:`olaya.evaluation.split_observations`.
+
+    Returns the same partition names as the evaluation splitter (``train``, ``validation``,
+    ``calibration``, ``test``); duplicate observations (identical state and target) are collapsed.
+    """
+    by_source: dict[str, IncidentInstance] = {}
+    rows = incident_observations(instances)
+    for row, inst in zip(rows, instances, strict=True):
+        by_source.setdefault(row.source_id, inst)
+    splits = split_observations(rows, seed=seed)
+    return {name: [by_source[row.source_id] for row in part] for name, part in splits.items()}
+
+
 class DecisionDataset(Dataset):
     def __init__(self, samples: list[TrainingSample]):
         self.samples = samples
@@ -347,12 +394,7 @@ def train_olaya(
         dev = torch.device(device)
 
     # Tokenizer setup
-    if tokenizer is None:
-        from tests.conftest import load_local_tokenizer
-
-        tok = load_local_tokenizer()
-    else:
-        tok = tokenizer
+    tok = load_local_tokenizer() if tokenizer is None else tokenizer
 
     special_ids = {
         "cls": getattr(tok, "cls_token_id", 50281) or 50281,
@@ -364,8 +406,15 @@ def train_olaya(
     # Generate synthetic incidents and build samples
     print(f"Generating {num_samples} synthetic operational incidents...")
     instances = generate_synthetic_incidents(num_samples=num_samples, seed=seed)
-    split_idx = int(0.85 * len(instances))
-    train_insts, val_insts = instances[:split_idx], instances[split_idx:]
+    # Group-disjoint split: incidents reworded from the same template never straddle train/validation.
+    # Validation drives checkpoint selection; the calibration/test partitions are held out untouched.
+    splits = split_incident_instances(instances, seed=seed)
+    train_insts, val_insts = splits["train"], splits["validation"]
+    print(
+        "Group-disjoint split: "
+        + ", ".join(f"{name}={len(part)}" for name, part in splits.items())
+        + " incidents (calibration/test held out)"
+    )
 
     print("Building typed decision sequence bundles...")
     train_samples = build_training_samples(

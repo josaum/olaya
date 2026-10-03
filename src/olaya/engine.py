@@ -2,29 +2,58 @@
 
 Provides the Jev/Laya-compatible `system_one` API extended with formal ontology grounding:
 - `concept`: Grounds state to a verified ontology concept with ancestral lineage and consistency guarantees
-- `subsumes`: Calibrated Bernoulli P(state is an instance of Concept C or any of its descendants)
-- `choice`: Pick one option from a discrete set with calibrated probabilities
+- `subsumes`: Bernoulli P(state is an instance of Concept C or any of its descendants)
+- `choice`: Pick one option from a discrete set with normalized probabilities
 - `score`: Expected continuous level across an ordered rubric
-- `noul`: Calibrated Bernoulli probability P(true) for yes/no statements
+- `noul`: Bernoulli probability P(true) for yes/no statements
+
+Temperature rule
+----------------
+Candidate logits are softmaxed with a temperature. Without a fitted temperature the cardinality
+heuristic :func:`olaya.axioms.temperature_by_cardinality` applies (the projections in ``olaya.axioms``
+divide by it). When the loaded checkpoint carries a fitted ``temperature`` (see
+``scripts/train_real_ontologies.py`` / ``scripts/calibrate_temperature.py``, which fit it on raw,
+mask-excluded logits), that fitted value *replaces* the heuristic: the engine pre-multiplies the
+candidate logits by ``T_card(k) / T_fitted`` so the projection's division by ``T_card(k)`` yields
+``softmax(logits / T_fitted)`` exactly. Padded (non-candidate) slots never enter the softmax either way.
+
+Confidence is normalized-entropy confidence; it is only empirically calibrated when such a fitted
+temperature is loaded.
 """
 
 from __future__ import annotations
 
+import hashlib
+import math
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import torch
 from transformers import AutoTokenizer
 
-from olaya.axioms import calibrate_and_project_distribution, project_hierarchical_distribution, verify_axioms
+from olaya.axioms import (
+    calibrate_and_project_distribution,
+    project_hierarchical_distribution,
+    temperature_by_cardinality,
+    verify_axioms,
+)
 from olaya.candidate_router import CandidateRouter
+from olaya.category_theory import extract_morphism_matrices
 from olaya.model import OntologyDecisionModel
 from olaya.ontology import Concept, Ontology, create_incident_ontology
 from olaya.sequence import QTYPE_IDS, SequenceBundle, build_ontology_sequence, serialize_state
 
 DEFAULT_SCORE_LEVELS = ["level 0", "level 1", "level 2", "level 3"]
+
+# Provenance tag used when the engine runs on freshly initialised (random) weights.
+UNTRAINED_MODEL_ID = "untrained-random-init"
+# Provenance tag used when the caller injects a model object whose weights the engine did not load.
+INJECTED_MODEL_ID = "injected-model"
+
+_DISTRIBUTION_TOL = 1e-6
 
 
 @dataclass
@@ -35,6 +64,9 @@ class ConceptAnswer:
     (the leaves of the active subgraph); ``curie`` is its argmax. ``probabilities`` holds hierarchical
     marginals P(state is an instance of C) for every concept in the active subgraph, so ancestors
     carry the summed mass of their descendants and P(parent) >= P(child) by construction.
+
+    ``axioms_verified`` is always computed by the engine (``verify_axioms`` over the marginals); the
+    dataclass default is ``False`` so a value of ``True`` is never a placeholder.
     """
 
     type: str = "concept"
@@ -44,16 +76,16 @@ class ConceptAnswer:
     probabilities: dict[str, float] = field(default_factory=dict)
     candidate_probabilities: dict[str, float] = field(default_factory=dict)
     confidence: float = 0.0
-    axioms_verified: bool = True
+    axioms_verified: bool = False
 
 
 @dataclass
 class SubsumesAnswer:
     type: str = "subsumes"
     concept: str = ""
-    subsumes: float = 0.0  # Calibrated P(true)
+    subsumes: float = 0.0  # P(true)
     confidence: float = 0.0
-    axioms_verified: bool = True
+    axioms_verified: bool = False
 
 
 @dataclass
@@ -62,6 +94,7 @@ class ChoiceAnswer:
     choice: str = ""
     probabilities: dict[str, float] = field(default_factory=dict)
     confidence: float = 0.0
+    axioms_verified: bool = False
 
 
 @dataclass
@@ -70,20 +103,32 @@ class ScoreAnswer:
     score: float = 0.0
     probabilities: dict[str, float] = field(default_factory=dict)
     confidence: float = 0.0
+    axioms_verified: bool = False
 
 
 @dataclass
 class NoulAnswer:
     type: str = "noul"
     noul: float = 0.0  # P(true)
+    axioms_verified: bool = False
 
 
 @dataclass
 class SystemOneResult:
+    """Result of one ``system_one`` call.
+
+    ``model`` records weight provenance: ``checkpoint-sha256:<prefix>`` for a loaded checkpoint,
+    ``untrained-random-init`` for freshly initialised weights, or ``injected-model`` for a model
+    object supplied by the caller. ``act_probabilities`` maps each question id to the auxiliary
+    act/escalate head's P(act) for that question's sequence (trained against escalation targets in
+    ``olaya.train``; it is not an ontology-projected quantity).
+    """
+
     model: str
     answers: dict[str, Any]
     usage: dict[str, int]
     latency_ms: float
+    act_probabilities: dict[str, float] = field(default_factory=dict)
 
 
 class OLaya:
@@ -119,44 +164,32 @@ class OLaya:
         else:
             self.tokenizer = tokenizer
 
-        # Model setup
-        self.calibrated_temperature = 1.0
+        # Model setup. ``calibrated_temperature`` stays None unless the checkpoint carries a fitted
+        # value (see the module docstring for how it is applied).
+        self.calibrated_temperature: float | None = None
+        self.model_id: str = UNTRAINED_MODEL_ID
         if model is None:
-            # Check checkpoint config if available
             ckpt = None
+            ckpt_file: Path | None = None
             if weights_path is not False and weights_path != "":
                 ckpt_file = Path(weights_path) if weights_path is not None else Path("models/olaya_decision_model.pt")
                 if ckpt_file.is_file():
                     ckpt = torch.load(ckpt_file, map_location=self.device)
-                    if isinstance(ckpt, dict):
-                        self.calibrated_temperature = float(ckpt.get("temperature", 1.0))
+                    if isinstance(ckpt, dict) and "temperature" in ckpt:
+                        self.calibrated_temperature = _validated_temperature(ckpt["temperature"], ckpt_file)
+                else:
+                    ckpt_file = None
 
             cfg_dict = ckpt.get("config", {}) if isinstance(ckpt, dict) else {}
-            bb = cfg_dict.get("backbone")
-            if bb and bb != "custom_bert":
-                self.model = OntologyDecisionModel(backbone_name_or_config=bb)
-            else:
-                from transformers import BertConfig, BertModel
-
-                default_v_size = max(len(self.tokenizer), getattr(self.tokenizer, "vocab_size", 30522)) + 256
-                v_size = cfg_dict.get("vocab_size", default_v_size)
-                h_size = cfg_dict.get("hidden_size", 256)
-                cfg = BertConfig(
-                    vocab_size=v_size,
-                    hidden_size=h_size,
-                    num_hidden_layers=cfg_dict.get("num_hidden_layers", 4),
-                    num_attention_heads=cfg_dict.get("num_attention_heads", 4),
-                    intermediate_size=cfg_dict.get("intermediate_size", 512),
-                    max_position_embeddings=512,
-                )
-                custom_encoder = BertModel(cfg)
-                self.model = OntologyDecisionModel(hidden_size=h_size, custom_encoder=custom_encoder)
+            self.model = self._build_model(cfg_dict)
 
             if ckpt is not None:
                 state_dict = ckpt["model_state_dict"] if isinstance(ckpt, dict) and "model_state_dict" in ckpt else ckpt
-                self.model.load_state_dict(state_dict, strict=False)
+                _load_state_dict_strict(self.model, state_dict, ckpt_file)
+                self.model_id = f"checkpoint-sha256:{_file_sha256(ckpt_file)[:12]}"
         else:
             self.model = model
+            self.model_id = INJECTED_MODEL_ID
 
         self.model.to(self.device)
         self.model.eval()
@@ -169,8 +202,40 @@ class OLaya:
             "pad": _token_id_or(self.tokenizer.pad_token_id, 0),
         }
 
+    def _build_model(self, cfg_dict: dict[str, Any]) -> OntologyDecisionModel:
+        """Instantiate the decision model from a checkpoint ``config`` block (or defaults)."""
+        bb = cfg_dict.get("backbone")
+        if bb and bb != "custom_bert":
+            return OntologyDecisionModel(backbone_name_or_config=bb)
+
+        from transformers import BertConfig, BertModel
+
+        default_v_size = max(len(self.tokenizer), getattr(self.tokenizer, "vocab_size", 30522)) + 256
+        h_size = cfg_dict.get("hidden_size", 256)
+        cfg = BertConfig(
+            vocab_size=cfg_dict.get("vocab_size", default_v_size),
+            hidden_size=h_size,
+            num_hidden_layers=cfg_dict.get("num_hidden_layers", 4),
+            num_attention_heads=cfg_dict.get("num_attention_heads", 4),
+            intermediate_size=cfg_dict.get("intermediate_size", 512),
+            max_position_embeddings=cfg_dict.get("max_position_embeddings", 512),
+        )
+        return OntologyDecisionModel(hidden_size=h_size, custom_encoder=BertModel(cfg))
+
     def _encode_text(self, text: str) -> list[int]:
         return self.tokenizer.encode(text, add_special_tokens=False)
+
+    def _calibrated_logits(self, raw_scores: np.ndarray) -> np.ndarray:
+        """Apply the temperature rule from the module docstring to the candidate-slot logits.
+
+        ``raw_scores`` must already be restricted to the real candidate slots (no padding). With a
+        fitted temperature ``T`` the returned logits are ``raw * T_card(k) / T``; the downstream
+        projection divides by ``T_card(k)`` again, so the effective softmax is ``softmax(raw / T)``.
+        """
+        if self.calibrated_temperature is None:
+            return raw_scores
+        k = len(raw_scores)
+        return raw_scores * (temperature_by_cardinality(k) / self.calibrated_temperature)
 
     def system_one(self, state: Any, questions: dict[str, dict[str, Any]]) -> SystemOneResult:
         """Evaluate typed questions against input state in a single forward pass."""
@@ -181,6 +246,10 @@ class OLaya:
 
         bundles: list[SequenceBundle] = []
         subgraphs: list[Ontology] = []
+        # Ontology used to build each bundle's morphism matrices. This mirrors the training
+        # collate (``olaya.train.collate_decision_batch``): concept questions carry the full
+        # ontology, flat questions carry none (all-zero adjacency).
+        morphism_ontologies: list[Ontology | None] = []
         total_tokens = 0
         state_text = serialize_state(state)
 
@@ -188,6 +257,7 @@ class OLaya:
             q = questions[qid]
             qtype = q.get("type", "concept")
             instructions = q.get("instructions", "")
+            morphism_ontology: Ontology | None = None
 
             if qtype == "concept":
                 root_curie = q.get("root")
@@ -201,6 +271,7 @@ class OLaya:
                 # Only the most specific routed concepts compete; their ancestors appear as
                 # subClassOf context in the option text and receive mass through marginals.
                 active_concepts = [c for c in subgraph.concepts.values() if not c.children]
+                morphism_ontology = self.ontology
 
             elif qtype == "subsumes":
                 target_curie = q.get("concept", "")
@@ -267,6 +338,7 @@ class OLaya:
             )
             bundles.append(bundle)
             subgraphs.append(subgraph)
+            morphism_ontologies.append(morphism_ontology)
 
         # Batch collate
         n = len(bundles)
@@ -279,6 +351,10 @@ class OLaya:
         marker_pos = torch.zeros((n, max_markers), dtype=torch.long)
         marker_mask = torch.zeros((n, max_markers), dtype=torch.bool)
         qtypes = torch.zeros((n,), dtype=torch.long)
+        # Morphism adjacency over candidate slots, built exactly as the training collate does.
+        parent_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
+        child_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
+        disjoint_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
 
         for i, b in enumerate(bundles):
             seq_len = len(b.input_ids)
@@ -288,6 +364,13 @@ class OLaya:
             if num_m > 0:
                 marker_pos[i, :num_m] = torch.tensor(b.marker_positions, dtype=torch.long)
                 marker_mask[i, :num_m] = True
+                if morphism_ontologies[i] is not None and b.candidate_curies:
+                    _, p_m, c_m, d_m = extract_morphism_matrices(
+                        b.candidate_curies, morphism_ontologies[i], max_k=num_m
+                    )
+                    parent_adj[i, :num_m, :num_m] = torch.from_numpy(p_m)
+                    child_adj[i, :num_m, :num_m] = torch.from_numpy(c_m)
+                    disjoint_adj[i, :num_m, :num_m] = torch.from_numpy(d_m)
             qtypes[i] = b.qtype
             total_tokens += seq_len
 
@@ -299,17 +382,30 @@ class OLaya:
         qtypes = qtypes.to(self.device)
 
         with torch.no_grad():
-            logits, act_probs = self.model(input_ids, attention_mask, marker_pos, marker_mask, qtypes)
+            logits, act_probs = self.model(
+                input_ids,
+                attention_mask,
+                marker_pos,
+                marker_mask,
+                qtypes,
+                parent_adj=parent_adj.to(self.device),
+                child_adj=child_adj.to(self.device),
+                disjoint_adj=disjoint_adj.to(self.device),
+            )
 
         logits_np = logits.cpu().numpy()
+        act_np = act_probs.cpu().numpy()
         answers: dict[str, Any] = {}
+        act_probabilities: dict[str, float] = {}
 
         for i, qid in enumerate(qids):
             b = bundles[i]
             subgraph = subgraphs[i]
             qtype = questions[qid].get("type", "concept")
             num_markers = len(b.marker_positions)
-            raw_scores = logits_np[i, :num_markers]
+            # Only real candidate slots: padded slots (masked to -1e4 by the head) never enter the softmax.
+            raw_scores = self._calibrated_logits(logits_np[i, :num_markers])
+            act_probabilities[qid] = round(float(act_np[i, 1]), 4)
 
             if qtype == "concept":
                 candidate_probs, marginals, confidence = project_hierarchical_distribution(
@@ -333,7 +429,7 @@ class OLaya:
                     probabilities={k: round(v, 4) for k, v in marginals.items()},
                     candidate_probabilities={k: round(v, 4) for k, v in candidate_probs.items()},
                     confidence=round(confidence, 4),
-                    axioms_verified=verify_axioms(marginals, subgraph),
+                    axioms_verified=_is_distribution(candidate_probs) and verify_axioms(marginals, subgraph),
                 )
                 continue
 
@@ -343,6 +439,9 @@ class OLaya:
                 subgraph=subgraph,
                 enforce_axioms=True,
             )
+            # Flat questions: the projection must return a proper distribution over the options and
+            # satisfy the (trivially-flat) subsumption/disjointness axioms of their subgraph.
+            axioms_ok = _is_distribution(prob_map) and verify_axioms(prob_map, subgraph)
 
             if qtype == "subsumes":
                 target_curie = questions[qid].get("concept", "")
@@ -351,6 +450,7 @@ class OLaya:
                     concept=target_curie,
                     subsumes=round(p_subsumes, 4),
                     confidence=round(confidence, 4),
+                    axioms_verified=axioms_ok and _is_probability(p_subsumes),
                 )
 
             elif qtype == "choice":
@@ -359,6 +459,7 @@ class OLaya:
                     choice=best_choice,
                     probabilities={k: round(v, 4) for k, v in prob_map.items()},
                     confidence=round(confidence, 4),
+                    axioms_verified=axioms_ok,
                 )
 
             elif qtype == "score":
@@ -367,19 +468,24 @@ class OLaya:
                     score=round(exp_score, 4),
                     probabilities={k: round(v, 4) for k, v in prob_map.items()},
                     confidence=round(confidence, 4),
+                    axioms_verified=axioms_ok,
                 )
 
             elif qtype == "noul":
                 p_true = prob_map.get("true", 0.5)
-                answers[qid] = NoulAnswer(noul=round(p_true, 4))
+                answers[qid] = NoulAnswer(
+                    noul=round(p_true, 4),
+                    axioms_verified=axioms_ok and _is_probability(p_true),
+                )
 
         latency_ms = (time.perf_counter() - start_time) * 1000.0
 
         return SystemOneResult(
-            model="o-laya-incident-v1",
+            model=self.model_id,
             answers=answers,
             usage={"input_tokens": total_tokens, "output_tokens": 0},
             latency_ms=round(latency_ms, 2),
+            act_probabilities=act_probabilities,
         )
 
 
@@ -392,3 +498,55 @@ def _flat_subgraph(name: str, concepts: list[Concept]) -> Ontology:
     for c in concepts:
         subgraph.add_concept(c)
     return subgraph
+
+
+def _is_probability(p: float, tol: float = _DISTRIBUTION_TOL) -> bool:
+    return math.isfinite(p) and -tol <= p <= 1.0 + tol
+
+
+def _is_distribution(prob_map: dict[str, float], tol: float = _DISTRIBUTION_TOL) -> bool:
+    """True when every value is a probability and the values sum to one."""
+    values = list(prob_map.values())
+    if not values or not all(_is_probability(v, tol) for v in values):
+        return False
+    return abs(sum(values) - 1.0) <= tol * max(1, len(values))
+
+
+def _validated_temperature(value: Any, ckpt_file: Path) -> float:
+    try:
+        temperature = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"Checkpoint {ckpt_file} has a non-numeric temperature: {value!r}") from exc
+    if not math.isfinite(temperature) or temperature <= 0.0:
+        raise ValueError(f"Checkpoint {ckpt_file} has an invalid temperature {temperature!r}; expected > 0.")
+    return temperature
+
+
+def _load_state_dict_strict(model: torch.nn.Module, state_dict: Any, ckpt_file: Path | None) -> None:
+    """Load weights strictly, naming the missing/unexpected keys when the checkpoint does not fit."""
+    if not isinstance(state_dict, dict):
+        raise ValueError(f"Checkpoint {ckpt_file} does not contain a state dict.")
+    expected = set(model.state_dict())
+    given = set(state_dict)
+    missing = sorted(expected - given)
+    unexpected = sorted(given - expected)
+    if missing or unexpected:
+        raise ValueError(
+            f"Checkpoint {ckpt_file} does not match the model architecture "
+            f"(missing {len(missing)} keys: {missing[:10]}; unexpected {len(unexpected)} keys: {unexpected[:10]}). "
+            "Rebuild the engine with the checkpoint's stored config or re-export the checkpoint."
+        )
+    try:
+        model.load_state_dict(state_dict, strict=True)
+    except RuntimeError as exc:  # e.g. shape mismatches
+        raise ValueError(f"Checkpoint {ckpt_file} does not match the model architecture: {exc}") from exc
+
+
+def _file_sha256(path: Path | None) -> str:
+    digest = hashlib.sha256()
+    if path is None:
+        return digest.hexdigest()
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()

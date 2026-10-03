@@ -118,7 +118,7 @@ def test_olaya_system_one_e2e(olaya):
         },
     )
 
-    assert result.model == "o-laya-incident-v1"
+    assert result.model == "untrained-random-init"
     assert "triage" in result.answers
     assert "is_data_issue" in result.answers
     assert "urgency" in result.answers
