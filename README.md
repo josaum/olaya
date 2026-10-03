@@ -342,3 +342,10 @@ against the regenerated file.
 
 MIT. Vendored OAEI data retains its upstream terms; see
 `tests/fixtures/oaei/README.md`.
+
+## Release builds
+
+Release builds are opt-in: include `[release]` in a commit pushed to `main`, or
+dispatch the Release workflow with `build_release=true`. See
+[release instructions](docs/release.md) for Python wheels, npm packages,
+complete Claude Desktop bundles, and Keychain signing.

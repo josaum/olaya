@@ -11,17 +11,20 @@ import queue
 import shutil
 import stat
 import subprocess
+import sys
 import tempfile
 import threading
+import tomllib
 import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_ARTIFACT = ROOT / "dist/olaya-desktop-complete-macos-arm64-0.2.0.mcpb"
+VERSION = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
+DEFAULT_ARTIFACT = ROOT / f"dist/olaya-desktop-complete-macos-arm64-{VERSION}.mcpb"
 DENIED_HOST_PATHS = [
     str(ROOT),
-    "/Users/josaum/.local/share/uv/python",
-    "/Users/josaum/.cache/huggingface",
+    str(Path(sys.base_prefix).resolve()),
+    str(Path(os.environ.get("HF_HOME", str(Path.home() / ".cache/huggingface"))).resolve()),
 ]
 
 

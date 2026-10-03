@@ -280,6 +280,54 @@ TOOLS = [
             "required": ["web_payload"],
         },
     },
+    {
+        "name": "olaya_obfuscate_pii",
+        "description": "Air-gapped, sovereign PII/PHI/MNPI obfuscation on demand. Sanitizes names, emails, phones, SSNs, credit cards, IPs, street addresses, and deal code names before data leaves your boundary or enters reasoning models.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string",
+                    "description": "Raw sensitive text, deal memo, transcript, or customer message.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["pseudonymize", "redact", "mask", "hash"],
+                    "default": "pseudonymize",
+                    "description": "Obfuscation mode: 'pseudonymize' (referential surrogates [PERSON_1]), 'redact' ([REDACTED_EMAIL]), 'mask' (j***@acme.com), or 'hash'.",
+                },
+                "custom_entities": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Optional custom company names, executive names, or target assets to protect.",
+                },
+                "deal_codenames": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Optional list of sensitive project code names (e.g. ['Project Helios', 'Project Titan']).",
+                },
+            },
+            "required": ["text"],
+        },
+    },
+    {
+        "name": "olaya_deanonymize_pii",
+        "description": "Reverses pseudonymized tokens in sanitized text back to their original entities using a private local de-anonymization vault.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "sanitized_text": {
+                    "type": "string",
+                    "description": "Sanitized text containing pseudonym tokens like [PERSON_1], [EMAIL_1].",
+                },
+                "vault": {
+                    "type": "object",
+                    "description": "Local de-anonymization vault dictionary returned by olaya_obfuscate_pii.",
+                },
+            },
+            "required": ["sanitized_text", "vault"],
+        },
+    },
 ]
 
 RESOURCE_SUMMARY_NOTE = (
@@ -564,6 +612,28 @@ class OLayaMCPServer:
                 "model": res.model,
                 "latency_ms": res.latency_ms,
             }
+
+        if name == "olaya_obfuscate_pii":
+            from olaya.pii import PIIObfuscator
+
+            obfuscator = PIIObfuscator()
+            res = obfuscator.obfuscate(
+                text=args["text"],
+                mode=args.get("mode", "pseudonymize"),
+                custom_entities=args.get("custom_entities"),
+                deal_codenames=args.get("deal_codenames"),
+            )
+            return res.to_dict()
+
+        if name == "olaya_deanonymize_pii":
+            from olaya.pii import PIIObfuscator
+
+            obfuscator = PIIObfuscator()
+            restored = obfuscator.deanonymize(
+                sanitized_text=args["sanitized_text"],
+                vault=args["vault"],
+            )
+            return {"restored_text": restored}
 
         raise ValueError(f"Unknown tool: {name}")
 

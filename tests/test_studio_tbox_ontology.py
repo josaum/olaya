@@ -15,7 +15,7 @@ from olaya.ontology import Ontology
 
 SPEC_DIR = Path(__file__).parent.parent / "spec"
 JSONLD_PATH = SPEC_DIR / "studio-deck-tbox.jsonld"
-ONTOLOGY_PATH = SPEC_DIR / "studio_deck_ontology.json"
+ONTOLOGY_PATH = SPEC_DIR / "studio-deck-ontology.json"
 
 
 def test_tbox_jsonld_structure():
