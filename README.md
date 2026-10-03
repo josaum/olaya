@@ -13,7 +13,58 @@ It ships as three runtimes that share one ontology model and one axiom specifica
 | **Python** | `olaya` (`src/olaya`) | Transformer marker-pooling head (**untrained**, see below) | Full `system_one` API: `concept`, `subsumes`, `choice`, `score`, `noul` |
 | **Node / TypeScript** | `@mycelia/olaya` (`packages/olaya-node`) | Lexical | Zero-dependency ESM + CJS; `systemOne`, `choice`, `score`, `noul` |
 
+## System One HTTP edge API
+
+The HTTP demo accepts `POST /api/systemone` at
+<https://public-nine-jade-58.vercel.app/api/systemone>; `GET` returns health metadata.
+Its implementation is [docs/public/api/systemone.js](docs/public/api/systemone.js).
+This edge handler uses lexical matching and does not load the ontology DAG,
+trained weights, or the full axiom projection kernel described below.
+Temperature-scaled softmax weights and entropy confidence do not by themselves
+establish empirical calibration. The health metadata currently advertises stronger
+ontology guarantees than this handler implements.
+
+```bash
+curl https://public-nine-jade-58.vercel.app/api/systemone \
+  -H 'Content-Type: application/json' \
+  --data '{"state":"Urgent frozen seafood shipment requires cold storage.","questions":{"storage":{"type":"choice","options":["cold storage","ambient storage"]},"priority":{"type":"score","criteria":["routine","urgent","critical"]},"frozen":{"type":"noul","instructions":"frozen seafood"}}}'
+```
+
+The source contract now returns `choice: null`, `abstained: true`, and a reason
+for unsupported or tied choices. Consumers must handle abstention before acting.
+Edge `noul` reports `evidence_status` and `abstained`. Supported positive or
+negative mentions have statuses `supported` or `contradicted`. Unmatched,
+conflicting, ambiguous-scope, and unsupported question wording return
+`noul: 0.5`, `confidence: 0`, and `abstained: true`. Structured state uses separate
+string values as evidence, excluding object keys and scalar booleans/numbers.
+Choice/score also exclude keys and scalar booleans/numbers, but can combine
+label-token evidence across string values; `noul` requires a mention in one value.
+This remains bounded lexical matching. See the [complete edge contract](spec/systemone-reliability.md).
+
+The current focused suite contains 34 regression tests; it does not establish
+general language understanding, decision accuracy, or probability calibration:
+
+```bash
+node --test tests/systemone-edge.test.mjs
+node benchmarks/bench_systemone_edge.mjs
+```
+
+The [benchmark script](benchmarks/bench_systemone_edge.mjs) records runtime,
+workloads, sample counts, warm-up, and repeated local trials. Its measurements
+exclude network transport and Vercel scheduling/cold starts. The earlier ad hoc
+comparison measured the initial 15-test patch (200 warm-up requests, 2,000 samples):
+original/patched median 0.0274/0.0317 ms and p95 0.0377/0.0420 ms. These historical
+numbers do not measure the expanded handler. Commit `7989f31` contains that initial
+patch. Deployment and GitHub push were connectivity-blocked in that verification
+session; verify the current release and live cases independently.
+
 ## Project status: read this first
+
+The model accuracy, ECE, WASM, and performance figures below are historical
+repository reports, not reproduced during the edge reliability work. Different
+sections describe different or incompletely specified workloads; numerical
+differences have not been reconciled. Do not treat them as current acceptance
+evidence or as performance/calibration evidence for the HTTP edge handler.
 
 - **Trained weights and ONNX models are available.** O-Laya includes a trained decision head
   checkpoint (`models/olaya_decision_model.pt`, 81.4% val accuracy) and multi-domain models trained
@@ -33,6 +84,10 @@ It ships as three runtimes that share one ontology model and one axiom specifica
 
 ## Measured performance
 
+Historical repository-reported results; not reproduced for this patch. Workload
+and cross-section comparability remain unverified. These are not HTTP endpoint
+measurements.
+
 Rust, lexical scoring, `olaya-core` release build, one core of the CI-class container used for
 this measurement (`cargo run --release -p olaya-core --bin bench_arrow`), 10,000 decisions per
 ontology size, `max_candidates = 8`:
@@ -44,6 +99,10 @@ ontology size, `max_candidates = 8`:
 | 100,000 | 320 ms | 4.9 µs | ~200k decisions/s |
 
 ### End-to-End Architecture & Latency Benchmark
+
+Historical repository-reported results; not reproduced for this patch. Workload
+and cross-section comparability remain unverified. These are not HTTP endpoint
+measurements.
 
 Measured on Apple Silicon MPS via `benchmarks/bench_e2e_comparison.py` over 25 operational GS1 evaluation runs (batch size 3: `concept`, `subsumes`, `score`):
 
@@ -59,12 +118,16 @@ Measured on Apple Silicon MPS via `benchmarks/bench_e2e_comparison.py` over 25 o
 | **Throughput** | **~210,000 decisions/s** | **130.8 decisions/s** | **6.0 decisions/s** | **52.5 decisions/s** |
 | **Axiom Kernel** | Rust (`olaya-core`) | PyTorch + Projection | PyTorch + Projection | Spec 2024-11-05 verified |
 
-- **Sub-microsecond routing**: The Arrow-native lexical router achieves 4.8 µs flat latency.
+- **Microsecond routing**: The Arrow-native lexical router achieves 4.8 µs flat latency.
 - **Ultra-low latency neural decisions**: Lightweight Custom BERT provides full cross-attention candidate reasoning under 23 ms.
 - **Deep semantic capacity**: ModernBERT-base expands representation capacity for intricate enterprise knowledge graphs.
 - **Agent RPC integration**: Zero-dependency stdio JSON-RPC 2.0 WebMCP bridge executes live tool calls in under 18 ms.
 
 ## Formal Validation: OAEI (Ontology Alignment Evaluation Initiative)
+
+Historical repository-reported results; not reproduced for this patch. Workload
+and cross-section comparability remain unverified. These are not HTTP endpoint
+measurements.
 
 Leio / O-Laya is evaluated against the official **OAEI Conference Track** benchmark (OntoFarm dataset), measuring semantic alignment accuracy and logical incoherence elimination across 21 pairwise ontology alignments and 259 class correspondences:
 
@@ -383,3 +446,31 @@ and bring the other runtimes to green against the regenerated file.
 ## License
 
 MIT.
+
+### Reproducible edge handler measurement
+
+The expanded patch was measured on 2026-10-03 UTC (2026-10-02 local time),
+Node v24.13.0, Apple M1. Five separate processes each measured 2,000 requests
+per handler after 200 warm-ups. Original per-run medians ranged from
+0.033084 to 0.034750 ms; patched medians ranged from 0.038750 to 0.041000 ms.
+The patched handler was slower in all five runs. This single-workload local
+measurement includes Request construction, handler execution, response decoding,
+and identical assertions; it excludes network transport and body serialization.
+It does not establish production latency, general accuracy, or calibration.
+[Raw results and source hashes](benchmarks/results/systemone-edge-2026-10-03.json)
+are saved alongside the [benchmark script](benchmarks/bench_systemone_edge.mjs).
+
+### Production acceptance, 2026-10-03 UTC
+
+Deployment `dpl_3yrTp5w3afrnmyamw7E8XFj8zqtK` reached READY and was aliased to
+<https://public-nine-jade-58.vercel.app>. All 34 focused regression cases passed
+against the public `/api/systemone` endpoint. Reproduce them with:
+
+```bash
+SYSTEMONE_TEST_URL=https://public-nine-jade-58.vercel.app/api/systemone node --test tests/systemone-edge.test.mjs
+```
+
+These are targeted acceptance checks, not general accuracy or calibration proof.
+[PR #2](https://github.com/josaum/olaya/pull/2) has passing edge and Node checks;
+Rust formatting and Python Ruff checks fail on unchanged base source. Their later
+test stages were not reached. The PR has not been merged as of this verification.
