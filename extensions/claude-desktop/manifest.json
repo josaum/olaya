@@ -1,0 +1,13 @@
+{
+  "manifest_version": "0.3",
+  "name": "olaya-desktop",
+  "display_name": "O-Laya Ontology Tools and Skills",
+  "version": "0.1.0",
+  "description": "Offline ontology lexical grounding with JSON-LD evidence and TBox workflow authoring skills.",
+  "author": {"name": "O-Laya contributors"},
+  "license": "MIT",
+  "server": {"type": "node", "entry_point": "server/index.mjs", "mcp_config": {"command": "node", "args": ["${__dirname}/server/index.mjs"]}},
+  "tools_generated": true,
+  "prompts_generated": true,
+  "compatibility": {"platforms": ["darwin", "win32"], "runtimes": {"node": ">=18.0.0"}}
+}
