@@ -3,13 +3,7 @@
  * Fully compatible with Convai / Receptron's Laya and TypeSafe AI's Jev primitives.
  */
 
-import {
-  calibrateAndProject,
-  normalizedEntropyConfidence,
-  softmax,
-  temperatureByCardinality,
-  verifyAxioms,
-} from "./axioms.js";
+import { calibrateAndProject, temperatureByCardinality, verifyAxioms } from "./axioms.js";
 import { Concept, OntologyDAG } from "./ontology.js";
 import { CandidateRouter, tokenize } from "./router.js";
 
@@ -30,6 +24,17 @@ export interface NoulResult {
   accepted: boolean;
   selected?: string;
   rejectionConfidence: number;
+}
+
+export interface RatingResult {
+  /** 1-based index of the selected level label. */
+  level: number;
+  /** Expected level position in [0, 1] (0 = first label, 1 = last label). */
+  score: number;
+  /** Normalised-entropy confidence of the level distribution. */
+  confidence: number;
+  /** Probability per level label. */
+  probabilities: Record<string, number>;
 }
 
 export class OLaya {
@@ -87,14 +92,14 @@ export class OLaya {
       }
     }
 
-    const t = temperatureByCardinality(m);
-    const preProjectionProbs = softmax(logits, t);
-    // Compute confidence before monotonicity lifting: after lift, parent probs are elevated
-    // to match their best child, creating degenerate uniform distributions over ancestor chains
-    // that would register as maximum entropy (confidence=0) incorrectly.
-    const confidence = normalizedEntropyConfidence(preProjectionProbs);
-
-    const { probs } = calibrateAndProject(logits, subgraph.parentEdges, subgraph.disjointEdges, t);
+    // Projected values plus the spec step-5 confidence (measured on the calibrated distribution
+    // before monotonicity lifting, after disjointness exclusion).
+    const { probs, confidence } = calibrateAndProject(
+      logits,
+      subgraph.parentEdges,
+      subgraph.disjointEdges,
+      temperatureByCardinality(m)
+    );
 
     // Argmax selection breaking ties in favor of more specific leaf concepts
     let bestSlot = 0;
@@ -191,6 +196,32 @@ export class OLaya {
     const matchRatio = matches / critTokens.length;
     const logit = (matchRatio - 0.3) * 6.0;
     return 1 / (1 + Math.exp(-logit));
+  }
+
+  /**
+   * Rate a state on an ordered scale of level labels (lowest first).
+   *
+   * This is the `choice` primitive over the level labels: each level's probability comes from the
+   * lexical overlap between the state and that label (plus `instructions`), calibrated by the shared
+   * kernel. `level` is the 1-based argmax, `score` the expected position in `[0, 1]`, and
+   * `confidence` the normalised-entropy confidence of the level distribution, so a state that
+   * matches none of the labels yields a uniform distribution and confidence 0.
+   */
+  public async rate(stateText: string, levels: string[], instructions?: string): Promise<RatingResult> {
+    if (levels.length === 0) {
+      throw new Error("rate() needs at least one level label");
+    }
+    const res = await this.choice(stateText, levels, instructions);
+    const probabilities: Record<string, number> = {};
+    let expected = 0;
+    levels.forEach((label, idx) => {
+      const p = res.probabilities[label] ?? 0;
+      probabilities[label] = p;
+      expected += p * idx;
+    });
+    const bestIdx = Math.max(0, levels.indexOf(res.choice));
+    const score = levels.length > 1 ? expected / (levels.length - 1) : 0;
+    return { level: bestIdx + 1, score, confidence: res.confidence, probabilities };
   }
 
   /**

@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 /**
- * CLI Entrypoint for @mycelia/olaya-mcp
- * Zero-dependency Model Context Protocol server.
+ * CLI entrypoint for @mycelia/olaya-mcp: a zero-dependency Model Context Protocol server.
  */
 
-import { OLayaNodeMCPServer, installNodeMCPConfig } from "./mcp.js";
-import { LeioServer } from "./server.js";
+import { OLayaNodeMCPServer, installNodeMCPConfig, LATEST_PROTOCOL_VERSION, DEFAULT_DOMAIN } from "./mcp.js";
+import { OlayaHttpServer } from "./server.js";
 
 const args = process.argv.slice(2);
 
 function printHelp(): void {
   console.log(`
-Leio Model Context Protocol (MCP) & System 1 Decision Server
+O-Laya Model Context Protocol (MCP) server and lexical decision HTTP server
 
 Usage:
-  npx @mycelia/olaya-mcp                     Start stdio MCP server (MCP 2026-07-28)
-  npx @mycelia/olaya-mcp serve [--port 8080] Start HTTP server (Jev /v1/systemone + MCP 2026)
-  npx @mycelia/olaya-mcp ground "<text>"     Ground observation from CLI
-  npx @mycelia/olaya-mcp install --client claude  Configure Claude Desktop
-  npx @mycelia/olaya-mcp install --client cursor  Configure Cursor IDE
+  npx @mycelia/olaya-mcp                           Start stdio MCP server (protocol ${LATEST_PROTOCOL_VERSION} / 2024-11-05)
+  npx @mycelia/olaya-mcp serve [--port 8080]       Start HTTP server (/v1/systemone, /v1/mcp, /v1/health)
+  npx @mycelia/olaya-mcp ground "<text>" [--domain ${DEFAULT_DOMAIN}]
+                                                   Ground an observation from the CLI
+  npx @mycelia/olaya-mcp install --client claude   Configure Claude Desktop
+  npx @mycelia/olaya-mcp install --client cursor   Configure Cursor IDE
 `);
 }
 
@@ -42,7 +42,7 @@ async function run(): Promise<void> {
   if (command === "serve") {
     const portIdx = args.indexOf("--port");
     const port = portIdx !== -1 && args[portIdx + 1] ? parseInt(args[portIdx + 1], 10) : 8080;
-    const server = new LeioServer(port);
+    const server = new OlayaHttpServer(port);
     await server.start();
     return;
   }
@@ -50,14 +50,14 @@ async function run(): Promise<void> {
   if (command === "ground") {
     const text = args[1] || "";
     const domainIdx = args.indexOf("--domain");
-    const domain = domainIdx !== -1 && args[domainIdx + 1] ? args[domainIdx + 1] : "gs1";
+    const domain = domainIdx !== -1 && args[domainIdx + 1] ? args[domainIdx + 1] : DEFAULT_DOMAIN;
     const server = new OLayaNodeMCPServer();
     const res = await server.executeTool("olaya_ground", { state: text, domain });
     console.log(JSON.stringify(res, null, 2));
     return;
   }
 
-  // Default: Run stdio MCP server
+  // Default: run the stdio MCP server
   const server = new OLayaNodeMCPServer();
   server.runStdio();
 }

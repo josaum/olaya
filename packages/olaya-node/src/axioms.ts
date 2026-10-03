@@ -147,12 +147,27 @@ export function normalizedEntropyConfidence(probs: Float32Array): number {
 }
 
 /**
+ * Spec step 5: confidence of the *calibrated* (pre-lift) distribution restricted to the slots that
+ * survived disjointness exclusion.
+ *
+ * Lifting copies a child's mass onto every ancestor, so measuring entropy on the projected values
+ * would make a confident deep decision look uniform (confidence 0). A slot that disjointness zeroed
+ * no longer competes, so it is masked out here too.
+ */
+export function projectedConfidence(calibrated: Float32Array, projected: Float32Array): number {
+  const masked = new Float32Array(calibrated.length);
+  for (let i = 0; i < calibrated.length; i++) {
+    masked[i] = projected[i] > 0 ? calibrated[i] : 0;
+  }
+  return normalizedEntropyConfidence(masked);
+}
+
+/**
  * Full calibration and axiom projection pipeline: cardinality-calibrated softmax, monotonicity
  * lifting, then disjointness. Probabilities are not renormalized afterwards (after lifting they are
- * hierarchical scores, not a simplex); the confidence normalizes internally.
- *
- * NOTE: Confidence is computed after projection to match spec/axioms_golden.json.
- * For decision selection, use normalizedEntropyConfidence on pre-projection probs.
+ * hierarchical scores, not a simplex). The confidence is the step-5 value of spec/AXIOMS.md,
+ * measured on the calibrated distribution before lifting; test/olaya.test.ts checks both against
+ * spec/axioms_golden.json.
  */
 export function calibrateAndProject(
   rawLogits: Float32Array,
@@ -161,9 +176,10 @@ export function calibrateAndProject(
   temperature = temperatureByCardinality(rawLogits.length)
 ): { probs: Float32Array; confidence: number } {
   const probs = softmax(rawLogits, temperature);
+  const calibrated = Float32Array.from(probs);
   enforceSubsumptionMonotonicityInplace(probs, parentEdges);
   enforceDisjointnessInplace(probs, disjointEdges, DISJOINT_THRESHOLD, parentEdges);
 
-  const confidence = normalizedEntropyConfidence(probs);
+  const confidence = projectedConfidence(calibrated, probs);
   return { probs, confidence };
 }

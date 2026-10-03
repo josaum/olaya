@@ -129,7 +129,26 @@ pub fn verify_axioms(
     monotone && exclusive
 }
 
+/// Spec step 5: confidence of the *calibrated* (pre-lift) distribution, restricted to the slots
+/// that survived disjointness exclusion.
+///
+/// `calibrated[i]` is slot `i`'s softmax value and `projected[i]` its value after monotonicity
+/// lifting and disjointness. Lifting copies a child's mass onto every ancestor, so measuring entropy
+/// on `projected` would make a confident deep decision look uniform (confidence 0); a slot that
+/// disjointness zeroed no longer competes, so it is masked out here too.
+pub fn projected_confidence(calibrated: &[f32], projected: &[f32]) -> f32 {
+    let masked: Vec<f32> = calibrated
+        .iter()
+        .zip(projected)
+        .map(|(&p, &q)| if q > 0.0 { p } else { 0.0 })
+        .collect();
+    normalized_entropy_confidence(&masked)
+}
+
 /// Applies temperature-scaled softmax, axiom projections, and calculates confidence.
+///
+/// On return `logits` holds the projected values (steps 2–4 of `spec/AXIOMS.md`) and the result is
+/// the step-5 confidence, which is measured on the calibrated distribution before lifting.
 pub fn calibrate_and_project_inplace(
     logits: &mut [f32],
     parent_edges: &[(usize, usize)],
@@ -155,11 +174,12 @@ pub fn calibrate_and_project_inplace(
             *l /= sum_exp;
         }
     }
+    let calibrated = logits.to_vec();
 
     // 2. Axiom enforcement
     enforce_subsumption_monotonicity_inplace(logits, parent_edges);
     enforce_disjointness_inplace(logits, parent_edges, disjoint_edges, DISJOINT_THRESHOLD);
 
-    // 3. Compute normalized entropy confidence
-    normalized_entropy_confidence(logits)
+    // 3. Confidence of the calibrated distribution over the surviving candidates
+    projected_confidence(&calibrated, logits)
 }

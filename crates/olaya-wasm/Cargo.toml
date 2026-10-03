@@ -21,10 +21,8 @@ serde-wasm-bindgen = "0.6"
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
 
-[profile.release]
-opt-level = "s"    # Size-optimized for WASM
-lto = true
-codegen-units = 1
+# A [profile.release] here would be ignored (this crate is a workspace member); the size-optimised
+# `wasm-release` profile is defined in the workspace root Cargo.toml.
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ["-Os"]

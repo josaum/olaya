@@ -32,6 +32,8 @@ pub struct OlayaEngine {
     #[cfg_attr(not(feature = "onnx"), allow(dead_code))]
     descriptions: Option<StringArray>,
     distilled_neural_scorer: Option<Arc<crate::distilled_neural::DistilledNeuralScorer>>,
+    /// Ontology row -> concept index inside the distilled scorer (validated when attached).
+    distilled_rows: Vec<usize>,
     #[cfg(feature = "onnx")]
     neural_scorer: Option<Arc<crate::neural::NeuralScorer>>,
 }
@@ -70,18 +72,43 @@ impl OlayaEngine {
             labels: required_column(&ontology_batch, "label")?,
             descriptions,
             distilled_neural_scorer: None,
+            distilled_rows: Vec::new(),
             #[cfg(feature = "onnx")]
             neural_scorer: None,
         })
     }
 
-    /// Attach an ultra-distilled native neural head scorer (1.87 µs latency, 0 external dependencies).
+    /// Attach a distilled native neural head scorer (no external dependencies).
+    ///
+    /// Every CURIE in the ontology must be known to the scorer; otherwise the scorer was trained on
+    /// a different ontology and its concept embeddings would be read at the wrong index, so this is
+    /// an error rather than a silent fallback.
     pub fn with_distilled_neural_scorer(
         mut self,
         scorer: Arc<crate::distilled_neural::DistilledNeuralScorer>,
-    ) -> Self {
+    ) -> Result<Self> {
+        let mut rows = Vec::with_capacity(self.curies.len());
+        let mut unknown = Vec::new();
+        for row in 0..self.curies.len() {
+            let curie = self.curies.value(row);
+            match scorer.curie_to_idx.get(curie) {
+                Some(&idx) => rows.push(idx),
+                None => unknown.push(curie.to_string()),
+            }
+        }
+        if !unknown.is_empty() {
+            let shown: Vec<&str> = unknown.iter().take(5).map(String::as_str).collect();
+            anyhow::bail!(
+                "distilled scorer does not know {} of {} ontology CURIEs (e.g. {}); it was trained \
+                 on a different ontology",
+                unknown.len(),
+                self.curies.len(),
+                shown.join(", ")
+            );
+        }
+        self.distilled_rows = rows;
         self.distilled_neural_scorer = Some(scorer);
-        self
+        Ok(self)
     }
 
     #[cfg(feature = "onnx")]
@@ -155,16 +182,16 @@ impl OlayaEngine {
         if let Some(distilled) = &self.distilled_neural_scorer {
             let tokens = tokenize_text(state_text);
             let tok_refs: Vec<&str> = tokens.iter().map(|s| s.as_str()).collect();
-            let idfs = vec![1.0f32; tok_refs.len()];
+            // Smoothed IDF over the ontology batch, as at training time.
+            let idfs: Vec<f32> = tokens.iter().map(|t| self.router.idf(t)).collect();
             let q_vec = distilled.encode_query(&tok_refs, &idfs);
 
+            // Every row was mapped to a scorer index when the scorer was attached.
+            let to_idx = |row: usize| self.distilled_rows[row];
             let candidate_indices: Vec<usize> = subgraph
                 .row_indices
                 .iter()
-                .map(|&row| {
-                    let curie = self.curies.value(row);
-                    distilled.curie_to_idx.get(curie).copied().unwrap_or(0)
-                })
+                .map(|&row| to_idx(row))
                 .collect();
 
             let parents: Vec<Vec<usize>> = subgraph
@@ -174,10 +201,7 @@ impl OlayaEngine {
                     self.router
                         .parent_rows(row)
                         .iter()
-                        .filter_map(|&p| {
-                            let curie = self.curies.value(p);
-                            distilled.curie_to_idx.get(curie).copied()
-                        })
+                        .map(|&p| to_idx(p))
                         .collect()
                 })
                 .collect();
@@ -189,10 +213,7 @@ impl OlayaEngine {
                     self.router
                         .disjoint_rows(row)
                         .iter()
-                        .filter_map(|&d| {
-                            let curie = self.curies.value(d);
-                            distilled.curie_to_idx.get(curie).copied()
-                        })
+                        .map(|&d| to_idx(d))
                         .collect()
                 })
                 .collect();

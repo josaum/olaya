@@ -11,7 +11,10 @@ Implementations:
 |---|---|---|
 | Python | `src/olaya/axioms.py` → `calibrate_and_project_distribution` | `tests/test_axiom_golden.py` |
 | Rust | `crates/olaya-core/src/axioms.rs` → `calibrate_and_project_inplace` | `test_axiom_kernel_matches_shared_golden_vectors` |
+| Rust (wasm) | `crates/olaya-wasm/src/lib.rs` → `calibrate_and_project` | `kernel_matches_shared_golden_vectors` (runs natively) |
 | Node | `packages/olaya-node/src/axioms.ts` → `calibrateAndProject` | `"matches the shared axiom golden vectors"` |
+
+`docs/public/olaya-engine.js` carries the same kernel for the demo pages but has no test harness.
 
 ## Scope boundary: HTTP edge demo
 
@@ -52,9 +55,17 @@ verify the listed kernel implementations, not the deployed HTTP demo.
    every slot below it via `parent_edges` are set to `0`. Zeroing the loser's subtree keeps step 3's
    guarantee intact. Because `threshold > 0.5` and the lifted values of two disjoint siblings cannot
    both reach it from one unit of mass unless lifting moved it, at most one side of a pair can win.
-5. **Confidence.** Normalise the final values to sum to 1 (for this calculation only), then
-   `confidence = 1 − H(p) / ln K` with `H` the Shannon entropy in nats, clamped to `[0, 1]`.
-   `K ≤ 1` gives `1.0`; an all-zero vector gives `0.0`.
+5. **Confidence.** Let `p` be the calibrated distribution from step 2 (before lifting) and `q` the
+   projected values after steps 3–4. Build `p'_i = p_i` if `q_i > 0`, else `0` (slots that
+   disjointness zeroed no longer compete), normalise `p'` to sum to 1 (for this calculation only),
+   then `confidence = 1 − H(p') / ln K` with `H` the Shannon entropy in nats and `K` the number of
+   slots, clamped to `[0, 1]`. `K ≤ 1` gives `1.0`; an all-zero `p'` gives `0.0`.
+
+   Confidence is deliberately measured *before* monotonicity lifting: lifting copies a child's mass
+   onto every ancestor, so a decision the model is certain about would otherwise look uniform over
+   the ancestor chain and report confidence `0` (see the `deep_chain_of_ten` golden case, whose
+   confidence is `≈ 0.79`, not `0`). It is measured *after* disjointness exclusion because an
+   excluded sibling is no longer a competing hypothesis.
 
 ## Verification
 
@@ -74,6 +85,48 @@ derives each ancestor's marginal as the sum of the leaf mass beneath it
 `candidate_probabilities` stays a proper distribution. Disjointness there zeroes the leaf mass under
 the losing side and renormalises, repeating until stable. The Rust and Node engines use the flat
 kernel for all decisions.
+
+## Decision parity across runtimes
+
+The golden vectors pin the kernel; `decision_parity.json` in this directory ties the runtimes
+together one level up. It holds a 10-class incident ontology and five states with the CURIE each
+must select (and, where disjointness bites, the CURIEs that must be zeroed):
+
+| Runtime | What is checked | Test |
+|---|---|---|
+| Rust | `OlayaEngine::system_one` selects `expected_curie` | `test_decisions_match_shared_parity_fixture` |
+| Rust (wasm) | `WasmRouter::decide` selects `expected_curie` | `decisions_match_shared_parity_fixture` |
+| Node | `OLaya.systemOne` selects `expected_curie` | `"selects the same concepts as the Rust, WASM and Python runtimes"` |
+| Python | `CandidateRouter.route_candidates` ranks `expected_curie` first, untied | `tests/test_decision_parity.py` |
+
+Python is checked at the router because its engine decisions come from a trained neural head, not
+from lexical overlap.
+
+### Tokenizers and scorers are not identical
+
+The runtimes do not share one tokenizer or one scoring formula, and the fixture is written so that
+the expected concept wins under all of them (several label/synonym tokens for the expected class,
+at most one for any competitor):
+
+- **Node and WASM** share one rule set: CamelCase split at a lower→upper boundary, lowercase,
+  `[a-z0-9]` runs longer than two characters, a stopword list, smoothed IDF
+  `ln((N + 1) / (df + 1)) + 1`, router weights 4/2/1 (label/synonym/description) and candidate
+  logits `1 + 6·idf` per label token, `5·idf` per synonym token, `idf` per description token.
+  `crates/olaya-wasm` is a port of `packages/olaya-node`, including argmax tie-breaking towards the
+  most specific concept.
+- **Rust core** (`crates/olaya-core/src/router.rs`) deliberately follows the Python package's
+  `tokenize_normalize` instead: tokens longer than one character, no stopwords, acronym-aware case
+  splitting (Rust additionally emits the whole lowercased word when it splits one), router IDF
+  `1 / (1 + df)`, logits `1 + 3·label + 2.5·synonym + 1.5·description` overlaps. It is not ported to the Node rules
+  because (a) its tokens are what the distilled neural head hashes (`fnv1a`) and weights by the
+  smoothed IDF the head was trained with (`olaya.distilled_head`), so changing the tokenizer in
+  Rust alone would desynchronise it from Python-trained weights; (b) Rust↔Python parity on tokens
+  such as `db`, `500` or `postgresql` is covered by existing tests and would be lost (the Node rules
+  drop every token of two characters or fewer and split `PostgreSQL` into `postgre`, `sql`); and (c)
+  the Python side is the reference for that tokenizer and is maintained separately.
+
+If a change to any scorer flips a fixture decision, that is a real cross-runtime divergence: fix
+the scorer or change the fixture in the same commit and say why.
 
 ## Changing the spec
 
