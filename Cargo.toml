@@ -13,3 +13,14 @@ edition = "2021"
 authors = ["Dionisio & Team"]
 license = "MIT"
 repository = "https://github.com/josaum/olaya"
+
+# Cargo ignores a [profile.*] section in a workspace member, so the size-optimised settings for the
+# browser build of olaya-wasm live here. Build it with
+#   cargo build -p olaya-wasm --target wasm32-unknown-unknown --profile wasm-release
+# (or `wasm-pack build crates/olaya-wasm --release`, which uses the plain release profile; see
+# docs/public/README.md). The native `release` profile is untouched.
+[profile.wasm-release]
+inherits = "release"
+opt-level = "s"
+lto = true
+codegen-units = 1

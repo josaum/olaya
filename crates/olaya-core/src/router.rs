@@ -246,6 +246,15 @@ impl ArrowCandidateRouter {
         self.parent_rows.len()
     }
 
+    /// Smoothed inverse document frequency of `token` over the indexed rows,
+    /// `ln((N + 1) / (df + 1)) + 1`, the formula the distilled head is trained with
+    /// (`olaya.distilled_head`). A token that no row contains has `df = 0`.
+    pub fn idf(&self, token: &str) -> f32 {
+        let n = self.num_concepts() as f32;
+        let df = self.inverted_index.get(token).map_or(0, Vec::len) as f32;
+        ((n + 1.0) / (df + 1.0)).ln() + 1.0
+    }
+
     /// Longest subClassOf path from a top-level concept to `row` (0 = top level).
     pub fn depth(&self, row: usize) -> u32 {
         self.depth[row]

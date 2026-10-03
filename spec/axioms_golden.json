@@ -17,7 +17,7 @@
         0.2244186,
         0.13258146
       ],
-      "expected_confidence": 0.1924541,
+      "expected_confidence": 0.19245405,
       "expected_axioms_verified": true
     },
     {
@@ -63,7 +63,7 @@
         0.0,
         0.68835383
       ],
-      "expected_confidence": 0.20751874,
+      "expected_confidence": 0.4814803,
       "expected_axioms_verified": true
     },
     {
@@ -85,7 +85,7 @@
         0.0,
         0.03918338
       ],
-      "expected_confidence": 0.84487764,
+      "expected_confidence": 0.84487762,
       "expected_axioms_verified": true
     },
     {
@@ -107,7 +107,7 @@
         0.33210559,
         0.29892413
       ],
-      "expected_confidence": 0.00335258,
+      "expected_confidence": 0.00335263,
       "expected_axioms_verified": true
     },
     {
@@ -222,7 +222,7 @@
         0.11427673,
         0.0973802
       ],
-      "expected_confidence": 0.01468166,
+      "expected_confidence": 0.01755351,
       "expected_axioms_verified": true
     },
     {
@@ -290,7 +290,7 @@
         0.91279343,
         0.91279343
       ],
-      "expected_confidence": 0.0,
+      "expected_confidence": 0.788221,
       "expected_axioms_verified": true
     }
   ]
