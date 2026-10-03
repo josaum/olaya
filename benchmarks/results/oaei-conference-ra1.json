@@ -1,8 +1,8 @@
 {
   "benchmark": "OAEI Conference track, OntoFarm, reference alignment ra1 (21 pairs, 7 ontologies)",
   "date": "2026-10-03",
-  "commit": "c2b189e2431280fc61f118d42d106de68f19ce1e",
-  "runtime_seconds": 12.28,
+  "commit": "332cccbb55dd308b3de18c06eaa68f5ab7d574d6",
+  "runtime_seconds": 11.95,
   "protocol": {
     "selection": "mutual-best 1:1 over all same-kind cross pairs, then confidence threshold",
     "modalities": {

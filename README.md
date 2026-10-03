@@ -237,8 +237,8 @@ cd packages/olaya-node && bun run src/cli.ts   # Node runtime
 ```
 
 Tools: `olaya_ground` (concept grounding with lineage and `axioms_verified`),
-`olaya_subsumes`, `olaya_choice`, `olaya_extract_and_ground` (JSON-LD / GTIN
-extraction then grounding). Bundled ontologies are the JSON files under
+`olaya_subsumes`, `olaya_choice`, `olaya_score`; the Python server also offers
+`olaya_extract_and_ground` (JSON-LD / GTIN extraction then grounding). Bundled ontologies are the JSON files under
 `src/olaya/data/` and `docs/public/ontologies/`; the resource descriptions state
 the actual class counts. Confidence is entropy-based, not calibrated, unless the
 Python server loads a checkpoint with a fitted temperature.
