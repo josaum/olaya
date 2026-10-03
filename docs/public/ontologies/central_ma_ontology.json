@@ -1,0 +1,675 @@
+{
+  "name": "CentralStrategyOntology",
+  "uri": "https://atlas.central.com/ontologies/strategy#",
+  "description": "Formal ontology for Central Garden & Pet corporate strategy, M&A capital allocation, and investment hurdle verification.",
+  "concepts": [
+    {
+      "curie": "cent:StrategicEntity",
+      "label": "Strategic Entity",
+      "description": "Root entity for Central Garden & Pet strategic planning and capital allocation.",
+      "parents": [],
+      "children": [
+        "cent:StrategicDecision",
+        "cent:OperatingPlatform",
+        "cent:InvestmentHurdleCriterion",
+        "cent:StrategicVerdict",
+        "cent:SynergyVector",
+        "cent:TargetArchetype"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "strategic entity",
+        "corporate development entity"
+      ]
+    },
+    {
+      "curie": "cent:StrategicDecision",
+      "label": "Strategic Decision",
+      "description": "A capital allocation or portfolio restructuring decision at Central Garden & Pet.",
+      "parents": [
+        "cent:StrategicEntity"
+      ],
+      "children": [
+        "cent:PlatformAcquisition",
+        "cent:BoltOnAcquisition",
+        "cent:DivestitureJVCarveOut",
+        "cent:InternalExtrusionCapEx"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "strategic decision",
+        "capital allocation move",
+        "M&A move"
+      ]
+    },
+    {
+      "curie": "cent:PlatformAcquisition",
+      "label": "Platform Acquisition",
+      "description": "A category-defining M&A transaction ($150M\u2013$400M EV) establishing leadership in an accretive consumable sub-vertical.",
+      "parents": [
+        "cent:StrategicDecision"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "cent:DivestitureJVCarveOut"
+      ],
+      "synonyms": [
+        "platform acquisition",
+        "core platform deal",
+        "scale acquisition"
+      ]
+    },
+    {
+      "curie": "cent:BoltOnAcquisition",
+      "label": "Bolt-On Acquisition",
+      "description": "A targeted tuck-in acquisition ($20M\u2013$75M EV) integrated into an existing business unit.",
+      "parents": [
+        "cent:StrategicDecision"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "bolt-on acquisition",
+        "tuck-in deal",
+        "tuck-in"
+      ]
+    },
+    {
+      "curie": "cent:DivestitureJVCarveOut",
+      "label": "Divestiture / JV Carve-Out",
+      "description": "An access-over-ownership restructuring carve-out moving low-margin physical distribution assets into minority-owned JVs.",
+      "parents": [
+        "cent:StrategicDecision"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "cent:PlatformAcquisition"
+      ],
+      "synonyms": [
+        "JV carve-out",
+        "access over ownership",
+        "distribution divestiture",
+        "portfolio pruning"
+      ]
+    },
+    {
+      "curie": "cent:InternalExtrusionCapEx",
+      "label": "Internal Extrusion CapEx",
+      "description": "Capital expenditure into proprietary injection molding, soft-chew extrusion, and packaging automation.",
+      "parents": [
+        "cent:StrategicDecision"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "plant capex",
+        "extrusion investment",
+        "manufacturing insourcing"
+      ]
+    },
+    {
+      "curie": "cent:StrategicVerdict",
+      "label": "Strategic Verdict",
+      "description": "The formalized corporate development recommendation on a strategic move.",
+      "parents": [
+        "cent:StrategicEntity"
+      ],
+      "children": [
+        "cent:ApprovedStrategicMove",
+        "cent:ConditionalStrategicMove",
+        "cent:RejectedStrategicMove"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "strategic verdict",
+        "investment committee verdict",
+        "deal recommendation"
+      ]
+    },
+    {
+      "curie": "cent:ApprovedStrategicMove",
+      "label": "Approved Strategic Move",
+      "description": "A transaction or capital allocation that fully satisfies Central's 4-point hurdle criteria and margin expansion mandate.",
+      "parents": [
+        "cent:StrategicVerdict"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "cent:RejectedStrategicMove"
+      ],
+      "synonyms": [
+        "approved deal",
+        "recommended acquisition",
+        "priority transaction",
+        "proceed to diligence"
+      ]
+    },
+    {
+      "curie": "cent:ConditionalStrategicMove",
+      "label": "Conditional Strategic Move",
+      "description": "A transaction requiring valuation re-negotiation, antitrust remedy, or manufacturing synergy verification before sign-off.",
+      "parents": [
+        "cent:StrategicVerdict"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "conditional deal",
+        "proceed with conditions",
+        "valuation dependent"
+      ]
+    },
+    {
+      "curie": "cent:RejectedStrategicMove",
+      "label": "Rejected Strategic Move",
+      "description": "A proposal that fails margin accretion hurdle, carries excessive commodity food risk, or lacks retail channel moats.",
+      "parents": [
+        "cent:StrategicVerdict"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "cent:ApprovedStrategicMove"
+      ],
+      "synonyms": [
+        "rejected deal",
+        "pass on deal",
+        "off-strategy move",
+        "dilutive proposal"
+      ]
+    },
+    {
+      "curie": "cent:OperatingPlatform",
+      "label": "Operating Platform",
+      "description": "Central Garden & Pet operating division.",
+      "parents": [
+        "cent:StrategicEntity"
+      ],
+      "children": [
+        "cent:PetPlatform",
+        "cent:GardenPlatform"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "operating platform",
+        "operating segment",
+        "business unit"
+      ]
+    },
+    {
+      "curie": "cent:PetPlatform",
+      "label": "Pet Operating Platform",
+      "description": "Central Pet segment (~40% gross margin, ~19% EBITDA), spanning chews, toys, functional wellness, avian, and aquatics.",
+      "parents": [
+        "cent:OperatingPlatform"
+      ],
+      "children": [
+        "cent:PetConsumables",
+        "cent:PetHardGoodsAndDurables",
+        "cent:CommodityPetFood"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "pet segment",
+        "central pet",
+        "companion animal division"
+      ]
+    },
+    {
+      "curie": "cent:GardenPlatform",
+      "label": "Garden Operating Platform",
+      "description": "Central Garden segment spanning turf grass seed, wild bird, live goods, and lawn controls.",
+      "parents": [
+        "cent:OperatingPlatform"
+      ],
+      "children": [
+        "cent:LawnAndTurf",
+        "cent:OrganicSoilAndBiology",
+        "cent:LiveGoodsAndNursery",
+        "cent:SyntheticChemicalFertilizer"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "garden segment",
+        "central garden",
+        "lawn and garden"
+      ]
+    },
+    {
+      "curie": "cent:PetConsumables",
+      "label": "Pet Consumables",
+      "description": "Recurring-purchase companion animal consumables delivering high replenish velocity and gross margins above 45%.",
+      "parents": [
+        "cent:PetPlatform"
+      ],
+      "children": [
+        "cent:PetFunctionalWellness",
+        "cent:PetNaturalChews",
+        "cent:PetAvianAndSmallAnimal"
+      ],
+      "disjoint_with": [
+        "cent:PetHardGoodsAndDurables",
+        "cent:CommodityPetFood"
+      ],
+      "synonyms": [
+        "pet consumables",
+        "companion animal repeat items",
+        "pet treats and chews"
+      ]
+    },
+    {
+      "curie": "cent:PetFunctionalWellness",
+      "label": "Pet Functional Wellness & Supplements",
+      "description": "Clinically backed canine and feline nutritional supplements: joint mobility, gut microbiome, calming, and dermatology soft chews.",
+      "parents": [
+        "cent:PetConsumables"
+      ],
+      "children": [
+        "cent:ClinicallyBackedPetWellnessTarget"
+      ],
+      "disjoint_with": [
+        "cent:CommodityPetFood"
+      ],
+      "synonyms": [
+        "pet wellness",
+        "pet supplements",
+        "functional chews",
+        "canine joint health",
+        "pet dermatology",
+        "pet gut health",
+        "NASC certified chews",
+        "Zesty Paws archetype",
+        "companion animal preventative health"
+      ]
+    },
+    {
+      "curie": "cent:PetNaturalChews",
+      "label": "Pet Natural Chews & Treats",
+      "description": "Single-ingredient and natural rawhide-alternative canine chews (Cadet, TDBBS, Nylabone edible chews).",
+      "parents": [
+        "cent:PetConsumables"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "natural chews",
+        "dog treats",
+        "single ingredient chews",
+        "Cadet",
+        "TDBBS"
+      ]
+    },
+    {
+      "curie": "cent:PetAvianAndSmallAnimal",
+      "label": "Avian and Small Animal Nutrition",
+      "description": "Wild bird feed, caged bird seed, and small animal nutrition (Kaytee brand platform).",
+      "parents": [
+        "cent:PetConsumables"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "Kaytee",
+        "wild bird feed",
+        "caged bird seed",
+        "small animal food"
+      ]
+    },
+    {
+      "curie": "cent:PetHardGoodsAndDurables",
+      "label": "Pet Hard Goods & Durables",
+      "description": "Durable hardware: glass aquariums, filtration, habitats, nylon chew toys, and cages (Aqueon, Nylabone non-edible).",
+      "parents": [
+        "cent:PetPlatform"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "cent:PetConsumables"
+      ],
+      "synonyms": [
+        "pet hard goods",
+        "aquatics",
+        "Aqueon",
+        "nylon bones",
+        "habitats",
+        "durable pet goods"
+      ]
+    },
+    {
+      "curie": "cent:CommodityPetFood",
+      "label": "Commodity Extruded Pet Food",
+      "description": "Standard wet/canned and dry extruded kibble pet food. Characterized by capital-intensive plants, high co-packer reliance, and sub-30% gross margins.",
+      "parents": [
+        "cent:PetPlatform"
+      ],
+      "children": [
+        "cent:CommodityExtrudedFoodTarget"
+      ],
+      "disjoint_with": [
+        "cent:PetFunctionalWellness",
+        "cent:PetConsumables"
+      ],
+      "synonyms": [
+        "wet pet food",
+        "dry kibble",
+        "extruded dog food",
+        "commodity pet food",
+        "canned cat food"
+      ]
+    },
+    {
+      "curie": "cent:LawnAndTurf",
+      "label": "Lawn and Turf Seed",
+      "description": "High-yield turfgrass seed, forage seed, and lawn establishment products (Pennington Seed brand platform).",
+      "parents": [
+        "cent:GardenPlatform"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "Pennington",
+        "grass seed",
+        "turf seed",
+        "lawn seed"
+      ]
+    },
+    {
+      "curie": "cent:OrganicSoilAndBiology",
+      "label": "Organic Soil and Biological Lawn Care",
+      "description": "Microbiome soil conditioners, bio-stimulants, and subscription DTC organic lawn care (Sunday, Espoma Organic archetype).",
+      "parents": [
+        "cent:GardenPlatform"
+      ],
+      "children": [
+        "cent:OrganicSoilMicrobiomeTarget"
+      ],
+      "disjoint_with": [
+        "cent:SyntheticChemicalFertilizer"
+      ],
+      "synonyms": [
+        "organic lawn care",
+        "soil microbiome",
+        "Sunday archetype",
+        "Espoma Organic",
+        "bio-stimulants",
+        "biological lawn care",
+        "soil testing"
+      ]
+    },
+    {
+      "curie": "cent:LiveGoodsAndNursery",
+      "label": "Live Goods and Nursery",
+      "description": "Live greenhouse bedding plants, potted annuals, and perennials (Bell Nursery, Hopewell Nursery).",
+      "parents": [
+        "cent:GardenPlatform"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "Bell Nursery",
+        "live goods",
+        "nursery plants",
+        "greenhouse plants"
+      ]
+    },
+    {
+      "curie": "cent:SyntheticChemicalFertilizer",
+      "label": "Synthetic Chemical Fertilizer",
+      "description": "Traditional synthetic chemical nitrogen/phosphorus fertilizers subject to input commodity swings.",
+      "parents": [
+        "cent:GardenPlatform"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "cent:OrganicSoilAndBiology"
+      ],
+      "synonyms": [
+        "chemical fertilizer",
+        "synthetic lawn fertilizer",
+        "chemical pest control"
+      ]
+    },
+    {
+      "curie": "cent:InvestmentHurdleCriterion",
+      "label": "Central Investment Hurdle Criterion",
+      "description": "Non-negotiable acquisition criteria established under CEO Niko Lahanas.",
+      "parents": [
+        "cent:StrategicEntity"
+      ],
+      "children": [
+        "cent:NicheCategoryLeadership",
+        "cent:ConsumableRepeatVelocity",
+        "cent:OmnichannelRetailMoat",
+        "cent:MarginAccretionHurdle"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "investment criteria",
+        "M&A formula",
+        "hurdle criteria"
+      ]
+    },
+    {
+      "curie": "cent:NicheCategoryLeadership",
+      "label": "Niche Category Leadership",
+      "description": "Target must hold #1 or #2 market position in a defined, defensible sub-vertical.",
+      "parents": [
+        "cent:InvestmentHurdleCriterion"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "category leadership",
+        "market leader",
+        "number 1 or 2 position",
+        "niche leader"
+      ]
+    },
+    {
+      "curie": "cent:ConsumableRepeatVelocity",
+      "label": "Consumable / Repeat Velocity",
+      "description": "Products must drive recurring replenishment (e.g. monthly Chewy autoship) rather than one-time durable replacement cycles.",
+      "parents": [
+        "cent:InvestmentHurdleCriterion"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "repeat velocity",
+        "consumable replenishment",
+        "autoship subscription",
+        "recurring cash flow"
+      ]
+    },
+    {
+      "curie": "cent:OmnichannelRetailMoat",
+      "label": "Omnichannel & Retail Moats",
+      "description": "Target must immediately plug into Central's tier-1 retail footprint: Walmart, Target, Home Depot, Lowe's, Chewy, Amazon.",
+      "parents": [
+        "cent:InvestmentHurdleCriterion"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "retail moat",
+        "omnichannel footprint",
+        "tier 1 door rollout",
+        "distribution synergy"
+      ]
+    },
+    {
+      "curie": "cent:MarginAccretionHurdle",
+      "label": "Margin Accretion Hurdle",
+      "description": "Target must deliver Gross Margin > 40% and EBITDA > 19% to reinforce corporate margin expansion mandate.",
+      "parents": [
+        "cent:InvestmentHurdleCriterion"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "margin accretion",
+        "50% gross margin",
+        "margin expansion mandate",
+        "EBITDA accretion"
+      ]
+    },
+    {
+      "curie": "cent:TargetArchetype",
+      "label": "Strategic Target Archetype",
+      "description": "Archetypes evaluated for Central Garden & Pet portfolio expansion.",
+      "parents": [
+        "cent:StrategicEntity"
+      ],
+      "children": [
+        "cent:ClinicallyBackedPetWellnessTarget",
+        "cent:OrganicSoilMicrobiomeTarget",
+        "cent:CommodityExtrudedFoodTarget"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "target archetype",
+        "M&A target class"
+      ]
+    },
+    {
+      "curie": "cent:ClinicallyBackedPetWellnessTarget",
+      "label": "Clinically Backed Pet Wellness Target",
+      "description": "Exemplified by Zesty Paws / Nutramax: 55%+ Gross Margin, non-seasonal, high repeat Chewy autoship, insources into Nylabone extrusion.",
+      "parents": [
+        "cent:TargetArchetype",
+        "cent:PetFunctionalWellness"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "cent:CommodityExtrudedFoodTarget"
+      ],
+      "synonyms": [
+        "Zesty Paws archetype",
+        "Zesty Paws",
+        "Nutramax",
+        "pet wellness platform",
+        "functional soft chews target",
+        "veterinary supplement target"
+      ]
+    },
+    {
+      "curie": "cent:OrganicSoilMicrobiomeTarget",
+      "label": "Organic Soil & Biological Lawn Target",
+      "description": "Exemplified by Sunday / Espoma Organic: 42\u201346% Gross Margin, bio-stimulants, DTC soil testing, seasonal spring demand.",
+      "parents": [
+        "cent:TargetArchetype",
+        "cent:OrganicSoilAndBiology"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "Sunday archetype",
+        "Sunday",
+        "Espoma Organic",
+        "organic lawn platform",
+        "soil biology target",
+        "DTC lawn testing target"
+      ]
+    },
+    {
+      "curie": "cent:CommodityExtrudedFoodTarget",
+      "label": "Commodity Extruded Food Target",
+      "description": "High-volume private label wet/dry food: sub-30% Gross Margin, capital intensive, dilutive to Central's margin mandate.",
+      "parents": [
+        "cent:TargetArchetype",
+        "cent:CommodityPetFood"
+      ],
+      "children": [],
+      "disjoint_with": [
+        "cent:ClinicallyBackedPetWellnessTarget"
+      ],
+      "synonyms": [
+        "kibble target",
+        "wet pet food facility",
+        "co-packed dog food",
+        "dilutive pet food asset"
+      ]
+    },
+    {
+      "curie": "cent:SynergyVector",
+      "label": "M&A Synergy Vector",
+      "description": "Core operational and commercial synergy vectors unlocked post-acquisition.",
+      "parents": [
+        "cent:StrategicEntity"
+      ],
+      "children": [
+        "cent:ExtrusionManufacturingInsource",
+        "cent:Tier1MassRetailDoorScale",
+        "cent:DigitalAutoshipCompounding",
+        "cent:JVLogisticsEfficiency"
+      ],
+      "disjoint_with": [],
+      "synonyms": [
+        "synergy vector",
+        "deal synergies",
+        "integration value driver"
+      ]
+    },
+    {
+      "curie": "cent:ExtrusionManufacturingInsource",
+      "label": "Extrusion Manufacturing Insourcing",
+      "description": "Absorb external soft-chew contract manufacturing volume into Central's proprietary Nylabone extrusion facilities.",
+      "parents": [
+        "cent:SynergyVector"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "extrusion absorption",
+        "plant insourcing",
+        "Nylabone manufacturing synergy"
+      ]
+    },
+    {
+      "curie": "cent:Tier1MassRetailDoorScale",
+      "label": "Tier-1 Mass Retail Door Scale",
+      "description": "Plug acquired brand into Central's existing vendor grid across 28,000+ Walmart, Target, Petco, and Home Depot doors.",
+      "parents": [
+        "cent:SynergyVector"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "door expansion",
+        "retail rollout",
+        "Walmart scale",
+        "mass retail synergy"
+      ]
+    },
+    {
+      "curie": "cent:DigitalAutoshipCompounding",
+      "label": "Digital & Autoship Compounding",
+      "description": "Capture 70%+ monthly repeat replenishment orders across Chewy Autoship and Amazon Subscribe & Save.",
+      "parents": [
+        "cent:SynergyVector"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "Chewy autoship",
+        "Amazon subscribe and save",
+        "DTC subscription",
+        "digital repeat"
+      ]
+    },
+    {
+      "curie": "cent:JVLogisticsEfficiency",
+      "label": "JV Logistics & Distribution Efficiency",
+      "description": "Route acquired freight through Central's minority-owned JV distribution networks ('access over ownership').",
+      "parents": [
+        "cent:SynergyVector"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "logistics synergy",
+        "JV distribution",
+        "freight rationalization"
+      ]
+    }
+  ]
+}

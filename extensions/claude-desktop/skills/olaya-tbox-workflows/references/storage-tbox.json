@@ -1,0 +1,139 @@
+{
+  "name": "StorageWorkflowExample",
+  "concepts": [
+    {
+      "curie": "ex:Workflow",
+      "label": "Storage workflow"
+    },
+    {
+      "curie": "ex:StorageDecision",
+      "label": "Storage decision"
+    },
+    {
+      "curie": "ex:StorageMode",
+      "label": "Storage mode"
+    },
+    {
+      "curie": "ex:Cold",
+      "label": "Cold storage",
+      "description": "Frozen or refrigerated goods requiring cold storage",
+      "parents": [
+        "ex:StorageMode"
+      ],
+      "disjoint_with": [
+        "ex:Ambient"
+      ]
+    },
+    {
+      "curie": "ex:Ambient",
+      "label": "Ambient storage",
+      "description": "Ambient dry goods storage",
+      "parents": [
+        "ex:StorageMode"
+      ],
+      "disjoint_with": [
+        "ex:Cold"
+      ]
+    },
+    {
+      "curie": "ex:ActionIntent",
+      "label": "Action intent"
+    },
+    {
+      "curie": "ex:DispatchCold",
+      "label": "Cold dispatch intent",
+      "parents": [
+        "ex:ActionIntent"
+      ]
+    },
+    {
+      "curie": "ex:DispatchAmbient",
+      "label": "Ambient dispatch intent",
+      "parents": [
+        "ex:ActionIntent"
+      ]
+    },
+    {
+      "curie": "ex:Review",
+      "label": "Human review intent",
+      "parents": [
+        "ex:ActionIntent"
+      ]
+    },
+    {
+      "curie": "ex:Infrastructure",
+      "label": "Infrastructure"
+    },
+    {
+      "curie": "ex:ColdStorageService",
+      "label": "Cold storage service",
+      "parents": [
+        "ex:Infrastructure"
+      ]
+    },
+    {
+      "curie": "ex:AmbientStorageService",
+      "label": "Ambient storage service",
+      "parents": [
+        "ex:Infrastructure"
+      ]
+    },
+    {
+      "curie": "ex:ReviewQueue",
+      "label": "Review queue",
+      "parents": [
+        "ex:Infrastructure"
+      ]
+    },
+    {
+      "curie": "ex:Application",
+      "label": "Application"
+    },
+    {
+      "curie": "ex:ShipmentApplication",
+      "label": "Shipment application",
+      "parents": [
+        "ex:Application"
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "curie": "ex:note",
+      "label": "Intent note",
+      "domains": [
+        "ex:ActionIntent"
+      ]
+    },
+    {
+      "curie": "ex:target",
+      "label": "target",
+      "domains": [
+        "ex:ActionIntent"
+      ],
+      "ranges": [
+        "ex:Infrastructure"
+      ]
+    },
+    {
+      "curie": "ex:handledBy",
+      "label": "handledBy",
+      "domains": [
+        "ex:ActionIntent"
+      ],
+      "ranges": [
+        "ex:Application"
+      ]
+    },
+    {
+      "curie": "ex:hosts",
+      "label": "hosts",
+      "domains": [
+        "ex:Infrastructure"
+      ],
+      "ranges": [
+        "ex:Application"
+      ]
+    }
+  ]
+}
