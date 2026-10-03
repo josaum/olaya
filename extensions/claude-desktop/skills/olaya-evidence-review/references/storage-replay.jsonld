@@ -1,0 +1,308 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "wf": "urn:olaya:workflow:",
+    "prov": "http://www.w3.org/ns/prov#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "ex": "https://example.org/storage#"
+  },
+  "@graph": [
+    {
+      "@id": "https://example.org/storage/ontology",
+      "@type": [
+        "owl:Ontology",
+        "prov:Entity"
+      ],
+      "wf:sha256": "90cc7ade90b867abc48e0d44b16b1ca85af6d62eccdd962e70be16a298b8c4a7"
+    },
+    {
+      "@id": "https://example.org/storage/workflows/shipment",
+      "@type": [
+        "wf:WorkflowDefinition",
+        "prov:Entity"
+      ],
+      "wf:declaredType": {
+        "@id": "https://example.org/storage#Workflow"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:sha256": "d948c5689b354798312fe3101ec06b1bf12cbe9e48094ca02dc895b2ccb7c25d"
+    },
+    {
+      "@id": "https://example.org/storage/workflows/shipment/steps/ambient_dispatch",
+      "@type": [
+        "wf:StepDefinition",
+        "prov:Entity"
+      ],
+      "wf:declaredType": {
+        "@id": "https://example.org/storage#DispatchAmbient"
+      },
+      "wf:inWorkflow": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/workflows/shipment/steps/cold_dispatch",
+      "@type": [
+        "wf:StepDefinition",
+        "prov:Entity"
+      ],
+      "wf:declaredType": {
+        "@id": "https://example.org/storage#DispatchCold"
+      },
+      "wf:inWorkflow": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/workflows/shipment/steps/review",
+      "@type": [
+        "wf:StepDefinition",
+        "prov:Entity"
+      ],
+      "wf:declaredType": {
+        "@id": "https://example.org/storage#Review"
+      },
+      "wf:inWorkflow": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/workflows/shipment/steps/storage",
+      "@type": [
+        "wf:StepDefinition",
+        "prov:Entity"
+      ],
+      "wf:declaredType": {
+        "@id": "https://example.org/storage#StorageDecision"
+      },
+      "wf:inWorkflow": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/resources/cold-service",
+      "@type": [
+        "wf:DeclaredResource",
+        "prov:Entity",
+        "https://example.org/storage#ColdStorageService"
+      ],
+      "wf:resourceState": "declared",
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:declaredIn": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "prov:wasDerivedFrom": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "https://example.org/storage#hosts": {
+        "@id": "https://example.org/storage/resources/shipment-application"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/resources/ambient-service",
+      "@type": [
+        "wf:DeclaredResource",
+        "prov:Entity",
+        "https://example.org/storage#AmbientStorageService"
+      ],
+      "wf:resourceState": "declared",
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:declaredIn": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "prov:wasDerivedFrom": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "https://example.org/storage#hosts": {
+        "@id": "https://example.org/storage/resources/shipment-application"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/resources/review-queue",
+      "@type": [
+        "wf:DeclaredResource",
+        "prov:Entity",
+        "https://example.org/storage#ReviewQueue"
+      ],
+      "wf:resourceState": "declared",
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:declaredIn": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "prov:wasDerivedFrom": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "https://example.org/storage#hosts": {
+        "@id": "https://example.org/storage/resources/shipment-application"
+      }
+    },
+    {
+      "@id": "https://example.org/storage/resources/shipment-application",
+      "@type": [
+        "wf:DeclaredResource",
+        "prov:Entity",
+        "https://example.org/storage#ShipmentApplication"
+      ],
+      "wf:resourceState": "declared",
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:declaredIn": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "prov:wasDerivedFrom": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      }
+    },
+    {
+      "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0/answer",
+      "@type": [
+        "wf:DecisionRecord",
+        "prov:Entity"
+      ],
+      "prov:wasGeneratedBy": {
+        "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0"
+      },
+      "wf:status": "abstained",
+      "wf:confidence": 0.0037
+    },
+    {
+      "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0",
+      "@type": [
+        "prov:Activity",
+        "wf:DecisionActivity",
+        "https://example.org/storage#StorageDecision"
+      ],
+      "wf:sequence": 0,
+      "wf:status": "abstained",
+      "wf:reason": "insufficient_confidence",
+      "wf:step": {
+        "@id": "https://example.org/storage/workflows/shipment/steps/storage"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "prov:used": [
+        {
+          "@id": "https://example.org/storage/workflows/shipment/steps/storage"
+        },
+        {
+          "@id": "https://example.org/storage/ontology"
+        }
+      ],
+      "prov:wasInformedBy": {
+        "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0"
+      },
+      "wf:nextStep": {
+        "@id": "https://example.org/storage/workflows/shipment/steps/review"
+      },
+      "wf:primitive": "choice",
+      "wf:scope": {
+        "@id": "https://example.org/storage#StorageMode"
+      },
+      "wf:options": {
+        "@list": [
+          {
+            "@id": "https://example.org/storage#Cold"
+          },
+          {
+            "@id": "https://example.org/storage#Ambient"
+          }
+        ]
+      },
+      "prov:generated": {
+        "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0/answer"
+      }
+    },
+    {
+      "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/intent",
+      "@type": [
+        "wf:ActionIntent",
+        "prov:Entity",
+        "https://example.org/storage#Review"
+      ],
+      "prov:wasGeneratedBy": {
+        "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:step": {
+        "@id": "https://example.org/storage/workflows/shipment/steps/review"
+      },
+      "https://example.org/storage#handledBy": {
+        "@id": "https://example.org/storage/resources/shipment-application"
+      },
+      "https://example.org/storage#note": "Human review requested",
+      "https://example.org/storage#target": {
+        "@id": "https://example.org/storage/resources/review-queue"
+      }
+    },
+    {
+      "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0",
+      "@type": [
+        "prov:Activity",
+        "wf:WorkflowRun",
+        "https://example.org/storage#Workflow"
+      ],
+      "wf:modelIdentifier": "o-laya-incident-v1",
+      "wf:executionMode": "replay",
+      "wf:workflow": {
+        "@id": "https://example.org/storage/workflows/shipment"
+      },
+      "wf:tbox": {
+        "@id": "https://example.org/storage/ontology"
+      },
+      "wf:steps": {
+        "@list": [
+          {
+            "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0"
+          }
+        ]
+      },
+      "wf:status": "completed",
+      "prov:used": [
+        {
+          "@id": "https://example.org/storage/workflows/shipment"
+        },
+        {
+          "@id": "https://example.org/storage/ontology"
+        }
+      ],
+      "prov:generated": [
+        {
+          "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/steps/0/answer"
+        },
+        {
+          "@id": "urn:uuid:1fe01b09-7ae5-4289-be47-3e8853c3f0b0/intent"
+        }
+      ],
+      "wf:replayOf": {
+        "@id": "urn:uuid:4fe689f2-fd98-4fad-aaeb-a7f38948cf22"
+      }
+    }
+  ]
+}
