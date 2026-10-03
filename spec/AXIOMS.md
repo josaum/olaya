@@ -13,6 +13,23 @@ Implementations:
 | Rust | `crates/olaya-core/src/axioms.rs` → `calibrate_and_project_inplace` | `test_axiom_kernel_matches_shared_golden_vectors` |
 | Node | `packages/olaya-node/src/axioms.ts` → `calibrateAndProject` | `"matches the shared axiom golden vectors"` |
 
+## Scope boundary: HTTP edge demo
+
+The edge `noul` contract now distinguishes supported/contradicted evidence from
+`unmatched`, `conflicting`, `ambiguous_scope`, and `unsupported_question`.
+Unknown cases return `abstained: true`, `noul: 0.5`, and confidence `0`.
+Structured-state evidence uses separate string values, excluding keys and scalar
+booleans/numbers, with no proposition matches spanning fields. This edge-only
+behavior does not change the runtime/package/parser APIs described here.
+
+
+`docs/public/api/systemone.js` does not implement the complete projection kernel
+specified here. It has lexical flat scoring, entropy confidence, choice
+abstention, and bounded English negation. Its temperature scaling is not evidence
+of empirical calibration, and its outputs do not provide `axioms_verified`.
+See [the edge API contract](systemone-reliability.md). The shared golden vectors
+verify the listed kernel implementations, not the deployed HTTP demo.
+
 ## Inputs
 
 - `logits[0..K)`: one raw score per candidate slot.
