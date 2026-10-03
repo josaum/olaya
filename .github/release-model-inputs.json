@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "release_tag": "olaya-desktop-model-inputs-v1",
+  "assets": [
+    {
+      "name": "olaya_decision_model.pt",
+      "sha256": "0a436dc02dc0e8b4b5d0d97dac611fc847dbc36ae5992db25b8379a8b89c1f6c",
+      "bytes": 63606719
+    },
+    {
+      "name": "tokenizer.json",
+      "sha256": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+      "bytes": 3583228
+    }
+  ],
+  "quality_status": "Existing checkpoint, historical validation accuracy 0.3793103448275862; no new domain accuracy/calibration certification."
+}

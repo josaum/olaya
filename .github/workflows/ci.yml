@@ -4,9 +4,13 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -66,8 +70,8 @@ jobs:
           uv venv --clear
           uv pip install --index-url https://download.pytorch.org/whl/cpu torch
           uv pip install -e ".[dev]"
-      - run: .venv/bin/ruff check src tests scripts benchmarks
-      - run: .venv/bin/ruff format --check src tests scripts benchmarks
+      - run: .venv/bin/ruff check src tests scripts benchmarks extensions/claude-desktop/server/complete.py
+      - run: .venv/bin/ruff format --check src tests scripts benchmarks extensions/claude-desktop/server/complete.py
       - run: .venv/bin/python -m pytest -q
       - name: Golden vectors are up to date
         run: |

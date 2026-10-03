@@ -1,18 +1,35 @@
 """O-Laya: Ontology-Grounded System 1 Decision Model."""
 
 from olaya.axioms import calibrate_and_project_distribution, enforce_subsumption_monotonicity
-from olaya.calibration import CalibrationMetrics, compute_ece, fit_temperature
 from olaya.candidate_router import CandidateRouter
-from olaya.engine import ChoiceAnswer, ConceptAnswer, NoulAnswer, OLaya, ScoreAnswer, SubsumesAnswer, SystemOneResult
-from olaya.model import OntologyDecisionHead, OntologyDecisionModel
 from olaya.ontology import Concept, Ontology, create_incident_ontology
+from olaya.pii import ObfuscationMode, ObfuscationResult, PIIEntity, PIIObfuscator
 from olaya.real_abox import RealABoxFact, load_atlas_real_abox
 from olaya.sequence import SequenceBundle, build_ontology_sequence
-from olaya.train import train_olaya
 from olaya.workflow import CompiledWorkflow, compile_workflow, run_workflow
 from olaya.workflow_replay import replay_workflow
 
+try:
+    from olaya.calibration import CalibrationMetrics, compute_ece, fit_temperature
+    from olaya.engine import (
+        ChoiceAnswer,
+        ConceptAnswer,
+        NoulAnswer,
+        OLaya,
+        ScoreAnswer,
+        SubsumesAnswer,
+        SystemOneResult,
+    )
+    from olaya.model import OntologyDecisionHead, OntologyDecisionModel
+    from olaya.train import train_olaya
+except ImportError:
+    pass
+
 __all__ = [
+    "ObfuscationMode",
+    "ObfuscationResult",
+    "PIIEntity",
+    "PIIObfuscator",
     "CompiledWorkflow",
     "compile_workflow",
     "run_workflow",
