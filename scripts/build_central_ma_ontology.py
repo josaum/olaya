@@ -7,6 +7,7 @@ for O-Laya (Leio) System 1 decision engine and the Central M&A toolkit.
 import json
 from pathlib import Path
 
+
 def build_central_ma_ontology():
     concepts = [
         # Root Entities
@@ -21,12 +22,11 @@ def build_central_ma_ontology():
                 "cent:InvestmentHurdleCriterion",
                 "cent:StrategicVerdict",
                 "cent:SynergyVector",
-                "cent:TargetArchetype"
+                "cent:TargetArchetype",
             ],
             "disjoint_with": [],
-            "synonyms": ["strategic entity", "corporate development entity"]
+            "synonyms": ["strategic entity", "corporate development entity"],
         },
-
         # Strategic Decisions
         {
             "curie": "cent:StrategicDecision",
@@ -37,10 +37,10 @@ def build_central_ma_ontology():
                 "cent:PlatformAcquisition",
                 "cent:BoltOnAcquisition",
                 "cent:DivestitureJVCarveOut",
-                "cent:InternalExtrusionCapEx"
+                "cent:InternalExtrusionCapEx",
             ],
             "disjoint_with": [],
-            "synonyms": ["strategic decision", "capital allocation move", "M&A move"]
+            "synonyms": ["strategic decision", "capital allocation move", "M&A move"],
         },
         {
             "curie": "cent:PlatformAcquisition",
@@ -49,7 +49,7 @@ def build_central_ma_ontology():
             "parents": ["cent:StrategicDecision"],
             "children": [],
             "disjoint_with": ["cent:DivestitureJVCarveOut"],
-            "synonyms": ["platform acquisition", "core platform deal", "scale acquisition"]
+            "synonyms": ["platform acquisition", "core platform deal", "scale acquisition"],
         },
         {
             "curie": "cent:BoltOnAcquisition",
@@ -58,7 +58,7 @@ def build_central_ma_ontology():
             "parents": ["cent:StrategicDecision"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["bolt-on acquisition", "tuck-in deal", "tuck-in"]
+            "synonyms": ["bolt-on acquisition", "tuck-in deal", "tuck-in"],
         },
         {
             "curie": "cent:DivestitureJVCarveOut",
@@ -67,7 +67,7 @@ def build_central_ma_ontology():
             "parents": ["cent:StrategicDecision"],
             "children": [],
             "disjoint_with": ["cent:PlatformAcquisition"],
-            "synonyms": ["JV carve-out", "access over ownership", "distribution divestiture", "portfolio pruning"]
+            "synonyms": ["JV carve-out", "access over ownership", "distribution divestiture", "portfolio pruning"],
         },
         {
             "curie": "cent:InternalExtrusionCapEx",
@@ -76,22 +76,17 @@ def build_central_ma_ontology():
             "parents": ["cent:StrategicDecision"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["plant capex", "extrusion investment", "manufacturing insourcing"]
+            "synonyms": ["plant capex", "extrusion investment", "manufacturing insourcing"],
         },
-
         # Strategic Verdicts
         {
             "curie": "cent:StrategicVerdict",
             "label": "Strategic Verdict",
             "description": "The formalized corporate development recommendation on a strategic move.",
             "parents": ["cent:StrategicEntity"],
-            "children": [
-                "cent:ApprovedStrategicMove",
-                "cent:ConditionalStrategicMove",
-                "cent:RejectedStrategicMove"
-            ],
+            "children": ["cent:ApprovedStrategicMove", "cent:ConditionalStrategicMove", "cent:RejectedStrategicMove"],
             "disjoint_with": [],
-            "synonyms": ["strategic verdict", "investment committee verdict", "deal recommendation"]
+            "synonyms": ["strategic verdict", "investment committee verdict", "deal recommendation"],
         },
         {
             "curie": "cent:ApprovedStrategicMove",
@@ -100,7 +95,7 @@ def build_central_ma_ontology():
             "parents": ["cent:StrategicVerdict"],
             "children": [],
             "disjoint_with": ["cent:RejectedStrategicMove"],
-            "synonyms": ["approved deal", "recommended acquisition", "priority transaction", "proceed to diligence"]
+            "synonyms": ["approved deal", "recommended acquisition", "priority transaction", "proceed to diligence"],
         },
         {
             "curie": "cent:ConditionalStrategicMove",
@@ -109,7 +104,7 @@ def build_central_ma_ontology():
             "parents": ["cent:StrategicVerdict"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["conditional deal", "proceed with conditions", "valuation dependent"]
+            "synonyms": ["conditional deal", "proceed with conditions", "valuation dependent"],
         },
         {
             "curie": "cent:RejectedStrategicMove",
@@ -118,34 +113,26 @@ def build_central_ma_ontology():
             "parents": ["cent:StrategicVerdict"],
             "children": [],
             "disjoint_with": ["cent:ApprovedStrategicMove"],
-            "synonyms": ["rejected deal", "pass on deal", "off-strategy move", "dilutive proposal"]
+            "synonyms": ["rejected deal", "pass on deal", "off-strategy move", "dilutive proposal"],
         },
-
         # Operating Platforms
         {
             "curie": "cent:OperatingPlatform",
             "label": "Operating Platform",
             "description": "Central Garden & Pet operating division.",
             "parents": ["cent:StrategicEntity"],
-            "children": [
-                "cent:PetPlatform",
-                "cent:GardenPlatform"
-            ],
+            "children": ["cent:PetPlatform", "cent:GardenPlatform"],
             "disjoint_with": [],
-            "synonyms": ["operating platform", "operating segment", "business unit"]
+            "synonyms": ["operating platform", "operating segment", "business unit"],
         },
         {
             "curie": "cent:PetPlatform",
             "label": "Pet Operating Platform",
             "description": "Central Pet segment (~40% gross margin, ~19% EBITDA), spanning chews, toys, functional wellness, avian, and aquatics.",
             "parents": ["cent:OperatingPlatform"],
-            "children": [
-                "cent:PetConsumables",
-                "cent:PetHardGoodsAndDurables",
-                "cent:CommodityPetFood"
-            ],
+            "children": ["cent:PetConsumables", "cent:PetHardGoodsAndDurables", "cent:CommodityPetFood"],
             "disjoint_with": [],
-            "synonyms": ["pet segment", "central pet", "companion animal division"]
+            "synonyms": ["pet segment", "central pet", "companion animal division"],
         },
         {
             "curie": "cent:GardenPlatform",
@@ -156,25 +143,20 @@ def build_central_ma_ontology():
                 "cent:LawnAndTurf",
                 "cent:OrganicSoilAndBiology",
                 "cent:LiveGoodsAndNursery",
-                "cent:SyntheticChemicalFertilizer"
+                "cent:SyntheticChemicalFertilizer",
             ],
             "disjoint_with": [],
-            "synonyms": ["garden segment", "central garden", "lawn and garden"]
+            "synonyms": ["garden segment", "central garden", "lawn and garden"],
         },
-
         # Pet Sub-Categories
         {
             "curie": "cent:PetConsumables",
             "label": "Pet Consumables",
             "description": "Recurring-purchase companion animal consumables delivering high replenish velocity and gross margins above 45%.",
             "parents": ["cent:PetPlatform"],
-            "children": [
-                "cent:PetFunctionalWellness",
-                "cent:PetNaturalChews",
-                "cent:PetAvianAndSmallAnimal"
-            ],
+            "children": ["cent:PetFunctionalWellness", "cent:PetNaturalChews", "cent:PetAvianAndSmallAnimal"],
             "disjoint_with": ["cent:PetHardGoodsAndDurables", "cent:CommodityPetFood"],
-            "synonyms": ["pet consumables", "companion animal repeat items", "pet treats and chews"]
+            "synonyms": ["pet consumables", "companion animal repeat items", "pet treats and chews"],
         },
         {
             "curie": "cent:PetFunctionalWellness",
@@ -184,10 +166,16 @@ def build_central_ma_ontology():
             "children": ["cent:ClinicallyBackedPetWellnessTarget"],
             "disjoint_with": ["cent:CommodityPetFood"],
             "synonyms": [
-                "pet wellness", "pet supplements", "functional chews", "canine joint health",
-                "pet dermatology", "pet gut health", "NASC certified chews", "Zesty Paws archetype",
-                "companion animal preventative health"
-            ]
+                "pet wellness",
+                "pet supplements",
+                "functional chews",
+                "canine joint health",
+                "pet dermatology",
+                "pet gut health",
+                "NASC certified chews",
+                "Zesty Paws archetype",
+                "companion animal preventative health",
+            ],
         },
         {
             "curie": "cent:PetNaturalChews",
@@ -196,7 +184,7 @@ def build_central_ma_ontology():
             "parents": ["cent:PetConsumables"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["natural chews", "dog treats", "single ingredient chews", "Cadet", "TDBBS"]
+            "synonyms": ["natural chews", "dog treats", "single ingredient chews", "Cadet", "TDBBS"],
         },
         {
             "curie": "cent:PetAvianAndSmallAnimal",
@@ -205,7 +193,7 @@ def build_central_ma_ontology():
             "parents": ["cent:PetConsumables"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["Kaytee", "wild bird feed", "caged bird seed", "small animal food"]
+            "synonyms": ["Kaytee", "wild bird feed", "caged bird seed", "small animal food"],
         },
         {
             "curie": "cent:PetHardGoodsAndDurables",
@@ -214,7 +202,7 @@ def build_central_ma_ontology():
             "parents": ["cent:PetPlatform"],
             "children": [],
             "disjoint_with": ["cent:PetConsumables"],
-            "synonyms": ["pet hard goods", "aquatics", "Aqueon", "nylon bones", "habitats", "durable pet goods"]
+            "synonyms": ["pet hard goods", "aquatics", "Aqueon", "nylon bones", "habitats", "durable pet goods"],
         },
         {
             "curie": "cent:CommodityPetFood",
@@ -223,9 +211,8 @@ def build_central_ma_ontology():
             "parents": ["cent:PetPlatform"],
             "children": ["cent:CommodityExtrudedFoodTarget"],
             "disjoint_with": ["cent:PetFunctionalWellness", "cent:PetConsumables"],
-            "synonyms": ["wet pet food", "dry kibble", "extruded dog food", "commodity pet food", "canned cat food"]
+            "synonyms": ["wet pet food", "dry kibble", "extruded dog food", "commodity pet food", "canned cat food"],
         },
-
         # Garden Sub-Categories
         {
             "curie": "cent:LawnAndTurf",
@@ -234,7 +221,7 @@ def build_central_ma_ontology():
             "parents": ["cent:GardenPlatform"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["Pennington", "grass seed", "turf seed", "lawn seed"]
+            "synonyms": ["Pennington", "grass seed", "turf seed", "lawn seed"],
         },
         {
             "curie": "cent:OrganicSoilAndBiology",
@@ -244,9 +231,14 @@ def build_central_ma_ontology():
             "children": ["cent:OrganicSoilMicrobiomeTarget"],
             "disjoint_with": ["cent:SyntheticChemicalFertilizer"],
             "synonyms": [
-                "organic lawn care", "soil microbiome", "Sunday archetype", "Espoma Organic",
-                "bio-stimulants", "biological lawn care", "soil testing"
-            ]
+                "organic lawn care",
+                "soil microbiome",
+                "Sunday archetype",
+                "Espoma Organic",
+                "bio-stimulants",
+                "biological lawn care",
+                "soil testing",
+            ],
         },
         {
             "curie": "cent:LiveGoodsAndNursery",
@@ -255,7 +247,7 @@ def build_central_ma_ontology():
             "parents": ["cent:GardenPlatform"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["Bell Nursery", "live goods", "nursery plants", "greenhouse plants"]
+            "synonyms": ["Bell Nursery", "live goods", "nursery plants", "greenhouse plants"],
         },
         {
             "curie": "cent:SyntheticChemicalFertilizer",
@@ -264,9 +256,8 @@ def build_central_ma_ontology():
             "parents": ["cent:GardenPlatform"],
             "children": [],
             "disjoint_with": ["cent:OrganicSoilAndBiology"],
-            "synonyms": ["chemical fertilizer", "synthetic lawn fertilizer", "chemical pest control"]
+            "synonyms": ["chemical fertilizer", "synthetic lawn fertilizer", "chemical pest control"],
         },
-
         # Investment Hurdle Criteria (Niko Lahanas Formula)
         {
             "curie": "cent:InvestmentHurdleCriterion",
@@ -277,10 +268,10 @@ def build_central_ma_ontology():
                 "cent:NicheCategoryLeadership",
                 "cent:ConsumableRepeatVelocity",
                 "cent:OmnichannelRetailMoat",
-                "cent:MarginAccretionHurdle"
+                "cent:MarginAccretionHurdle",
             ],
             "disjoint_with": [],
-            "synonyms": ["investment criteria", "M&A formula", "hurdle criteria"]
+            "synonyms": ["investment criteria", "M&A formula", "hurdle criteria"],
         },
         {
             "curie": "cent:NicheCategoryLeadership",
@@ -289,7 +280,7 @@ def build_central_ma_ontology():
             "parents": ["cent:InvestmentHurdleCriterion"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["category leadership", "market leader", "number 1 or 2 position", "niche leader"]
+            "synonyms": ["category leadership", "market leader", "number 1 or 2 position", "niche leader"],
         },
         {
             "curie": "cent:ConsumableRepeatVelocity",
@@ -298,7 +289,7 @@ def build_central_ma_ontology():
             "parents": ["cent:InvestmentHurdleCriterion"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["repeat velocity", "consumable replenishment", "autoship subscription", "recurring cash flow"]
+            "synonyms": ["repeat velocity", "consumable replenishment", "autoship subscription", "recurring cash flow"],
         },
         {
             "curie": "cent:OmnichannelRetailMoat",
@@ -307,7 +298,7 @@ def build_central_ma_ontology():
             "parents": ["cent:InvestmentHurdleCriterion"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["retail moat", "omnichannel footprint", "tier 1 door rollout", "distribution synergy"]
+            "synonyms": ["retail moat", "omnichannel footprint", "tier 1 door rollout", "distribution synergy"],
         },
         {
             "curie": "cent:MarginAccretionHurdle",
@@ -316,9 +307,8 @@ def build_central_ma_ontology():
             "parents": ["cent:InvestmentHurdleCriterion"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["margin accretion", "50% gross margin", "margin expansion mandate", "EBITDA accretion"]
+            "synonyms": ["margin accretion", "50% gross margin", "margin expansion mandate", "EBITDA accretion"],
         },
-
         # Target Archetypes (Exemplars)
         {
             "curie": "cent:TargetArchetype",
@@ -328,10 +318,10 @@ def build_central_ma_ontology():
             "children": [
                 "cent:ClinicallyBackedPetWellnessTarget",
                 "cent:OrganicSoilMicrobiomeTarget",
-                "cent:CommodityExtrudedFoodTarget"
+                "cent:CommodityExtrudedFoodTarget",
             ],
             "disjoint_with": [],
-            "synonyms": ["target archetype", "M&A target class"]
+            "synonyms": ["target archetype", "M&A target class"],
         },
         {
             "curie": "cent:ClinicallyBackedPetWellnessTarget",
@@ -341,9 +331,13 @@ def build_central_ma_ontology():
             "children": [],
             "disjoint_with": ["cent:CommodityExtrudedFoodTarget"],
             "synonyms": [
-                "Zesty Paws archetype", "Zesty Paws", "Nutramax", "pet wellness platform",
-                "functional soft chews target", "veterinary supplement target"
-            ]
+                "Zesty Paws archetype",
+                "Zesty Paws",
+                "Nutramax",
+                "pet wellness platform",
+                "functional soft chews target",
+                "veterinary supplement target",
+            ],
         },
         {
             "curie": "cent:OrganicSoilMicrobiomeTarget",
@@ -353,9 +347,13 @@ def build_central_ma_ontology():
             "children": [],
             "disjoint_with": [],
             "synonyms": [
-                "Sunday archetype", "Sunday", "Espoma Organic", "organic lawn platform",
-                "soil biology target", "DTC lawn testing target"
-            ]
+                "Sunday archetype",
+                "Sunday",
+                "Espoma Organic",
+                "organic lawn platform",
+                "soil biology target",
+                "DTC lawn testing target",
+            ],
         },
         {
             "curie": "cent:CommodityExtrudedFoodTarget",
@@ -364,9 +362,8 @@ def build_central_ma_ontology():
             "parents": ["cent:TargetArchetype", "cent:CommodityPetFood"],
             "children": [],
             "disjoint_with": ["cent:ClinicallyBackedPetWellnessTarget"],
-            "synonyms": ["kibble target", "wet pet food facility", "co-packed dog food", "dilutive pet food asset"]
+            "synonyms": ["kibble target", "wet pet food facility", "co-packed dog food", "dilutive pet food asset"],
         },
-
         # Synergy Vectors
         {
             "curie": "cent:SynergyVector",
@@ -377,10 +374,10 @@ def build_central_ma_ontology():
                 "cent:ExtrusionManufacturingInsource",
                 "cent:Tier1MassRetailDoorScale",
                 "cent:DigitalAutoshipCompounding",
-                "cent:JVLogisticsEfficiency"
+                "cent:JVLogisticsEfficiency",
             ],
             "disjoint_with": [],
-            "synonyms": ["synergy vector", "deal synergies", "integration value driver"]
+            "synonyms": ["synergy vector", "deal synergies", "integration value driver"],
         },
         {
             "curie": "cent:ExtrusionManufacturingInsource",
@@ -389,7 +386,7 @@ def build_central_ma_ontology():
             "parents": ["cent:SynergyVector"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["extrusion absorption", "plant insourcing", "Nylabone manufacturing synergy"]
+            "synonyms": ["extrusion absorption", "plant insourcing", "Nylabone manufacturing synergy"],
         },
         {
             "curie": "cent:Tier1MassRetailDoorScale",
@@ -398,7 +395,7 @@ def build_central_ma_ontology():
             "parents": ["cent:SynergyVector"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["door expansion", "retail rollout", "Walmart scale", "mass retail synergy"]
+            "synonyms": ["door expansion", "retail rollout", "Walmart scale", "mass retail synergy"],
         },
         {
             "curie": "cent:DigitalAutoshipCompounding",
@@ -407,7 +404,7 @@ def build_central_ma_ontology():
             "parents": ["cent:SynergyVector"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["Chewy autoship", "Amazon subscribe and save", "DTC subscription", "digital repeat"]
+            "synonyms": ["Chewy autoship", "Amazon subscribe and save", "DTC subscription", "digital repeat"],
         },
         {
             "curie": "cent:JVLogisticsEfficiency",
@@ -416,23 +413,27 @@ def build_central_ma_ontology():
             "parents": ["cent:SynergyVector"],
             "children": [],
             "disjoint_with": [],
-            "synonyms": ["logistics synergy", "JV distribution", "freight rationalization"]
-        }
+            "synonyms": ["logistics synergy", "JV distribution", "freight rationalization"],
+        },
     ]
 
     ontology = {
         "name": "CentralStrategyOntology",
         "uri": "https://atlas.central.com/ontologies/strategy#",
         "description": "Formal ontology for Central Garden & Pet corporate strategy, M&A capital allocation, and investment hurdle verification.",
-        "concepts": concepts
+        "concepts": concepts,
     }
 
     # Save to all target locations
     paths = [
         Path("/Users/josaum/projects/decision-model/data/central_ma_ontology.json"),
         Path("/Users/josaum/projects/decision-model/docs/public/ontologies/central_ma_ontology.json"),
-        Path("/Users/josaum/projects/atlas/cartridges/theres-still-room-for-further-consolidation/src/atlas_ma/assets/central_ma_ontology.json"),
-        Path("/Users/josaum/projects/atlas/cartridges/theres-still-room-for-further-consolidation/enterprise-connector/assets/central_ma_ontology.json"),
+        Path(
+            "/Users/josaum/projects/atlas/cartridges/theres-still-room-for-further-consolidation/src/atlas_ma/assets/central_ma_ontology.json"
+        ),
+        Path(
+            "/Users/josaum/projects/atlas/cartridges/theres-still-room-for-further-consolidation/enterprise-connector/assets/central_ma_ontology.json"
+        ),
     ]
 
     for p in paths:

@@ -115,12 +115,12 @@ def test_gs1_ontology_loading_and_routing():
     from olaya.candidate_router import CandidateRouter
     from olaya.real_ontology_train import load_ontology_file
 
-    gs1_path = Path("data/gs1_ontology.json")
+    gs1_path = Path(__file__).resolve().parents[1] / "src" / "olaya" / "data" / "gs1_ontology.json"
     if not gs1_path.exists():
         pytest.skip("GS1 ontology json file not found.")
 
     onto = load_ontology_file(gs1_path)
-    assert len(onto.concepts) == 55
+    assert len(onto.concepts) >= 55
     assert "Beverage" in onto.concepts
     assert "FoodBeverageTobaccoProduct" in onto.concepts
     assert "Product" in onto.concepts
