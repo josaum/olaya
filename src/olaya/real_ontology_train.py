@@ -443,4 +443,3 @@ def generate_real_ontology_samples(
 
     rng.shuffle(samples)
     return samples[:num_samples]
-

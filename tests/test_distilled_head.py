@@ -3,12 +3,11 @@ Tests for Distilled Native Neural Head.
 """
 
 import json
-import pytest
+
 import torch
 
 from olaya.distilled_head import (
     DistilledNeuralHead,
-    DistilledWeights,
     fnv1a_hash,
     train_distilled_head_for_ontology,
 )
@@ -42,7 +41,7 @@ def test_distilled_head_forward_and_export():
 
     # Test morphism scoring
     parents_map = {0: [1]}  # C1 -> C2
-    disjoint_map = {0: [3]} # C1 disjoint C4
+    disjoint_map = {0: [3]}  # C1 disjoint C4
     scores = head.score_with_morphisms(q_vec, [0, 1, 2], parents_map, disjoint_map)
     assert len(scores) == 3
 
@@ -67,8 +66,12 @@ def test_distilled_head_forward_and_export():
 def test_train_distilled_head_on_ontology():
     ont = Ontology(name="test")
     ont.add_concept(Concept("C_ROOT", "Root Concept", "top level", parents=set()))
-    ont.add_concept(Concept("C_HEART", "Heart Disease", "cardiac condition", parents={"C_ROOT"}, synonyms=["cardiac arrest"]))
-    ont.add_concept(Concept("C_LUNG", "Lung Disease", "pulmonary condition", parents={"C_ROOT"}, disjoint_with={"C_HEART"}))
+    ont.add_concept(
+        Concept("C_HEART", "Heart Disease", "cardiac condition", parents={"C_ROOT"}, synonyms=["cardiac arrest"])
+    )
+    ont.add_concept(
+        Concept("C_LUNG", "Lung Disease", "pulmonary condition", parents={"C_ROOT"}, disjoint_with={"C_HEART"})
+    )
 
     samples = [
         ("cardiac arrest severe chest pain", "C_HEART"),

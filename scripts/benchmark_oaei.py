@@ -55,7 +55,9 @@ def main():
     total_post_disj = sum(r.post_disjoint_collisions for r in results)
 
     print(f"\nEvaluated {len(results)} ontology pairs across {total_classes} class correspondences:\n")
-    print(f"{'Ontology Pair':<24} | {'Classes':<7} | {'Hits@1':<8} | {'Hits@3':<8} | {'Hits@5':<8} | {'MRR':<6} | {'Axiom Violations (Raw -> Post)'}")
+    print(
+        f"{'Ontology Pair':<24} | {'Classes':<7} | {'Hits@1':<8} | {'Hits@3':<8} | {'Hits@5':<8} | {'MRR':<6} | {'Axiom Violations (Raw -> Post)'}"
+    )
     print("-" * 95)
 
     summary_records = []
@@ -67,21 +69,23 @@ def main():
             f"Mono: {r.raw_monotonicity_violations} -> {r.post_monotonicity_violations}, "
             f"Disj: {r.raw_disjoint_collisions} -> {r.post_disjoint_collisions}"
         )
-        summary_records.append({
-            "pair": r.pair_name,
-            "evaluated_classes": r.evaluated_classes,
-            "hits_at_1": r.hits_at_1,
-            "hits_at_3": r.hits_at_3,
-            "hits_at_5": r.hits_at_5,
-            "acc_at_1": r.acc_at_1,
-            "recall_at_3": r.recall_at_3,
-            "recall_at_5": r.recall_at_5,
-            "mrr": r.mrr,
-            "raw_monotonicity_violations": r.raw_monotonicity_violations,
-            "post_monotonicity_violations": r.post_monotonicity_violations,
-            "raw_disjoint_collisions": r.raw_disjoint_collisions,
-            "post_disjoint_collisions": r.post_disjoint_collisions,
-        })
+        summary_records.append(
+            {
+                "pair": r.pair_name,
+                "evaluated_classes": r.evaluated_classes,
+                "hits_at_1": r.hits_at_1,
+                "hits_at_3": r.hits_at_3,
+                "hits_at_5": r.hits_at_5,
+                "acc_at_1": r.acc_at_1,
+                "recall_at_3": r.recall_at_3,
+                "recall_at_5": r.recall_at_5,
+                "mrr": r.mrr,
+                "raw_monotonicity_violations": r.raw_monotonicity_violations,
+                "post_monotonicity_violations": r.post_monotonicity_violations,
+                "raw_disjoint_collisions": r.raw_disjoint_collisions,
+                "post_disjoint_collisions": r.post_disjoint_collisions,
+            }
+        )
 
     print("-" * 95)
     overall_h1 = (total_h1 / max(1, total_classes)) * 100
@@ -96,25 +100,29 @@ def main():
         f"Disj: {total_raw_disj} -> {total_post_disj} (0.0%)"
     )
     print("=" * 95)
-    print(f"\nFormal Axiomatic Verification Proof:")
+    print("\nFormal Axiomatic Verification Proof:")
     print(f"  * Pre-projection Incoherence Violations: {total_raw_mono + total_raw_disj}")
     print(f"  * Post-projection Incoherence Violations: {total_post_mono + total_post_disj} (Zero-Violation Guarantee)")
     print(f"  * Macro MRR: {macro_mrr:.4f} | Recall@5: {overall_h5:.2f}%")
 
     Path(args.output_json).parent.mkdir(parents=True, exist_ok=True)
     with open(args.output_json, "w") as f:
-        json.dump({
-            "benchmark": "OAEI Conference Track",
-            "pairs_evaluated": len(results),
-            "total_classes": total_classes,
-            "hits_at_1_pct": overall_h1,
-            "hits_at_3_pct": overall_h3,
-            "hits_at_5_pct": overall_h5,
-            "macro_mrr": macro_mrr,
-            "raw_violations": total_raw_mono + total_raw_disj,
-            "post_violations": total_post_mono + total_post_disj,
-            "details": summary_records,
-        }, f, indent=2)
+        json.dump(
+            {
+                "benchmark": "OAEI Conference Track",
+                "pairs_evaluated": len(results),
+                "total_classes": total_classes,
+                "hits_at_1_pct": overall_h1,
+                "hits_at_3_pct": overall_h3,
+                "hits_at_5_pct": overall_h5,
+                "macro_mrr": macro_mrr,
+                "raw_violations": total_raw_mono + total_raw_disj,
+                "post_violations": total_post_mono + total_post_disj,
+                "details": summary_records,
+            },
+            f,
+            indent=2,
+        )
     print(f"\nSaved formal OAEI validation summary to {args.output_json}")
 
 

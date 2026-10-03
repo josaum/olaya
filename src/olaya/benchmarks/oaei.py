@@ -7,7 +7,6 @@ formal validation of semantic alignment and axiomatic consistency for O-Laya.
 from __future__ import annotations
 
 import math
-import os
 import re
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
@@ -15,11 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from olaya.axioms import (
-    enforce_disjointness_exclusion,
     enforce_owl2_rl_axioms,
-    enforce_subsumption_monotonicity,
-    project_hierarchical_distribution,
-    verify_axioms,
     verify_owl2_rl_axioms,
 )
 from olaya.candidate_router import CandidateRouter
@@ -29,7 +24,7 @@ from olaya.distilled_head import (
     train_distilled_head_for_ontology,
 )
 from olaya.ontology import Concept, ObjectProperty, Ontology
-from olaya.owl2_rl import OWL2RLClosure, OWL2RLReasoner
+from olaya.owl2_rl import OWL2RLReasoner
 
 # XML Namespaces used in OWL and OAEI Alignment RDF
 NS_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -148,7 +143,11 @@ class OWLParser:
                     if union_elem is not None:
                         u_members = []
                         for uc in union_elem.findall(f".//{{{NS_OWL}}}Class"):
-                            uid = clean_uri(uc.attrib.get(f"{{{NS_RDF}}}ID") or uc.attrib.get(f"{{{NS_RDF}}}about") or uc.attrib.get(f"{{{NS_RDF}}}resource"))
+                            uid = clean_uri(
+                                uc.attrib.get(f"{{{NS_RDF}}}ID")
+                                or uc.attrib.get(f"{{{NS_RDF}}}about")
+                                or uc.attrib.get(f"{{{NS_RDF}}}resource")
+                            )
                             if uid and uid != "Thing" and uid != curie:
                                 u_members.append(uid)
                         if u_members:
@@ -159,7 +158,11 @@ class OWLParser:
                     if int_elem is not None:
                         i_members = []
                         for ic in int_elem.findall(f".//{{{NS_OWL}}}Class"):
-                            iid = clean_uri(ic.attrib.get(f"{{{NS_RDF}}}ID") or ic.attrib.get(f"{{{NS_RDF}}}about") or ic.attrib.get(f"{{{NS_RDF}}}resource"))
+                            iid = clean_uri(
+                                ic.attrib.get(f"{{{NS_RDF}}}ID")
+                                or ic.attrib.get(f"{{{NS_RDF}}}about")
+                                or ic.attrib.get(f"{{{NS_RDF}}}resource")
+                            )
                             if iid and iid != "Thing" and iid != curie:
                                 i_members.append(iid)
                         if i_members:
@@ -169,7 +172,11 @@ class OWLParser:
             for dju in elem.findall(f"{{{NS_OWL}}}disjointUnionOf"):
                 dju_members = []
                 for mc in dju.findall(f".//{{{NS_OWL}}}Class"):
-                    mid = clean_uri(mc.attrib.get(f"{{{NS_RDF}}}ID") or mc.attrib.get(f"{{{NS_RDF}}}about") or mc.attrib.get(f"{{{NS_RDF}}}resource"))
+                    mid = clean_uri(
+                        mc.attrib.get(f"{{{NS_RDF}}}ID")
+                        or mc.attrib.get(f"{{{NS_RDF}}}about")
+                        or mc.attrib.get(f"{{{NS_RDF}}}resource")
+                    )
                     if mid and mid != "Thing" and mid != curie:
                         dju_members.append(mid)
                 if len(dju_members) >= 2:
@@ -230,11 +237,15 @@ class OWLParser:
         for adc in root.findall(f".//{{{NS_OWL}}}AllDisjointClasses"):
             members = []
             for mc in adc.findall(f".//{{{NS_OWL}}}Class"):
-                mid = clean_uri(mc.attrib.get(f"{{{NS_RDF}}}ID") or mc.attrib.get(f"{{{NS_RDF}}}about") or mc.attrib.get(f"{{{NS_RDF}}}resource"))
+                mid = clean_uri(
+                    mc.attrib.get(f"{{{NS_RDF}}}ID")
+                    or mc.attrib.get(f"{{{NS_RDF}}}about")
+                    or mc.attrib.get(f"{{{NS_RDF}}}resource")
+                )
                 if mid and mid in ontology.concepts:
                     members.append(mid)
             for i, m1 in enumerate(members):
-                for m2 in members[i + 1:]:
+                for m2 in members[i + 1 :]:
                     ontology.add_disjointness(m1, m2)
 
         # -------------------------------------------------------------
@@ -250,7 +261,9 @@ class OWLParser:
                     continue
 
                 plabel_elem = pelem.find(f"{{{NS_RDFS}}}label")
-                plabel = plabel_elem.text.strip() if plabel_elem is not None and plabel_elem.text else camel_to_words(pcurie)
+                plabel = (
+                    plabel_elem.text.strip() if plabel_elem is not None and plabel_elem.text else camel_to_words(pcurie)
+                )
 
                 domains = set()
                 for d in pelem.findall(f"{{{NS_RDFS}}}domain"):
@@ -277,9 +290,18 @@ class OWLParser:
                         subprops.add(spres)
 
                 # Property types
-                is_trans = pelem.find(f"{{{NS_OWL}}}TransitiveProperty") is not None or "TransitiveProperty" in pelem.attrib.values()
-                is_func = pelem.find(f"{{{NS_OWL}}}FunctionalProperty") is not None or "FunctionalProperty" in pelem.attrib.values()
-                is_symm = pelem.find(f"{{{NS_OWL}}}SymmetricProperty") is not None or "SymmetricProperty" in pelem.attrib.values()
+                is_trans = (
+                    pelem.find(f"{{{NS_OWL}}}TransitiveProperty") is not None
+                    or "TransitiveProperty" in pelem.attrib.values()
+                )
+                is_func = (
+                    pelem.find(f"{{{NS_OWL}}}FunctionalProperty") is not None
+                    or "FunctionalProperty" in pelem.attrib.values()
+                )
+                is_symm = (
+                    pelem.find(f"{{{NS_OWL}}}SymmetricProperty") is not None
+                    or "SymmetricProperty" in pelem.attrib.values()
+                )
 
                 prop_obj = ObjectProperty(
                     curie=pcurie,
@@ -407,15 +429,9 @@ class OAEIBenchmark:
     def get_ontology(self, name: str) -> Ontology:
         name_lower = name.lower()
         if name_lower not in self._parsed_ontologies:
-            matches = [
-                f for f in self.ontologies_dir.glob("*.owl")
-                if f.stem.lower() == name_lower
-            ]
+            matches = [f for f in self.ontologies_dir.glob("*.owl") if f.stem.lower() == name_lower]
             if not matches:
-                matches = [
-                    f for f in self.ontologies_dir.glob("*.owl")
-                    if name_lower in f.stem.lower()
-                ]
+                matches = [f for f in self.ontologies_dir.glob("*.owl") if name_lower in f.stem.lower()]
             if not matches:
                 raise FileNotFoundError(f"Ontology file for {name} not found in {self.ontologies_dir}")
             self._parsed_ontologies[name_lower] = OWLParser.parse(matches[0])
@@ -428,8 +444,7 @@ class OAEIBenchmark:
 
         # Filter only alignments between classes present in both ontologies
         valid_alignments = [
-            a for a in alignments
-            if a.entity1 in source_onto.concepts and a.entity2 in target_onto.concepts
+            a for a in alignments if a.entity1 in source_onto.concepts and a.entity2 in target_onto.concepts
         ]
 
         if not valid_alignments:
@@ -468,7 +483,10 @@ class OAEIBenchmark:
 
             # Formulate query text representing source concept in context
             query_parts = [src_concept.label]
-            if src_concept.description and src_concept.description != f"{src_concept.label} concept in {source_onto.name} ontology":
+            if (
+                src_concept.description
+                and src_concept.description != f"{src_concept.label} concept in {source_onto.name} ontology"
+            ):
                 query_parts.append(src_concept.description)
             for p in src_concept.parents:
                 if p in source_onto.concepts:
@@ -498,11 +516,15 @@ class OAEIBenchmark:
                 cand_indices = [curie_to_idx[c] for c in all_target_curies if c in curie_to_idx]
                 parents_map = {
                     curie_to_idx[c]: [curie_to_idx[p] for p in target_onto.concepts[c].parents if p in curie_to_idx]
-                    for c in all_target_curies if c in curie_to_idx
+                    for c in all_target_curies
+                    if c in curie_to_idx
                 }
                 disjoint_map = {
-                    curie_to_idx[c]: [curie_to_idx[d] for d in target_onto.concepts[c].disjoint_with if d in curie_to_idx]
-                    for c in all_target_curies if c in curie_to_idx
+                    curie_to_idx[c]: [
+                        curie_to_idx[d] for d in target_onto.concepts[c].disjoint_with if d in curie_to_idx
+                    ]
+                    for c in all_target_curies
+                    if c in curie_to_idx
                 }
                 neural_scores = head.score_with_morphisms(q_vec, cand_indices, parents_map, disjoint_map)
                 neural_score_dict = {all_target_curies[i]: s for i, s in enumerate(neural_scores)}
@@ -538,7 +560,7 @@ class OAEIBenchmark:
             top_k_curies = ranked_curies[:5]
             raw_scores = [1.0 / (i + 1) for i in range(len(top_k_curies))]
             total = sum(raw_scores)
-            raw_probs = {c: s / total for c, s in zip(top_k_curies, raw_scores)}
+            raw_probs = {c: s / total for c, s in zip(top_k_curies, raw_scores, strict=True)}
 
             # Check raw violations under OWL 2 RL deductive closure
             _, raw_viols = verify_owl2_rl_axioms(raw_probs, target_onto, threshold=0.4, closure=target_closure)
@@ -562,13 +584,15 @@ class OAEIBenchmark:
                 elif "Disjointness" in v:
                     post_disj_colls += 1
 
-            top_matches.append({
-                "source": align.entity1,
-                "target_expected": ground_truth_target,
-                "target_predicted": ranked_curies[0],
-                "rank": rank,
-                "hit": rank == 1,
-            })
+            top_matches.append(
+                {
+                    "source": align.entity1,
+                    "target_expected": ground_truth_target,
+                    "target_predicted": ranked_curies[0],
+                    "rank": rank,
+                    "hit": rank == 1,
+                }
+            )
 
         mrr = sum(reciprocal_ranks) / max(1, len(reciprocal_ranks))
 

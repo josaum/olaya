@@ -207,7 +207,9 @@ def test_mcp_compliance_ping_and_notifications():
     init_note = server.handle_message({"jsonrpc": "2.0", "method": "notifications/initialized"})
     assert init_note is None
 
-    cancel_note = server.handle_message({"jsonrpc": "2.0", "method": "notifications/cancelled", "params": {"requestId": 1}})
+    cancel_note = server.handle_message(
+        {"jsonrpc": "2.0", "method": "notifications/cancelled", "params": {"requestId": 1}}
+    )
     assert cancel_note is None
 
     templates_req = {"jsonrpc": "2.0", "id": 102, "method": "resources/templates/list"}
@@ -247,4 +249,8 @@ def test_mcp_leio_product_ontology():
     assert not resp["result"]["isError"]
     content = json.loads(resp["result"]["content"][0]["text"])
     assert content["domain"] == "leio"
-    assert content["curie"].startswith("leio:") and ("leio:Pricing" in content["lineage"] or content["curie"] in ("leio:InputOnlyMetering", "leio:PayAsYouGoScaleTier", "leio:JevCompatibleBilling", "leio:FreeOutputTokens"))
+    assert content["curie"].startswith("leio:") and (
+        "leio:Pricing" in content["lineage"]
+        or content["curie"]
+        in ("leio:InputOnlyMetering", "leio:PayAsYouGoScaleTier", "leio:JevCompatibleBilling", "leio:FreeOutputTokens")
+    )

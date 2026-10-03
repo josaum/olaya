@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Set
+from typing import Any
 
 from olaya.distilled_head import create_zero_shot_head_for_ontology
 from olaya.ontology import Concept, Ontology
@@ -32,8 +32,8 @@ MODELS_DIR = Path("models")
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def load_json_onto(path: Path) -> Dict[str, Any]:
-    with open(path, "r", encoding="utf-8") as f:
+def load_json_onto(path: Path) -> dict[str, Any]:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -211,7 +211,9 @@ def build_master_lattice() -> Ontology:
     print("⚙️  Running W3C OWL 2 RL Deductive Reasoner across Master Lattice...")
     reasoner = OWL2RLReasoner(master)
     closure = reasoner.compute_closure()
-    print(f"  * Deductive closure complete: {len(closure.subclasses)} subclass relations, {len(closure.disjointnesses)} disjoint pairs")
+    print(
+        f"  * Deductive closure complete: {len(closure.subclasses)} subclass relations, {len(closure.disjointnesses)} disjoint pairs"
+    )
 
     return master
 
