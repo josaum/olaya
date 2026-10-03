@@ -46,6 +46,10 @@ class TrainingSample:
     act_target: int
     qtype_name: str
     ontology: Ontology | None = None
+    source_id: str = ""
+    group_id: str = ""
+    state_text: str = ""
+    source_kind: str = ""
 
 
 def build_training_samples(
