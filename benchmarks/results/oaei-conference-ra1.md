@@ -1,6 +1,6 @@
 # OAEI Conference track (ra1) — honest evaluation
 
-Date: 2026-10-03  ·  Commit: `c2b189e24312`  ·  Runtime: 12.3 s (matching + 101-point threshold sweep, single CPU)
+Date: 2026-10-03  ·  Commit: `332cccbb55dd`  ·  Runtime: 11.9 s (matching + 101-point threshold sweep, single CPU)
 
 Protocol: standard OAEI alignment evaluation.  For each of the 21 OntoFarm pairs the matcher scores every
 class/class and property/property cross pair, keeps the mutual-best 1:1 correspondences, applies a confidence
