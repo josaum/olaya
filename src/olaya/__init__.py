@@ -2,7 +2,8 @@
 
 from olaya.axioms import calibrate_and_project_distribution, enforce_subsumption_monotonicity
 from olaya.candidate_router import CandidateRouter
-from olaya.ontology import Concept, Ontology, create_incident_ontology
+from olaya.ontology import Concept, Individual, ObjectProperty, Ontology, create_incident_ontology
+from olaya.owl2_rl import OWL2RLReasoner, abox_consistency_report
 from olaya.pii import ObfuscationMode, ObfuscationResult, PIIEntity, PIIObfuscator
 from olaya.real_abox import RealABoxFact, load_atlas_real_abox
 from olaya.sequence import SequenceBundle, build_ontology_sequence
@@ -36,6 +37,10 @@ __all__ = [
     "replay_workflow",
     "Ontology",
     "Concept",
+    "Individual",
+    "ObjectProperty",
+    "OWL2RLReasoner",
+    "abox_consistency_report",
     "create_incident_ontology",
     "CandidateRouter",
     "OntologyDecisionModel",
