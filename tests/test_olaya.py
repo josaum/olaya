@@ -198,3 +198,20 @@ def test_subsumes_head_hierarchical_scopes(olaya):
     assert ans_root.concept == "INCIDENT:ROOT"
     assert 0.0 <= ans_root.subsumes <= 1.0
     assert 0.0 <= ans_root.confidence <= 1.0
+
+
+def test_incident_ontology_abox_instances():
+    """ABox on the bundled incident ontology: inferred types feed instances_of."""
+    from olaya.owl2_rl import OWL2RLReasoner
+
+    onto = create_incident_ontology()
+    onto.assert_type("INC-1", "INCIDENT:DB_OUTAGE")
+    onto.assert_type("INC-2", "INCIDENT:INVOICE_MISCALC")
+    closure = OWL2RLReasoner(onto).compute_closure()
+    assert closure.is_consistent
+    assert onto.instances_of("INCIDENT:DATA", closure) == {"INC-1"}
+    assert onto.instances_of("INCIDENT:ROOT", closure) == {"INC-1", "INC-2"}
+    onto.assert_type("INC-1", "INCIDENT:INVOICE_MISCALC")  # disjoint with DB_OUTAGE
+    closure = OWL2RLReasoner(onto).compute_closure()
+    assert not closure.is_consistent
+    assert closure.inconsistencies[0].rule == "cax-dw"
