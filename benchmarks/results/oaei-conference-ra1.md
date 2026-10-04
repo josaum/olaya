@@ -1,6 +1,6 @@
 # OAEI Conference track (ra1) — honest evaluation
 
-Date: 2026-10-04  ·  Commit: `7cbc576a3e11`  ·  Runtime: 438.7 s (lexical 21.1 s; embeddings 417.6 s including model loading, encoding, the configuration grid and the cross-validation; 4-thread CPU)
+Date: 2026-10-04  ·  Commit: `954a65894888`  ·  Runtime: 613.6 s (lexical 20.9 s; embeddings 592.7 s including model loading, encoding, the configuration grid and the cross-validation; 4-thread CPU)
 
 Protocol: standard OAEI alignment evaluation.  For each of the 21 OntoFarm pairs the matcher scores every
 class/class and property/property cross pair, keeps the mutual-best 1:1 correspondences, applies a confidence
@@ -23,15 +23,17 @@ The gold target is never placed in the candidate set; no metric is derived from 
 | olaya-embedding only (intfloat/e5-small-v2), a-priori threshold | 0.50 | 0.85 / 0.61 / **0.71** | 0.29 / 0.30 / **0.29** | 0.73 / 0.57 / **0.64** |
 | olaya-embedding only (intfloat/e5-small-v2), best threshold (optimistic) | 0.46 | 0.84 / 0.63 / **0.72** | 0.27 / 0.35 / **0.30** | 0.71 / 0.59 / **0.64** |
 | olaya-hybrid (intfloat/e5-small-v2), a-priori config | 0.50 | 0.82 / 0.68 / **0.74** | 0.29 / 0.37 / **0.32** | 0.71 / 0.63 / **0.67** |
-| olaya-hybrid (intfloat/e5-small-v2), best config on ra1 (optimistic) | 0.51 | 0.83 / 0.69 / **0.75** | 0.33 / 0.48 / **0.39** | 0.71 / 0.66 / **0.68** |
-| **olaya-hybrid (intfloat/e5-small-v2), leave-one-pair-out CV (headline)** | CV | 0.82 / 0.69 / **0.75** | 0.32 / 0.48 / **0.39** | 0.70 / 0.66 / **0.68** |
-| olaya-hybrid (intfloat/e5-small-v2), leave-one-ontology-out CV | CV | 0.83 / 0.69 / **0.75** | 0.31 / 0.45 / **0.37** | 0.70 / 0.65 / **0.68** |
+| olaya-hybrid (intfloat/e5-small-v2, path text), a-priori threshold | 0.50 | 0.82 / 0.69 / **0.75** | 0.33 / 0.48 / **0.39** | 0.70 / 0.66 / **0.68** |
+| olaya-hybrid (intfloat/e5-small-v2, path text), best threshold (optimistic) | 0.40 | 0.80 / 0.73 / **0.76** | 0.32 / 0.52 / **0.40** | 0.69 / 0.70 / **0.69** |
+| olaya-hybrid (intfloat/e5-small-v2), best config on ra1 (optimistic) | 0.51 | 0.84 / 0.69 / **0.76** | 0.35 / 0.48 / **0.41** | 0.73 / 0.66 / **0.69** |
+| **olaya-hybrid (intfloat/e5-small-v2), leave-one-pair-out CV (headline)** | CV | 0.81 / 0.69 / **0.75** | 0.32 / 0.48 / **0.38** | 0.69 / 0.66 / **0.68** |
+| olaya-hybrid (intfloat/e5-small-v2), leave-one-ontology-out CV | CV | 0.81 / 0.68 / **0.74** | 0.33 / 0.46 / **0.38** | 0.70 / 0.65 / **0.67** |
 | olaya-hybrid + structure (intfloat/e5-small-v2, neighbour w=0.3), a-priori config | 0.50 | 0.86 / 0.65 / **0.74** | 0.38 / 0.43 / **0.40** | 0.76 / 0.62 / **0.68** |
 | olaya-hybrid + structure (intfloat/e5-small-v2), best structural config on ra1 (optimistic) | 0.45 | 0.84 / 0.68 / **0.75** | 0.37 / 0.46 / **0.41** | 0.74 / 0.64 / **0.69** |
 | olaya-hybrid + structure (intfloat/e5-small-v2), leave-one-pair-out CV (structural grid) | CV | 0.82 / 0.66 / **0.73** | 0.34 / 0.46 / **0.39** | 0.71 / 0.63 / **0.67** |
 | olaya-hybrid + structure (intfloat/e5-small-v2), leave-one-ontology-out CV (structural grid) | CV | 0.83 / 0.67 / **0.74** | 0.32 / 0.41 / **0.36** | 0.72 / 0.63 / **0.67** |
-| **olaya-hybrid (+structure) (intfloat/e5-small-v2), leave-one-pair-out CV, union grid** | CV | 0.82 / 0.66 / **0.73** | 0.34 / 0.46 / **0.39** | 0.71 / 0.63 / **0.67** |
-| olaya-hybrid (+structure) (intfloat/e5-small-v2), leave-one-ontology-out CV, union grid | CV | 0.83 / 0.67 / **0.74** | 0.32 / 0.41 / **0.36** | 0.72 / 0.63 / **0.67** |
+| **olaya-hybrid (+structure) (intfloat/e5-small-v2), leave-one-pair-out CV, union grid** | CV | 0.81 / 0.69 / **0.75** | 0.32 / 0.48 / **0.38** | 0.69 / 0.66 / **0.68** |
+| olaya-hybrid (+structure) (intfloat/e5-small-v2), leave-one-ontology-out CV, union grid | CV | 0.81 / 0.68 / **0.74** | 0.33 / 0.46 / **0.38** | 0.70 / 0.65 / **0.67** |
 
 Macro (mean over pairs) for the lexical a-priori run: M1 P 0.86 / R 0.67 / F1 0.74 (21 pairs), M2 P 0.29 / R 0.30 / F1 0.27 (14 pairs), M3 P 0.76 / R 0.61 / F1 0.67 (21 pairs).
 
@@ -52,8 +54,11 @@ Notes:
 Encoder: `intfloat/e5-small-v2` (revision `main`, commit `ffb93f3bd404`, 384-d,
 mean pooling, L2-normalised, max 128 tokens, prefix `'query: '`), run locally on the CPU
 with `transformers` only (`olaya.embeddings.TransformerEncoder`).  Entity text = label (camelCase split) +
-comment + parent labels (classes) or domain / range labels (properties); the matcher uses the mean of the
-label-only and full-description cosines.  Raw cosines have a high floor on this data (unrelated entities
+comment + parent labels (classes) or domain / range labels (properties); the original matcher uses the mean
+of the label-only and full-description cosines (`text=both`).  The *path* text added after the error
+analysis (`benchmarks/results/oaei-error-analysis.md`) encodes the entity as its chain from the root,
+`Conference > Document > Paper` for a class and `Paper > has Author > Person` (domain > label > range) for a
+property; `text=path` uses it alone, `text=label+path` averages it with the label cosine.  Raw cosines have a high floor on this data (unrelated entities
 score 0.3-0.5, and more for e5), so they are hubness-corrected with CSLS (Conneau et al. 2018): the mean
 similarity of each entity's 10 nearest neighbours is the background and the score is rescaled so that
 background = 0 and a perfect match = 1.  No gold data is involved in the calibration.
@@ -71,15 +76,21 @@ held-out pair; the held-out TP/FP/FN are then summed.  Leave-one-ontology-out (7
 ontology held out, selection on the remaining 15) is the stricter variant.  Two caveats remain and are not
 hidden: (1) the *design* choices (cascade rather than weighted sum, CSLS rather than raw cosine, averaging
 label and full text) and the choice of the primary encoder were made after looking at ra1 numbers, and
-the CV only protects the numeric knobs (combination, text, alpha, threshold); (2) 21 pairs from 7
+the CV only protects the numeric knobs (combination, text, alpha, threshold); the *path* text in the grid was
+designed after the error analysis of the a-priori hybrid on ra1 (`oaei-error-analysis.md`), which is the same
+kind of caveat; (2) 21 pairs from 7
 ontologies are a small sample, so differences of 0.01-0.02 F1 between any two rows are within noise.
 
 ### Cross-validated selection (primary encoder)
 
-- Leave-one-pair-out: M1 0.824 / 0.687 / **0.750**, M3 0.704 / 0.656 / **0.679**.  Configs chosen across the 21 folds: `cascade,w=0.0,text=both,alpha=0.2,th=0.50`, `cascade,w=0.0,text=both,alpha=0.2,th=0.51`.
-- Leave-one-ontology-out: M1 0.826 / 0.685 / **0.749**, M3 0.705 / 0.649 / **0.676**.  Configs chosen across the 7 folds: `cascade,w=0.0,text=both,alpha=0.2,th=0.50`, `cascade,w=0.0,text=both,alpha=0.2,th=0.51`, `cascade,w=0.0,text=both,alpha=0.3,th=0.55`.
-- Best single grid point on all 21 pairs (optimistic): `cascade,w=0.0,text=both,alpha=0.2,th=0.51`.
-- Grid: combination in {lexical only, sum w=0.3, sum w=0.5, cascade} x text in {label, both, full} x alpha in {0.0, 0.1, 0.2, 0.3} x threshold 0.30-0.80 step 0.01 (2040 points); selection criterion: micro-F1 M3.
+- Leave-one-pair-out: M1 0.810 / 0.691 / **0.746**, M3 0.693 / 0.659 / **0.676**.  Configs chosen across the 21 folds: `cascade,w=0.0,text=label+path,alpha=0.0,th=0.42`, `cascade,w=0.0,text=label+path,alpha=0.2,th=0.51`, `cascade,w=0.0,text=path,alpha=0.0,th=0.40`.
+- Leave-one-ontology-out: M1 0.808 / 0.683 / **0.741**, M3 0.698 / 0.649 / **0.673**.  Configs chosen across the 7 folds: `cascade,w=0.0,text=label+path,alpha=0.0,th=0.38`, `cascade,w=0.0,text=label+path,alpha=0.0,th=0.42`, `cascade,w=0.0,text=label+path,alpha=0.0,th=0.51`, `cascade,w=0.0,text=label+path,alpha=0.2,th=0.51`, `cascade,w=0.0,text=path,alpha=0.0,th=0.42`, `sum,w=0.5,text=path,alpha=0.1,th=0.44`.
+- Best single grid point on all 21 pairs (optimistic): `cascade,w=0.0,text=label+path,alpha=0.2,th=0.51`.
+- Path cascade alone (text=path, alpha 0), only its threshold cross-validated (51 points): leave-one-pair-out M1 0.756 / M3 0.686, leave-one-ontology-out M1 0.755 / M3 0.684.  The full grid above contains these points, but with five texts x four alphas x four combinations the selection on 20 pairs hops
+  between `path` and `label+path` configurations and the held-out gain shrinks to the noise band: the path text
+  is the one change the error analysis produced that survives cross-validation on its own sub-grid (+0.04 M3),
+  but on the full grid the headline is unchanged within noise (0.750 / 0.679 before).  The headline stays the full-grid number.
+- Grid: combination in {lexical only, sum w=0.3, sum w=0.5, cascade} x text in {label, both, full, path, label+path} x alpha in {0.0, 0.1, 0.2, 0.3} x threshold 0.30-0.80 step 0.01 (3264 points); selection criterion: micro-F1 M3.
 
 ### Grid sweep at the a-priori threshold 0.50 (primary encoder, micro F1 M1 / M3)
 
@@ -89,12 +100,18 @@ ontologies are a small sample, so differences of 0.01-0.02 F1 between any two ro
 | sum w=0.3 | label | 0.710 / 0.636 | 0.717 / 0.644 | 0.719 / 0.645 | 0.717 / 0.644 |
 | sum w=0.3 | both | 0.720 / 0.647 | 0.727 / 0.652 | 0.728 / 0.651 | 0.728 / 0.653 |
 | sum w=0.3 | full | 0.715 / 0.648 | 0.723 / 0.662 | 0.723 / 0.659 | 0.719 / 0.655 |
+| sum w=0.3 | path | 0.718 / 0.658 | 0.719 / 0.663 | 0.720 / 0.662 | 0.718 / 0.658 |
+| sum w=0.3 | label+path | 0.723 / 0.654 | 0.724 / 0.656 | 0.725 / 0.656 | 0.725 / 0.659 |
 | sum w=0.5 | label | 0.692 / 0.621 | 0.698 / 0.625 | 0.709 / 0.634 | 0.710 / 0.634 |
 | sum w=0.5 | both | 0.696 / 0.628 | 0.703 / 0.633 | 0.710 / 0.637 | 0.710 / 0.643 |
 | sum w=0.5 | full | 0.693 / 0.641 | 0.696 / 0.643 | 0.697 / 0.641 | 0.695 / 0.642 |
+| sum w=0.5 | path | 0.694 / 0.647 | 0.702 / 0.653 | 0.703 / 0.655 | 0.691 / 0.645 |
+| sum w=0.5 | label+path | 0.696 / 0.629 | 0.704 / 0.635 | 0.707 / 0.640 | 0.705 / 0.642 |
 | cascade | label | 0.726 / 0.645 | 0.726 / 0.644 | 0.726 / 0.649 | 0.735 / 0.658 |
 | cascade | both | 0.744 / 0.668 | 0.747 / 0.671 | 0.755 / 0.684 | 0.743 / 0.674 |
 | cascade | full | 0.737 / 0.662 | 0.737 / 0.662 | 0.735 / 0.662 | 0.720 / 0.650 |
+| cascade | path | 0.749 / 0.680 | 0.754 / 0.683 | 0.748 / 0.678 | 0.740 / 0.669 |
+| cascade | label+path | 0.746 / 0.684 | 0.751 / 0.689 | 0.756 / 0.692 | 0.749 / 0.685 |
 
 Reading the sweep: at 0.50 the weighted sum never beats the lexical matcher on M1 and at most matches it
 on M3 (the embedding's residual floor dilutes exact lexical evidence); the cascade adds recall for
@@ -105,11 +122,11 @@ and M3 for the cascade and is kept as a tunable knob; its benefit is within nois
 
 ### Encoder ablation (cascade, text=both, CSLS; micro F1 M1 / M3)
 
-| encoder | commit | embedding only @0.50 | embedding only, best th | cascade alpha 0 @0.50 | cascade alpha 0.2 @0.50 | cascade, best th (optimistic) | cascade + neighbour w=0.3 @0.50 |
-|---|---|---|---|---|---|---|---|
-| `intfloat/e5-small-v2` | `ffb93f3b` | 0.711 / 0.638 | 0.721 / 0.643 (th 0.46) | 0.744 / 0.668 | 0.755 / 0.684 | 0.743 / 0.670 (th 0.43) | 0.741 / 0.681 |
-| `sentence-transformers/all-MiniLM-L6-v2` | `1110a243` | 0.690 / 0.624 | 0.699 / 0.634 (th 0.52) | 0.734 / 0.666 | 0.740 / 0.671 | 0.739 / 0.672 (th 0.52) | 0.740 / 0.678 |
-| `BAAI/bge-small-en-v1.5` | `5c38ec7c` | 0.696 / 0.631 | 0.722 / 0.646 (th 0.39) | 0.731 / 0.668 | 0.736 / 0.669 | 0.739 / 0.677 (th 0.49) | 0.738 / 0.679 |
+| encoder | commit | embedding only @0.50 | embedding only, best th | cascade alpha 0 @0.50 | cascade alpha 0.2 @0.50 | cascade, best th (optimistic) | cascade + neighbour w=0.3 @0.50 | cascade, path text @0.50 | cascade, path text, best th (optimistic) |
+|---|---|---|---|---|---|---|---|---|---|
+| `intfloat/e5-small-v2` | `ffb93f3b` | 0.711 / 0.638 | 0.721 / 0.643 (th 0.46) | 0.744 / 0.668 | 0.755 / 0.684 | 0.743 / 0.670 (th 0.43) | 0.741 / 0.681 | 0.749 / 0.680 | 0.764 / 0.693 (th 0.40) |
+| `sentence-transformers/all-MiniLM-L6-v2` | `1110a243` | 0.690 / 0.624 | 0.699 / 0.634 (th 0.52) | 0.734 / 0.666 | 0.740 / 0.671 | 0.739 / 0.672 (th 0.52) | 0.740 / 0.678 | 0.744 / 0.680 | 0.749 / 0.685 (th 0.52) |
+| `BAAI/bge-small-en-v1.5` | `5c38ec7c` | 0.696 / 0.631 | 0.722 / 0.646 (th 0.39) | 0.731 / 0.668 | 0.736 / 0.669 | 0.739 / 0.677 (th 0.49) | 0.738 / 0.679 | 0.741 / 0.677 | 0.744 / 0.683 (th 0.52) |
 
 All small encoders land within 0.01-0.02 of each other.  Two base-size encoders were also measured once
 with the same code during development (not part of the default run): `sentence-transformers/all-mpnet-base-v2`
@@ -178,10 +195,10 @@ No structure, same seed and threshold: M1 0.744 / M3 0.668.
 
 - Structural grid alone (1020 points: 20 rule / weight / rounds settings x threshold 0.30-0.80), leave-one-pair-out: M1 0.823 / 0.664 / **0.735**, M3 0.712 / 0.633 / **0.670**; configs chosen: `structure=neighbour,w=0.20,it=10,th=0.43`, `structure=neighbour,w=0.20,it=10,th=0.44`, `structure=neighbour,w=0.20,it=10,th=0.47`, `structure=neighbour,w=0.30,it=10,th=0.44`, `structure=neighbour,w=0.30,it=10,th=0.45`.
 - Structural grid alone, leave-one-ontology-out: M1 0.832 / 0.670 / **0.742**, M3 0.720 / 0.631 / **0.672**; configs chosen: `structure=flooding,w=0.30,it=50,th=0.38`, `structure=neighbour,w=0.20,it=10,th=0.43`, `structure=neighbour,w=0.20,it=10,th=0.45`, `structure=neighbour,w=0.30,it=10,th=0.44`, `structure=neighbour,w=0.30,it=10,th=0.45`, `structure=smooth,w=0.50,it=1,th=0.47`.
-- Union of the hybrid grid and the structural grid (3060 points; the selection may pick "no structure"), leave-one-pair-out: M1 0.823 / 0.664 / **0.735**, M3 0.712 / 0.633 / **0.670**; configs chosen: `structure=neighbour,w=0.20,it=10,th=0.43`, `structure=neighbour,w=0.20,it=10,th=0.44`, `structure=neighbour,w=0.20,it=10,th=0.47`, `structure=neighbour,w=0.30,it=10,th=0.44`, `structure=neighbour,w=0.30,it=10,th=0.45`.
-- Union grid, leave-one-ontology-out: M1 0.832 / 0.670 / **0.742**, M3 0.720 / 0.631 / **0.672**; configs chosen: `structure=flooding,w=0.30,it=50,th=0.38`, `structure=neighbour,w=0.20,it=10,th=0.43`, `structure=neighbour,w=0.20,it=10,th=0.45`, `structure=neighbour,w=0.30,it=10,th=0.44`, `structure=neighbour,w=0.30,it=10,th=0.45`, `structure=smooth,w=0.50,it=1,th=0.47`.
-- For reference, the hybrid grid alone (previous headline), leave-one-pair-out: M1 **0.750** / M3 **0.679**.
-- Best structural grid point on all 21 pairs (optimistic): `structure=neighbour,w=0.30,it=10,th=0.45`; best union point: `structure=neighbour,w=0.30,it=10,th=0.45`.
+- Union of the hybrid grid and the structural grid (4284 points; the selection may pick "no structure"), leave-one-pair-out: M1 0.810 / 0.691 / **0.746**, M3 0.693 / 0.659 / **0.676**; configs chosen: `cascade,w=0.0,text=label+path,alpha=0.0,th=0.42`, `cascade,w=0.0,text=label+path,alpha=0.2,th=0.51`, `cascade,w=0.0,text=path,alpha=0.0,th=0.40`.
+- Union grid, leave-one-ontology-out: M1 0.808 / 0.683 / **0.741**, M3 0.698 / 0.649 / **0.673**; configs chosen: `cascade,w=0.0,text=label+path,alpha=0.0,th=0.38`, `cascade,w=0.0,text=label+path,alpha=0.0,th=0.42`, `cascade,w=0.0,text=label+path,alpha=0.0,th=0.51`, `cascade,w=0.0,text=label+path,alpha=0.2,th=0.51`, `cascade,w=0.0,text=path,alpha=0.0,th=0.42`, `sum,w=0.5,text=path,alpha=0.1,th=0.44`.
+- For reference, the hybrid grid alone (previous headline), leave-one-pair-out: M1 **0.746** / M3 **0.676**.
+- Best structural grid point on all 21 pairs (optimistic): `structure=neighbour,w=0.30,it=10,th=0.45`; best union point: `cascade,w=0.0,text=label+path,alpha=0.2,th=0.51`.
 
 ### Does structure buy recall at a lower threshold?  (micro P / R, M1 and M3)
 
@@ -202,9 +219,9 @@ No structure, same seed and threshold: M1 0.744 / M3 0.668.
 Reading the structural rows: at the a-priori threshold the change against the hybrid is `flooding` -0.060 (M1) / -0.054 (M3), `flooding_relative` -0.190 (M1) / -0.232 (M3), `neighbour` -0.003 (M1) / +0.013 (M3), `smooth` +0.003 (M1) / +0.005 (M3); `neighbour` is the best a-priori rule and the heavy-handed rules (global-normalised flooding, relative
 flooding at w = 0.5) are clearly worse because they move the score scale away from the fixed threshold.
 The best structural grid point on all 21 pairs is `structure=neighbour,w=0.30,it=10,th=0.45` at M1 0.750 / M3 0.688 (optimistic), which looks like a gain over the best hybrid point, but it does not survive
-cross-validation: the union-grid LOPO-CV picks a structural config in 21 of 21 folds
+cross-validation: the union-grid LOPO-CV picks a structural config in 0 of 21 folds
 (the structural points win on the 20 training pairs) and the held-out pairs then score
-M1 0.735 / M3 0.670, against M1 0.750 / M3 0.679 for the hybrid grid alone (-0.015 M1 / -0.009 M3; the structural grid alone gives M1 0.735 / M3 0.670).  The structural gain on ra1 is a threshold-and-weight fit to the
+M1 0.746 / M3 0.676, against M1 0.746 / M3 0.676 for the hybrid grid alone (+0.000 M1 / +0.000 M3; the structural grid alone gives M1 0.735 / M3 0.670).  The structural gain on ra1 is a threshold-and-weight fit to the
 particular pairs rather than a transferable improvement; the differences are within the noise band of 21 pairs.
 
 Recall versus precision: structure *does* raise recall.  Similarity Flooding (relative, w = 0.5) reaches
@@ -227,8 +244,8 @@ number (no pair selects its own configuration).  Ranked by F1.
 |---|---|---|---|
 | GraphMatcher | 0.78 | 0.89 | 0.83 |
 | SORBETMtch | 0.78 | 0.75 | 0.76 |
-| **olaya-hybrid (LOPO-CV)** (this repo) | 0.82 | 0.69 | 0.75 |
-| **olaya-hybrid+structure (LOPO-CV, union grid)** (this repo) | 0.82 | 0.66 | 0.73 |
+| **olaya-hybrid (LOPO-CV)** (this repo) | 0.81 | 0.69 | 0.75 |
+| **olaya-hybrid+structure (LOPO-CV, union grid)** (this repo) | 0.81 | 0.69 | 0.75 |
 | **olaya-lexical** (this repo) | 0.83 | 0.64 | 0.73 |
 | LogMap | 0.84 | 0.63 | 0.72 |
 | Matcha | 0.76 | 0.68 | 0.72 |
@@ -246,8 +263,8 @@ number (no pair selects its own configuration).  Ranked by F1.
 | GraphMatcher | 0.76 | 0.80 | 0.78 |
 | SORBETMtch | 0.78 | 0.64 | 0.70 |
 | LogMap | 0.81 | 0.58 | 0.68 |
-| **olaya-hybrid (LOPO-CV)** (this repo) | 0.70 | 0.66 | 0.68 |
-| **olaya-hybrid+structure (LOPO-CV, union grid)** (this repo) | 0.71 | 0.63 | 0.67 |
+| **olaya-hybrid (LOPO-CV)** (this repo) | 0.69 | 0.66 | 0.68 |
+| **olaya-hybrid+structure (LOPO-CV, union grid)** (this repo) | 0.69 | 0.66 | 0.68 |
 | Matcha | 0.70 | 0.64 | 0.67 |
 | **olaya-lexical** (this repo) | 0.73 | 0.60 | 0.66 |
 | ALIN | 0.88 | 0.47 | 0.61 |
@@ -264,8 +281,8 @@ Where we land (headline = hybrid, leave-one-pair-out CV, M1 F1 0.75 / M3 F1 0.68
 rank 3 of 13 on ra1-M1 and rank 3 of 14 on ra1-M3 by two-decimal F1 (a 0.00 gap in the
 two-decimal table is a tie, not a win).  GraphMatcher: 0.08 below on M1, 0.10 below on M3; SORBETMtch: 0.01 below on M1, 0.02 below on M3; LogMap: 0.03 above on M1, tied on M3;
 above Matcha, OLaLa, ALIN, edna, LogMapLt, StringEquiv, LSMatch, AMD, TOMATO on both modalities.  The headline improves on
-the purely lexical matcher by +0.022 (M1) / +0.022 (M3) under cross-validation, which is a real but small
-gain, within the noise band of a 21-pair test set.  Structure did not help under cross-validation: the union-grid CV (M1 0.735 / M3 0.670) is -0.015 (M1) / -0.009 (M3) against the hybrid-grid CV, so the headline stays the hybrid; see the structural section for why (recall rises, precision falls faster).
+the purely lexical matcher by +0.018 (M1) / +0.019 (M3) under cross-validation, which is a real but small
+gain, within the noise band of a 21-pair test set.  Structure did not help under cross-validation: the union-grid CV (M1 0.746 / M3 0.676) is +0.000 (M1) / +0.000 (M3) against the hybrid-grid CV, so the headline stays the hybrid; see the structural section for why (recall rises, precision falls faster).
 We do not beat or tie the published best on either modality, and we do not claim state of the art.  GraphMatcher / SORBETMtch additionally learn from the
 task (graph attention over the ontology, fine-tuned encoders); nothing here is trained on OntoFarm.
 
