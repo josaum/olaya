@@ -205,3 +205,100 @@ def test_threshold_is_monotone(bench: OAEIConferenceBenchmark):
     sizes = [len(bench.align(LexicalMatcher(), "cmt", "ekaw", th)) for th in (0.0, 0.3, 0.5, 0.7, 1.0)]
     assert sizes == sorted(sizes, reverse=True)
     assert all(c.measure >= 0.7 for c in bench.align(LexicalMatcher(), "cmt", "ekaw", 0.7))
+
+
+# -- embedding / hybrid matchers (stub encoder, no download) ---------------------------
+
+
+def test_build_entity_texts_describes_classes_and_properties():
+    from olaya.benchmarks.oaei import build_entity_texts
+
+    onto = Ontology("o")
+    onto.add_concept(Concept(curie="Document", label="Document", metadata={"has_label": True}))
+    onto.add_concept(
+        Concept(curie="PaperFullVersion", label="", description="The full version of a paper.", metadata={})
+    )
+    onto.add_subsumption("PaperFullVersion", "Document")
+    onto.add_property(ObjectProperty(curie="hasAuthor", domains={"PaperFullVersion"}, ranges={"Document"}))
+    texts = {t.name: t for t in build_entity_texts(onto)}
+    assert texts["PaperFullVersion"].label == "Paper Full Version"
+    assert texts["PaperFullVersion"].full == "Paper Full Version. The full version of a paper. Subclass of Document."
+    assert texts["hasAuthor"].kind == "property"
+    assert texts["hasAuthor"].full == "has Author. Domain: Paper Full Version. Range: Document."
+
+
+def test_csls_calibrate_maps_background_to_zero_and_perfect_to_one():
+    import numpy as np
+
+    from olaya.benchmarks.oaei import csls_calibrate
+
+    sim = np.array([[1.0, 0.4], [0.4, 0.4]])
+    out = csls_calibrate(sim, k=2)  # background of row 0 / col 0 is (1.0 + 0.4) / 2 = 0.7
+    assert out[0, 0] == pytest.approx(1.0)
+    assert out[1, 1] <= 0.0  # no better than its neighbourhood
+    assert out[0, 1] < out[0, 0]
+
+
+def test_propagate_structure_only_raises_scores_of_pairs_with_matching_parents():
+    from olaya.benchmarks.oaei import propagate_structure
+
+    src, tgt = _tiny_pair()
+    src.add_concept(Concept(curie="FullPaper", label="FullPaper"))
+    tgt.add_concept(Concept(curie="RegularPaper", label="RegularPaper"))
+    src.add_subsumption("FullPaper", "Paper")
+    tgt.add_subsumption("RegularPaper", "Paper")
+    scores = {("Paper", "Paper"): 1.0, ("FullPaper", "RegularPaper"): 0.4, ("FullPaper", "Review"): 0.4}
+    out = propagate_structure(scores, src, tgt, alpha=0.5)
+    assert out[("FullPaper", "RegularPaper")] == pytest.approx(0.4 + 0.5 * 0.6)
+    assert out[("FullPaper", "Review")] == 0.4  # Review has no parent: untouched
+    assert out[("Paper", "Paper")] == 1.0
+
+
+def test_hybrid_cascade_keeps_lexical_matches_and_adds_embedding_ones():
+    from olaya.benchmarks.oaei import EmbeddingMatcherConfig, HybridMatcher, HybridMatcherConfig
+    from olaya.embeddings import HashEncoder
+
+    src, tgt = _tiny_pair()
+    src.add_concept(Concept(curie="Banquet", label="Banquet", description="conference dinner", metadata={}))
+    tgt.add_concept(Concept(curie="Dinner", label="Dinner", description="conference dinner", metadata={}))
+    cfg = HybridMatcherConfig(combine="cascade", embedding=EmbeddingMatcherConfig(text="full", calibration="none"))
+    scored = HybridMatcher(HashEncoder(), cfg).score_all(src, tgt)
+    best = {(c.entity1, c.entity2): c.measure for c in select_mutual_best(scored)}
+    assert best[("Paper", "Paper")] >= 0.9  # lexical stage, kept with its lexical score
+    assert ("Banquet", "Dinner") in best  # no lexical evidence: supplied by the embedding stage
+    # Entities taken by the lexical stage are not offered to the embedding stage.
+    assert not any(e1 == "Paper" and e2 != "Paper" for e1, e2 in best)
+
+
+def test_hybrid_matchers_on_real_pair_with_stub_encoder(bench: OAEIConferenceBenchmark):
+    from olaya.benchmarks.oaei import EmbeddingMatcher, HybridMatcher, HybridMatcherConfig
+    from olaya.embeddings import HashEncoder
+
+    enc = HashEncoder()
+    emb = bench.evaluate_pair(EmbeddingMatcher(enc), "cmt", "ekaw", 0.5)
+    assert emb.results["M1"].tp >= 3  # token-hash embeddings still find the exact-name pairs
+    for combine in ("sum", "cascade"):
+        res = bench.evaluate_pair(HybridMatcher(enc, HybridMatcherConfig(combine=combine)), "cmt", "ekaw", 0.5)
+        assert res.results["M1"].f1 >= 0.6
+        assert res.system_size <= 25
+    # Zero embedding weight reproduces the lexical matcher exactly.
+    lex = bench.evaluate_pair(LexicalMatcher(), "cmt", "ekaw", 0.5)
+    zero = bench.evaluate_pair(HybridMatcher(enc, HybridMatcherConfig(embedding_weight=0.0)), "cmt", "ekaw", 0.5)
+    assert zero.results["M3"].to_dict() == lex.results["M3"].to_dict()
+
+
+def test_cross_validate_never_selects_on_the_held_out_pair():
+    from olaya.benchmarks.oaei import PRF, cross_validate, leave_one_ontology_out_folds, leave_one_pair_out_folds
+
+    # Config "a" is best on pair p1 only, "b" is best everywhere else.
+    grid = {
+        "a": {"p1": {m: PRF(5, 0, 0) for m in ("M1", "M2", "M3")}, "p2": {m: PRF(1, 4, 4) for m in ("M1", "M2", "M3")}},
+        "b": {"p1": {m: PRF(2, 3, 3) for m in ("M1", "M2", "M3")}, "p2": {m: PRF(4, 1, 1) for m in ("M1", "M2", "M3")}},
+    }
+    cv = cross_validate(grid, leave_one_pair_out_folds(["p1", "p2"]))
+    assert cv["chosen"] == {"p1": "b", "p2": "a"}  # each pair scored under the other's choice
+    assert (cv["M3"]["tp"], cv["M3"]["fp"], cv["M3"]["fn"]) == (2 + 1, 3 + 4, 3 + 4)
+    folds = leave_one_ontology_out_folds()
+    assert len(folds) == 7
+    assert len(folds["cmt"][1]) == 6 and len(folds["cmt"][0]) == 15
+    assert not any("cmt" in p.split("-") for p in folds["cmt"][0])

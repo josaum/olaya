@@ -29,7 +29,7 @@ import re
 import time
 import xml.etree.ElementTree as ET
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -650,6 +650,265 @@ class LexicalMatcher(Matcher):
 
 
 # ---------------------------------------------------------------------------
+# Embedding and hybrid matchers
+# ---------------------------------------------------------------------------
+
+
+def _display_name(ontology: Ontology, name: str) -> str:
+    """Human-readable label of a class or property (camelCase split when unlabelled)."""
+    c = ontology.concepts.get(name)
+    if c is not None:
+        return c.label if c.metadata.get("has_label") else camel_to_words(name)
+    p = ontology.properties.get(name)
+    if p is not None:
+        return p.label if p.metadata.get("has_label") else camel_to_words(name)
+    return camel_to_words(name)
+
+
+@dataclass
+class EntityText:
+    name: str
+    kind: str
+    label: str  # label only (camelCase split)
+    full: str  # label + comment + parents / domain + range
+
+
+def build_entity_texts(ontology: Ontology) -> list[EntityText]:
+    """Natural-language description of every class and property, for the encoder.
+
+    Classes: ``<label>. <comment> Subclass of <parent labels>.``
+    Properties: ``<label>. <comment> Domain: <labels>. Range: <labels>.``
+    """
+    out: list[EntityText] = []
+    for curie, concept in sorted(ontology.concepts.items()):
+        label = _display_name(ontology, curie)
+        parts = [label + "."]
+        if concept.description:
+            parts.append(concept.description.strip().rstrip(".") + ".")
+        parents = [_display_name(ontology, p) for p in sorted(concept.parents)]
+        if parents:
+            parts.append("Subclass of " + ", ".join(parents) + ".")
+        out.append(EntityText(curie, "class", label, " ".join(parts)))
+    for curie, prop in sorted(ontology.properties.items()):
+        label = _display_name(ontology, curie)
+        parts = [label + "."]
+        if prop.description:
+            parts.append(prop.description.strip().rstrip(".") + ".")
+        if prop.domains:
+            parts.append("Domain: " + ", ".join(_display_name(ontology, d) for d in sorted(prop.domains)) + ".")
+        if prop.ranges:
+            parts.append("Range: " + ", ".join(_display_name(ontology, r) for r in sorted(prop.ranges)) + ".")
+        elif prop.metadata.get("datatype"):
+            parts.append("Range: " + str(prop.metadata["datatype"]) + ".")
+        out.append(EntityText(curie, "property", label, " ".join(parts)))
+    return out
+
+
+@dataclass
+class EmbeddingMatcherConfig:
+    """Knobs of :class:`EmbeddingMatcher`."""
+
+    text: str = "both"  # "label", "full" or "both" (mean of the two cosines)
+    calibration: str = "csls"  # "none" (raw cosine) or "csls" (hubness-corrected, see below)
+    csls_k: int = 10  # neighbourhood size of the CSLS correction
+    match_properties: bool = True
+
+
+class EmbeddingMatcher(Matcher):
+    """Cosine similarity between encoder embeddings of the entity descriptions.
+
+    The confidence is the cosine clipped to ``[0, 1]``.  With ``text="both"`` the
+    label-only and full-description cosines are averaged, which keeps the exact
+    label signal sharp while letting comments / neighbours disambiguate.
+    """
+
+    def __init__(self, encoder: Any, config: EmbeddingMatcherConfig | None = None):
+        self.encoder = encoder
+        self.config = config or EmbeddingMatcherConfig()
+        self._cache: dict[str, tuple[list[EntityText], Any, Any]] = {}
+
+    @property
+    def name(self) -> str:  # type: ignore[override]
+        c = self.config
+        cal = f"{c.calibration}{c.csls_k}" if c.calibration == "csls" else c.calibration
+        return f"olaya-embedding[{self.encoder.name},{c.text},{cal}]"
+
+    def _encode(self, ontology: Ontology) -> tuple[list[EntityText], Any, Any]:
+        key = ontology.name
+        if key not in self._cache:
+            texts = build_entity_texts(ontology)
+            lab = self.encoder.encode([t.label for t in texts])
+            full = self.encoder.encode([t.full for t in texts]) if self.config.text != "label" else lab
+            self._cache[key] = (texts, lab, full)
+        return self._cache[key]
+
+    def similarity_matrix(self, source: Ontology, target: Ontology) -> tuple[list[EntityText], list[EntityText], Any]:
+        import numpy as np
+
+        st, sl, sf = self._encode(source)
+        tt, tl, tf = self._encode(target)
+        if self.config.text == "label":
+            sim = sl @ tl.T
+        elif self.config.text == "full":
+            sim = sf @ tf.T
+        else:
+            sim = 0.5 * (sl @ tl.T + sf @ tf.T)
+        if self.config.calibration == "csls":
+            sim = csls_calibrate(sim, self.config.csls_k)
+        return st, tt, np.clip(sim, 0.0, 1.0)
+
+    def score_all(self, source: Ontology, target: Ontology) -> list[OAEIAlignment]:
+        st, tt, sim = self.similarity_matrix(source, target)
+        out: list[OAEIAlignment] = []
+        for i, s in enumerate(st):
+            if not self.config.match_properties and s.kind != "class":
+                continue
+            for j, t in enumerate(tt):
+                if s.kind != t.kind:
+                    continue
+                score = float(sim[i, j])
+                if score > 0.0:
+                    out.append(OAEIAlignment(s.name, t.name, "=", round(score, 6)))
+        return out
+
+
+def csls_calibrate(sim: Any, k: int = 10) -> Any:
+    """Hubness-corrected cosine (Conneau et al. 2018, *CSLS*), rescaled to ``[0, 1]``.
+
+    Sentence encoders give a high similarity floor: unrelated ontology entities still
+    score 0.3-0.5 and "hub" entities are close to everything.  For each row / column
+    the mean similarity of its ``k`` nearest neighbours is the *background*
+    ``b = (r_s + r_t) / 2``; the calibrated score is ``(cos - b) / (1 - b)``: 0 for a
+    pair that is no better than the entity's usual neighbourhood, 1 for a perfect
+    match.  No gold data is involved; the transform is per ontology pair.
+    """
+    import numpy as np
+
+    if sim.size == 0:
+        return sim
+    kk = max(1, min(k, sim.shape[1]))
+    r_s = np.sort(sim, axis=1)[:, -kk:].mean(axis=1, keepdims=True)
+    kk = max(1, min(k, sim.shape[0]))
+    r_t = np.sort(sim, axis=0)[-kk:, :].mean(axis=0, keepdims=True)
+    background = 0.5 * (r_s + r_t)
+    return (sim - background) / np.maximum(1.0 - background, 1e-6)
+
+
+@dataclass
+class HybridMatcherConfig:
+    """Knobs of :class:`HybridMatcher`.
+
+    ``embedding_weight`` (``w``) mixes the lexical score ``lex`` and the embedding
+    cosine ``emb`` as ``(1 - w) * lex + w * emb`` (``combine="sum"``) or
+    ``max(lex, emb)`` (``combine="max"``).  With ``combine="cascade"`` the lexical
+    matcher runs first (mutual-best, threshold ``cascade_threshold``) and the
+    embedding score is used only for the entities it left unmatched, so the
+    embedding can *add* correspondences the lexical stage has no evidence for
+    without re-ranking the ones it is confident about.  ``structure_weight`` (``alpha``) adds a
+    GraphMatcher-style propagation: a class pair whose parents also match (and a
+    property pair whose domains / ranges match) is pulled up towards the best
+    neighbour-pair score, ``score + alpha * max(0, neighbour - score)``.
+    """
+
+    embedding_weight: float = 0.5
+    combine: str = "sum"
+    cascade_threshold: float = 0.5  # lexical acceptance threshold of the first cascade stage
+    structure_weight: float = 0.0
+    lexical: LexicalMatcherConfig = field(default_factory=LexicalMatcherConfig)
+    embedding: EmbeddingMatcherConfig = field(default_factory=EmbeddingMatcherConfig)
+
+
+class HybridMatcher(Matcher):
+    """Lexical + embedding similarity with optional structural propagation."""
+
+    def __init__(self, encoder: Any, config: HybridMatcherConfig | None = None):
+        self.config = config or HybridMatcherConfig()
+        self.lexical = LexicalMatcher(self.config.lexical)
+        self.embedding = EmbeddingMatcher(encoder, self.config.embedding)
+
+    @property
+    def name(self) -> str:  # type: ignore[override]
+        c = self.config
+        return (
+            f"olaya-hybrid[{self.embedding.name},w={c.embedding_weight:.2f},{c.combine},alpha={c.structure_weight:.2f}]"
+        )
+
+    def base_scores(self, source: Ontology, target: Ontology) -> dict[tuple[str, str], float]:
+        c = self.config
+        lex_all = self.lexical.score_all(source, target)
+        lex = {(a.entity1, a.entity2): a.measure for a in lex_all}
+        st, tt, sim = self.embedding.similarity_matrix(source, target)
+        if c.combine == "cascade":
+            accepted = apply_threshold(select_mutual_best(lex_all), c.cascade_threshold)
+            taken1 = {a.entity1 for a in accepted}
+            taken2 = {a.entity2 for a in accepted}
+            scores = {(a.entity1, a.entity2): a.measure for a in accepted}
+            for i, s in enumerate(st):
+                if s.name in taken1:
+                    continue
+                for j, t in enumerate(tt):
+                    if s.kind != t.kind or t.name in taken2:
+                        continue
+                    scores[(s.name, t.name)] = float(sim[i, j])
+            return scores
+        scores: dict[tuple[str, str], float] = {}
+        for i, s in enumerate(st):
+            for j, t in enumerate(tt):
+                if s.kind != t.kind:
+                    continue
+                le = lex.get((s.name, t.name), 0.0)
+                em = float(sim[i, j])
+                if c.combine == "max":
+                    score = max(le, em) if c.embedding_weight > 0 else le
+                else:
+                    score = (1.0 - c.embedding_weight) * le + c.embedding_weight * em
+                scores[(s.name, t.name)] = score
+        return scores
+
+    def score_all(self, source: Ontology, target: Ontology) -> list[OAEIAlignment]:
+        scores = self.base_scores(source, target)
+        alpha = self.config.structure_weight
+        if alpha > 0.0:
+            scores = propagate_structure(scores, source, target, alpha)
+        return [OAEIAlignment(s, t, "=", round(v, 6)) for (s, t), v in sorted(scores.items()) if v > 0.0]
+
+
+def propagate_structure(
+    scores: dict[tuple[str, str], float], source: Ontology, target: Ontology, alpha: float
+) -> dict[tuple[str, str], float]:
+    """One round of neighbour propagation (parents for classes, domain / range for properties).
+
+    ``score' = score + alpha * max(0, best_neighbour_pair_score - score)`` where the
+    neighbour pair score is taken from the *base* scores, so the update is a single
+    deterministic pass and never lowers a score.
+    """
+
+    def best(pairs: Iterable[tuple[str, str]]) -> float:
+        return max((scores.get(p, 0.0) for p in pairs), default=0.0)
+
+    out = dict(scores)
+    for (s, t), v in scores.items():
+        if s in source.concepts and t in target.concepts:
+            sp, tp = source.concepts[s].parents, target.concepts[t].parents
+            if not sp or not tp:
+                continue
+            nb = best((a, b) for a in sp for b in tp)
+        elif s in source.properties and t in target.properties:
+            ps, pt = source.properties[s], target.properties[t]
+            dom = best((a, b) for a in ps.domains for b in pt.domains) if ps.domains and pt.domains else None
+            rng = best((a, b) for a in ps.ranges for b in pt.ranges) if ps.ranges and pt.ranges else None
+            vals = [x for x in (dom, rng) if x is not None]
+            if not vals:
+                continue
+            nb = sum(vals) / len(vals)
+        else:
+            continue
+        if nb > v:
+            out[(s, t)] = min(1.0, v + alpha * (nb - v))
+    return out
+
+
+# ---------------------------------------------------------------------------
 # Selection: mutual best + threshold, optional coherence repair
 # ---------------------------------------------------------------------------
 
@@ -789,6 +1048,7 @@ class OAEIConferenceBenchmark:
         self._ontologies: dict[str, Ontology] = {}
         self._references: dict[tuple[str, str], list[OAEIAlignment]] = {}
         self._scores: dict[tuple[str, str, str], list[OAEIAlignment]] = {}
+        self._mutual: dict[tuple[str, str, str], list[OAEIAlignment]] = {}
 
     # -- data access -------------------------------------------------------
     def ontology_path(self, name: str) -> Path:
@@ -838,8 +1098,15 @@ class OAEIConferenceBenchmark:
         mutual_best: bool = True,
         repair: bool = False,
     ) -> list[OAEIAlignment]:
-        scored = self.scored_pairs(matcher, source, target)
-        alignment = select_mutual_best(scored) if mutual_best else sorted(scored, key=lambda c: c.key)
+        key = (matcher.name, source.lower(), target.lower())
+        if mutual_best:
+            # Mutual-best selection does not depend on the threshold: cache it per matcher / pair
+            # so a threshold sweep only re-applies the cut-off.
+            if key not in self._mutual:
+                self._mutual[key] = select_mutual_best(self.scored_pairs(matcher, source, target))
+            alignment = self._mutual[key]
+        else:
+            alignment = sorted(self.scored_pairs(matcher, source, target), key=lambda c: c.key)
         alignment = apply_threshold(alignment, threshold)
         if repair:
             alignment = coherence_repair(alignment, self.ontology(source), self.ontology(target))
@@ -896,6 +1163,83 @@ class OAEIConferenceBenchmark:
                 best = run
         assert best is not None
         return best, curve
+
+
+# ---------------------------------------------------------------------------
+# Cross-validated configuration selection
+# ---------------------------------------------------------------------------
+
+GridResults = dict[str, dict[str, dict[str, PRF]]]
+"""``{config_label: {pair: {modality: PRF}}}`` - per-pair counts of every grid point."""
+
+
+def grid_results(run: BenchmarkRun) -> dict[str, dict[str, PRF]]:
+    """Per-pair counts of one run, in the shape :func:`cross_validate` consumes."""
+    return {pe.pair: pe.results for pe in run.pairs}
+
+
+def _micro_f1(counts: Iterable[PRF]) -> float:
+    total = PRF()
+    for c in counts:
+        total = total + c
+    return total.f1
+
+
+def select_config(grid: GridResults, pairs: Iterable[str], modality: str = "M3") -> str:
+    """Config label with the best micro-F1 of ``modality`` over ``pairs`` (ties: first label)."""
+    pairs = list(pairs)
+    best_label, best_f1 = "", -1.0
+    for label, per_pair in grid.items():
+        f1 = _micro_f1(per_pair[p][modality] for p in pairs)
+        if f1 > best_f1:
+            best_label, best_f1 = label, f1
+    return best_label
+
+
+def cross_validate(
+    grid: GridResults,
+    folds: dict[str, tuple[list[str], list[str]]],
+    *,
+    modality: str = "M3",
+) -> dict[str, Any]:
+    """Nested selection: pick the config on each fold's train pairs, score its test pairs.
+
+    ``folds`` maps a fold name to ``(train_pairs, test_pairs)``.  Every test pair is
+    scored under the config chosen *without* it, and the per-fold test counts are
+    summed into the usual micro P/R/F1 (so the result is directly comparable to the
+    optimistic "best on the test set" row, but no pair ever selects its own config).
+    """
+    totals = {m: PRF() for m in MODALITIES}
+    chosen: dict[str, str] = {}
+    for fold, (train, test) in folds.items():
+        label = select_config(grid, train, modality)
+        chosen[fold] = label
+        for p in test:
+            for m in MODALITIES:
+                totals[m] = totals[m] + grid[label][p][m]
+    return {
+        "modality_selected": modality,
+        "folds": len(folds),
+        "chosen": chosen,
+        "distinct_configs_chosen": sorted(set(chosen.values())),
+        **{m: totals[m].to_dict() for m in MODALITIES},
+    }
+
+
+def leave_one_pair_out_folds(pairs: Iterable[str] = ()) -> dict[str, tuple[list[str], list[str]]]:
+    names = list(pairs) or [f"{s}-{t}" for s, t in CONFERENCE_PAIRS]
+    return {p: ([q for q in names if q != p], [p]) for p in names}
+
+
+def leave_one_ontology_out_folds(
+    ontologies: Iterable[str] = CONFERENCE_ONTOLOGIES,
+) -> dict[str, tuple[list[str], list[str]]]:
+    names = [f"{s}-{t}" for s, t in CONFERENCE_PAIRS]
+    folds = {}
+    for o in ontologies:
+        test = [p for p in names if o in p.split("-")]
+        folds[o] = ([p for p in names if p not in test], test)
+    return folds
 
 
 def timed(fn: Callable[[], Any]) -> tuple[Any, float]:

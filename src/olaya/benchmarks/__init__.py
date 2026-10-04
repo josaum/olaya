@@ -2,6 +2,10 @@
 
 from olaya.benchmarks.oaei import (
     CONFERENCE_PAIRS,
+    EmbeddingMatcher,
+    EmbeddingMatcherConfig,
+    HybridMatcher,
+    HybridMatcherConfig,
     LexicalMatcher,
     LexicalMatcherConfig,
     OAEIAlignment,
@@ -10,11 +14,16 @@ from olaya.benchmarks.oaei import (
     OWLParser,
     PairEvaluation,
     StringEquivMatcher,
+    cross_validate,
     evaluate_alignment,
 )
 
 __all__ = [
     "CONFERENCE_PAIRS",
+    "EmbeddingMatcher",
+    "EmbeddingMatcherConfig",
+    "HybridMatcher",
+    "HybridMatcherConfig",
     "LexicalMatcher",
     "LexicalMatcherConfig",
     "OAEIAlignment",
@@ -23,5 +32,6 @@ __all__ = [
     "OWLParser",
     "PairEvaluation",
     "StringEquivMatcher",
+    "cross_validate",
     "evaluate_alignment",
 ]

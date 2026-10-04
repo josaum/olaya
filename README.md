@@ -37,14 +37,18 @@ upstream data, reproducible with one command.
 
 ## OAEI Conference track (the one external benchmark)
 
-O-Laya's lexical matcher is evaluated with the standard OAEI alignment protocol on
+O-Laya's matchers are evaluated with the standard OAEI alignment protocol on
 the Conference track (OntoFarm, reference alignment ra1, 21 ontology pairs, 259
 class and 46 property correspondences): every cross pair is scored, mutual-best
 1:1 correspondences above a threshold fixed a priori (0.50) form the alignment,
 and precision / recall / F1 are computed against ra1 for classes (M1),
 properties (M2) and both (M3), micro-averaged over the 21 pairs as OAEI does.
-Reproduce with `.venv/bin/python scripts/benchmark_oaei.py` (no arguments, ~15 s,
-vendored upstream data in `tests/fixtures/oaei/`).
+Two matchers are reported: a dependency-free lexical matcher, and a hybrid that
+runs the lexical matcher first and lets a small local sentence encoder
+(`intfloat/e5-small-v2`, CSLS-calibrated cosine) decide only the leftover
+entities. Reproduce with `.venv/bin/python scripts/benchmark_oaei.py`
+(about 5 min with the encoder, or `--no-embeddings` for the lexical rows in
+about 12 s; vendored upstream data in `tests/fixtures/oaei/`).
 
 | System (OAEI 2023, ra1, micro) | M1 P / R / F1 | M3 P / R / F1 |
 | :--- | :---: | :---: |
@@ -52,14 +56,19 @@ vendored upstream data in `tests/fixtures/oaei/`).
 | SORBETMtch | 0.78 / 0.75 / 0.76 | 0.78 / 0.64 / 0.70 |
 | LogMap | 0.84 / 0.63 / 0.72 | 0.81 / 0.58 / 0.68 |
 | Matcha | 0.76 / 0.68 / 0.72 | 0.70 / 0.64 / 0.67 |
+| **olaya-hybrid (this repo, leave-one-pair-out CV)** | 0.82 / 0.69 / 0.75 | 0.70 / 0.66 / 0.68 |
 | **olaya-lexical (this repo, threshold 0.50)** | 0.83 / 0.64 / 0.73 | 0.73 / 0.60 / 0.66 |
 | edna (baseline) | 0.88 / 0.54 / 0.67 | 0.79 / 0.47 / 0.59 |
 | StringEquiv (baseline) | 0.88 / 0.50 / 0.64 | 0.80 / 0.43 / 0.56 |
 
-Where we land: a purely lexical, dependency-free matcher that is above the string
-baselines and on par with LogMap / Matcha on classes (within the rounding of the
-published numbers), and clearly below the embedding-based
-systems (GraphMatcher, SORBETMtch). It is not state of the art. Applying the OWL 2
+Where we land: the hybrid's headline is cross-validated (threshold and fusion
+weight chosen on the other 20 pairs for each held-out pair), which makes it the
+honest number; the same configuration picked on the full set scores 0.75 / 0.68.
+It ranks third on both tables: below GraphMatcher by 0.08 (M1) and 0.10 (M3),
+below SORBETMtch by 0.01 and 0.02, tied with LogMap on M3 and above LogMap and
+Matcha on M1. The lexical matcher alone is 0.02 behind the hybrid on both. It is
+not state of the art. The design choices (cascade fusion, CSLS, encoder) were made
+after seeing ra1; only the numeric knobs are protected by the CV. Applying the OWL 2
 RL coherence repair to the alignment *lowers* F1 on ra1 by about 0.02 (ra1 is the
 unrepaired reference; the repaired rar2 is not vendored), so it is opt-in and not
 part of the headline number. Full per-pair numbers, the threshold sweep, dataset
