@@ -1,6 +1,6 @@
 # OAEI Conference track (ra1) — honest evaluation
 
-Date: 2026-10-04  ·  Commit: `11015830579a`  ·  Runtime: 311.7 s (lexical 10.6 s; embeddings 301.1 s including model loading, encoding, the configuration grid and the cross-validation; 4-thread CPU)
+Date: 2026-10-04  ·  Commit: `7cbc576a3e11`  ·  Runtime: 438.7 s (lexical 21.1 s; embeddings 417.6 s including model loading, encoding, the configuration grid and the cross-validation; 4-thread CPU)
 
 Protocol: standard OAEI alignment evaluation.  For each of the 21 OntoFarm pairs the matcher scores every
 class/class and property/property cross pair, keeps the mutual-best 1:1 correspondences, applies a confidence
@@ -17,12 +17,21 @@ The gold target is never placed in the candidate set; no metric is derived from 
 | olaya-lexical, a-priori threshold | 0.50 | 0.83 / 0.64 / **0.73** | 0.31 / 0.33 / **0.32** | 0.73 / 0.60 / **0.66** |
 | olaya-lexical, best threshold on the test set (optimistic) | 0.51 | 0.85 / 0.64 / **0.73** | 0.31 / 0.33 / **0.32** | 0.74 / 0.59 / **0.66** |
 | olaya-lexical + OWL 2 RL coherence repair | 0.50 | 0.84 / 0.61 / **0.71** | 0.31 / 0.33 / **0.32** | 0.73 / 0.57 / **0.64** |
+| olaya-lexical + structure (flooding), a-priori threshold | 0.50 | 0.89 / 0.42 / **0.57** | 0.18 / 0.04 / **0.07** | 0.83 / 0.36 / **0.51** |
+| olaya-lexical + structure (flooding_relative), a-priori threshold | 0.50 | 0.53 / 0.73 / **0.61** | 0.10 / 0.48 / **0.16** | 0.36 / 0.70 / **0.48** |
+| olaya-lexical + structure (neighbour), a-priori threshold | 0.50 | 0.86 / 0.63 / **0.73** | 0.35 / 0.33 / **0.34** | 0.77 / 0.58 / **0.66** |
 | olaya-embedding only (intfloat/e5-small-v2), a-priori threshold | 0.50 | 0.85 / 0.61 / **0.71** | 0.29 / 0.30 / **0.29** | 0.73 / 0.57 / **0.64** |
 | olaya-embedding only (intfloat/e5-small-v2), best threshold (optimistic) | 0.46 | 0.84 / 0.63 / **0.72** | 0.27 / 0.35 / **0.30** | 0.71 / 0.59 / **0.64** |
 | olaya-hybrid (intfloat/e5-small-v2), a-priori config | 0.50 | 0.82 / 0.68 / **0.74** | 0.29 / 0.37 / **0.32** | 0.71 / 0.63 / **0.67** |
 | olaya-hybrid (intfloat/e5-small-v2), best config on ra1 (optimistic) | 0.51 | 0.83 / 0.69 / **0.75** | 0.33 / 0.48 / **0.39** | 0.71 / 0.66 / **0.68** |
 | **olaya-hybrid (intfloat/e5-small-v2), leave-one-pair-out CV (headline)** | CV | 0.82 / 0.69 / **0.75** | 0.32 / 0.48 / **0.39** | 0.70 / 0.66 / **0.68** |
 | olaya-hybrid (intfloat/e5-small-v2), leave-one-ontology-out CV | CV | 0.83 / 0.69 / **0.75** | 0.31 / 0.45 / **0.37** | 0.70 / 0.65 / **0.68** |
+| olaya-hybrid + structure (intfloat/e5-small-v2, neighbour w=0.3), a-priori config | 0.50 | 0.86 / 0.65 / **0.74** | 0.38 / 0.43 / **0.40** | 0.76 / 0.62 / **0.68** |
+| olaya-hybrid + structure (intfloat/e5-small-v2), best structural config on ra1 (optimistic) | 0.45 | 0.84 / 0.68 / **0.75** | 0.37 / 0.46 / **0.41** | 0.74 / 0.64 / **0.69** |
+| olaya-hybrid + structure (intfloat/e5-small-v2), leave-one-pair-out CV (structural grid) | CV | 0.82 / 0.66 / **0.73** | 0.34 / 0.46 / **0.39** | 0.71 / 0.63 / **0.67** |
+| olaya-hybrid + structure (intfloat/e5-small-v2), leave-one-ontology-out CV (structural grid) | CV | 0.83 / 0.67 / **0.74** | 0.32 / 0.41 / **0.36** | 0.72 / 0.63 / **0.67** |
+| **olaya-hybrid (+structure) (intfloat/e5-small-v2), leave-one-pair-out CV, union grid** | CV | 0.82 / 0.66 / **0.73** | 0.34 / 0.46 / **0.39** | 0.71 / 0.63 / **0.67** |
+| olaya-hybrid (+structure) (intfloat/e5-small-v2), leave-one-ontology-out CV, union grid | CV | 0.83 / 0.67 / **0.74** | 0.32 / 0.41 / **0.36** | 0.72 / 0.63 / **0.67** |
 
 Macro (mean over pairs) for the lexical a-priori run: M1 P 0.86 / R 0.67 / F1 0.74 (21 pairs), M2 P 0.29 / R 0.30 / F1 0.27 (14 pairs), M3 P 0.76 / R 0.61 / F1 0.67 (21 pairs).
 
@@ -96,17 +105,117 @@ and M3 for the cascade and is kept as a tunable knob; its benefit is within nois
 
 ### Encoder ablation (cascade, text=both, CSLS; micro F1 M1 / M3)
 
-| encoder | commit | embedding only @0.50 | embedding only, best th | cascade alpha 0 @0.50 | cascade alpha 0.2 @0.50 | cascade, best th (optimistic) |
-|---|---|---|---|---|---|---|
-| `intfloat/e5-small-v2` | `ffb93f3b` | 0.711 / 0.638 | 0.721 / 0.643 (th 0.46) | 0.744 / 0.668 | 0.755 / 0.684 | 0.743 / 0.670 (th 0.43) |
-| `sentence-transformers/all-MiniLM-L6-v2` | `1110a243` | 0.690 / 0.624 | 0.699 / 0.634 (th 0.52) | 0.734 / 0.666 | 0.740 / 0.671 | 0.739 / 0.672 (th 0.52) |
-| `BAAI/bge-small-en-v1.5` | `5c38ec7c` | 0.696 / 0.631 | 0.722 / 0.646 (th 0.39) | 0.731 / 0.668 | 0.736 / 0.669 | 0.739 / 0.677 (th 0.49) |
+| encoder | commit | embedding only @0.50 | embedding only, best th | cascade alpha 0 @0.50 | cascade alpha 0.2 @0.50 | cascade, best th (optimistic) | cascade + neighbour w=0.3 @0.50 |
+|---|---|---|---|---|---|---|---|
+| `intfloat/e5-small-v2` | `ffb93f3b` | 0.711 / 0.638 | 0.721 / 0.643 (th 0.46) | 0.744 / 0.668 | 0.755 / 0.684 | 0.743 / 0.670 (th 0.43) | 0.741 / 0.681 |
+| `sentence-transformers/all-MiniLM-L6-v2` | `1110a243` | 0.690 / 0.624 | 0.699 / 0.634 (th 0.52) | 0.734 / 0.666 | 0.740 / 0.671 | 0.739 / 0.672 (th 0.52) | 0.740 / 0.678 |
+| `BAAI/bge-small-en-v1.5` | `5c38ec7c` | 0.696 / 0.631 | 0.722 / 0.646 (th 0.39) | 0.731 / 0.668 | 0.736 / 0.669 | 0.739 / 0.677 (th 0.49) | 0.738 / 0.679 |
 
 All small encoders land within 0.01-0.02 of each other.  Two base-size encoders were also measured once
 with the same code during development (not part of the default run): `sentence-transformers/all-mpnet-base-v2`
 cascade @0.50 M1 0.750 / M3 0.684 (alpha 0), `BAAI/bge-base-en-v1.5` 0.737 / 0.669 (alpha 0.2).  A larger
 encoder does not move the ceiling; the limiting factor is that the leftover candidates the embedding has to
 decide on are semantically plausible pairs ra1 does not contain (Reviewer/Possible_Reviewer, date/startDate).
+
+## Structural propagation
+
+GraphMatcher's edge on this track is *recall* (0.89 on M1 against our 0.69) and it gets it from the
+ontology graph.  `olaya.benchmarks.structural` adds that evidence without training: the pairwise similarity
+matrix of the a-priori hybrid (cascade, CSLS, alpha 0) seeds an iterative propagation over the two
+ontologies' graphs (subClassOf, equivalentClass, disjointWith, property domain / range, inverseOf,
+subPropertyOf), after which the usual mutual-best 1:1 selection and threshold apply.  Three rules were
+implemented and compared on the same seed:
+
+- `flooding`: Similarity Flooding (Melnik et al. 2002), pairwise connectivity graph with inverse-degree
+  propagation coefficients, fixpoint variant C `normalise(s0 + s_i + phi(s0 + s_i))`, global-max
+  normalisation; final score `(1 - w) seed + w fixpoint`.  `flooding_relative` rescales the fixpoint to the
+  paper's relative similarity (divide by the larger of the row and column maximum) before mixing, because
+  the global-max fixpoint sits far below the fixed 0.50 threshold for all but the strongest pairs.
+- `neighbour`: `sim' = (1 - w) seed + w * mean over neighbourhood types of max-matched neighbour similarity`
+  (parents, children, siblings, equivalents, disjoints, properties a class is domain / range of; domains,
+  ranges, inverses, super- / sub-properties of a property), iterated to convergence (a contraction).
+- `smooth`: GraphMatcher-style message passing on the embedding vectors without the learned attention:
+  `e' = normalise(e + beta * mean(neighbour e))` for a fixed number of rounds, then the usual CSLS cosine
+  inside the cascade.
+
+**A-priori structural config** (fixed before the structural grid was swept): `neighbour`, w = 0.3,
+at most 10 iterations, threshold 0.50 on the a-priori hybrid seed; the other rules' a-priori points are
+`flooding` w = 0.5, `flooding_relative` w = 0.5 (added after the global-normalised fixpoint was seen to
+collapse the scale, so not strictly a-priori) and `smooth` beta = 0.5, one round.  The rules were
+smoke-tested at a handful of weights before the grid; as with the hybrid, the CV protects only the numeric
+knobs (rule, weight, rounds, threshold), not the design choices.
+
+### A-priori rows at threshold 0.50 (micro P / R / F1)
+
+| seed | rule | M1 (classes) | M2 (properties) | M3 (all) |
+|---|---|---|---|---|
+| lexical | none | 0.835 / 0.645 / **0.728** | 0.306 / 0.326 / **0.316** | 0.731 / 0.597 / **0.657** |
+| lexical | flooding | 0.886 / 0.421 / **0.571** | 0.182 / 0.043 / **0.070** | 0.828 / 0.364 / **0.506** |
+| lexical | flooding_relative | 0.529 / 0.734 / **0.615** | 0.098 / 0.478 / **0.162** | 0.363 / 0.695 / **0.477** |
+| lexical | neighbour | 0.862 / 0.629 / **0.728** | 0.349 / 0.326 / **0.337** | 0.767 / 0.584 / **0.663** |
+| hybrid | none | 0.822 / 0.679 / **0.744** | 0.288 / 0.370 / **0.324** | 0.707 / 0.633 / **0.668** |
+| hybrid | flooding | 0.889 / 0.556 / **0.684** | 0.280 / 0.152 / **0.197** | 0.807 / 0.495 / **0.614** |
+| hybrid | flooding_relative | 0.424 / 0.799 / **0.554** | 0.106 / 0.696 / **0.183** | 0.302 / 0.784 / **0.436** |
+| hybrid | neighbour | 0.858 / 0.652 / **0.741** | 0.377 / 0.435 / **0.404** | 0.756 / 0.620 / **0.681** |
+| hybrid | smooth | 0.830 / 0.679 / **0.747** | 0.298 / 0.370 / **0.330** | 0.718 / 0.633 / **0.672** |
+
+### Structural grid at the a-priori threshold 0.50 (hybrid seed; micro M1 P / R / F1, M3 F1)
+
+| rule | w = 0.1 | w = 0.2 | w = 0.3 | w = 0.5 |
+|---|---|---|---|---|
+| flooding | 0.84 / 0.64 / 0.728, M3 0.653 | 0.86 / 0.62 / 0.721, M3 0.649 | 0.88 / 0.59 / 0.708, M3 0.642 | 0.89 / 0.56 / 0.684, M3 0.614 |
+| flooding_relative | 0.80 / 0.69 / 0.740, M3 0.665 | 0.76 / 0.71 / 0.739, M3 0.666 | 0.67 / 0.76 / 0.714, M3 0.635 | 0.42 / 0.80 / 0.554, M3 0.436 |
+| neighbour | 0.84 / 0.67 / 0.744, M3 0.671 | 0.85 / 0.65 / 0.740, M3 0.677 | 0.86 / 0.65 / 0.741, M3 0.681 | 0.83 / 0.62 / 0.712, M3 0.664 |
+
+| rule | beta = 0.1 | beta = 0.3 | beta = 0.5 | beta = 1.0 |
+|---|---|---|---|---|
+| smooth, 1 round | 0.82 / 0.68 / 0.747, M3 0.671 | 0.83 / 0.68 / 0.745, M3 0.669 | 0.83 / 0.68 / 0.747, M3 0.672 | 0.82 / 0.66 / 0.732, M3 0.665 |
+| smooth, 2 rounds | 0.82 / 0.68 / 0.747, M3 0.670 | 0.83 / 0.68 / 0.746, M3 0.674 | 0.82 / 0.66 / 0.731, M3 0.664 | 0.78 / 0.66 / 0.716, M3 0.650 |
+
+No structure, same seed and threshold: M1 0.744 / M3 0.668.
+
+### Cross-validated selection (structural)
+
+- Structural grid alone (1020 points: 20 rule / weight / rounds settings x threshold 0.30-0.80), leave-one-pair-out: M1 0.823 / 0.664 / **0.735**, M3 0.712 / 0.633 / **0.670**; configs chosen: `structure=neighbour,w=0.20,it=10,th=0.43`, `structure=neighbour,w=0.20,it=10,th=0.44`, `structure=neighbour,w=0.20,it=10,th=0.47`, `structure=neighbour,w=0.30,it=10,th=0.44`, `structure=neighbour,w=0.30,it=10,th=0.45`.
+- Structural grid alone, leave-one-ontology-out: M1 0.832 / 0.670 / **0.742**, M3 0.720 / 0.631 / **0.672**; configs chosen: `structure=flooding,w=0.30,it=50,th=0.38`, `structure=neighbour,w=0.20,it=10,th=0.43`, `structure=neighbour,w=0.20,it=10,th=0.45`, `structure=neighbour,w=0.30,it=10,th=0.44`, `structure=neighbour,w=0.30,it=10,th=0.45`, `structure=smooth,w=0.50,it=1,th=0.47`.
+- Union of the hybrid grid and the structural grid (3060 points; the selection may pick "no structure"), leave-one-pair-out: M1 0.823 / 0.664 / **0.735**, M3 0.712 / 0.633 / **0.670**; configs chosen: `structure=neighbour,w=0.20,it=10,th=0.43`, `structure=neighbour,w=0.20,it=10,th=0.44`, `structure=neighbour,w=0.20,it=10,th=0.47`, `structure=neighbour,w=0.30,it=10,th=0.44`, `structure=neighbour,w=0.30,it=10,th=0.45`.
+- Union grid, leave-one-ontology-out: M1 0.832 / 0.670 / **0.742**, M3 0.720 / 0.631 / **0.672**; configs chosen: `structure=flooding,w=0.30,it=50,th=0.38`, `structure=neighbour,w=0.20,it=10,th=0.43`, `structure=neighbour,w=0.20,it=10,th=0.45`, `structure=neighbour,w=0.30,it=10,th=0.44`, `structure=neighbour,w=0.30,it=10,th=0.45`, `structure=smooth,w=0.50,it=1,th=0.47`.
+- For reference, the hybrid grid alone (previous headline), leave-one-pair-out: M1 **0.750** / M3 **0.679**.
+- Best structural grid point on all 21 pairs (optimistic): `structure=neighbour,w=0.30,it=10,th=0.45`; best union point: `structure=neighbour,w=0.30,it=10,th=0.45`.
+
+### Does structure buy recall at a lower threshold?  (micro P / R, M1 and M3)
+
+| threshold | no_structure (hybrid a-priori): M1 P / R, M3 P / R | cv_selected (structure=neighbour,w=0.30,it=10): M1 P / R, M3 P / R | flooding_relative,w=0.50,it=50: M1 P / R, M3 P / R |
+|---|---|---|---|
+| 0.30 | 0.67 / 0.78 (F1 0.719), 0.56 / 0.74 (F1 0.635) | 0.68 / 0.76 (F1 0.718), 0.56 / 0.73 (F1 0.635) | 0.37 / 0.84 (F1 0.513), 0.26 / 0.82 (F1 0.392) |
+| 0.35 | 0.72 / 0.74 (F1 0.730), 0.61 / 0.70 (F1 0.652) | 0.75 / 0.73 (F1 0.740), 0.64 / 0.70 (F1 0.665) | 0.38 / 0.83 (F1 0.521), 0.27 / 0.81 (F1 0.399) |
+| 0.40 | 0.78 / 0.71 (F1 0.746), 0.65 / 0.68 (F1 0.668) | 0.81 / 0.70 (F1 0.754), 0.70 / 0.67 (F1 0.681) | 0.39 / 0.83 (F1 0.531), 0.28 / 0.81 (F1 0.411) |
+| 0.45 | 0.80 / 0.69 (F1 0.739), 0.68 / 0.65 (F1 0.664) | 0.84 / 0.68 (F1 0.750), 0.74 / 0.64 (F1 0.688) | 0.40 / 0.81 (F1 0.538), 0.29 / 0.80 (F1 0.421) |
+| 0.50 | 0.82 / 0.68 (F1 0.744), 0.71 / 0.63 (F1 0.668) | 0.86 / 0.65 (F1 0.741), 0.76 / 0.62 (F1 0.681) | 0.42 / 0.80 (F1 0.554), 0.30 / 0.78 (F1 0.436) |
+| 0.55 | 0.85 / 0.64 (F1 0.730), 0.74 / 0.58 (F1 0.654) | 0.86 / 0.61 (F1 0.718), 0.77 / 0.58 (F1 0.658) | 0.52 / 0.77 (F1 0.622), 0.40 / 0.75 (F1 0.519) |
+| 0.60 | 0.86 / 0.59 (F1 0.697), 0.76 / 0.54 (F1 0.628) | 0.87 / 0.59 (F1 0.705), 0.77 / 0.54 (F1 0.637) | 0.60 / 0.75 (F1 0.669), 0.48 / 0.72 (F1 0.581) |
+| 0.65 | 0.88 / 0.58 (F1 0.695), 0.79 / 0.52 (F1 0.626) | 0.89 / 0.51 (F1 0.645), 0.81 / 0.46 (F1 0.587) | 0.70 / 0.72 (F1 0.712), 0.59 / 0.69 (F1 0.636) |
+| 0.70 | 0.88 / 0.57 (F1 0.690), 0.79 / 0.50 (F1 0.616) | 0.91 / 0.41 (F1 0.568), 0.88 / 0.37 (F1 0.524) | 0.80 / 0.67 (F1 0.728), 0.67 / 0.64 (F1 0.658) |
+| 0.75 | 0.88 / 0.54 (F1 0.671), 0.78 / 0.47 (F1 0.588) | 0.91 / 0.34 (F1 0.499), 0.88 / 0.31 (F1 0.456) | 0.84 / 0.64 (F1 0.725), 0.72 / 0.59 (F1 0.652) |
+| 0.80 | 0.88 / 0.54 (F1 0.671), 0.78 / 0.47 (F1 0.586) | 0.91 / 0.24 (F1 0.374), 0.89 / 0.21 (F1 0.335) | 0.89 / 0.55 (F1 0.678), 0.78 / 0.50 (F1 0.614) |
+
+Reading the structural rows: at the a-priori threshold the change against the hybrid is `flooding` -0.060 (M1) / -0.054 (M3), `flooding_relative` -0.190 (M1) / -0.232 (M3), `neighbour` -0.003 (M1) / +0.013 (M3), `smooth` +0.003 (M1) / +0.005 (M3); `neighbour` is the best a-priori rule and the heavy-handed rules (global-normalised flooding, relative
+flooding at w = 0.5) are clearly worse because they move the score scale away from the fixed threshold.
+The best structural grid point on all 21 pairs is `structure=neighbour,w=0.30,it=10,th=0.45` at M1 0.750 / M3 0.688 (optimistic), which looks like a gain over the best hybrid point, but it does not survive
+cross-validation: the union-grid LOPO-CV picks a structural config in 21 of 21 folds
+(the structural points win on the 20 training pairs) and the held-out pairs then score
+M1 0.735 / M3 0.670, against M1 0.750 / M3 0.679 for the hybrid grid alone (-0.015 M1 / -0.009 M3; the structural grid alone gives M1 0.735 / M3 0.670).  The structural gain on ra1 is a threshold-and-weight fit to the
+particular pairs rather than a transferable improvement; the differences are within the noise band of 21 pairs.
+
+Recall versus precision: structure *does* raise recall.  Similarity Flooding (relative, w = 0.5) reaches
+M1 recall 0.84 on the curve above (GraphMatcher: 0.89), but at precision 0.37; the extra correspondences it floods in are mostly
+structurally plausible pairs ra1 does not contain (sibling classes under a matched parent, properties with
+matched domain and range but a different meaning), so precision falls faster than recall rises and F1 does
+not improve.  Holding micro precision at >= 0.80 on M1, the best recall on the curve is 0.68 (th 0.50) without structure, 0.70 (th 0.40) with the CV-selected structural config and 0.67 (th 0.70) with flooding.
+GraphMatcher's recall comes from an attention network *trained* on the Conference ontologies, which learns
+which structural patterns are reliable; a training-free propagation cannot tell a matching sibling pair
+from a merely parallel one, and the mutual-best 1:1 selection plus a single global threshold is a blunt
+instrument for the recall it adds.
 
 ## Comparison with published OAEI 2023 results (ra1, micro)
 
@@ -119,6 +228,7 @@ number (no pair selects its own configuration).  Ranked by F1.
 | GraphMatcher | 0.78 | 0.89 | 0.83 |
 | SORBETMtch | 0.78 | 0.75 | 0.76 |
 | **olaya-hybrid (LOPO-CV)** (this repo) | 0.82 | 0.69 | 0.75 |
+| **olaya-hybrid+structure (LOPO-CV, union grid)** (this repo) | 0.82 | 0.66 | 0.73 |
 | **olaya-lexical** (this repo) | 0.83 | 0.64 | 0.73 |
 | LogMap | 0.84 | 0.63 | 0.72 |
 | Matcha | 0.76 | 0.68 | 0.72 |
@@ -137,6 +247,7 @@ number (no pair selects its own configuration).  Ranked by F1.
 | SORBETMtch | 0.78 | 0.64 | 0.70 |
 | LogMap | 0.81 | 0.58 | 0.68 |
 | **olaya-hybrid (LOPO-CV)** (this repo) | 0.70 | 0.66 | 0.68 |
+| **olaya-hybrid+structure (LOPO-CV, union grid)** (this repo) | 0.71 | 0.63 | 0.67 |
 | Matcha | 0.70 | 0.64 | 0.67 |
 | **olaya-lexical** (this repo) | 0.73 | 0.60 | 0.66 |
 | ALIN | 0.88 | 0.47 | 0.61 |
@@ -151,12 +262,11 @@ number (no pair selects its own configuration).  Ranked by F1.
 
 Where we land (headline = hybrid, leave-one-pair-out CV, M1 F1 0.75 / M3 F1 0.68):
 rank 3 of 13 on ra1-M1 and rank 3 of 14 on ra1-M3 by two-decimal F1 (a 0.00 gap in the
-two-decimal table is a tie, not a win).  That is 0.08 (M1) / 0.10 (M3)
-F1 below GraphMatcher and 0.01 (M1) / 0.02 (M3) below SORBETMtch;
-tied with LogMap on M3 and 0.03 above it on M1; above Matcha and the string-based systems.  The hybrid improves on
+two-decimal table is a tie, not a win).  GraphMatcher: 0.08 below on M1, 0.10 below on M3; SORBETMtch: 0.01 below on M1, 0.02 below on M3; LogMap: 0.03 above on M1, tied on M3;
+above Matcha, OLaLa, ALIN, edna, LogMapLt, StringEquiv, LSMatch, AMD, TOMATO on both modalities.  The headline improves on
 the purely lexical matcher by +0.022 (M1) / +0.022 (M3) under cross-validation, which is a real but small
-gain, within the noise band of a 21-pair test set.  We do not beat or tie the published best on either
-modality, and we do not claim state of the art.  GraphMatcher / SORBETMtch additionally learn from the
+gain, within the noise band of a 21-pair test set.  Structure did not help under cross-validation: the union-grid CV (M1 0.735 / M3 0.670) is -0.015 (M1) / -0.009 (M3) against the hybrid-grid CV, so the headline stays the hybrid; see the structural section for why (recall rises, precision falls faster).
+We do not beat or tie the published best on either modality, and we do not claim state of the art.  GraphMatcher / SORBETMtch additionally learn from the
 task (graph attention over the ontology, fine-tuned encoders); nothing here is trained on OntoFarm.
 
 ## Per-pair results (hybrid a-priori run)
@@ -201,5 +311,10 @@ raw (uncalibrated) cosine in the cascade (-0.15 F1 at 0.50, best threshold 0.70)
 (-0.02 F1 vs label + description).  Embeddings are cached on disk under `$OLAYA_CACHE_DIR/embeddings`
 (default `~/.cache/olaya/embeddings`), keyed by model commit and text sha256; `--no-embeddings` reproduces the
 lexical rows offline.
+
+`olaya.benchmarks.structural.StructuralMatcher`: see the structural section.  Seeded by the hybrid (or by the
+lexical matcher alone with `--no-embeddings`), propagates over subClassOf / equivalentClass / disjointWith /
+domain / range / inverseOf / subPropertyOf with Similarity Flooding, neighbour aggregation or embedding
+smoothing; dense numpy, well under a second per pair.
 
 Dataset: 28 upstream files, hashes in the JSON and in `tests/fixtures/oaei/README.md`.
