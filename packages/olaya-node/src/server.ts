@@ -1,19 +1,27 @@
 /**
- * Leio Server: Compatible with TypeSafe AI's Jev (api.typesafe.ai/v1/systemone)
- * and Model Context Protocol (MCP 2026-07-28 stateless HTTP + stdio).
+ * HTTP server for @mycelia/olaya.
  *
- * Implements:
- * 1. POST /v1/systemone (Exact Jev Request/Response spec, $0.042/1M input pricing)
- * 2. POST /v1/mcp (MCP 2026-07-28 Stateless HTTP JSON-RPC endpoint)
- * 3. GET /v1/billing/usage (Live API token metering and invoice estimator)
- * 4. GET /v1/health (Sub-millisecond latency heartbeat)
+ * 1. POST /v1/systemone — Jev-style request shape (`state` + named `questions`), answered by the
+ *    package's lexical primitives: `choice`, `score` (an ordered scale of `criteria` labels, via
+ *    `OLaya.rate`) and `noul` (lexical proposition overlap via `OLaya.score`).
+ * 2. POST /v1/mcp — MCP JSON-RPC over plain HTTP POST: one request, one JSON response. This is a
+ *    subset of the 2025-03-26 Streamable HTTP transport (no SSE streaming, no sessions, no GET).
+ * 3. GET /v1/health — liveness.
+ *
+ * There is no authentication, metering or billing: requests are not attributed to anyone.
  */
 
 import * as http from "node:http";
 import * as crypto from "node:crypto";
 import { OLaya } from "./engine.js";
 import { OntologyDAG } from "./ontology.js";
-import { DEFAULT_GS1_CLASSES, DEFAULT_INCIDENT_CLASSES } from "./mcp.js";
+import {
+  DEFAULT_DOMAIN,
+  DEFAULT_INCIDENT_CLASSES,
+  OLayaNodeMCPServer,
+  SERVER_INFO,
+  negotiateProtocolVersion,
+} from "./mcp.js";
 
 export type OutputFormat = "jev" | "json-rpc" | "json-schema" | "json-ld";
 
@@ -27,8 +35,8 @@ export interface JevSystemOneRequest {
 
 export type JevQuestion =
   | { type: "choice"; instructions?: string; options: string[] }
-  | { type: "score"; instructions?: string; levels?: number; criteria?: string[] }
-  | { type: "noul"; instructions?: string };
+  | { type: "score"; instructions?: string; criteria: string[] }
+  | { type: "noul"; instructions: string };
 
 export interface JevChoiceResponse {
   type: "choice";
@@ -39,9 +47,12 @@ export interface JevChoiceResponse {
 
 export interface JevScoreResponse {
   type: "score";
+  /** Expected position on the scale in [0, 1]. */
   score: number;
+  /** 1-based index of the selected criterion. */
   level: number;
   confidence: number;
+  /** Probability per criterion label. */
   probabilities: Record<string, number>;
 }
 
@@ -52,92 +63,27 @@ export interface JevNoulResponse {
 
 export type JevQuestionResponse = JevChoiceResponse | JevScoreResponse | JevNoulResponse;
 
-export interface TokenUsage {
-  input_tokens: number;
-  output_tokens: number;
-  total_tokens: number;
-  cost_usd: number;
+export interface SystemOneResponse {
+  id: string;
+  model: string;
+  questions: Record<string, JevQuestionResponse>;
 }
 
-// Global in-memory billing ledger (mock/production ready with API key attribution)
-export interface ApiKeyUsage {
-  apiKey: string;
-  totalRequests: number;
-  totalInputTokens: number;
-  totalOutputTokens: number;
-  totalCostUSD: number;
-  lastActive: string;
-}
+export const DEFAULT_MODEL_NAME = "olaya-lexical";
 
-export const USAGE_LEDGER = new Map<string, ApiKeyUsage>();
+const round4 = (x: number) => Number(x.toFixed(4));
+const roundMap = (m: Record<string, number>) => Object.fromEntries(Object.entries(m).map(([k, v]) => [k, round4(v)]));
 
-const RATE_PER_MILLION_INPUT = 0.042; // $0.042 per 1,000,000 tokens (Jev exact rate)
-
-export function estimateTokens(input: any): number {
-  const str = typeof input === "string" ? input : JSON.stringify(input);
-  // Accurate heuristic: average 1 token per 3.8 characters for structured payloads
-  return Math.max(1, Math.ceil(str.length / 3.8));
-}
-
-export function recordTokenUsage(apiKey: string, inputTokens: number, outputTokens: number = 0): TokenUsage {
-  const costUsd = Number(((inputTokens / 1_000_000) * RATE_PER_MILLION_INPUT).toFixed(8));
-  let ledger = USAGE_LEDGER.get(apiKey);
-  if (!ledger) {
-    ledger = {
-      apiKey,
-      totalRequests: 0,
-      totalInputTokens: 0,
-      totalOutputTokens: 0,
-      totalCostUSD: 0,
-      lastActive: new Date().toISOString(),
-    };
-    USAGE_LEDGER.set(apiKey, ledger);
-  }
-  ledger.totalRequests++;
-  ledger.totalInputTokens += inputTokens;
-  ledger.totalOutputTokens += outputTokens;
-  ledger.totalCostUSD += costUsd;
-  ledger.lastActive = new Date().toISOString();
-
-  return {
-    input_tokens: inputTokens,
-    output_tokens: outputTokens,
-    total_tokens: inputTokens + outputTokens,
-    cost_usd: costUsd,
-  };
-}
-
-export function getApiKeyUsage(apiKey: string) {
-  const ledger = USAGE_LEDGER.get(apiKey) || {
-    apiKey,
-    totalRequests: 0,
-    totalInputTokens: 0,
-    totalOutputTokens: 0,
-    totalCostUSD: 0,
-    lastActive: new Date().toISOString(),
-  };
-
-  return {
-    ...ledger,
-    ratePerMillionInput: "$0.042",
-    outputPricing: "$0.00 (Free)",
-    invoiceEstimateUSD: `$${ledger.totalCostUSD.toFixed(4)}`,
-  };
-}
-
-export function computeInputTokens(req: JevSystemOneRequest): number {
-  const rawState = typeof req.state === "string" ? req.state : JSON.stringify(req.state);
-  return estimateTokens(rawState) + estimateTokens(req.questions || {});
-}
-
-export class LeioServer {
+export class OlayaHttpServer {
+  /** Engine for the flat primitives (`choice`, `rate`, `score`); the ontology is not used by them. */
   private engine: OLaya;
+  private registry = new OLayaNodeMCPServer();
   private port: number;
   private server: http.Server | null = null;
 
   constructor(port: number = 8080, ontology?: OntologyDAG) {
     this.port = port;
-    this.engine = new OLaya(ontology || new OntologyDAG([...DEFAULT_GS1_CLASSES, ...DEFAULT_INCIDENT_CLASSES]));
+    this.engine = new OLaya(ontology || new OntologyDAG(DEFAULT_INCIDENT_CLASSES));
   }
 
   public async start(): Promise<http.Server> {
@@ -161,234 +107,166 @@ export class LeioServer {
   }
 
   /**
-   * Process TypeSafe AI Jev-compatible /v1/systemone payload
+   * Answer a `/v1/systemone` payload. Throws on a malformed question so the caller can return 400.
    */
-  public async processSystemOne(
-    body: JevSystemOneRequest,
-    apiKey: string = "anon_key"
-  ): Promise<{ result: Record<string, JevQuestionResponse>; usage: TokenUsage }> {
+  public async processSystemOne(body: JevSystemOneRequest): Promise<Record<string, JevQuestionResponse>> {
+    if (body === null || typeof body !== "object" || body.state === undefined) {
+      throw new Error("`state` is required");
+    }
     const rawState = typeof body.state === "string" ? body.state : JSON.stringify(body.state);
     const questions = body.questions || {};
     const result: Record<string, JevQuestionResponse> = {};
 
-    const inputTokens = estimateTokens(rawState) + estimateTokens(questions);
-
     for (const [qKey, qVal] of Object.entries(questions)) {
       if (qVal.type === "choice") {
-        const options = qVal.options || [];
+        const options = Array.isArray(qVal.options) ? qVal.options.map(String) : [];
+        if (options.length === 0) throw new Error(`question "${qKey}": choice needs a non-empty \`options\` array`);
         const choiceRes = await this.engine.choice(rawState, options, qVal.instructions);
         result[qKey] = {
           type: "choice",
           choice: choiceRes.choice,
-          confidence: Number(choiceRes.confidence.toFixed(4)),
-          probabilities: Object.fromEntries(
-            Object.entries(choiceRes.probabilities).map(([k, v]) => [k, Number(v.toFixed(4))])
-          ),
+          confidence: round4(choiceRes.confidence),
+          probabilities: roundMap(choiceRes.probabilities),
         };
       } else if (qVal.type === "score") {
-        const levels = qVal.levels || (qVal.criteria ? qVal.criteria.length : 5);
-        const criteria = qVal.criteria || Array.from({ length: levels }, (_, i) => `level_${i + 1}`);
-        const rawScore = await this.engine.score(rawState, criteria.join(" "));
-        const assignedLevel = Math.min(levels, Math.max(1, Math.ceil(rawScore * levels)));
-
-        // Compute softmax spread across levels
-        const levelProbs: Record<string, number> = {};
-        for (let l = 1; l <= levels; l++) {
-          const dist = Math.abs(l - (rawScore * (levels - 1) + 1));
-          levelProbs[String(l)] = Number(Math.exp(-dist * 1.5).toFixed(4));
+        const criteria = Array.isArray(qVal.criteria) ? qVal.criteria.map(String) : [];
+        if (criteria.length === 0) {
+          throw new Error(
+            `question "${qKey}": score needs \`criteria\` (one label per level, lowest first); ` +
+              "this lexical engine has no evidence to rank bare level numbers"
+          );
         }
-        const sum = Object.values(levelProbs).reduce((a, b) => a + b, 0);
-        for (const k of Object.keys(levelProbs)) {
-          levelProbs[k] = Number((levelProbs[k] / sum).toFixed(4));
-        }
-
+        const rating = await this.engine.rate(rawState, criteria, qVal.instructions);
         result[qKey] = {
           type: "score",
-          score: Number(rawScore.toFixed(4)),
-          level: assignedLevel,
-          confidence: Number((levelProbs[String(assignedLevel)] || 0.8).toFixed(4)),
-          probabilities: levelProbs,
+          score: round4(rating.score),
+          level: rating.level,
+          confidence: round4(rating.confidence),
+          probabilities: roundMap(rating.probabilities),
         };
       } else if (qVal.type === "noul") {
-        const instructions = qVal.instructions || "Is this hypothesis true?";
-        const noulScore = await this.engine.score(rawState, instructions);
-        result[qKey] = {
-          type: "noul",
-          noul: Number(noulScore.toFixed(4)),
-        };
+        if (typeof qVal.instructions !== "string" || qVal.instructions.trim() === "") {
+          throw new Error(`question "${qKey}": noul needs the proposition in \`instructions\``);
+        }
+        result[qKey] = { type: "noul", noul: round4(await this.engine.score(rawState, qVal.instructions)) };
+      } else {
+        throw new Error(`question "${qKey}": unknown type "${(qVal as any)?.type}"`);
       }
     }
 
-    // Free output tokens per Jev pricing architecture
-    const outputTokens = 0;
-    const costUsd = Number(((inputTokens / 1_000_000) * RATE_PER_MILLION_INPUT).toFixed(8));
+    return result;
+  }
 
-    // Update billing ledger
-    let ledger = USAGE_LEDGER.get(apiKey);
-    if (!ledger) {
-      ledger = {
-        apiKey,
-        totalRequests: 0,
-        totalInputTokens: 0,
-        totalOutputTokens: 0,
-        totalCostUSD: 0,
-        lastActive: new Date().toISOString(),
-      };
-      USAGE_LEDGER.set(apiKey, ledger);
-    }
-    ledger.totalRequests++;
-    ledger.totalInputTokens += inputTokens;
-    ledger.totalCostUSD += costUsd;
-    ledger.lastActive = new Date().toISOString();
-
-    const usage: TokenUsage = {
-      input_tokens: inputTokens,
-      output_tokens: outputTokens,
-      total_tokens: inputTokens,
-      cost_usd: costUsd,
-    };
-
-    return { result, usage };
+  public mcpToolDefinitions() {
+    return [
+      {
+        name: "olaya_systemone",
+        description:
+          "Answer Jev-style questions about a state with the package's lexical primitives: " +
+          "choice (options), score (ordered criteria labels) and noul (a proposition in instructions).",
+        inputSchema: {
+          type: "object",
+          properties: {
+            state: { type: "string", description: "State observation or event context" },
+            questions: { type: "object", description: "Named questions: {type: choice|score|noul, ...}" },
+          },
+          required: ["state", "questions"],
+        },
+      },
+      {
+        name: "olaya_ground",
+        description:
+          "Ground an observation into the best-matching class of a bundled ontology by lexical overlap, " +
+          "with the subsumption/disjointness projection and a normalised-entropy confidence.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            state: { type: "string", description: "Observation text" },
+            domain: { type: "string", enum: this.registry.availableDomains(), default: DEFAULT_DOMAIN },
+          },
+          required: ["state"],
+        },
+      },
+    ];
   }
 
   /**
-   * Process MCP 2026-07-28 Stateless HTTP JSON-RPC Request
+   * Handle one MCP JSON-RPC message. Returns null for notifications (no response body).
    */
-  public async processMcp(body: Record<string, any>): Promise<Record<string, any>> {
-    const { id, method, params } = body;
+  public async processMcp(body: Record<string, any>): Promise<Record<string, any> | null> {
+    const { id, method, params } = body ?? {};
+
+    if (method === "notifications/initialized" || method === "notifications/cancelled") {
+      return null;
+    }
+
+    if (method === "ping") {
+      return { jsonrpc: "2.0", id, result: {} };
+    }
 
     if (method === "initialize") {
       return {
         jsonrpc: "2.0",
         id,
         result: {
-          protocolVersion: "2026-07-28",
-          serverInfo: {
-            name: "leio-mcp-engine",
-            version: "2026.1.0",
-          },
-          capabilities: {
-            stateless: true,
-            tools: { listChanged: false },
-            resources: { subscribe: false, listChanged: false },
-            tasks: { enabled: true },
-          },
+          protocolVersion: negotiateProtocolVersion(params?.protocolVersion),
+          serverInfo: SERVER_INFO,
+          capabilities: { tools: { listChanged: false } },
         },
       };
     }
 
     if (method === "tools/list") {
-      return {
-        jsonrpc: "2.0",
-        id,
-        result: {
-          protocolVersion: "2026-07-28",
-          tools: [
-            {
-              name: "leio_systemone",
-              description: "Jev-compatible System 1 decision evaluation (choice, score, noul) in <1ms.",
-              inputSchema: {
-                type: "object",
-                properties: {
-                  state: { type: "string", description: "State observation or event context" },
-                  questions: { type: "object", description: "Jev decision questions" },
-                },
-                required: ["state", "questions"],
-              },
-            },
-            {
-              name: "leio_ground",
-              description: "Ground state into formal GS1, Schema.org, or Incident ontology classes with axiom guarantees.",
-              inputSchema: {
-                type: "object",
-                properties: {
-                  state: { type: "string", description: "Observation text" },
-                  domain: { type: "string", enum: ["gs1", "schemaorg", "bfo", "skos", "incident"], default: "gs1" },
-                },
-                required: ["state"],
-              },
-            },
-          ],
-        },
-      };
+      return { jsonrpc: "2.0", id, result: { tools: this.mcpToolDefinitions() } };
     }
 
     if (method === "tools/call") {
       const name = params?.name;
       const args = params?.arguments || {};
-
-      if (name === "leio_systemone") {
-        const { result, usage } = await this.processSystemOne({
-          state: args.state,
-          questions: args.questions,
-        });
+      try {
+        let payload: unknown;
+        if (name === "olaya_systemone") {
+          payload = await this.processSystemOne({ state: args.state, questions: args.questions });
+        } else if (name === "olaya_ground") {
+          payload = await this.registry.executeTool("olaya_ground", args);
+        } else {
+          return { jsonrpc: "2.0", id, error: { code: -32602, message: `Unknown tool: ${name}` } };
+        }
         return {
           jsonrpc: "2.0",
           id,
-          result: {
-            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-            telemetry: {
-              protocol: "2026-07-28",
-              pricing: "$0.042 / 1M tokens",
-              usage,
-            },
-            isError: false,
-          },
+          result: { content: [{ type: "text", text: JSON.stringify(payload, null, 2) }], isError: false },
         };
-      }
-
-      if (name === "leio_ground") {
-        const decision = await this.engine.systemOne(String(args.state || ""));
+      } catch (err: any) {
         return {
           jsonrpc: "2.0",
           id,
-          result: {
-            content: [
-              {
-                type: "text",
-                text: JSON.stringify(
-                  {
-                    curie: decision.selectedConcept.curie,
-                    label: decision.selectedConcept.label,
-                    confidence: decision.confidence,
-                    axioms_verified: decision.axiomsVerified,
-                    probabilities: decision.probabilities.slice(0, 5),
-                  },
-                  null,
-                  2
-                ),
-              },
-            ],
-            isError: false,
-          },
+          result: { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true },
         };
       }
-
-      return {
-        jsonrpc: "2.0",
-        id,
-        error: { code: -32601, message: `Unknown tool: ${name}` },
-      };
     }
 
-    return {
-      jsonrpc: "2.0",
-      id,
-      error: { code: -32601, message: `Method not found: ${method}` },
-    };
+    if (id === undefined) return null;
+    return { jsonrpc: "2.0", id, error: { code: -32601, message: `Method not found: ${method}` } };
   }
 
-  /**
-   * Start high-performance HTTP server
-   */
   public listen(port: number = 8080): http.Server {
+    const readBody = (req: http.IncomingMessage) =>
+      new Promise<string>((resolve, reject) => {
+        let bodyStr = "";
+        req.on("data", (chunk) => (bodyStr += chunk));
+        req.on("end", () => resolve(bodyStr));
+        req.on("error", reject);
+      });
+    const json = (res: http.ServerResponse, status: number, payload: unknown, headers: Record<string, string> = {}) => {
+      res.writeHead(status, { "Content-Type": "application/json", ...headers });
+      res.end(JSON.stringify(payload));
+    };
+
     const server = http.createServer(async (req, res) => {
-      // CORS headers
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Mcp-Session-Id");
-      res.setHeader("X-Protocol-Version", "2026-07-28");
-      res.setHeader("X-Engine-Name", "Leio");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
       if (req.method === "OPTIONS") {
         res.writeHead(204);
@@ -397,123 +275,65 @@ export class LeioServer {
       }
 
       const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
-      const authHeader = req.headers["authorization"] || "";
-      const apiKey = authHeader.replace(/^Bearer\s+/i, "") || "public_demo_key";
 
-      // 1. Health check
       if (req.method === "GET" && (url.pathname === "/health" || url.pathname === "/v1/health")) {
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(
-          JSON.stringify({
-            status: "healthy",
-            engine: "Leio System 1",
-            model: "leio-systemone-latest",
-            mcp_protocol: "2026-07-28",
-            pricing: "$0.042 / 1M input tokens (outputs free)",
-            uptime_seconds: process.uptime(),
-          })
-        );
+        json(res, 200, {
+          status: "ok",
+          engine: SERVER_INFO.name,
+          version: SERVER_INFO.version,
+          model: DEFAULT_MODEL_NAME,
+          uptime_seconds: process.uptime(),
+        });
         return;
       }
 
-      // 2. Billing / Usage ledger endpoint
-      if (req.method === "GET" && (url.pathname === "/v1/billing/usage" || url.pathname === "/v1/usage")) {
-        const usage = USAGE_LEDGER.get(apiKey) || {
-          apiKey,
-          totalRequests: 0,
-          totalInputTokens: 0,
-          totalOutputTokens: 0,
-          totalCostUSD: 0,
-          lastActive: "never",
-        };
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(
-          JSON.stringify({
-            apiKey,
-            rate: "$0.042 per 1,000,000 input tokens",
-            rate_per_million_input: "$0.042",
-            outputs: "FREE",
-            output_pricing: "$0.00 (Free)",
-            usage,
-            invoice_estimate_usd: usage.totalCostUSD.toFixed(6),
-          })
-        );
-        return;
-      }
-
-      // 3. Jev-compatible /v1/systemone
       if (req.method === "POST" && (url.pathname === "/v1/systemone" || url.pathname === "/systemone")) {
-        let bodyStr = "";
-        req.on("data", (chunk) => (bodyStr += chunk));
-        req.on("end", async () => {
-          try {
-            const body = JSON.parse(bodyStr);
-            const t0 = performance.now();
-            const { result, usage } = await this.processSystemOne(body, apiKey);
-            const dtMs = performance.now() - t0;
-
-            res.writeHead(200, {
-              "Content-Type": "application/json",
-              "X-Inference-Latency-Ms": dtMs.toFixed(2),
-              "X-Input-Tokens": String(usage.input_tokens),
-              "X-Cost-USD": String(usage.cost_usd),
-            });
-            res.end(
-              JSON.stringify({
-                id: `leio_${crypto.randomUUID().replace(/-/g, "")}`,
-                model: body.model || "leio-1-enterprise",
-                questions: result,
-                usage,
-                _telemetry: {
-                  latency_ms: Number(dtMs.toFixed(2)),
-                },
-              })
-            );
-          } catch (err: any) {
-            res.writeHead(400, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ error: `Invalid systemone request: ${err.message}` }));
-          }
-        });
+        try {
+          const body = JSON.parse(await readBody(req));
+          const t0 = performance.now();
+          const questions = await this.processSystemOne(body);
+          const dtMs = performance.now() - t0;
+          json(
+            res,
+            200,
+            {
+              id: `olaya_${crypto.randomUUID().replace(/-/g, "")}`,
+              model: body.model || DEFAULT_MODEL_NAME,
+              questions,
+              _telemetry: { latency_ms: Number(dtMs.toFixed(2)) },
+            },
+            { "X-Inference-Latency-Ms": dtMs.toFixed(2) }
+          );
+        } catch (err: any) {
+          json(res, 400, { error: `Invalid systemone request: ${err.message}` });
+        }
         return;
       }
 
-      // 4. MCP 2026-07-28 Stateless HTTP endpoint
       if (req.method === "POST" && (url.pathname === "/v1/mcp" || url.pathname === "/mcp")) {
-        let bodyStr = "";
-        req.on("data", (chunk) => (bodyStr += chunk));
-        req.on("end", async () => {
-          try {
-            const body = JSON.parse(bodyStr);
-            const mcpResp = await this.processMcp(body);
-            res.writeHead(200, { "Content-Type": "application/json" });
-            res.end(JSON.stringify(mcpResp));
-          } catch (err: any) {
-            res.writeHead(400, { "Content-Type": "application/json" });
-            res.end(
-              JSON.stringify({
-                jsonrpc: "2.0",
-                id: null,
-                error: { code: -32700, message: `Parse error: ${err.message}` },
-              })
-            );
+        try {
+          const body = JSON.parse(await readBody(req));
+          const mcpResp = await this.processMcp(body);
+          if (mcpResp === null) {
+            res.writeHead(202);
+            res.end();
+            return;
           }
-        });
+          json(res, 200, mcpResp);
+        } catch (err: any) {
+          json(res, 400, { jsonrpc: "2.0", id: null, error: { code: -32700, message: `Parse error: ${err.message}` } });
+        }
         return;
       }
 
-      // 404 fallback
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({
-          error: "Endpoint not found",
-          available_endpoints: [
-            "POST /v1/systemone (TypeSafe AI Jev drop-in replacement)",
-            "POST /v1/mcp (Model Context Protocol 2026-07-28 stateless)",
-            "GET /v1/billing/usage (Live API billing and token metering)",
-            "GET /v1/health (Health check)",
-          ],
-        })
-      );
+      json(res, 404, {
+        error: "Endpoint not found",
+        available_endpoints: [
+          "POST /v1/systemone (choice / score / noul questions about a state)",
+          "POST /v1/mcp (MCP JSON-RPC over HTTP POST)",
+          "GET /v1/health",
+        ],
+      });
     });
 
     server.listen(port);
@@ -521,14 +341,17 @@ export class LeioServer {
   }
 }
 
-export const defaultLeioServer = new LeioServer();
+/** Previous name of {@link OlayaHttpServer}, kept for callers of the 0.1.x API. */
+export { OlayaHttpServer as LeioServer };
 
-export async function processSystemOne(req: JevSystemOneRequest, apiKey: string = "anon_key") {
-  const res = await defaultLeioServer.processSystemOne(req, apiKey);
+let defaultServer: OlayaHttpServer | null = null;
+
+/** Answer a `/v1/systemone` payload in-process, without opening a socket. */
+export async function processSystemOne(req: JevSystemOneRequest): Promise<SystemOneResponse> {
+  defaultServer ??= new OlayaHttpServer();
   return {
-    id: `leio_${crypto.randomUUID().replace(/-/g, "")}`,
-    model: req.model || "leio-1-enterprise",
-    questions: res.result,
-    usage: res.usage,
+    id: `olaya_${crypto.randomUUID().replace(/-/g, "")}`,
+    model: req.model || DEFAULT_MODEL_NAME,
+    questions: await defaultServer.processSystemOne(req),
   };
 }

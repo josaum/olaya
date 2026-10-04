@@ -1,29 +1,16 @@
 """Shared fixtures: a hermetic tokenizer loaded from the bundled ModernBERT tokenizer.json."""
 
-from pathlib import Path
-
 import pytest
 import torch
-from transformers import PreTrainedTokenizerFast
 
 from olaya.engine import OLaya
+from olaya.tokenizer import TOKENIZER_FILE, load_local_tokenizer
 
-TOKENIZER_FILE = Path(__file__).resolve().parent.parent / "models" / "tokenizer.json"
-
-
-def load_local_tokenizer() -> PreTrainedTokenizerFast:
-    return PreTrainedTokenizerFast(
-        tokenizer_file=str(TOKENIZER_FILE),
-        cls_token="[CLS]",
-        sep_token="[SEP]",
-        mask_token="[MASK]",
-        pad_token="[PAD]",
-        unk_token="[UNK]",
-    )
+__all__ = ["TOKENIZER_FILE", "load_local_tokenizer"]
 
 
 @pytest.fixture(scope="session")
-def tokenizer() -> PreTrainedTokenizerFast:
+def tokenizer():
     return load_local_tokenizer()
 
 

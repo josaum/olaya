@@ -1,17 +1,37 @@
 """O-Laya Benchmark Suite."""
 
 from olaya.benchmarks.oaei import (
+    CONFERENCE_PAIRS,
+    EmbeddingMatcher,
+    EmbeddingMatcherConfig,
+    HybridMatcher,
+    HybridMatcherConfig,
+    LexicalMatcher,
+    LexicalMatcherConfig,
     OAEIAlignment,
     OAEIAlignmentParser,
-    OAEIBenchmark,
-    OAEIEvalResult,
+    OAEIConferenceBenchmark,
     OWLParser,
+    PairEvaluation,
+    StringEquivMatcher,
+    cross_validate,
+    evaluate_alignment,
 )
 
 __all__ = [
-    "OWLParser",
+    "CONFERENCE_PAIRS",
+    "EmbeddingMatcher",
+    "EmbeddingMatcherConfig",
+    "HybridMatcher",
+    "HybridMatcherConfig",
+    "LexicalMatcher",
+    "LexicalMatcherConfig",
     "OAEIAlignment",
     "OAEIAlignmentParser",
-    "OAEIEvalResult",
-    "OAEIBenchmark",
+    "OAEIConferenceBenchmark",
+    "OWLParser",
+    "PairEvaluation",
+    "StringEquivMatcher",
+    "cross_validate",
+    "evaluate_alignment",
 ]

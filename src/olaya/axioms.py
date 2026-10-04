@@ -225,6 +225,12 @@ def calibrate_and_project_distribution(
     Used for flat questions (choice, score, noul, subsumes). Monotonicity is enforced by lifting
     parents, so when the candidates include a hierarchy the returned values are no longer a simplex.
     Concept questions use :func:`project_hierarchical_distribution` instead.
+
+    Confidence follows step 5 of ``spec/AXIOMS.md``: it is the normalised-entropy confidence of the
+    *calibrated* distribution (step 2, before monotonicity lifting) restricted to the slots that
+    survived disjointness exclusion. Lifting copies a child's mass onto every ancestor, so measuring
+    entropy after it would make any deep chain look uniform and report confidence 0 for a decision
+    the model was certain about.
     """
     base_probs = _temperature_softmax(raw_logits, len(candidate_curies))
 
@@ -236,11 +242,27 @@ def calibrate_and_project_distribution(
         # Enforce disjointness
         prob_map = enforce_disjointness_exclusion(prob_map, subgraph, threshold=DISJOINT_THRESHOLD)
 
-    # Compute normalized entropy confidence
-    prob_values = np.array(list(prob_map.values()), dtype=np.float32)
-    conf = normalized_entropy_confidence(prob_values)
+    conf = _projected_confidence(base_probs, [prob_map[curie] for curie in candidate_curies])
 
     return prob_map, conf
+
+
+def _projected_confidence(calibrated: np.ndarray, projected: list[float]) -> float:
+    """Spec step 5: entropy confidence of the calibrated distribution, masked by exclusion.
+
+    ``calibrated[i]`` is the softmax value of slot ``i`` and ``projected[i]`` its value after
+    monotonicity lifting and disjointness. A slot zeroed by disjointness no longer competes, so it is
+    zeroed here as well; every other slot keeps its calibrated (pre-lift) mass.
+    """
+    masked = np.array(
+        [float(calibrated[i]) if projected[i] > 0.0 else 0.0 for i in range(len(projected))],
+        dtype=np.float64,
+    )
+    if len(masked) <= 1:
+        return 1.0
+    if masked.sum() <= 0.0:
+        return 0.0
+    return normalized_entropy_confidence(masked)
 
 
 def enforce_owl2_rl_axioms(

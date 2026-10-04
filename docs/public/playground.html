@@ -1609,7 +1609,16 @@
 
 <script type="module">
 import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
-    import init, { OlayaWasm } from './wasm/olaya_wasm.js';
+
+    // The WASM build (./wasm/olaya_wasm.js + .wasm) is not committed; see README.md next to this
+    // page for the wasm-pack step. It is loaded dynamically so that when it is absent the import
+    // rejects, the catch below runs, and the page keeps working on the pure-JS engine.
+    let OlayaWasm = null;
+    const init = async () => {
+      const wasm = await import('./wasm/olaya_wasm.js');
+      await wasm.default();
+      OlayaWasm = wasm.OlayaWasm;
+    };
 
     let wasmEngine = null;
     let wasmReady = false;

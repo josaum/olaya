@@ -2,9 +2,6 @@ export const config = {
   runtime: 'edge',
 };
 
-// ─── Pricing ────────────────────────────────────────────────────────────────
-const RATE_PER_MILLION_INPUT = 0.042; // Exact Jev rate: $0.042 / 1M input tokens
-
 // ─── Tokenizer (CamelCase-aware, English stopwords) ─────────────────────────
 const STOPWORDS = new Set([
   'a','an','the','and','or','but','in','on','at','to','for','with','by','about',
@@ -150,23 +147,16 @@ export default async function handler(req) {
     return new Response(
       JSON.stringify({
         status: 'healthy',
-        engine: 'Leio System 1',
-        model: 'leio-1-enterprise',
+        engine: 'olaya-edge-lexical',
         version: '1.0.0',
-        mcp_protocol: '2026-07-28',
-        jev_compatible: true,
         primitives: ['choice', 'score', 'noul'],
-        guarantees: [
-          'P(child) <= P(parent) subsumption monotonicity',
-          'Disjointness exclusion: A AND B = bottom',
-          'Calibrated probabilities (temperature-scaled softmax)',
+        scoring: 'bounded lexical token overlap; no trained model, no ontology DAG',
+        limitations: [
+          'Does not load an ontology hierarchy; subsumption and disjointness projection are not applied.',
+          'Temperature-scaled softmax weights are not empirically calibrated probabilities.',
+          'noul and choice abstain (abstained: true) when evidence is absent, conflicting, or ambiguous.',
         ],
-        pricing: {
-          rate_per_million_input: '$0.042',
-          output_tokens: 'FREE ($0.00)',
-          currency: 'USD',
-          note: 'Exact Jev/TypeSafe AI pricing model',
-        },
+        contract: 'https://github.com/josaum/olaya/blob/main/spec/systemone-reliability.md',
         endpoints: {
           systemone: 'POST /api/systemone',
           health: 'GET /api/systemone',
@@ -200,7 +190,6 @@ export default async function handler(req) {
     // JSON keys and boolean/number values are not natural language evidence.
     const stateToks = tokenize(stateTextValues(body.state).join(' '));
     const inputTokens = estimateTokens(rawState) + estimateTokens(questions);
-    const costUsd = Number(((inputTokens / 1_000_000) * RATE_PER_MILLION_INPUT).toFixed(8));
 
     const results = {};
 
@@ -319,20 +308,17 @@ export default async function handler(req) {
 
     return new Response(
       JSON.stringify({
-        id: `leio_${crypto.randomUUID().replace(/-/g, '')}`,
-        model: body.model || 'leio-1-enterprise',
+        id: `olaya_${crypto.randomUUID().replace(/-/g, '')}`,
+        engine: 'olaya-edge-lexical',
         questions: results,
         usage: {
           input_tokens: inputTokens,
           output_tokens: 0,
           total_tokens: inputTokens,
-          cost_usd: costUsd,
         },
         _telemetry: {
           latency_ms: Number(dtMs.toFixed(2)),
-          rate_per_million_input: '$0.042',
-          output_tokens: 'FREE',
-          engine: 'leio-edge-v1 (lexical O-Laya kernel)',
+          engine: 'olaya-edge-lexical (bounded token overlap, no ontology DAG)',
         },
       }),
       {
@@ -341,8 +327,7 @@ export default async function handler(req) {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
           'X-Inference-Latency-Ms': dtMs.toFixed(2),
-          'X-Cost-USD': String(costUsd),
-          'X-Engine': 'leio-edge-v1',
+          'X-Engine': 'olaya-edge-lexical',
           'Cache-Control': 'no-cache',
         },
       }

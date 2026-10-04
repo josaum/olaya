@@ -7,9 +7,12 @@ workflow compilation/execution, and trace replay offline, without a separate
 Python installation, model download, or API key. The full server does not expose
 the earlier lexical-grounding tool.
 
-Strict checkpoint loading establishes runtime/parameter compatibility. The existing
-checkpoint reports historical validation accuracy **0.3793**; this is not a new
-quality or calibration validation, production acceptance, or SOTA claim.
+Strict checkpoint loading establishes runtime/parameter compatibility. **No
+checkpoint is committed to the repository** (`*.pt` is gitignored); the build
+script expects one at `models/olaya_decision_model.pt`, so train or supply a
+checkpoint first (`scripts/train_real_ontologies.py`). The checkpoint used for the
+original packaging run reported historical validation accuracy **0.3793**; this
+is not a quality or calibration validation, production acceptance, or SOTA claim.
 
 ## Install the extension
 

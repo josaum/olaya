@@ -1,0 +1,61 @@
+{
+  "name": "SKOS_SimpleKnowledgeOrganizationSystem",
+  "description": "W3C SKOS Recommendation for thesauri, classification schemes, subject heading lists, and taxonomies.",
+  "concepts": [
+    {
+      "curie": "skos:Concept",
+      "label": "Concept",
+      "description": "An idea or notion; a unit of thought.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "concept",
+        "concept"
+      ]
+    },
+    {
+      "curie": "skos:ConceptScheme",
+      "label": "Concept Scheme",
+      "description": "A set of concepts, optionally including statements about semantic relationships between those concepts.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [
+        "skos:Concept"
+      ],
+      "synonyms": [
+        "concept scheme",
+        "conceptscheme"
+      ]
+    },
+    {
+      "curie": "skos:Collection",
+      "label": "Collection",
+      "description": "A meaningful collection of concepts.",
+      "parents": [],
+      "children": [],
+      "disjoint_with": [
+        "skos:Concept",
+        "skos:ConceptScheme"
+      ],
+      "synonyms": [
+        "collection",
+        "collection"
+      ]
+    },
+    {
+      "curie": "skos:OrderedCollection",
+      "label": "Ordered Collection",
+      "description": "An ordered collection of concepts, where both the grouping and the ordering are meaningful.",
+      "parents": [
+        "skos:Collection"
+      ],
+      "children": [],
+      "disjoint_with": [],
+      "synonyms": [
+        "ordered collection",
+        "orderedcollection"
+      ]
+    }
+  ]
+}

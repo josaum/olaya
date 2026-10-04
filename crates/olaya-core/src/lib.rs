@@ -17,8 +17,8 @@ pub use arrow_schema::{
 };
 pub use axioms::{
     calibrate_and_project_inplace, enforce_disjointness_inplace,
-    enforce_subsumption_monotonicity_inplace, normalized_entropy_confidence, verify_axioms,
-    DISJOINT_THRESHOLD,
+    enforce_subsumption_monotonicity_inplace, normalized_entropy_confidence, projected_confidence,
+    verify_axioms, DISJOINT_THRESHOLD,
 };
 pub use engine::{DecisionResult, OlayaEngine};
 pub use router::{

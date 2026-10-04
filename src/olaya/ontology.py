@@ -27,10 +27,11 @@ class ObjectProperty:
     is_asymmetric: bool = False  # owl:AsymmetricProperty
     is_irreflexive: bool = False  # owl:IrreflexiveProperty
     disjoint_with: set[str] = field(default_factory=set)  # owl:propertyDisjointWith
+    property_chains: list[list[str]] = field(default_factory=list)  # owl:propertyChainAxiom (each chain implies self)
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        d: dict[str, Any] = {
             "curie": self.curie,
             "label": self.label,
             "description": self.description,
@@ -47,6 +48,9 @@ class ObjectProperty:
             "disjoint_with": sorted(list(self.disjoint_with)),
             "metadata": self.metadata,
         }
+        if self.property_chains:
+            d["property_chains"] = [list(chain) for chain in self.property_chains]
+        return d
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ObjectProperty:
@@ -65,6 +69,46 @@ class ObjectProperty:
             is_asymmetric=data.get("is_asymmetric", False),
             is_irreflexive=data.get("is_irreflexive", False),
             disjoint_with=set(data.get("disjoint_with", [])),
+            property_chains=[list(chain) for chain in data.get("property_chains", [])],
+            metadata=data.get("metadata", {}),
+        )
+
+
+@dataclass
+class Individual:
+    """An OWL 2 named individual (ABox): class assertions, object property assertions, (in)equality."""
+
+    curie: str
+    label: str = ""
+    types: set[str] = field(default_factory=set)  # rdf:type (asserted only; see OWL2RLClosure.types_of)
+    properties: dict[str, set[str]] = field(default_factory=dict)  # property curie -> object individuals
+    same_as: set[str] = field(default_factory=set)  # owl:sameAs
+    different_from: set[str] = field(default_factory=set)  # owl:differentFrom
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        d: dict[str, Any] = {
+            "curie": self.curie,
+            "label": self.label,
+            "types": sorted(self.types),
+            "properties": {p: sorted(objs) for p, objs in sorted(self.properties.items()) if objs},
+            "metadata": self.metadata,
+        }
+        if self.same_as:
+            d["same_as"] = sorted(self.same_as)
+        if self.different_from:
+            d["different_from"] = sorted(self.different_from)
+        return d
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> Individual:
+        return cls(
+            curie=data["curie"],
+            label=data.get("label", ""),
+            types=set(data.get("types", [])),
+            properties={p: set(objs) for p, objs in data.get("properties", {}).items()},
+            same_as=set(data.get("same_as", [])),
+            different_from=set(data.get("different_from", [])),
             metadata=data.get("metadata", {}),
         )
 
@@ -126,6 +170,7 @@ class Ontology:
         self.name = name
         self.concepts: dict[str, Concept] = {}
         self.properties: dict[str, ObjectProperty] = {}
+        self.individuals: dict[str, Individual] = {}  # ABox; empty for pure TBox ontologies
         self.disjoint_unions: dict[str, list[list[str]]] = {}
         self._ancestor_cache: dict[str, set[str]] = {}
         self._descendant_cache: dict[str, set[str]] = {}
@@ -209,6 +254,83 @@ class Ontology:
             raise KeyError(f"Property {parent_curie} not found")
         self.properties[child_curie].parents.add(parent_curie)
         self.properties[parent_curie].children.add(child_curie)
+
+    def add_property_chain(self, prop_curie: str, chain: list[str]) -> None:
+        """Assert owl:propertyChainAxiom(prop, chain): p1 o p2 o ... o pn subPropertyOf prop (prp-spo2)."""
+        if prop_curie not in self.properties:
+            raise KeyError(f"Property {prop_curie} not found")
+        missing = [p for p in chain if p not in self.properties]
+        if missing:
+            raise KeyError(f"Chain members {missing} not found")
+        if len(chain) < 2:
+            raise ValueError("A property chain needs at least two members")
+        self.properties[prop_curie].property_chains.append(list(chain))
+
+    def add_property_disjointness(self, curie_a: str, curie_b: str) -> None:
+        """Assert curie_a owl:propertyDisjointWith curie_b (symmetric)."""
+        if curie_a not in self.properties or curie_b not in self.properties:
+            raise KeyError(f"Properties {curie_a} or {curie_b} not found")
+        self.properties[curie_a].disjoint_with.add(curie_b)
+        self.properties[curie_b].disjoint_with.add(curie_a)
+
+    # ------------------------------------------------------------------
+    # ABox
+    # ------------------------------------------------------------------
+    def add_individual(self, individual: Individual) -> Individual:
+        """Add or replace a named individual."""
+        self.individuals[individual.curie] = individual
+        return individual
+
+    def _ensure_individual(self, curie: str) -> Individual:
+        ind = self.individuals.get(curie)
+        if ind is None:
+            ind = Individual(curie=curie)
+            self.individuals[curie] = ind
+        return ind
+
+    def assert_type(self, individual_curie: str, concept_curie: str) -> None:
+        """Assert ClassAssertion(concept, individual). The individual is created on demand."""
+        if concept_curie not in self.concepts:
+            raise KeyError(f"Concept {concept_curie} not found in ontology")
+        self._ensure_individual(individual_curie).types.add(concept_curie)
+
+    def assert_property(self, subject_curie: str, property_curie: str, object_curie: str) -> None:
+        """Assert ObjectPropertyAssertion(property, subject, object). Both individuals are created on demand."""
+        if property_curie not in self.properties:
+            raise KeyError(f"Property {property_curie} not found in ontology")
+        self._ensure_individual(subject_curie).properties.setdefault(property_curie, set()).add(object_curie)
+        self._ensure_individual(object_curie)
+
+    def assert_same_as(self, curie_a: str, curie_b: str) -> None:
+        """Assert owl:sameAs between two individuals (symmetric)."""
+        self._ensure_individual(curie_a).same_as.add(curie_b)
+        self._ensure_individual(curie_b).same_as.add(curie_a)
+
+    def assert_different_from(self, curie_a: str, curie_b: str) -> None:
+        """Assert owl:differentFrom between two individuals (symmetric)."""
+        self._ensure_individual(curie_a).different_from.add(curie_b)
+        self._ensure_individual(curie_b).different_from.add(curie_a)
+
+    def property_assertions(self) -> set[tuple[str, str, str]]:
+        """All asserted (subject, property, object) triples."""
+        return {
+            (ind.curie, prop, obj)
+            for ind in self.individuals.values()
+            for prop, objs in ind.properties.items()
+            for obj in objs
+        }
+
+    def instances_of(self, concept_curie: str, closure: Any = None) -> set[str]:
+        """Individuals that are instances of concept_curie.
+
+        With an OWL2RLClosure (``OWL2RLReasoner(onto).compute_closure()``) the answer uses the full
+        inferred type set (cax-sco, prp-dom/rng, sameAs, ...). Without one it only follows the asserted
+        types up the subsumption DAG.
+        """
+        if closure is not None:
+            return {curie for curie in self.individuals if concept_curie in closure.types_of(curie)}
+        descendants = self.get_descendants(concept_curie)
+        return {curie for curie, ind in self.individuals.items() if ind.types & descendants}
 
     def get_equivalent_concepts(self, curie: str) -> set[str]:
         """Compute the transitive/symmetric closure of equivalent concepts."""
@@ -374,6 +496,8 @@ class Ontology:
             d["properties"] = [p.to_dict() for p in self.properties.values()]
         if self.disjoint_unions:
             d["disjoint_unions"] = self.disjoint_unions
+        if self.individuals:
+            d["individuals"] = [i.to_dict() for i in self.individuals.values()]
         return d
 
     def to_json(self) -> str:
@@ -392,6 +516,15 @@ class Ontology:
             onto.properties[prop.curie] = prop
 
         onto.disjoint_unions = data.get("disjoint_unions", {})
+
+        for i_data in data.get("individuals", []):
+            individual = Individual.from_dict(i_data)
+            onto.individuals[individual.curie] = individual
+        # Objects of property assertions are individuals too, even when only referenced
+        for ind in list(onto.individuals.values()):
+            for objs in ind.properties.values():
+                for obj in objs:
+                    onto.individuals.setdefault(obj, Individual(curie=obj))
 
         # Populate children back-links
         for concept in onto.concepts.values():
