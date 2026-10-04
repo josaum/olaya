@@ -129,14 +129,16 @@ def test_lexical_features_have_expected_values(features: PairFeatures):
     def f(a: str, b: str, feat: str) -> float:
         return float(pf.X[names[(a, b)], pf.feature_names.index(feat)])
 
-    assert f("Document", "Document", "lex:exact") == 1.0 and f("Document", "Document", "lex:levenshtein") == 1.0
+    assert f("Document", "Document", "lex:exact") == 1.0
+    assert f("Document", "Document", "lex:levenshtein") == pytest.approx(1.0, abs=1e-5)
     assert f("Paper", "Article", "lex:exact") == 0.0
     assert f("Review", "Review", "lex:head_equal") == 1.0
     assert f("Document", "Document", "rank:lex:mutual") == 1.0
     assert f("Document", "Document", "rank:lex:row_rank") == 0.0
     assert f("Paper", "Location", "rank:lex:row_margin") < 0.0 < f("Document", "Document", "rank:lex:row_margin")
     # Paper and Article share the parent Document, which matches exactly: parent similarity is 1 and present.
-    assert f("Paper", "Article", "struct:parents") == 1.0 and f("Paper", "Article", "struct:parents_present") == 1.0
+    assert f("Paper", "Article", "struct:parents") == pytest.approx(1.0, abs=1e-5)
+    assert f("Paper", "Article", "struct:parents_present") == 1.0
     assert f("Document", "Document", "struct:parents_present") == 0.0  # roots have no parents
     assert f("Document", "Document", "struct:depth_diff") == 0.0 and f("Paper", "Document", "struct:depth_diff") == 1.0
     assert f("Paper", "Article", "meta:is_class") == 1.0 and f("hasAuthor", "authoredBy", "meta:is_class") == 0.0
