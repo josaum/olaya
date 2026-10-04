@@ -1,0 +1,3113 @@
+{
+ "ablation": {
+  "model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+  "results": {
+   "apriori": {
+    "aggregates": {
+     "M1": {
+      "macro": {
+       "f1": 0.5913,
+       "pairs": 21,
+       "precision": 0.5426,
+       "recall": 0.7117
+      },
+      "micro": {
+       "f0.5": 0.5512,
+       "f1": 0.5997,
+       "f2": 0.6575,
+       "fn": 77,
+       "fp": 166,
+       "precision": 0.523,
+       "recall": 0.7027,
+       "tp": 182
+      }
+     },
+     "M2": {
+      "macro": {
+       "f1": 0.2922,
+       "pairs": 14,
+       "precision": 0.2083,
+       "recall": 0.5619
+      },
+      "micro": {
+       "f0.5": 0.1811,
+       "f1": 0.243,
+       "f2": 0.3693,
+       "fn": 20,
+       "fp": 142,
+       "precision": 0.1548,
+       "recall": 0.5652,
+       "tp": 26
+      }
+     },
+     "M3": {
+      "macro": {
+       "f1": 0.501,
+       "pairs": 21,
+       "precision": 0.408,
+       "recall": 0.6878
+      },
+      "micro": {
+       "f0.5": 0.439,
+       "f1": 0.5067,
+       "f2": 0.5991,
+       "fn": 97,
+       "fp": 308,
+       "precision": 0.4031,
+       "recall": 0.682,
+       "tp": 208
+      }
+     }
+    },
+    "k": 5,
+    "matcher": "olaya-hybrid[olaya-embedding[intfloat/e5-small-v2,both,csls10],w=0.50,cascade,alpha=0.00]",
+    "pairs": [
+     {
+      "M1": {
+       "f0.5": 0.5357,
+       "f1": 0.6,
+       "f2": 0.6818,
+       "fn": 3,
+       "fp": 9,
+       "precision": 0.5,
+       "recall": 0.75,
+       "tp": 9
+      },
+      "M2": {
+       "f0.5": 0.0909,
+       "f1": 0.125,
+       "f2": 0.2,
+       "fn": 2,
+       "fp": 12,
+       "precision": 0.0769,
+       "recall": 0.3333,
+       "tp": 1
+      },
+      "M3": {
+       "f0.5": 0.3597,
+       "f1": 0.4348,
+       "f2": 0.5495,
+       "fn": 5,
+       "fp": 21,
+       "precision": 0.3226,
+       "recall": 0.6667,
+       "tp": 10
+      },
+      "pair": "cmt-conference",
+      "reference_size": 15,
+      "system_size": 31
+     },
+     {
+      "M1": {
+       "f0.5": 0.4348,
+       "f1": 0.4211,
+       "f2": 0.4082,
+       "fn": 6,
+       "fp": 5,
+       "precision": 0.4444,
+       "recall": 0.4,
+       "tp": 4
+      },
+      "M2": {
+       "f0.5": 0.3947,
+       "f1": 0.4286,
+       "f2": 0.4688,
+       "fn": 3,
+       "fp": 5,
+       "precision": 0.375,
+       "recall": 0.5,
+       "tp": 3
+      },
+      "M3": {
+       "f0.5": 0.4167,
+       "f1": 0.4242,
+       "f2": 0.4321,
+       "fn": 9,
+       "fp": 10,
+       "precision": 0.4118,
+       "recall": 0.4375,
+       "tp": 7
+      },
+      "pair": "cmt-confOf",
+      "reference_size": 16,
+      "system_size": 17
+     },
+     {
+      "M1": {
+       "f0.5": 0.5556,
+       "f1": 0.6667,
+       "f2": 0.8333,
+       "fn": 0,
+       "fp": 8,
+       "precision": 0.5,
+       "recall": 1.0,
+       "tp": 8
+      },
+      "M2": {
+       "f0.5": 0.137,
+       "f1": 0.1818,
+       "f2": 0.2703,
+       "fn": 3,
+       "fp": 15,
+       "precision": 0.1176,
+       "recall": 0.4,
+       "tp": 2
+      },
+      "M3": {
+       "f0.5": 0.3448,
+       "f1": 0.4348,
+       "f2": 0.5882,
+       "fn": 3,
+       "fp": 23,
+       "precision": 0.303,
+       "recall": 0.7692,
+       "tp": 10
+      },
+      "pair": "cmt-edas",
+      "reference_size": 13,
+      "system_size": 33
+     },
+     {
+      "M1": {
+       "f0.5": 0.5556,
+       "f1": 0.6667,
+       "f2": 0.8333,
+       "fn": 0,
+       "fp": 8,
+       "precision": 0.5,
+       "recall": 1.0,
+       "tp": 8
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 3,
+       "fp": 7,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.3883,
+       "f1": 0.4706,
+       "f2": 0.597,
+       "fn": 3,
+       "fp": 15,
+       "precision": 0.3478,
+       "recall": 0.7273,
+       "tp": 8
+      },
+      "pair": "cmt-ekaw",
+      "reference_size": 11,
+      "system_size": 23
+     },
+     {
+      "M1": {
+       "f0.5": 0.3846,
+       "f1": 0.5,
+       "f2": 0.7143,
+       "fn": 0,
+       "fp": 8,
+       "precision": 0.3333,
+       "recall": 1.0,
+       "tp": 4
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 3,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.3125,
+       "f1": 0.4211,
+       "f2": 0.6452,
+       "fn": 0,
+       "fp": 11,
+       "precision": 0.2667,
+       "recall": 1.0,
+       "tp": 4
+      },
+      "pair": "cmt-iasted",
+      "reference_size": 4,
+      "system_size": 15
+     },
+     {
+      "M1": {
+       "f0.5": 0.7258,
+       "f1": 0.7826,
+       "f2": 0.8491,
+       "fn": 1,
+       "fp": 4,
+       "precision": 0.6923,
+       "recall": 0.9,
+       "tp": 9
+      },
+      "M2": {
+       "f0.5": 0.3333,
+       "f1": 0.4444,
+       "f2": 0.6667,
+       "fn": 0,
+       "fp": 5,
+       "precision": 0.2857,
+       "recall": 1.0,
+       "tp": 2
+      },
+      "M3": {
+       "f0.5": 0.5978,
+       "f1": 0.6875,
+       "f2": 0.8088,
+       "fn": 1,
+       "fp": 9,
+       "precision": 0.55,
+       "recall": 0.9167,
+       "tp": 11
+      },
+      "pair": "cmt-sigkdd",
+      "reference_size": 12,
+      "system_size": 20
+     },
+     {
+      "M1": {
+       "f0.5": 0.5634,
+       "f1": 0.6154,
+       "f2": 0.678,
+       "fn": 3,
+       "fp": 7,
+       "precision": 0.5333,
+       "recall": 0.7273,
+       "tp": 8
+      },
+      "M2": {
+       "f0.5": 0.5357,
+       "f1": 0.6,
+       "f2": 0.6818,
+       "fn": 1,
+       "fp": 3,
+       "precision": 0.5,
+       "recall": 0.75,
+       "tp": 3
+      },
+      "M3": {
+       "f0.5": 0.5556,
+       "f1": 0.6111,
+       "f2": 0.679,
+       "fn": 4,
+       "fp": 10,
+       "precision": 0.5238,
+       "recall": 0.7333,
+       "tp": 11
+      },
+      "pair": "conference-confOf",
+      "reference_size": 15,
+      "system_size": 21
+     },
+     {
+      "M1": {
+       "f0.5": 0.407,
+       "f1": 0.4375,
+       "f2": 0.473,
+       "fn": 7,
+       "fp": 11,
+       "precision": 0.3889,
+       "recall": 0.5,
+       "tp": 7
+      },
+      "M2": {
+       "f0.5": 0.1333,
+       "f1": 0.1905,
+       "f2": 0.3333,
+       "fn": 1,
+       "fp": 16,
+       "precision": 0.1111,
+       "recall": 0.6667,
+       "tp": 2
+      },
+      "M3": {
+       "f0.5": 0.2795,
+       "f1": 0.3396,
+       "f2": 0.4327,
+       "fn": 8,
+       "fp": 27,
+       "precision": 0.25,
+       "recall": 0.5294,
+       "tp": 9
+      },
+      "pair": "conference-edas",
+      "reference_size": 17,
+      "system_size": 36
+     },
+     {
+      "M1": {
+       "f0.5": 0.5245,
+       "f1": 0.566,
+       "f2": 0.6148,
+       "fn": 8,
+       "fp": 15,
+       "precision": 0.5,
+       "recall": 0.6522,
+       "tp": 15
+      },
+      "M2": {
+       "f0.5": 0.1316,
+       "f1": 0.1818,
+       "f2": 0.2941,
+       "fn": 1,
+       "fp": 8,
+       "precision": 0.1111,
+       "recall": 0.5,
+       "tp": 1
+      },
+      "M3": {
+       "f0.5": 0.442,
+       "f1": 0.5,
+       "f2": 0.5755,
+       "fn": 9,
+       "fp": 23,
+       "precision": 0.4103,
+       "recall": 0.64,
+       "tp": 16
+      },
+      "pair": "conference-ekaw",
+      "reference_size": 25,
+      "system_size": 39
+     },
+     {
+      "M1": {
+       "f0.5": 0.3425,
+       "f1": 0.3571,
+       "f2": 0.3731,
+       "fn": 8,
+       "fp": 10,
+       "precision": 0.3333,
+       "recall": 0.3846,
+       "tp": 5
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 1,
+       "fp": 5,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.266,
+       "f1": 0.2941,
+       "f2": 0.3289,
+       "fn": 9,
+       "fp": 15,
+       "precision": 0.25,
+       "recall": 0.3571,
+       "tp": 5
+      },
+      "pair": "conference-iasted",
+      "reference_size": 14,
+      "system_size": 20
+     },
+     {
+      "M1": {
+       "f0.5": 0.625,
+       "f1": 0.64,
+       "f2": 0.6557,
+       "fn": 4,
+       "fp": 5,
+       "precision": 0.6154,
+       "recall": 0.6667,
+       "tp": 8
+      },
+      "M2": {
+       "f0.5": 0.3704,
+       "f1": 0.4444,
+       "f2": 0.5556,
+       "fn": 1,
+       "fp": 4,
+       "precision": 0.3333,
+       "recall": 0.6667,
+       "tp": 2
+      },
+      "M3": {
+       "f0.5": 0.5495,
+       "f1": 0.5882,
+       "f2": 0.6329,
+       "fn": 5,
+       "fp": 9,
+       "precision": 0.5263,
+       "recall": 0.6667,
+       "tp": 10
+      },
+      "pair": "conference-sigkdd",
+      "reference_size": 15,
+      "system_size": 19
+     },
+     {
+      "M1": {
+       "f0.5": 0.6081,
+       "f1": 0.6207,
+       "f2": 0.6338,
+       "fn": 5,
+       "fp": 6,
+       "precision": 0.6,
+       "recall": 0.6429,
+       "tp": 9
+      },
+      "M2": {
+       "f0.5": 0.3774,
+       "f1": 0.4706,
+       "f2": 0.625,
+       "fn": 1,
+       "fp": 8,
+       "precision": 0.3333,
+       "recall": 0.8,
+       "tp": 4
+      },
+      "M3": {
+       "f0.5": 0.5118,
+       "f1": 0.5652,
+       "f2": 0.6311,
+       "fn": 6,
+       "fp": 14,
+       "precision": 0.4815,
+       "recall": 0.6842,
+       "tp": 13
+      },
+      "pair": "confOf-edas",
+      "reference_size": 19,
+      "system_size": 27
+     },
+     {
+      "M1": {
+       "f0.5": 0.7692,
+       "f1": 0.7805,
+       "f2": 0.7921,
+       "fn": 4,
+       "fp": 5,
+       "precision": 0.7619,
+       "recall": 0.8,
+       "tp": 16
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 5,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.6452,
+       "f1": 0.6957,
+       "f2": 0.7547,
+       "fn": 4,
+       "fp": 10,
+       "precision": 0.6154,
+       "recall": 0.8,
+       "tp": 16
+      },
+      "pair": "confOf-ekaw",
+      "reference_size": 20,
+      "system_size": 26
+     },
+     {
+      "M1": {
+       "f0.5": 0.4386,
+       "f1": 0.4762,
+       "f2": 0.5208,
+       "fn": 4,
+       "fp": 7,
+       "precision": 0.4167,
+       "recall": 0.5556,
+       "tp": 5
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 3,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.3623,
+       "f1": 0.4167,
+       "f2": 0.4902,
+       "fn": 4,
+       "fp": 10,
+       "precision": 0.3333,
+       "recall": 0.5556,
+       "tp": 5
+      },
+      "pair": "confOf-iasted",
+      "reference_size": 9,
+      "system_size": 15
+     },
+     {
+      "M1": {
+       "f0.5": 0.7143,
+       "f1": 0.5,
+       "f2": 0.3846,
+       "fn": 4,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.3333,
+       "tp": 2
+      },
+      "M2": {
+       "f0.5": 0.2941,
+       "f1": 0.4,
+       "f2": 0.625,
+       "fn": 0,
+       "fp": 3,
+       "precision": 0.25,
+       "recall": 1.0,
+       "tp": 1
+      },
+      "M3": {
+       "f0.5": 0.4839,
+       "f1": 0.4615,
+       "f2": 0.4412,
+       "fn": 4,
+       "fp": 3,
+       "precision": 0.5,
+       "recall": 0.4286,
+       "tp": 3
+      },
+      "pair": "confOf-sigkdd",
+      "reference_size": 7,
+      "system_size": 6
+     },
+     {
+      "M1": {
+       "f0.5": 0.5926,
+       "f1": 0.6667,
+       "f2": 0.7619,
+       "fn": 3,
+       "fp": 13,
+       "precision": 0.5517,
+       "recall": 0.8421,
+       "tp": 16
+      },
+      "M2": {
+       "f0.5": 0.25,
+       "f1": 0.3077,
+       "f2": 0.4,
+       "fn": 2,
+       "fp": 7,
+       "precision": 0.2222,
+       "recall": 0.5,
+       "tp": 2
+      },
+      "M3": {
+       "f0.5": 0.5143,
+       "f1": 0.5902,
+       "f2": 0.6923,
+       "fn": 5,
+       "fp": 20,
+       "precision": 0.4737,
+       "recall": 0.7826,
+       "tp": 18
+      },
+      "pair": "edas-ekaw",
+      "reference_size": 23,
+      "system_size": 38
+     },
+     {
+      "M1": {
+       "f0.5": 0.514,
+       "f1": 0.5366,
+       "f2": 0.5612,
+       "fn": 8,
+       "fp": 11,
+       "precision": 0.5,
+       "recall": 0.5789,
+       "tp": 11
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 6,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.4198,
+       "f1": 0.4681,
+       "f2": 0.5288,
+       "fn": 8,
+       "fp": 17,
+       "precision": 0.3929,
+       "recall": 0.5789,
+       "tp": 11
+      },
+      "pair": "edas-iasted",
+      "reference_size": 19,
+      "system_size": 28
+     },
+     {
+      "M1": {
+       "f0.5": 0.7463,
+       "f1": 0.8,
+       "f2": 0.8621,
+       "fn": 1,
+       "fp": 4,
+       "precision": 0.7143,
+       "recall": 0.9091,
+       "tp": 10
+      },
+      "M2": {
+       "f0.5": 0.2344,
+       "f1": 0.3158,
+       "f2": 0.4839,
+       "fn": 1,
+       "fp": 12,
+       "precision": 0.2,
+       "recall": 0.75,
+       "tp": 3
+      },
+      "M3": {
+       "f0.5": 0.4962,
+       "f1": 0.5909,
+       "f2": 0.7303,
+       "fn": 2,
+       "fp": 16,
+       "precision": 0.4483,
+       "recall": 0.8667,
+       "tp": 13
+      },
+      "pair": "edas-sigkdd",
+      "reference_size": 15,
+      "system_size": 29
+     },
+     {
+      "M1": {
+       "f0.5": 0.3636,
+       "f1": 0.4571,
+       "f2": 0.6154,
+       "fn": 2,
+       "fp": 17,
+       "precision": 0.32,
+       "recall": 0.8,
+       "tp": 8
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 3,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.3279,
+       "f1": 0.4211,
+       "f2": 0.5882,
+       "fn": 2,
+       "fp": 20,
+       "precision": 0.2857,
+       "recall": 0.8,
+       "tp": 8
+      },
+      "pair": "ekaw-iasted",
+      "reference_size": 10,
+      "system_size": 28
+     },
+     {
+      "M1": {
+       "f0.5": 0.5556,
+       "f1": 0.5833,
+       "f2": 0.614,
+       "fn": 4,
+       "fp": 6,
+       "precision": 0.5385,
+       "recall": 0.6364,
+       "tp": 7
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 4,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.443,
+       "f1": 0.5,
+       "f2": 0.5738,
+       "fn": 4,
+       "fp": 10,
+       "precision": 0.4118,
+       "recall": 0.6364,
+       "tp": 7
+      },
+      "pair": "ekaw-sigkdd",
+      "reference_size": 11,
+      "system_size": 17
+     },
+     {
+      "M1": {
+       "f0.5": 0.6842,
+       "f1": 0.7429,
+       "f2": 0.8125,
+       "fn": 2,
+       "fp": 7,
+       "precision": 0.65,
+       "recall": 0.8667,
+       "tp": 13
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 8,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.5118,
+       "f1": 0.6047,
+       "f2": 0.7386,
+       "fn": 2,
+       "fp": 15,
+       "precision": 0.4643,
+       "recall": 0.8667,
+       "tp": 13
+      },
+      "pair": "iasted-sigkdd",
+      "reference_size": 15,
+      "system_size": 28
+     }
+    ],
+    "threshold": 0.5,
+    "weight": 0.5
+   },
+   "best_on_ra1": {
+    "M1": {
+     "f0.5": 0.7728,
+     "f1": 0.7433,
+     "f2": 0.716,
+     "fn": 78,
+     "fp": 47,
+     "precision": 0.7939,
+     "recall": 0.6988,
+     "tp": 181
+    },
+    "M2": {
+     "f0.5": 0.3254,
+     "f1": 0.3697,
+     "f2": 0.428,
+     "fn": 24,
+     "fp": 51,
+     "precision": 0.3014,
+     "recall": 0.4783,
+     "tp": 22
+    },
+    "M3": {
+     "f0.5": 0.6726,
+     "f1": 0.67,
+     "f2": 0.6673,
+     "fn": 102,
+     "fp": 98,
+     "precision": 0.6744,
+     "recall": 0.6656,
+     "tp": 203
+    },
+    "label": "base=cascade,k=5,w=0.00,th=0.43"
+   },
+   "best_threshold_per_weight": {
+    "base=cascade,w=0.00": {
+     "M1": 0.7433,
+     "M2": 0.3697,
+     "M3": 0.67,
+     "label": "base=cascade,k=5,w=0.00,th=0.43"
+    },
+    "base=cascade,w=0.25": {
+     "M1": 0.7288,
+     "M2": 0.374,
+     "M3": 0.6568,
+     "label": "base=cascade,k=5,w=0.25,th=0.54"
+    },
+    "base=cascade,w=0.50": {
+     "M1": 0.6903,
+     "M2": 0.4,
+     "M3": 0.6314,
+     "label": "base=cascade,k=5,w=0.50,th=0.70"
+    },
+    "base=cascade,w=0.75": {
+     "M1": 0.6495,
+     "M2": 0.3172,
+     "M3": 0.5754,
+     "label": "base=cascade,k=5,w=0.75,th=0.80"
+    },
+    "base=cascade,w=1.00": {
+     "M1": 0.5552,
+     "M2": 0.2192,
+     "M3": 0.4651,
+     "label": "base=cascade,k=5,w=1.00,th=0.80"
+    },
+    "base=sum,w=0.00": {
+     "M1": 0.7205,
+     "M2": 0.3119,
+     "M3": 0.6453,
+     "label": "base=sum,k=5,w=0.00,th=0.39"
+    },
+    "base=sum,w=0.25": {
+     "M1": 0.7101,
+     "M2": 0.3276,
+     "M3": 0.6351,
+     "label": "base=sum,k=5,w=0.25,th=0.52"
+    },
+    "base=sum,w=0.50": {
+     "M1": 0.6789,
+     "M2": 0.3297,
+     "M3": 0.6186,
+     "label": "base=sum,k=5,w=0.50,th=0.72"
+    },
+    "base=sum,w=0.75": {
+     "M1": 0.6597,
+     "M2": 0.3308,
+     "M3": 0.5882,
+     "label": "base=sum,k=5,w=0.75,th=0.80"
+    },
+    "base=sum,w=1.00": {
+     "M1": 0.4935,
+     "M2": 0.209,
+     "M3": 0.4162,
+     "label": "base=sum,k=5,w=1.00,th=0.80"
+    }
+   },
+   "candidate_recall": {
+    "cascade": {
+     "mean": 0.8964,
+     "per_pair": {
+      "cmt-confOf": 0.75,
+      "cmt-conference": 0.8,
+      "cmt-edas": 0.7692,
+      "cmt-ekaw": 0.7273,
+      "cmt-iasted": 1.0,
+      "cmt-sigkdd": 1.0,
+      "confOf-edas": 0.9474,
+      "confOf-ekaw": 0.9,
+      "confOf-iasted": 0.8889,
+      "confOf-sigkdd": 1.0,
+      "conference-confOf": 0.9333,
+      "conference-edas": 0.9412,
+      "conference-ekaw": 0.92,
+      "conference-iasted": 0.6429,
+      "conference-sigkdd": 0.9333,
+      "edas-ekaw": 1.0,
+      "edas-iasted": 0.8947,
+      "edas-sigkdd": 0.9333,
+      "ekaw-iasted": 1.0,
+      "ekaw-sigkdd": 0.9091,
+      "iasted-sigkdd": 0.9333
+     }
+    },
+    "sum": {
+     "mean": 0.9525,
+     "per_pair": {
+      "cmt-confOf": 0.8125,
+      "cmt-conference": 1.0,
+      "cmt-edas": 0.8462,
+      "cmt-ekaw": 0.9091,
+      "cmt-iasted": 1.0,
+      "cmt-sigkdd": 1.0,
+      "confOf-edas": 1.0,
+      "confOf-ekaw": 0.95,
+      "confOf-iasted": 0.8889,
+      "confOf-sigkdd": 1.0,
+      "conference-confOf": 1.0,
+      "conference-edas": 1.0,
+      "conference-ekaw": 1.0,
+      "conference-iasted": 0.7143,
+      "conference-sigkdd": 1.0,
+      "edas-ekaw": 1.0,
+      "edas-iasted": 0.9474,
+      "edas-sigkdd": 1.0,
+      "ekaw-iasted": 1.0,
+      "ekaw-sigkdd": 1.0,
+      "iasted-sigkdd": 0.9333
+     }
+    }
+   },
+   "f1_at_apriori_threshold": {
+    "base=cascade,k=5,w=0.00,th=0.50": {
+     "M1": 0.7442,
+     "M2": 0.3238,
+     "M3": 0.6678
+    },
+    "base=cascade,k=5,w=0.25,th=0.50": {
+     "M1": 0.7075,
+     "M2": 0.3511,
+     "M3": 0.6342
+    },
+    "base=cascade,k=5,w=0.50,th=0.50": {
+     "M1": 0.5997,
+     "M2": 0.243,
+     "M3": 0.5067
+    },
+    "base=cascade,k=5,w=0.75,th=0.50": {
+     "M1": 0.5723,
+     "M2": 0.2167,
+     "M3": 0.4741
+    },
+    "base=cascade,k=5,w=1.00,th=0.50": {
+     "M1": 0.5367,
+     "M2": 0.1992,
+     "M3": 0.4417
+    },
+    "base=sum,k=5,w=0.00,th=0.50": {
+     "M1": 0.6955,
+     "M2": 0.2921,
+     "M3": 0.6276
+    },
+    "base=sum,k=5,w=0.25,th=0.50": {
+     "M1": 0.6996,
+     "M2": 0.3167,
+     "M3": 0.6238
+    },
+    "base=sum,k=5,w=0.50,th=0.50": {
+     "M1": 0.6212,
+     "M2": 0.2437,
+     "M3": 0.5225
+    },
+    "base=sum,k=5,w=0.75,th=0.50": {
+     "M1": 0.5993,
+     "M2": 0.2193,
+     "M3": 0.4899
+    },
+    "base=sum,k=5,w=1.00,th=0.50": {
+     "M1": 0.4794,
+     "M2": 0.1973,
+     "M3": 0.399
+    }
+   },
+   "grid_points": 510,
+   "lopo_cv": {
+    "M1": {
+     "f0.5": 0.7481,
+     "f1": 0.7175,
+     "f2": 0.6894,
+     "fn": 85,
+     "fp": 52,
+     "precision": 0.7699,
+     "recall": 0.6718,
+     "tp": 174
+    },
+    "M2": {
+     "f0.5": 0.2879,
+     "f1": 0.3248,
+     "f2": 0.3725,
+     "fn": 27,
+     "fp": 52,
+     "precision": 0.2676,
+     "recall": 0.413,
+     "tp": 19
+    },
+    "M3": {
+     "f0.5": 0.6463,
+     "f1": 0.6412,
+     "f2": 0.6361,
+     "fn": 112,
+     "fp": 104,
+     "precision": 0.6498,
+     "recall": 0.6328,
+     "tp": 193
+    },
+    "chosen": {
+     "cmt-confOf": "base=cascade,k=5,w=0.00,th=0.43",
+     "cmt-conference": "base=cascade,k=5,w=0.00,th=0.43",
+     "cmt-edas": "base=cascade,k=5,w=0.00,th=0.42",
+     "cmt-ekaw": "base=cascade,k=5,w=0.00,th=0.39",
+     "cmt-iasted": "base=cascade,k=5,w=0.00,th=0.42",
+     "cmt-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "confOf-edas": "base=cascade,k=5,w=0.00,th=0.51",
+     "confOf-ekaw": "base=cascade,k=5,w=0.00,th=0.43",
+     "confOf-iasted": "base=cascade,k=5,w=0.00,th=0.43",
+     "confOf-sigkdd": "base=cascade,k=5,w=0.00,th=0.51",
+     "conference-confOf": "base=cascade,k=5,w=0.00,th=0.39",
+     "conference-edas": "base=cascade,k=5,w=0.00,th=0.43",
+     "conference-ekaw": "base=cascade,k=5,w=0.00,th=0.51",
+     "conference-iasted": "base=cascade,k=5,w=0.00,th=0.52",
+     "conference-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "edas-ekaw": "base=cascade,k=5,w=0.00,th=0.51",
+     "edas-iasted": "base=cascade,k=5,w=0.00,th=0.42",
+     "edas-sigkdd": "base=cascade,k=5,w=0.00,th=0.51",
+     "ekaw-iasted": "base=cascade,k=5,w=0.00,th=0.39",
+     "ekaw-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "iasted-sigkdd": "base=cascade,k=5,w=0.00,th=0.42"
+    },
+    "distinct_configs_chosen": [
+     "base=cascade,k=5,w=0.00,th=0.39",
+     "base=cascade,k=5,w=0.00,th=0.42",
+     "base=cascade,k=5,w=0.00,th=0.43",
+     "base=cascade,k=5,w=0.00,th=0.51",
+     "base=cascade,k=5,w=0.00,th=0.52"
+    ],
+    "folds": 21,
+    "modality_selected": "M3"
+   },
+   "lopo_cv_apriori_base_only": {
+    "M1": {
+     "f0.5": 0.7481,
+     "f1": 0.7175,
+     "f2": 0.6894,
+     "fn": 85,
+     "fp": 52,
+     "precision": 0.7699,
+     "recall": 0.6718,
+     "tp": 174
+    },
+    "M2": {
+     "f0.5": 0.2879,
+     "f1": 0.3248,
+     "f2": 0.3725,
+     "fn": 27,
+     "fp": 52,
+     "precision": 0.2676,
+     "recall": 0.413,
+     "tp": 19
+    },
+    "M3": {
+     "f0.5": 0.6463,
+     "f1": 0.6412,
+     "f2": 0.6361,
+     "fn": 112,
+     "fp": 104,
+     "precision": 0.6498,
+     "recall": 0.6328,
+     "tp": 193
+    },
+    "chosen": {
+     "cmt-confOf": "base=cascade,k=5,w=0.00,th=0.43",
+     "cmt-conference": "base=cascade,k=5,w=0.00,th=0.43",
+     "cmt-edas": "base=cascade,k=5,w=0.00,th=0.42",
+     "cmt-ekaw": "base=cascade,k=5,w=0.00,th=0.39",
+     "cmt-iasted": "base=cascade,k=5,w=0.00,th=0.42",
+     "cmt-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "confOf-edas": "base=cascade,k=5,w=0.00,th=0.51",
+     "confOf-ekaw": "base=cascade,k=5,w=0.00,th=0.43",
+     "confOf-iasted": "base=cascade,k=5,w=0.00,th=0.43",
+     "confOf-sigkdd": "base=cascade,k=5,w=0.00,th=0.51",
+     "conference-confOf": "base=cascade,k=5,w=0.00,th=0.39",
+     "conference-edas": "base=cascade,k=5,w=0.00,th=0.43",
+     "conference-ekaw": "base=cascade,k=5,w=0.00,th=0.51",
+     "conference-iasted": "base=cascade,k=5,w=0.00,th=0.52",
+     "conference-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "edas-ekaw": "base=cascade,k=5,w=0.00,th=0.51",
+     "edas-iasted": "base=cascade,k=5,w=0.00,th=0.42",
+     "edas-sigkdd": "base=cascade,k=5,w=0.00,th=0.51",
+     "ekaw-iasted": "base=cascade,k=5,w=0.00,th=0.39",
+     "ekaw-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "iasted-sigkdd": "base=cascade,k=5,w=0.00,th=0.42"
+    },
+    "distinct_configs_chosen": [
+     "base=cascade,k=5,w=0.00,th=0.39",
+     "base=cascade,k=5,w=0.00,th=0.42",
+     "base=cascade,k=5,w=0.00,th=0.43",
+     "base=cascade,k=5,w=0.00,th=0.51",
+     "base=cascade,k=5,w=0.00,th=0.52"
+    ],
+    "folds": 21,
+    "modality_selected": "M3"
+   }
+  }
+ },
+ "baselines": {
+  "cascade": {
+   "apriori": {
+    "aggregates": {
+     "M1": {
+      "macro": {
+       "f1": 0.7582,
+       "pairs": 21,
+       "precision": 0.8487,
+       "recall": 0.7049
+      },
+      "micro": {
+       "f0.5": 0.7892,
+       "f1": 0.7442,
+       "f2": 0.704,
+       "fn": 83,
+       "fp": 38,
+       "precision": 0.8224,
+       "recall": 0.6795,
+       "tp": 176
+      }
+     },
+     "M2": {
+      "macro": {
+       "f1": 0.3146,
+       "pairs": 14,
+       "precision": 0.3383,
+       "recall": 0.3488
+      },
+      "micro": {
+       "f0.5": 0.3014,
+       "f1": 0.3238,
+       "f2": 0.3498,
+       "fn": 29,
+       "fp": 42,
+       "precision": 0.2881,
+       "recall": 0.3696,
+       "tp": 17
+      }
+     },
+     "M3": {
+      "macro": {
+       "f1": 0.682,
+       "pairs": 21,
+       "precision": 0.7435,
+       "recall": 0.6536
+      },
+      "micro": {
+       "f0.5": 0.6908,
+       "f1": 0.6678,
+       "f2": 0.6463,
+       "fn": 112,
+       "fp": 80,
+       "precision": 0.707,
+       "recall": 0.6328,
+       "tp": 193
+      }
+     }
+    },
+    "threshold": 0.5
+   },
+   "best_on_ra1": {
+    "M1": {
+     "f0.5": 0.7728,
+     "f1": 0.7433,
+     "f2": 0.716,
+     "fn": 78,
+     "fp": 47,
+     "precision": 0.7939,
+     "recall": 0.6988,
+     "tp": 181
+    },
+    "M2": {
+     "f0.5": 0.3254,
+     "f1": 0.3697,
+     "f2": 0.428,
+     "fn": 24,
+     "fp": 51,
+     "precision": 0.3014,
+     "recall": 0.4783,
+     "tp": 22
+    },
+    "M3": {
+     "f0.5": 0.6726,
+     "f1": 0.67,
+     "f2": 0.6673,
+     "fn": 102,
+     "fp": 98,
+     "precision": 0.6744,
+     "recall": 0.6656,
+     "tp": 203
+    },
+    "label": "th=0.43"
+   },
+   "lopo_cv": {
+    "M1": {
+     "f0.5": 0.7481,
+     "f1": 0.7175,
+     "f2": 0.6894,
+     "fn": 85,
+     "fp": 52,
+     "precision": 0.7699,
+     "recall": 0.6718,
+     "tp": 174
+    },
+    "M2": {
+     "f0.5": 0.2879,
+     "f1": 0.3248,
+     "f2": 0.3725,
+     "fn": 27,
+     "fp": 52,
+     "precision": 0.2676,
+     "recall": 0.413,
+     "tp": 19
+    },
+    "M3": {
+     "f0.5": 0.6463,
+     "f1": 0.6412,
+     "f2": 0.6361,
+     "fn": 112,
+     "fp": 104,
+     "precision": 0.6498,
+     "recall": 0.6328,
+     "tp": 193
+    },
+    "chosen": {
+     "cmt-confOf": "th=0.43",
+     "cmt-conference": "th=0.43",
+     "cmt-edas": "th=0.42",
+     "cmt-ekaw": "th=0.39",
+     "cmt-iasted": "th=0.42",
+     "cmt-sigkdd": "th=0.42",
+     "confOf-edas": "th=0.51",
+     "confOf-ekaw": "th=0.43",
+     "confOf-iasted": "th=0.43",
+     "confOf-sigkdd": "th=0.51",
+     "conference-confOf": "th=0.39",
+     "conference-edas": "th=0.43",
+     "conference-ekaw": "th=0.51",
+     "conference-iasted": "th=0.52",
+     "conference-sigkdd": "th=0.42",
+     "edas-ekaw": "th=0.51",
+     "edas-iasted": "th=0.42",
+     "edas-sigkdd": "th=0.51",
+     "ekaw-iasted": "th=0.39",
+     "ekaw-sigkdd": "th=0.42",
+     "iasted-sigkdd": "th=0.42"
+    },
+    "distinct_configs_chosen": [
+     "th=0.39",
+     "th=0.42",
+     "th=0.43",
+     "th=0.51",
+     "th=0.52"
+    ],
+    "folds": 21,
+    "modality_selected": "M3"
+   },
+   "matcher": "olaya-hybrid[olaya-embedding[intfloat/e5-small-v2,both,csls10],w=0.50,cascade,alpha=0.00]"
+  },
+  "sum": {
+   "apriori": {
+    "aggregates": {
+     "M1": {
+      "macro": {
+       "f1": 0.7137,
+       "pairs": 21,
+       "precision": 0.865,
+       "recall": 0.626
+      },
+      "micro": {
+       "f0.5": 0.7782,
+       "f1": 0.6955,
+       "f2": 0.6286,
+       "fn": 106,
+       "fp": 28,
+       "precision": 0.8453,
+       "recall": 0.5907,
+       "tp": 153
+      }
+     },
+     "M2": {
+      "macro": {
+       "f1": 0.2629,
+       "pairs": 14,
+       "precision": 0.2921,
+       "recall": 0.2869
+      },
+      "micro": {
+       "f0.5": 0.2982,
+       "f1": 0.2921,
+       "f2": 0.2863,
+       "fn": 33,
+       "fp": 30,
+       "precision": 0.3023,
+       "recall": 0.2826,
+       "tp": 13
+      }
+     },
+     "M3": {
+      "macro": {
+       "f1": 0.6419,
+       "pairs": 21,
+       "precision": 0.7723,
+       "recall": 0.5718
+      },
+      "micro": {
+       "f0.5": 0.6911,
+       "f1": 0.6276,
+       "f2": 0.5748,
+       "fn": 139,
+       "fp": 58,
+       "precision": 0.7411,
+       "recall": 0.5443,
+       "tp": 166
+      }
+     }
+    },
+    "threshold": 0.5
+   },
+   "best_on_ra1": {
+    "M1": {
+     "f0.5": 0.7532,
+     "f1": 0.7205,
+     "f2": 0.6905,
+     "fn": 85,
+     "fp": 50,
+     "precision": 0.7768,
+     "recall": 0.6718,
+     "tp": 174
+    },
+    "M2": {
+     "f0.5": 0.2852,
+     "f1": 0.3119,
+     "f2": 0.3441,
+     "fn": 29,
+     "fp": 46,
+     "precision": 0.2698,
+     "recall": 0.3696,
+     "tp": 17
+    },
+    "M3": {
+     "f0.5": 0.6573,
+     "f1": 0.6453,
+     "f2": 0.6337,
+     "fn": 114,
+     "fp": 96,
+     "precision": 0.6655,
+     "recall": 0.6262,
+     "tp": 191
+    },
+    "label": "th=0.39"
+   },
+   "lopo_cv": {
+    "M1": {
+     "f0.5": 0.7391,
+     "f1": 0.6989,
+     "f2": 0.6629,
+     "fn": 93,
+     "fp": 50,
+     "precision": 0.7685,
+     "recall": 0.6409,
+     "tp": 166
+    },
+    "M2": {
+     "f0.5": 0.2622,
+     "f1": 0.283,
+     "f2": 0.3074,
+     "fn": 31,
+     "fp": 45,
+     "precision": 0.25,
+     "recall": 0.3261,
+     "tp": 15
+    },
+    "M3": {
+     "f0.5": 0.6423,
+     "f1": 0.6231,
+     "f2": 0.6049,
+     "fn": 124,
+     "fp": 95,
+     "precision": 0.6558,
+     "recall": 0.5934,
+     "tp": 181
+    },
+    "chosen": {
+     "cmt-confOf": "th=0.46",
+     "cmt-conference": "th=0.39",
+     "cmt-edas": "th=0.39",
+     "cmt-ekaw": "th=0.39",
+     "cmt-iasted": "th=0.39",
+     "cmt-sigkdd": "th=0.39",
+     "confOf-edas": "th=0.39",
+     "confOf-ekaw": "th=0.41",
+     "confOf-iasted": "th=0.39",
+     "confOf-sigkdd": "th=0.39",
+     "conference-confOf": "th=0.39",
+     "conference-edas": "th=0.39",
+     "conference-ekaw": "th=0.46",
+     "conference-iasted": "th=0.39",
+     "conference-sigkdd": "th=0.46",
+     "edas-ekaw": "th=0.46",
+     "edas-iasted": "th=0.39",
+     "edas-sigkdd": "th=0.39",
+     "ekaw-iasted": "th=0.41",
+     "ekaw-sigkdd": "th=0.39",
+     "iasted-sigkdd": "th=0.39"
+    },
+    "distinct_configs_chosen": [
+     "th=0.39",
+     "th=0.41",
+     "th=0.46"
+    ],
+    "folds": 21,
+    "modality_selected": "M3"
+   },
+   "matcher": "olaya-hybrid[olaya-embedding[intfloat/e5-small-v2,both,csls10],w=0.50,sum,alpha=0.00]"
+  }
+ },
+ "commit": "7cbc576a3e11",
+ "dataset_hashes": {
+  "ontologies/Conference.owl": "9aa78f9673b776c26f615ec7946182c60a146015038ab9c3c105d903251ff1dd",
+  "ontologies/cmt.owl": "8bf45a9de7faf24bfee5a9d90cd95f744964f90bb0ad64ad80ec4335f6f5c1db",
+  "ontologies/confOf.owl": "e869c4e75c65c5fd26523a4e73b99a3b1916823a35708798e87c549a63242625",
+  "ontologies/edas.owl": "6bf83df738c1c3cbf1321a679ee9867fe0ecf97d15a578d8483380e1f28408c3",
+  "ontologies/ekaw.owl": "e4582518c2b2afe7eca9668c88e9d0f4ab34dcb7d169ebf6880c79dac5e6edaa",
+  "ontologies/iasted.owl": "36fabbc70accc1260a3ab10fcba2bdf809edf4bb7f78030cc825a90c1f709f33",
+  "ontologies/sigkdd.owl": "c0bcbb1376ce5d9e711e3d23d809c4e214416cdcfd5a204d80fde7140deaebf4",
+  "reference_alignments/cmt-confOf.rdf": "e9c402455c838b75b74614a4019b9c1e3b63ba85ba2ab73ac104a5d059776b42",
+  "reference_alignments/cmt-conference.rdf": "6ce52b6f2e9eca110f6d7fbf12be1475063e8556e7be89bef733b7defd28b0bf",
+  "reference_alignments/cmt-edas.rdf": "d16347ed42a9f48b5695ed504d0714b627029a62848df77218b15b9de065f393",
+  "reference_alignments/cmt-ekaw.rdf": "ab825abd429d435bbef672d4386ddef78e1d0f15e6e28cd16f67907831a8a42e",
+  "reference_alignments/cmt-iasted.rdf": "cc67c2b41dc50deb8bee9c98a48007c698b825538bfc4820f1b28c41c884f187",
+  "reference_alignments/cmt-sigkdd.rdf": "3c433c01260c329f07cdce5b8d01c353bc511fe36d5aac5571954d0820888e7f",
+  "reference_alignments/confOf-edas.rdf": "f90c4427213cac1c6134d5d5ddf270268939a53c7605232209154a7b93735971",
+  "reference_alignments/confOf-ekaw.rdf": "76e8935bb0976e48d3f9c97d0caef2fd1fbae292413c5a9e8da24c6d866e865c",
+  "reference_alignments/confOf-iasted.rdf": "d32d37eb312c421ca40b7aceb7c8754af7ec418c0c4ca6b263614ecee8c9a1d6",
+  "reference_alignments/confOf-sigkdd.rdf": "7fa8b226f53473067bf45d8318ef8630b16b32f3d0c0489e5792a716137cf351",
+  "reference_alignments/conference-confOf.rdf": "acedbf5685196c14b3f8b2dba2b8ab93b9b448ba1a9252c81f30bb89086bf517",
+  "reference_alignments/conference-edas.rdf": "8a0dfa0ddea8eb6f55c569eb898d505f93e1b8cfbf9c038d6909cd7021f23233",
+  "reference_alignments/conference-ekaw.rdf": "23c0ded5a68600664ce0c669f3343e2cc6f077e028ef44d536a6aec370803d79",
+  "reference_alignments/conference-iasted.rdf": "55765ad3b30b2b796234230c8ce33d56074e1b9752cee149b7343386778fba74",
+  "reference_alignments/conference-sigkdd.rdf": "c90a348205b5e8447195aed1c722ee1086b03f0475a2055f3559e3d5499a59f1",
+  "reference_alignments/edas-ekaw.rdf": "13ae6872b60976da8d32f33795776cabba1908a03e3035ca475835f98e425fd7",
+  "reference_alignments/edas-iasted.rdf": "bfda638f4e16fa2e82d6bc33baf53f2a73bdb338977e71e84b66acf285bc17ff",
+  "reference_alignments/edas-sigkdd.rdf": "7ae3b3440772687cfd4706b910dbe22a53fc45fa5255dbbd6d7bd438210d6f1b",
+  "reference_alignments/ekaw-iasted.rdf": "20886cea3021f560b64e01917cb25c1bc2bd9d3b0b0c79ccf4cc441aefd5bfd8",
+  "reference_alignments/ekaw-sigkdd.rdf": "080dd8d9089ee5d705f082c43ecc1160d94835f3bc9474f199bdeb4d50b41ab9",
+  "reference_alignments/iasted-sigkdd.rdf": "69abc4a050b84cc8df98f4071aad382eae6ec172b64c20007f747770d4c2391a"
+ },
+ "date_utc": "2026-10-04T01:40:29Z",
+ "encoder": {
+  "commit_sha": "ffb93f3bd4047442299a41ebb6fa998a38507c52",
+  "dim": 384,
+  "extra": {
+   "batch_size": 64,
+   "cache": "/root/.cache/olaya/embeddings/intfloat__e5-small-v2/ffb93f3bd4047442299a41ebb6fa998a38507c52"
+  },
+  "max_length": 128,
+  "model": "intfloat/e5-small-v2",
+  "normalize": true,
+  "pooling": "mean",
+  "prefix": "query: ",
+  "revision": "main"
+ },
+ "protocol": {
+  "apriori": {
+   "base": "cascade",
+   "k": 5,
+   "threshold": 0.5,
+   "weight": 0.5
+  },
+  "cv": "leave-one-pair-out (21 folds), selection by micro-F1 M3 on the 20 training pairs",
+  "grid": {
+   "bases": [
+    "cascade",
+    "sum"
+   ],
+   "ks": [
+    5
+   ],
+   "thresholds": [
+    0.3,
+    0.31,
+    0.32,
+    0.33,
+    0.34,
+    0.35,
+    0.36,
+    0.37,
+    0.38,
+    0.39,
+    0.4,
+    0.41,
+    0.42,
+    0.43,
+    0.44,
+    0.45,
+    0.46,
+    0.47,
+    0.48,
+    0.49,
+    0.5,
+    0.51,
+    0.52,
+    0.53,
+    0.54,
+    0.55,
+    0.56,
+    0.57,
+    0.58,
+    0.59,
+    0.6,
+    0.61,
+    0.62,
+    0.63,
+    0.64,
+    0.65,
+    0.66,
+    0.67,
+    0.68,
+    0.69,
+    0.7,
+    0.71,
+    0.72,
+    0.73,
+    0.74,
+    0.75,
+    0.76,
+    0.77,
+    0.78,
+    0.79,
+    0.8
+   ],
+   "weights": [
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+   ]
+  },
+  "published": {
+   "GraphMatcher": {
+    "M1": 0.83,
+    "M3": 0.78
+   },
+   "SORBETMtch": {
+    "M1": 0.76,
+    "M3": 0.7
+   }
+  }
+ },
+ "reranker": {
+  "checkpoint": "/home/user/olaya/models/reranker/anatomy-minilm-l6",
+  "manifest": {
+   "base_model": {
+    "commit_sha": "233902d25c440f23af6f7d6e94d2946bac0bee0a",
+    "name": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "revision": "main"
+   },
+   "candidate_encoder": {
+    "commit_sha": "ffb93f3bd4047442299a41ebb6fa998a38507c52",
+    "csls_k": 10,
+    "k": 5,
+    "name": "intfloat/e5-small-v2"
+   },
+   "commit": "7cbc576a3e11",
+   "data": {
+    "candidate_pairs": 23474,
+    "candidate_reference_recall": 0.9406,
+    "files": {
+     "human.owl": "5c1ca432d9845f1abb36ecfce313df46d8c56d2fb4137d0590ec4e4a6a9b05bf",
+     "mouse.owl": "93756393d6306c8f332c884401aa447cc4b2557f0a6be3e0efd988a943cb68f8",
+     "reference.rdf": "b6a6b12f3e7a786e5b58c4898024f0f483426e9036bdc3939aa61b046dbc26c4"
+    },
+    "reference_equivalences": 1516,
+    "split": {
+     "by": "source entity",
+     "fraction": 0.8,
+     "seed": 0,
+     "train_sources": 2194,
+     "validation_sources": 549
+    },
+    "track": "OAEI Anatomy (mouse -> human), see tests/fixtures/oaei/anatomy/README.md",
+    "train_pairs": 18716,
+    "train_pairs_sha256": "a8e610da3d44060be0a8b965bc7292023f4efd97f0007307cfca43dd7d5a52e2",
+    "train_positives": 1224,
+    "validation_pairs": 4848,
+    "validation_pairs_sha256": "eb3c29ef38a38bdbcc0cd4cd90bc04ab4e181c06455cbd8acf5d4c78e4e04eb7",
+    "validation_positives": 292
+   },
+   "date_utc": "2026-10-04T01:34:39Z",
+   "hyperparameters": {
+    "base_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "batch_size": 32,
+    "epochs": 2,
+    "learning_rate": 2e-05,
+    "log_every": 20,
+    "max_length": 96,
+    "revision": "main",
+    "seed": 0,
+    "threads": 2,
+    "time_budget_s": 900.0,
+    "warmup_fraction": 0.1,
+    "weight_decay": 0.01
+   },
+   "total_seconds": 948.5,
+   "training": {
+    "elapsed_s": 918.0,
+    "epoch_losses": [
+     0.1331,
+     0.06706
+    ],
+    "epochs_completed": 2.0,
+    "loss_curve": [
+     {
+      "loss": 0.67092,
+      "step": 20
+     },
+     {
+      "loss": 0.49063,
+      "step": 40
+     },
+     {
+      "loss": 0.39787,
+      "step": 60
+     },
+     {
+      "loss": 0.34676,
+      "step": 80
+     },
+     {
+      "loss": 0.30973,
+      "step": 100
+     },
+     {
+      "loss": 0.28519,
+      "step": 120
+     },
+     {
+      "loss": 0.26156,
+      "step": 140
+     },
+     {
+      "loss": 0.24228,
+      "step": 160
+     },
+     {
+      "loss": 0.22912,
+      "step": 180
+     },
+     {
+      "loss": 0.21675,
+      "step": 200
+     },
+     {
+      "loss": 0.20545,
+      "step": 220
+     },
+     {
+      "loss": 0.19771,
+      "step": 240
+     },
+     {
+      "loss": 0.19134,
+      "step": 260
+     },
+     {
+      "loss": 0.18543,
+      "step": 280
+     },
+     {
+      "loss": 0.18043,
+      "step": 300
+     },
+     {
+      "loss": 0.17361,
+      "step": 320
+     },
+     {
+      "loss": 0.1688,
+      "step": 340
+     },
+     {
+      "loss": 0.16469,
+      "step": 360
+     },
+     {
+      "loss": 0.16146,
+      "step": 380
+     },
+     {
+      "loss": 0.15746,
+      "step": 400
+     },
+     {
+      "loss": 0.15308,
+      "step": 420
+     },
+     {
+      "loss": 0.14885,
+      "step": 440
+     },
+     {
+      "loss": 0.14474,
+      "step": 460
+     },
+     {
+      "loss": 0.14404,
+      "step": 480
+     },
+     {
+      "loss": 0.14078,
+      "step": 500
+     },
+     {
+      "loss": 0.13857,
+      "step": 520
+     },
+     {
+      "loss": 0.13649,
+      "step": 540
+     },
+     {
+      "loss": 0.13593,
+      "step": 560
+     },
+     {
+      "loss": 0.13376,
+      "step": 580
+     },
+     {
+      "loss": 0.05929,
+      "step": 600
+     },
+     {
+      "loss": 0.07716,
+      "step": 620
+     },
+     {
+      "loss": 0.07861,
+      "step": 640
+     },
+     {
+      "loss": 0.0809,
+      "step": 660
+     },
+     {
+      "loss": 0.07616,
+      "step": 680
+     },
+     {
+      "loss": 0.06975,
+      "step": 700
+     },
+     {
+      "loss": 0.06712,
+      "step": 720
+     },
+     {
+      "loss": 0.06726,
+      "step": 740
+     },
+     {
+      "loss": 0.06843,
+      "step": 760
+     },
+     {
+      "loss": 0.06852,
+      "step": 780
+     },
+     {
+      "loss": 0.06512,
+      "step": 800
+     },
+     {
+      "loss": 0.06376,
+      "step": 820
+     },
+     {
+      "loss": 0.0663,
+      "step": 840
+     },
+     {
+      "loss": 0.06604,
+      "step": 860
+     },
+     {
+      "loss": 0.06822,
+      "step": 880
+     },
+     {
+      "loss": 0.06824,
+      "step": 900
+     },
+     {
+      "loss": 0.0671,
+      "step": 920
+     },
+     {
+      "loss": 0.0678,
+      "step": 940
+     },
+     {
+      "loss": 0.06793,
+      "step": 960
+     },
+     {
+      "loss": 0.06799,
+      "step": 980
+     },
+     {
+      "loss": 0.06815,
+      "step": 1000
+     },
+     {
+      "loss": 0.06711,
+      "step": 1020
+     },
+     {
+      "loss": 0.06626,
+      "step": 1040
+     },
+     {
+      "loss": 0.06674,
+      "step": 1060
+     },
+     {
+      "loss": 0.0666,
+      "step": 1080
+     },
+     {
+      "loss": 0.06667,
+      "step": 1100
+     },
+     {
+      "loss": 0.06615,
+      "step": 1120
+     },
+     {
+      "loss": 0.06633,
+      "step": 1140
+     },
+     {
+      "loss": 0.06648,
+      "step": 1160
+     }
+    ],
+    "steps": 1170,
+    "stopped_by_budget": false,
+    "validation": [
+     {
+      "base": {
+       "auc": 0.9527,
+       "hits@1": 0.9135
+      },
+      "cross_encoder": {
+       "auc": 0.9763,
+       "hits@1": 0.9343
+      },
+      "epoch": 1.0,
+      "fused": {
+       "w=0.00": {
+        "auc": 0.9527,
+        "hits@1": 0.9135
+       },
+       "w=0.50": {
+        "auc": 0.9744,
+        "hits@1": 0.9239
+       },
+       "w=1.00": {
+        "auc": 0.9763,
+        "hits@1": 0.9343
+       }
+      },
+      "negatives": 4556,
+      "pairs": 4848,
+      "positives": 292
+     },
+     {
+      "base": {
+       "auc": 0.9527,
+       "hits@1": 0.9135
+      },
+      "cross_encoder": {
+       "auc": 0.9787,
+       "hits@1": 0.9343
+      },
+      "epoch": 2.0,
+      "fused": {
+       "w=0.00": {
+        "auc": 0.9527,
+        "hits@1": 0.9135
+       },
+       "w=0.50": {
+        "auc": 0.975,
+        "hits@1": 0.9239
+       },
+       "w=1.00": {
+        "auc": 0.9787,
+        "hits@1": 0.9343
+       }
+      },
+      "negatives": 4556,
+      "pairs": 4848,
+      "positives": 292
+     }
+    ]
+   },
+   "validation_before_training": {
+    "base": {
+     "auc": 0.9527,
+     "hits@1": 0.9135
+    },
+    "cross_encoder": {
+     "auc": 0.9484,
+     "hits@1": 0.8997
+    },
+    "fused": {
+     "w=0.00": {
+      "auc": 0.9527,
+      "hits@1": 0.9135
+     },
+     "w=0.50": {
+      "auc": 0.9707,
+      "hits@1": 0.9204
+     },
+     "w=1.00": {
+      "auc": 0.9484,
+      "hits@1": 0.8997
+     }
+    },
+    "negatives": 4556,
+    "pairs": 4848,
+    "positives": 292
+   }
+  },
+  "results": {
+   "apriori": {
+    "aggregates": {
+     "M1": {
+      "macro": {
+       "f1": 0.6141,
+       "pairs": 21,
+       "precision": 0.8748,
+       "recall": 0.5171
+      },
+      "micro": {
+       "f0.5": 0.7382,
+       "f1": 0.6229,
+       "f2": 0.5387,
+       "fn": 131,
+       "fp": 24,
+       "precision": 0.8421,
+       "recall": 0.4942,
+       "tp": 128
+      }
+     },
+     "M2": {
+      "macro": {
+       "f1": 0.3654,
+       "pairs": 14,
+       "precision": 0.481,
+       "recall": 0.3464
+      },
+      "micro": {
+       "f0.5": 0.381,
+       "f1": 0.3678,
+       "f2": 0.3556,
+       "fn": 30,
+       "fp": 25,
+       "precision": 0.3902,
+       "recall": 0.3478,
+       "tp": 16
+      }
+     },
+     "M3": {
+      "macro": {
+       "f1": 0.568,
+       "pairs": 21,
+       "precision": 0.7967,
+       "recall": 0.492
+      },
+      "micro": {
+       "f0.5": 0.6685,
+       "f1": 0.5783,
+       "f2": 0.5096,
+       "fn": 161,
+       "fp": 49,
+       "precision": 0.7461,
+       "recall": 0.4721,
+       "tp": 144
+      }
+     }
+    },
+    "k": 5,
+    "matcher": "olaya-hybrid[olaya-embedding[intfloat/e5-small-v2,both,csls10],w=0.50,cascade,alpha=0.00]",
+    "pairs": [
+     {
+      "M1": {
+       "f0.5": 0.5556,
+       "f1": 0.4444,
+       "f2": 0.3704,
+       "fn": 8,
+       "fp": 2,
+       "precision": 0.6667,
+       "recall": 0.3333,
+       "tp": 4
+      },
+      "M2": {
+       "f0.5": 0.2174,
+       "f1": 0.25,
+       "f2": 0.2941,
+       "fn": 2,
+       "fp": 4,
+       "precision": 0.2,
+       "recall": 0.3333,
+       "tp": 1
+      },
+      "M3": {
+       "f0.5": 0.4237,
+       "f1": 0.3846,
+       "f2": 0.3521,
+       "fn": 10,
+       "fp": 6,
+       "precision": 0.4545,
+       "recall": 0.3333,
+       "tp": 5
+      },
+      "pair": "cmt-conference",
+      "reference_size": 15,
+      "system_size": 11
+     },
+     {
+      "M1": {
+       "f0.5": 0.3571,
+       "f1": 0.1818,
+       "f2": 0.122,
+       "fn": 9,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.1,
+       "tp": 1
+      },
+      "M2": {
+       "f0.5": 0.5,
+       "f1": 0.2857,
+       "f2": 0.2,
+       "fn": 5,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.1667,
+       "tp": 1
+      },
+      "M3": {
+       "f0.5": 0.4167,
+       "f1": 0.2222,
+       "f2": 0.1515,
+       "fn": 14,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.125,
+       "tp": 2
+      },
+      "pair": "cmt-confOf",
+      "reference_size": 16,
+      "system_size": 2
+     },
+     {
+      "M1": {
+       "f0.5": 0.9722,
+       "f1": 0.9333,
+       "f2": 0.8974,
+       "fn": 1,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.875,
+       "tp": 7
+      },
+      "M2": {
+       "f0.5": 0.3448,
+       "f1": 0.3636,
+       "f2": 0.3846,
+       "fn": 3,
+       "fp": 4,
+       "precision": 0.3333,
+       "recall": 0.4,
+       "tp": 2
+      },
+      "M3": {
+       "f0.5": 0.6923,
+       "f1": 0.6923,
+       "f2": 0.6923,
+       "fn": 4,
+       "fp": 4,
+       "precision": 0.6923,
+       "recall": 0.6923,
+       "tp": 9
+      },
+      "pair": "cmt-edas",
+      "reference_size": 13,
+      "system_size": 13
+     },
+     {
+      "M1": {
+       "f0.5": 0.9375,
+       "f1": 0.8571,
+       "f2": 0.7895,
+       "fn": 2,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.75,
+       "tp": 6
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 3,
+       "fp": 2,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.6977,
+       "f1": 0.6316,
+       "f2": 0.5769,
+       "fn": 5,
+       "fp": 2,
+       "precision": 0.75,
+       "recall": 0.5455,
+       "tp": 6
+      },
+      "pair": "cmt-ekaw",
+      "reference_size": 11,
+      "system_size": 8
+     },
+     {
+      "M1": {
+       "f0.5": 0.8333,
+       "f1": 0.8889,
+       "f2": 0.9524,
+       "fn": 0,
+       "fp": 1,
+       "precision": 0.8,
+       "recall": 1.0,
+       "tp": 4
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.7143,
+       "f1": 0.8,
+       "f2": 0.9091,
+       "fn": 0,
+       "fp": 2,
+       "precision": 0.6667,
+       "recall": 1.0,
+       "tp": 4
+      },
+      "pair": "cmt-iasted",
+      "reference_size": 4,
+      "system_size": 6
+     },
+     {
+      "M1": {
+       "f0.5": 0.9524,
+       "f1": 0.8889,
+       "f2": 0.8333,
+       "fn": 2,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.8,
+       "tp": 8
+      },
+      "M2": {
+       "f0.5": 1.0,
+       "f1": 1.0,
+       "f2": 1.0,
+       "fn": 0,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 1.0,
+       "tp": 2
+      },
+      "M3": {
+       "f0.5": 0.9615,
+       "f1": 0.9091,
+       "f2": 0.8621,
+       "fn": 2,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.8333,
+       "tp": 10
+      },
+      "pair": "cmt-sigkdd",
+      "reference_size": 12,
+      "system_size": 10
+     },
+     {
+      "M1": {
+       "f0.5": 0.6452,
+       "f1": 0.5,
+       "f2": 0.4082,
+       "fn": 7,
+       "fp": 1,
+       "precision": 0.8,
+       "recall": 0.3636,
+       "tp": 4
+      },
+      "M2": {
+       "f0.5": 0.625,
+       "f1": 0.5714,
+       "f2": 0.5263,
+       "fn": 2,
+       "fp": 1,
+       "precision": 0.6667,
+       "recall": 0.5,
+       "tp": 2
+      },
+      "M3": {
+       "f0.5": 0.6383,
+       "f1": 0.5217,
+       "f2": 0.4412,
+       "fn": 9,
+       "fp": 2,
+       "precision": 0.75,
+       "recall": 0.4,
+       "tp": 6
+      },
+      "pair": "conference-confOf",
+      "reference_size": 15,
+      "system_size": 8
+     },
+     {
+      "M1": {
+       "f0.5": 0.7,
+       "f1": 0.6087,
+       "f2": 0.5385,
+       "fn": 7,
+       "fp": 2,
+       "precision": 0.7778,
+       "recall": 0.5,
+       "tp": 7
+      },
+      "M2": {
+       "f0.5": 0.3704,
+       "f1": 0.4444,
+       "f2": 0.5556,
+       "fn": 1,
+       "fp": 4,
+       "precision": 0.3333,
+       "recall": 0.6667,
+       "tp": 2
+      },
+      "M3": {
+       "f0.5": 0.5844,
+       "f1": 0.5625,
+       "f2": 0.5422,
+       "fn": 8,
+       "fp": 6,
+       "precision": 0.6,
+       "recall": 0.5294,
+       "tp": 9
+      },
+      "pair": "conference-edas",
+      "reference_size": 17,
+      "system_size": 15
+     },
+     {
+      "M1": {
+       "f0.5": 0.493,
+       "f1": 0.4,
+       "f2": 0.3365,
+       "fn": 16,
+       "fp": 5,
+       "precision": 0.5833,
+       "recall": 0.3043,
+       "tp": 7
+      },
+      "M2": {
+       "f0.5": 0.5,
+       "f1": 0.5,
+       "f2": 0.5,
+       "fn": 1,
+       "fp": 1,
+       "precision": 0.5,
+       "recall": 0.5,
+       "tp": 1
+      },
+      "M3": {
+       "f0.5": 0.4938,
+       "f1": 0.4103,
+       "f2": 0.3509,
+       "fn": 17,
+       "fp": 6,
+       "precision": 0.5714,
+       "recall": 0.32,
+       "tp": 8
+      },
+      "pair": "conference-ekaw",
+      "reference_size": 25,
+      "system_size": 14
+     },
+     {
+      "M1": {
+       "f0.5": 0.5172,
+       "f1": 0.3529,
+       "f2": 0.2679,
+       "fn": 10,
+       "fp": 1,
+       "precision": 0.75,
+       "recall": 0.2308,
+       "tp": 3
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 1,
+       "fp": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.5,
+       "f1": 0.3333,
+       "f2": 0.25,
+       "fn": 11,
+       "fp": 1,
+       "precision": 0.75,
+       "recall": 0.2143,
+       "tp": 3
+      },
+      "pair": "conference-iasted",
+      "reference_size": 14,
+      "system_size": 4
+     },
+     {
+      "M1": {
+       "f0.5": 0.8333,
+       "f1": 0.7619,
+       "f2": 0.7018,
+       "fn": 4,
+       "fp": 1,
+       "precision": 0.8889,
+       "recall": 0.6667,
+       "tp": 8
+      },
+      "M2": {
+       "f0.5": 0.7143,
+       "f1": 0.5,
+       "f2": 0.3846,
+       "fn": 2,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.3333,
+       "tp": 1
+      },
+      "M3": {
+       "f0.5": 0.8182,
+       "f1": 0.72,
+       "f2": 0.6429,
+       "fn": 6,
+       "fp": 1,
+       "precision": 0.9,
+       "recall": 0.6,
+       "tp": 9
+      },
+      "pair": "conference-sigkdd",
+      "reference_size": 15,
+      "system_size": 10
+     },
+     {
+      "M1": {
+       "f0.5": 0.7609,
+       "f1": 0.6364,
+       "f2": 0.5469,
+       "fn": 7,
+       "fp": 1,
+       "precision": 0.875,
+       "recall": 0.5,
+       "tp": 7
+      },
+      "M2": {
+       "f0.5": 0.2,
+       "f1": 0.2,
+       "f2": 0.2,
+       "fn": 4,
+       "fp": 4,
+       "precision": 0.2,
+       "recall": 0.2,
+       "tp": 1
+      },
+      "M3": {
+       "f0.5": 0.5634,
+       "f1": 0.5,
+       "f2": 0.4494,
+       "fn": 11,
+       "fp": 5,
+       "precision": 0.6154,
+       "recall": 0.4211,
+       "tp": 8
+      },
+      "pair": "confOf-edas",
+      "reference_size": 19,
+      "system_size": 13
+     },
+     {
+      "M1": {
+       "f0.5": 0.8036,
+       "f1": 0.6207,
+       "f2": 0.5056,
+       "fn": 11,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.45,
+       "tp": 9
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.8036,
+       "f1": 0.6207,
+       "f2": 0.5056,
+       "fn": 11,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.45,
+       "tp": 9
+      },
+      "pair": "confOf-ekaw",
+      "reference_size": 20,
+      "system_size": 9
+     },
+     {
+      "M1": {
+       "f0.5": 0.5882,
+       "f1": 0.3636,
+       "f2": 0.2632,
+       "fn": 7,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.2222,
+       "tp": 2
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.5882,
+       "f1": 0.3636,
+       "f2": 0.2632,
+       "fn": 7,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.2222,
+       "tp": 2
+      },
+      "pair": "confOf-iasted",
+      "reference_size": 9,
+      "system_size": 2
+     },
+     {
+      "M1": {
+       "f0.5": 0.5,
+       "f1": 0.2857,
+       "f2": 0.2,
+       "fn": 5,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.1667,
+       "tp": 1
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 1,
+       "fp": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.4545,
+       "f1": 0.25,
+       "f2": 0.1724,
+       "fn": 6,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.1429,
+       "tp": 1
+      },
+      "pair": "confOf-sigkdd",
+      "reference_size": 7,
+      "system_size": 1
+     },
+     {
+      "M1": {
+       "f0.5": 0.6962,
+       "f1": 0.6471,
+       "f2": 0.6044,
+       "fn": 8,
+       "fp": 4,
+       "precision": 0.7333,
+       "recall": 0.5789,
+       "tp": 11
+      },
+      "M2": {
+       "f0.5": 0.4167,
+       "f1": 0.3333,
+       "f2": 0.2778,
+       "fn": 3,
+       "fp": 1,
+       "precision": 0.5,
+       "recall": 0.25,
+       "tp": 1
+      },
+      "M3": {
+       "f0.5": 0.6593,
+       "f1": 0.6,
+       "f2": 0.5505,
+       "fn": 11,
+       "fp": 5,
+       "precision": 0.7059,
+       "recall": 0.5217,
+       "tp": 12
+      },
+      "pair": "edas-ekaw",
+      "reference_size": 23,
+      "system_size": 17
+     },
+     {
+      "M1": {
+       "f0.5": 0.6863,
+       "f1": 0.5185,
+       "f2": 0.4167,
+       "fn": 12,
+       "fp": 1,
+       "precision": 0.875,
+       "recall": 0.3684,
+       "tp": 7
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.6863,
+       "f1": 0.5185,
+       "f2": 0.4167,
+       "fn": 12,
+       "fp": 1,
+       "precision": 0.875,
+       "recall": 0.3684,
+       "tp": 7
+      },
+      "pair": "edas-iasted",
+      "reference_size": 19,
+      "system_size": 8
+     },
+     {
+      "M1": {
+       "f0.5": 0.8974,
+       "f1": 0.7778,
+       "f2": 0.6863,
+       "fn": 4,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.6364,
+       "tp": 7
+      },
+      "M2": {
+       "f0.5": 0.8333,
+       "f1": 0.6667,
+       "f2": 0.5556,
+       "fn": 2,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.5,
+       "tp": 2
+      },
+      "M3": {
+       "f0.5": 0.8824,
+       "f1": 0.75,
+       "f2": 0.6522,
+       "fn": 6,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.6,
+       "tp": 9
+      },
+      "pair": "edas-sigkdd",
+      "reference_size": 15,
+      "system_size": 9
+     },
+     {
+      "M1": {
+       "f0.5": 0.8824,
+       "f1": 0.75,
+       "f2": 0.6522,
+       "fn": 4,
+       "fp": 0,
+       "precision": 1.0,
+       "recall": 0.6,
+       "tp": 6
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 1,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.7895,
+       "f1": 0.7059,
+       "f2": 0.6383,
+       "fn": 4,
+       "fp": 1,
+       "precision": 0.8571,
+       "recall": 0.6,
+       "tp": 6
+      },
+      "pair": "ekaw-iasted",
+      "reference_size": 10,
+      "system_size": 7
+     },
+     {
+      "M1": {
+       "f0.5": 0.7692,
+       "f1": 0.6667,
+       "f2": 0.5882,
+       "fn": 5,
+       "fp": 1,
+       "precision": 0.8571,
+       "recall": 0.5455,
+       "tp": 6
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 0,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.7692,
+       "f1": 0.6667,
+       "f2": 0.5882,
+       "fn": 5,
+       "fp": 1,
+       "precision": 0.8571,
+       "recall": 0.5455,
+       "tp": 6
+      },
+      "pair": "ekaw-sigkdd",
+      "reference_size": 11,
+      "system_size": 7
+     },
+     {
+      "M1": {
+       "f0.5": 0.7831,
+       "f1": 0.8125,
+       "f2": 0.8442,
+       "fn": 2,
+       "fp": 4,
+       "precision": 0.7647,
+       "recall": 0.8667,
+       "tp": 13
+      },
+      "M2": {
+       "f0.5": 0.0,
+       "f1": 0.0,
+       "f2": 0.0,
+       "fn": 0,
+       "fp": 2,
+       "precision": 0.0,
+       "recall": 0.0,
+       "tp": 0
+      },
+      "M3": {
+       "f0.5": 0.7143,
+       "f1": 0.7647,
+       "f2": 0.8228,
+       "fn": 2,
+       "fp": 6,
+       "precision": 0.6842,
+       "recall": 0.8667,
+       "tp": 13
+      },
+      "pair": "iasted-sigkdd",
+      "reference_size": 15,
+      "system_size": 19
+     }
+    ],
+    "threshold": 0.5,
+    "weight": 0.5
+   },
+   "best_on_ra1": {
+    "M1": {
+     "f0.5": 0.7728,
+     "f1": 0.7433,
+     "f2": 0.716,
+     "fn": 78,
+     "fp": 47,
+     "precision": 0.7939,
+     "recall": 0.6988,
+     "tp": 181
+    },
+    "M2": {
+     "f0.5": 0.3254,
+     "f1": 0.3697,
+     "f2": 0.428,
+     "fn": 24,
+     "fp": 51,
+     "precision": 0.3014,
+     "recall": 0.4783,
+     "tp": 22
+    },
+    "M3": {
+     "f0.5": 0.6726,
+     "f1": 0.67,
+     "f2": 0.6673,
+     "fn": 102,
+     "fp": 98,
+     "precision": 0.6744,
+     "recall": 0.6656,
+     "tp": 203
+    },
+    "label": "base=cascade,k=5,w=0.00,th=0.43"
+   },
+   "best_threshold_per_weight": {
+    "base=cascade,w=0.00": {
+     "M1": 0.7433,
+     "M2": 0.3697,
+     "M3": 0.67,
+     "label": "base=cascade,k=5,w=0.00,th=0.43"
+    },
+    "base=cascade,w=0.25": {
+     "M1": 0.7474,
+     "M2": 0.3363,
+     "M3": 0.6689,
+     "label": "base=cascade,k=5,w=0.25,th=0.38"
+    },
+    "base=cascade,w=0.50": {
+     "M1": 0.7195,
+     "M2": 0.3036,
+     "M3": 0.639,
+     "label": "base=cascade,k=5,w=0.50,th=0.30"
+    },
+    "base=cascade,w=0.75": {
+     "M1": 0.6432,
+     "M2": 0.3404,
+     "M3": 0.5885,
+     "label": "base=cascade,k=5,w=0.75,th=0.31"
+    },
+    "base=cascade,w=1.00": {
+     "M1": 0.5966,
+     "M2": 0.2889,
+     "M3": 0.5411,
+     "label": "base=cascade,k=5,w=1.00,th=0.30"
+    },
+    "base=sum,w=0.00": {
+     "M1": 0.7205,
+     "M2": 0.3119,
+     "M3": 0.6453,
+     "label": "base=sum,k=5,w=0.00,th=0.39"
+    },
+    "base=sum,w=0.25": {
+     "M1": 0.7176,
+     "M2": 0.3551,
+     "M3": 0.6505,
+     "label": "base=sum,k=5,w=0.25,th=0.34"
+    },
+    "base=sum,w=0.50": {
+     "M1": 0.6968,
+     "M2": 0.3579,
+     "M3": 0.6369,
+     "label": "base=sum,k=5,w=0.50,th=0.39"
+    },
+    "base=sum,w=0.75": {
+     "M1": 0.6276,
+     "M2": 0.3368,
+     "M3": 0.5747,
+     "label": "base=sum,k=5,w=0.75,th=0.30"
+    },
+    "base=sum,w=1.00": {
+     "M1": 0.5827,
+     "M2": 0.3059,
+     "M3": 0.5347,
+     "label": "base=sum,k=5,w=1.00,th=0.41"
+    }
+   },
+   "candidate_recall": {
+    "cascade": {
+     "mean": 0.8964,
+     "per_pair": {
+      "cmt-confOf": 0.75,
+      "cmt-conference": 0.8,
+      "cmt-edas": 0.7692,
+      "cmt-ekaw": 0.7273,
+      "cmt-iasted": 1.0,
+      "cmt-sigkdd": 1.0,
+      "confOf-edas": 0.9474,
+      "confOf-ekaw": 0.9,
+      "confOf-iasted": 0.8889,
+      "confOf-sigkdd": 1.0,
+      "conference-confOf": 0.9333,
+      "conference-edas": 0.9412,
+      "conference-ekaw": 0.92,
+      "conference-iasted": 0.6429,
+      "conference-sigkdd": 0.9333,
+      "edas-ekaw": 1.0,
+      "edas-iasted": 0.8947,
+      "edas-sigkdd": 0.9333,
+      "ekaw-iasted": 1.0,
+      "ekaw-sigkdd": 0.9091,
+      "iasted-sigkdd": 0.9333
+     }
+    },
+    "sum": {
+     "mean": 0.9525,
+     "per_pair": {
+      "cmt-confOf": 0.8125,
+      "cmt-conference": 1.0,
+      "cmt-edas": 0.8462,
+      "cmt-ekaw": 0.9091,
+      "cmt-iasted": 1.0,
+      "cmt-sigkdd": 1.0,
+      "confOf-edas": 1.0,
+      "confOf-ekaw": 0.95,
+      "confOf-iasted": 0.8889,
+      "confOf-sigkdd": 1.0,
+      "conference-confOf": 1.0,
+      "conference-edas": 1.0,
+      "conference-ekaw": 1.0,
+      "conference-iasted": 0.7143,
+      "conference-sigkdd": 1.0,
+      "edas-ekaw": 1.0,
+      "edas-iasted": 0.9474,
+      "edas-sigkdd": 1.0,
+      "ekaw-iasted": 1.0,
+      "ekaw-sigkdd": 1.0,
+      "iasted-sigkdd": 0.9333
+     }
+    }
+   },
+   "f1_at_apriori_threshold": {
+    "base=cascade,k=5,w=0.00,th=0.50": {
+     "M1": 0.7442,
+     "M2": 0.3238,
+     "M3": 0.6678
+    },
+    "base=cascade,k=5,w=0.25,th=0.50": {
+     "M1": 0.7059,
+     "M2": 0.3299,
+     "M3": 0.6382
+    },
+    "base=cascade,k=5,w=0.50,th=0.50": {
+     "M1": 0.6229,
+     "M2": 0.3678,
+     "M3": 0.5783
+    },
+    "base=cascade,k=5,w=0.75,th=0.50": {
+     "M1": 0.5871,
+     "M2": 0.3544,
+     "M3": 0.5489
+    },
+    "base=cascade,k=5,w=1.00,th=0.50": {
+     "M1": 0.5729,
+     "M2": 0.325,
+     "M3": 0.5314
+    },
+    "base=sum,k=5,w=0.00,th=0.50": {
+     "M1": 0.6955,
+     "M2": 0.2921,
+     "M3": 0.6276
+    },
+    "base=sum,k=5,w=0.25,th=0.50": {
+     "M1": 0.6957,
+     "M2": 0.3556,
+     "M3": 0.6376
+    },
+    "base=sum,k=5,w=0.50,th=0.50": {
+     "M1": 0.6146,
+     "M2": 0.3902,
+     "M3": 0.5772
+    },
+    "base=sum,k=5,w=0.75,th=0.50": {
+     "M1": 0.5842,
+     "M2": 0.3636,
+     "M3": 0.5489
+    },
+    "base=sum,k=5,w=1.00,th=0.50": {
+     "M1": 0.57,
+     "M2": 0.321,
+     "M3": 0.5281
+    }
+   },
+   "grid_points": 510,
+   "lopo_cv": {
+    "M1": {
+     "f0.5": 0.7481,
+     "f1": 0.7175,
+     "f2": 0.6894,
+     "fn": 85,
+     "fp": 52,
+     "precision": 0.7699,
+     "recall": 0.6718,
+     "tp": 174
+    },
+    "M2": {
+     "f0.5": 0.2879,
+     "f1": 0.3248,
+     "f2": 0.3725,
+     "fn": 27,
+     "fp": 52,
+     "precision": 0.2676,
+     "recall": 0.413,
+     "tp": 19
+    },
+    "M3": {
+     "f0.5": 0.6463,
+     "f1": 0.6412,
+     "f2": 0.6361,
+     "fn": 112,
+     "fp": 104,
+     "precision": 0.6498,
+     "recall": 0.6328,
+     "tp": 193
+    },
+    "chosen": {
+     "cmt-confOf": "base=cascade,k=5,w=0.00,th=0.43",
+     "cmt-conference": "base=cascade,k=5,w=0.00,th=0.43",
+     "cmt-edas": "base=cascade,k=5,w=0.00,th=0.42",
+     "cmt-ekaw": "base=cascade,k=5,w=0.00,th=0.39",
+     "cmt-iasted": "base=cascade,k=5,w=0.00,th=0.42",
+     "cmt-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "confOf-edas": "base=cascade,k=5,w=0.00,th=0.51",
+     "confOf-ekaw": "base=cascade,k=5,w=0.00,th=0.43",
+     "confOf-iasted": "base=cascade,k=5,w=0.00,th=0.43",
+     "confOf-sigkdd": "base=cascade,k=5,w=0.00,th=0.51",
+     "conference-confOf": "base=cascade,k=5,w=0.00,th=0.39",
+     "conference-edas": "base=cascade,k=5,w=0.00,th=0.43",
+     "conference-ekaw": "base=cascade,k=5,w=0.00,th=0.51",
+     "conference-iasted": "base=cascade,k=5,w=0.00,th=0.52",
+     "conference-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "edas-ekaw": "base=cascade,k=5,w=0.00,th=0.51",
+     "edas-iasted": "base=cascade,k=5,w=0.00,th=0.42",
+     "edas-sigkdd": "base=cascade,k=5,w=0.00,th=0.51",
+     "ekaw-iasted": "base=cascade,k=5,w=0.00,th=0.39",
+     "ekaw-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "iasted-sigkdd": "base=cascade,k=5,w=0.00,th=0.42"
+    },
+    "distinct_configs_chosen": [
+     "base=cascade,k=5,w=0.00,th=0.39",
+     "base=cascade,k=5,w=0.00,th=0.42",
+     "base=cascade,k=5,w=0.00,th=0.43",
+     "base=cascade,k=5,w=0.00,th=0.51",
+     "base=cascade,k=5,w=0.00,th=0.52"
+    ],
+    "folds": 21,
+    "modality_selected": "M3"
+   },
+   "lopo_cv_apriori_base_only": {
+    "M1": {
+     "f0.5": 0.7481,
+     "f1": 0.7175,
+     "f2": 0.6894,
+     "fn": 85,
+     "fp": 52,
+     "precision": 0.7699,
+     "recall": 0.6718,
+     "tp": 174
+    },
+    "M2": {
+     "f0.5": 0.2879,
+     "f1": 0.3248,
+     "f2": 0.3725,
+     "fn": 27,
+     "fp": 52,
+     "precision": 0.2676,
+     "recall": 0.413,
+     "tp": 19
+    },
+    "M3": {
+     "f0.5": 0.6463,
+     "f1": 0.6412,
+     "f2": 0.6361,
+     "fn": 112,
+     "fp": 104,
+     "precision": 0.6498,
+     "recall": 0.6328,
+     "tp": 193
+    },
+    "chosen": {
+     "cmt-confOf": "base=cascade,k=5,w=0.00,th=0.43",
+     "cmt-conference": "base=cascade,k=5,w=0.00,th=0.43",
+     "cmt-edas": "base=cascade,k=5,w=0.00,th=0.42",
+     "cmt-ekaw": "base=cascade,k=5,w=0.00,th=0.39",
+     "cmt-iasted": "base=cascade,k=5,w=0.00,th=0.42",
+     "cmt-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "confOf-edas": "base=cascade,k=5,w=0.00,th=0.51",
+     "confOf-ekaw": "base=cascade,k=5,w=0.00,th=0.43",
+     "confOf-iasted": "base=cascade,k=5,w=0.00,th=0.43",
+     "confOf-sigkdd": "base=cascade,k=5,w=0.00,th=0.51",
+     "conference-confOf": "base=cascade,k=5,w=0.00,th=0.39",
+     "conference-edas": "base=cascade,k=5,w=0.00,th=0.43",
+     "conference-ekaw": "base=cascade,k=5,w=0.00,th=0.51",
+     "conference-iasted": "base=cascade,k=5,w=0.00,th=0.52",
+     "conference-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "edas-ekaw": "base=cascade,k=5,w=0.00,th=0.51",
+     "edas-iasted": "base=cascade,k=5,w=0.00,th=0.42",
+     "edas-sigkdd": "base=cascade,k=5,w=0.00,th=0.51",
+     "ekaw-iasted": "base=cascade,k=5,w=0.00,th=0.39",
+     "ekaw-sigkdd": "base=cascade,k=5,w=0.00,th=0.42",
+     "iasted-sigkdd": "base=cascade,k=5,w=0.00,th=0.42"
+    },
+    "distinct_configs_chosen": [
+     "base=cascade,k=5,w=0.00,th=0.39",
+     "base=cascade,k=5,w=0.00,th=0.42",
+     "base=cascade,k=5,w=0.00,th=0.43",
+     "base=cascade,k=5,w=0.00,th=0.51",
+     "base=cascade,k=5,w=0.00,th=0.52"
+    ],
+    "folds": 21,
+    "modality_selected": "M3"
+   }
+  }
+ },
+ "runtime_s": 195.3,
+ "threads": 2,
+ "timing": {
+  "ablation_s": 90.1,
+  "base_s": 14.8,
+  "rerank_s": 89.4
+ },
+ "verdict": "Cross-validated, the reranker moves the hybrid base from M1 0.718 / M3 0.641 to M1 0.718 / M3 0.641 (+0.000 / +0.000). That is still below both published systems (GraphMatcher 0.83 / 0.78, SORBETMtch 0.76 / 0.70); this is **not** a state-of-the-art claim. The change versus the base matcher is within the noise of a 21-pair test set."
+}
