@@ -89,11 +89,22 @@ APRIORI_HYBRID = HybridMatcherConfig(
     embedding=EmbeddingMatcherConfig(text="both", calibration="csls", csls_k=10),
 )
 
+# Path hybrid (added after the error analysis in benchmarks/results/oaei-error-analysis.md): the
+# same cascade, but the encoder sees the entity's *path from the root* ("Conference > Document >
+# Paper"; "Paper > has Author > Person" for properties) instead of label + description.  It is a
+# design choice made after looking at ra1, so its a-priori row is reported next to the original
+# one and only the cross-validated number (grid below, which contains both texts) is the headline.
+PATH_HYBRID = HybridMatcherConfig(
+    combine="cascade",
+    structure_weight=0.0,
+    embedding=EmbeddingMatcherConfig(text="path", calibration="csls", csls_k=10),
+)
+
 # Configuration grid for the primary encoder.  "lexical" rows are the lexical matcher
 # alone (with propagation), so the cross-validation may legitimately select "no
 # embedding" when that is better on the training pairs.
 GRID_COMBINES = [("lexical", 0.0), ("sum", 0.3), ("sum", 0.5), ("cascade", 0.0)]
-GRID_TEXTS = ["label", "both", "full"]
+GRID_TEXTS = ["label", "both", "full", "path", "label+path"]
 GRID_ALPHAS = [0.0, 0.1, 0.2, 0.3]
 GRID_THRESHOLDS = [round(i / 100, 2) for i in range(30, 81)]
 
@@ -660,6 +671,8 @@ def write_markdown(payload: dict, ours: dict[str, BenchmarkRun], baseline: Bench
             fmt_row(f"olaya-embedding only ({short}), a-priori threshold", ours["embedding_apriori"]),
             fmt_row(f"olaya-embedding only ({short}), best threshold (optimistic)", ours["embedding_best"]),
             fmt_row(f"olaya-hybrid ({short}), a-priori config", ours["hybrid_apriori"]),
+            fmt_row(f"olaya-hybrid ({short}, path text), a-priori threshold", ours["path_apriori"]),
+            fmt_row(f"olaya-hybrid ({short}, path text), best threshold (optimistic)", ours["path_best"]),
             fmt_row(f"olaya-hybrid ({short}), best config on ra1 (optimistic)", ours["hybrid_best"]),
             cv_row(f"**olaya-hybrid ({short}), leave-one-pair-out CV{hyb_tag}**", prim["cv_leave_one_pair_out"]),
             cv_row(f"olaya-hybrid ({short}), leave-one-ontology-out CV", prim["cv_leave_one_ontology_out"]),
@@ -721,8 +734,11 @@ def write_markdown(payload: dict, ours: dict[str, BenchmarkRun], baseline: Bench
             f"Encoder: `{enc['model']}` (revision `{enc['revision']}`, commit `{enc['commit_sha'][:12]}`, {enc['dim']}-d,",
             f"mean pooling, L2-normalised, max {enc['max_length']} tokens, prefix `{enc['prefix']!r}`), run locally on the CPU",
             "with `transformers` only (`olaya.embeddings.TransformerEncoder`).  Entity text = label (camelCase split) +",
-            "comment + parent labels (classes) or domain / range labels (properties); the matcher uses the mean of the",
-            "label-only and full-description cosines.  Raw cosines have a high floor on this data (unrelated entities",
+            "comment + parent labels (classes) or domain / range labels (properties); the original matcher uses the mean",
+            "of the label-only and full-description cosines (`text=both`).  The *path* text added after the error",
+            "analysis (`benchmarks/results/oaei-error-analysis.md`) encodes the entity as its chain from the root,",
+            "`Conference > Document > Paper` for a class and `Paper > has Author > Person` (domain > label > range) for a",
+            "property; `text=path` uses it alone, `text=label+path` averages it with the label cosine.  Raw cosines have a high floor on this data (unrelated entities",
             "score 0.3-0.5, and more for e5), so they are hubness-corrected with CSLS (Conneau et al. 2018): the mean",
             "similarity of each entity's 10 nearest neighbours is the background and the score is rescaled so that",
             "background = 0 and a perfect match = 1.  No gold data is involved in the calibration.",
@@ -740,7 +756,9 @@ def write_markdown(payload: dict, ours: dict[str, BenchmarkRun], baseline: Bench
             "ontology held out, selection on the remaining 15) is the stricter variant.  Two caveats remain and are not",
             "hidden: (1) the *design* choices (cascade rather than weighted sum, CSLS rather than raw cosine, averaging",
             "label and full text) and the choice of the primary encoder were made after looking at ra1 numbers, and",
-            "the CV only protects the numeric knobs (combination, text, alpha, threshold); (2) 21 pairs from 7",
+            "the CV only protects the numeric knobs (combination, text, alpha, threshold); the *path* text in the grid was",
+            "designed after the error analysis of the a-priori hybrid on ra1 (`oaei-error-analysis.md`), which is the same",
+            "kind of caveat; (2) 21 pairs from 7",
             "ontologies are a small sample, so differences of 0.01-0.02 F1 between any two rows are within noise.",
             "",
             "### Cross-validated selection (primary encoder)",
@@ -752,7 +770,16 @@ def write_markdown(payload: dict, ours: dict[str, BenchmarkRun], baseline: Bench
             f"M3 {looo['M3']['precision']:.3f} / {looo['M3']['recall']:.3f} / **{looo['M3']['f1']:.3f}**.  "
             f"Configs chosen across the 7 folds: {', '.join(f'`{c}`' for c in looo['distinct_configs_chosen'])}.",
             f"- Best single grid point on all 21 pairs (optimistic): `{prim['best_on_ra1']['label']}`.",
-            f"- Grid: combination in {{lexical only, sum w=0.3, sum w=0.5, cascade}} x text in {{label, both, full}} x "
+            f"- Path cascade alone (text=path, alpha 0), only its threshold cross-validated ({len(GRID_THRESHOLDS)} points): "
+            f"leave-one-pair-out M1 {prim['path_cascade_threshold_only_cv_leave_one_pair_out']['M1']['f1']:.3f} / "
+            f"M3 {prim['path_cascade_threshold_only_cv_leave_one_pair_out']['M3']['f1']:.3f}, leave-one-ontology-out "
+            f"M1 {prim['path_cascade_threshold_only_cv_leave_one_ontology_out']['M1']['f1']:.3f} / "
+            f"M3 {prim['path_cascade_threshold_only_cv_leave_one_ontology_out']['M3']['f1']:.3f}.  The full grid above "
+            "contains these points, but with five texts x four alphas x four combinations the selection on 20 pairs hops",
+            "  between `path` and `label+path` configurations and the held-out gain shrinks to the noise band: the path text",
+            "  is the one change the error analysis produced that survives cross-validation on its own sub-grid (+0.04 M3),",
+            "  but on the full grid the headline is unchanged within noise (0.750 / 0.679 before).  The headline stays the full-grid number.",
+            f"- Grid: combination in {{lexical only, sum w=0.3, sum w=0.5, cascade}} x text in {{{', '.join(GRID_TEXTS)}}} x "
             f"alpha in {{{', '.join(f'{a:.1f}' for a in GRID_ALPHAS)}}} x threshold "
             f"{GRID_THRESHOLDS[0]:.2f}-{GRID_THRESHOLDS[-1]:.2f} step 0.01 ({len(prim['grid_micro'])} points); "
             "selection criterion: micro-F1 M3.",
@@ -784,12 +811,12 @@ def write_markdown(payload: dict, ours: dict[str, BenchmarkRun], baseline: Bench
             "",
             "### Encoder ablation (cascade, text=both, CSLS; micro F1 M1 / M3)",
             "",
-            "| encoder | commit | embedding only @0.50 | embedding only, best th | cascade alpha 0 @0.50 | cascade alpha 0.2 @0.50 | cascade, best th (optimistic) | cascade + neighbour w=0.3 @0.50 |",
-            "|---|---|---|---|---|---|---|---|",
+            "| encoder | commit | embedding only @0.50 | embedding only, best th | cascade alpha 0 @0.50 | cascade alpha 0.2 @0.50 | cascade, best th (optimistic) | cascade + neighbour w=0.3 @0.50 | cascade, path text @0.50 | cascade, path text, best th (optimistic) |",
+            "|---|---|---|---|---|---|---|---|---|---|",
         ]
         for e in emb["encoders"]:
             if "error" in e:
-                lines.append(f"| {e['model']} | - | not loadable: {e['error']} | | | | |")
+                lines.append(f"| {e['model']} | - | not loadable: {e['error']} | | | | | | |")
                 continue
             cells = [
                 f"`{e['encoder']['model']}`",
@@ -800,6 +827,8 @@ def write_markdown(payload: dict, ours: dict[str, BenchmarkRun], baseline: Bench
                 f"{e['cascade_alpha02']['M1']['f1']:.3f} / {e['cascade_alpha02']['M3']['f1']:.3f}",
                 f"{e['cascade_best']['M1']['f1']:.3f} / {e['cascade_best']['M3']['f1']:.3f} (th {e['cascade_best']['threshold']:.2f})",
                 f"{e['structural_apriori']['neighbour']['M1']['f1']:.3f} / {e['structural_apriori']['neighbour']['M3']['f1']:.3f}",
+                f"{e['cascade_path']['M1']['f1']:.3f} / {e['cascade_path']['M3']['f1']:.3f}",
+                f"{e['cascade_path_best']['M1']['f1']:.3f} / {e['cascade_path_best']['M3']['f1']:.3f} (th {e['cascade_path_best']['threshold']:.2f})",
             ]
             lines.append("| " + " | ".join(cells) + " |")
         lines += [
@@ -890,6 +919,9 @@ def evaluate_encoder(
     hyb_default = bench.run(cascade0, DEFAULT_THRESHOLD)
     hyb02 = bench.run(cascade02, DEFAULT_THRESHOLD)
     hyb_best, hyb_curve = bench.sweep(cascade0, SWEEP_THRESHOLDS, modality="M3")
+    path_matcher = HybridMatcher(encoder, PATH_HYBRID)
+    path_default = bench.run(path_matcher, DEFAULT_THRESHOLD)
+    path_best, path_curve = bench.sweep(path_matcher, SWEEP_THRESHOLDS, modality="M3")
     info = {
         "encoder": encoder.info.to_dict(),
         "model": model,
@@ -899,9 +931,17 @@ def evaluate_encoder(
         "cascade_alpha0": {**{m: micro(hyb_default, m) for m in MODALITIES}, "threshold": DEFAULT_THRESHOLD},
         "cascade_alpha02": {**{m: micro(hyb02, m) for m in MODALITIES}, "threshold": DEFAULT_THRESHOLD},
         "cascade_best": {**{m: micro(hyb_best, m) for m in MODALITIES}, "threshold": hyb_best.threshold},
+        "cascade_path": {**{m: micro(path_default, m) for m in MODALITIES}, "threshold": DEFAULT_THRESHOLD},
+        "cascade_path_best": {**{m: micro(path_best, m) for m in MODALITIES}, "threshold": path_best.threshold},
         "texts_encoded_this_run": encoder.calls,
     }
-    runs = {"embedding_apriori": emb_default, "embedding_best": emb_best, "hybrid_apriori": hyb_default}
+    runs = {
+        "embedding_apriori": emb_default,
+        "embedding_best": emb_best,
+        "hybrid_apriori": hyb_default,
+        "path_apriori": path_default,
+        "path_best": path_best,
+    }
     # Structural propagation on top of the a-priori hybrid seed: the a-priori row of every rule.
     seed_cache: dict = {}
     struct_apriori = {}
@@ -917,6 +957,12 @@ def evaluate_encoder(
         best_label = select_config(grid, all_pairs, "M3")
         lopo = cross_validate(grid, leave_one_pair_out_folds(all_pairs), modality="M3")
         looo = cross_validate(grid, leave_one_ontology_out_folds(), modality="M3")
+        # The path cascade alone with only its threshold cross-validated (the sub-grid the error
+        # analysis points at); reported next to the full-grid number to show how much of the path
+        # gain the larger grid's selection noise eats.
+        path_grid = {k: v for k, v in grid.items() if k.startswith(grid_label("cascade", 0.0, "path", 0.0, 0.0)[:-7])}
+        path_lopo = cross_validate(path_grid, leave_one_pair_out_folds(all_pairs), modality="M3")
+        path_looo = cross_validate(path_grid, leave_one_ontology_out_folds(), modality="M3")
         # Structural grid: on its own and in union with the hybrid grid (the CV may pick "no structure").
         s_grid, s_micro, s_iters = run_structural_grid(bench, encoder)
         s_best_label = select_config(s_grid, all_pairs, "M3")
@@ -994,8 +1040,11 @@ def evaluate_encoder(
                 "best_on_ra1": {"label": best_label, **grid_micro[best_label], "caveat": "selected on the test set"},
                 "cv_leave_one_pair_out": lopo,
                 "cv_leave_one_ontology_out": looo,
+                "path_cascade_threshold_only_cv_leave_one_pair_out": path_lopo,
+                "path_cascade_threshold_only_cv_leave_one_ontology_out": path_looo,
                 "embedding_threshold_curve": emb_curve,
                 "cascade_threshold_curve": hyb_curve,
+                "path_threshold_curve": path_curve,
             }
         )
         # The best grid point as a BenchmarkRun (for the results table).
@@ -1138,6 +1187,8 @@ def main() -> None:
                     "olaya_embedding_default": ours["embedding_apriori"].to_dict(),
                     "olaya_embedding_best_threshold": ours["embedding_best"].to_dict(),
                     "olaya_hybrid_apriori": ours["hybrid_apriori"].to_dict(),
+                    "olaya_hybrid_path_apriori": ours["path_apriori"].to_dict(),
+                    "olaya_hybrid_path_best_threshold": ours["path_best"].to_dict(),
                     "olaya_hybrid_best_on_ra1": ours["hybrid_best"].to_dict(),
                     "olaya_structural_apriori": ours["structural_apriori"].to_dict(),
                     "olaya_structural_best_on_ra1": ours["structural_best"].to_dict(),

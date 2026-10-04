@@ -578,6 +578,7 @@ class LexicalMatcherConfig:
     char_weight: float = 1.0  # weight of the char similarity once it passes ``char_min``
     char_min: float = 0.9  # only near-identical spellings count; ungated it cost ~0.1 F1
     context_weight: float = 0.2  # weight of comment/neighbour token overlap (+0.01-0.02 F1)
+    head_weight: float = 0.0  # soft bonus when the two labels share their head noun (ablation knob, 0 = off)
     match_properties: bool = True
 
 
@@ -591,6 +592,8 @@ class LexicalMatcher(Matcher):
 
     def __init__(self, config: LexicalMatcherConfig | None = None):
         self.config = config or LexicalMatcherConfig()
+        if self.config.head_weight > 0.0:
+            self.name = f"olaya-lexical[head={self.config.head_weight:.2f}]"
 
     def score_all(self, source: Ontology, target: Ontology) -> list[OAEIAlignment]:
         cfg = self.config
@@ -644,6 +647,9 @@ class LexicalMatcher(Matcher):
                         score = max(score, cfg.char_weight * char_sim)
                 if cfg.context_weight > 0.0:
                     score = (1.0 - cfg.context_weight) * score + cfg.context_weight * context_sim(s, t)
+                if cfg.head_weight > 0.0 and s.tokens and t.tokens:
+                    same_head = 1.0 if s.tokens[-1] == t.tokens[-1] else 0.0
+                    score = (1.0 - cfg.head_weight) * score + cfg.head_weight * same_head
                 if score > 0.0:
                     out.append(OAEIAlignment(s.name, t.name, "=", round(score, 6)))
         return out
@@ -671,15 +677,66 @@ class EntityText:
     kind: str
     label: str  # label only (camelCase split)
     full: str  # label + comment + parents / domain + range
+    head: str = ""  # head noun of the label (last non-stop token), e.g. "author" for "Regular author"
+    rich: str = ""  # label + comment + path from the root + children + siblings + properties (classes)
+    path: str = ""  # "Root > ... > label" (classes) or "Domain > label > Range" (properties)
+
+
+TEXT_FIELDS = ("label", "full", "head", "rich", "path")
+TEXT_ALIASES = {"both": "label+full", "three": "label+full+head"}
+
+_MAX_LISTED = 8  # cap on children / siblings / properties listed in the rich text
+
+
+def head_noun(label: str) -> str:
+    """Last non-stop-word token of a (camelCase-split) label, lowercase; ``""`` if none."""
+    toks = [w.lower() for w in re.findall(r"[A-Za-z0-9]+", camel_to_words(label))]
+    toks = [t for t in toks if t not in STOP_WORDS] or toks
+    return toks[-1] if toks else ""
+
+
+def _root_path(ontology: Ontology, curie: str) -> list[str]:
+    """Labels from a root down to ``curie`` along the (lexicographically first) parent chain."""
+    chain = [curie]
+    seen = {curie}
+    cur = curie
+    while True:
+        parents = sorted(p for p in ontology.concepts.get(cur, Concept(cur, cur)).parents if p not in seen)
+        if not parents:
+            break
+        cur = parents[0]
+        seen.add(cur)
+        chain.append(cur)
+    return [_display_name(ontology, c) for c in reversed(chain)]
+
+
+def _listed(ontology: Ontology, names: Iterable[str]) -> str:
+    items = [_display_name(ontology, n) for n in sorted(names)]
+    if len(items) > _MAX_LISTED:
+        items = items[:_MAX_LISTED]
+    return ", ".join(items)
 
 
 def build_entity_texts(ontology: Ontology) -> list[EntityText]:
-    """Natural-language description of every class and property, for the encoder.
+    """Natural-language descriptions of every class and property, for the encoder.
 
-    Classes: ``<label>. <comment> Subclass of <parent labels>.``
-    Properties: ``<label>. <comment> Domain: <labels>. Range: <labels>.``
+    ``full`` (the original field): classes ``<label>. <comment> Subclass of <parent labels>.``,
+    properties ``<label>. <comment> Domain: <labels>. Range: <labels>.``
+
+    ``rich`` adds the graph context in words: the path from the root, the children,
+    the siblings and (for classes) the properties the class is domain or range of;
+    for properties the inverse and super-properties.  ``head`` is the head noun of
+    the label and ``path`` the bare root path.  Which fields the matcher uses is a
+    configuration knob (:class:`EmbeddingMatcherConfig.text`).
     """
     out: list[EntityText] = []
+    domain_of: dict[str, set[str]] = {}
+    range_of: dict[str, set[str]] = {}
+    for pcurie, prop in ontology.properties.items():
+        for d in prop.domains:
+            domain_of.setdefault(d, set()).add(pcurie)
+        for r in prop.ranges:
+            range_of.setdefault(r, set()).add(pcurie)
     for curie, concept in sorted(ontology.concepts.items()):
         label = _display_name(ontology, curie)
         parts = [label + "."]
@@ -688,30 +745,84 @@ def build_entity_texts(ontology: Ontology) -> list[EntityText]:
         parents = [_display_name(ontology, p) for p in sorted(concept.parents)]
         if parents:
             parts.append("Subclass of " + ", ".join(parents) + ".")
-        out.append(EntityText(curie, "class", label, " ".join(parts)))
+        full = " ".join(parts)
+        path_labels = _root_path(ontology, curie)
+        path = " > ".join(path_labels)
+        rich = list(parts[:2])
+        if len(path_labels) > 1:
+            rich.append("Path: " + path + ".")
+        if concept.children:
+            rich.append("Superclass of " + _listed(ontology, concept.children) + ".")
+        siblings = set()
+        for p in concept.parents:
+            siblings |= ontology.concepts[p].children if p in ontology.concepts else set()
+        siblings.discard(curie)
+        if siblings:
+            rich.append("Siblings: " + _listed(ontology, siblings) + ".")
+        if concept.synonyms:
+            rich.append("Also called " + ", ".join(concept.synonyms) + ".")
+        props = domain_of.get(curie, set())
+        if props:
+            rich.append("Has properties " + _listed(ontology, props) + ".")
+        rprops = range_of.get(curie, set())
+        if rprops:
+            rich.append("Is the value of " + _listed(ontology, rprops) + ".")
+        out.append(EntityText(curie, "class", label, full, head_noun(label), " ".join(rich), path))
     for curie, prop in sorted(ontology.properties.items()):
         label = _display_name(ontology, curie)
         parts = [label + "."]
         if prop.description:
             parts.append(prop.description.strip().rstrip(".") + ".")
-        if prop.domains:
-            parts.append("Domain: " + ", ".join(_display_name(ontology, d) for d in sorted(prop.domains)) + ".")
-        if prop.ranges:
-            parts.append("Range: " + ", ".join(_display_name(ontology, r) for r in sorted(prop.ranges)) + ".")
-        elif prop.metadata.get("datatype"):
-            parts.append("Range: " + str(prop.metadata["datatype"]) + ".")
-        out.append(EntityText(curie, "property", label, " ".join(parts)))
+        dom = ", ".join(_display_name(ontology, d) for d in sorted(prop.domains))
+        rng = ", ".join(_display_name(ontology, r) for r in sorted(prop.ranges))
+        if not rng and prop.metadata.get("datatype"):
+            rng = str(prop.metadata["datatype"])
+        if dom:
+            parts.append("Domain: " + dom + ".")
+        if rng:
+            parts.append("Range: " + rng + ".")
+        full = " ".join(parts)
+        rich = list(parts)
+        if prop.inverses:
+            rich.append("Inverse of " + _listed(ontology, prop.inverses) + ".")
+        if prop.parents:
+            rich.append("Sub-property of " + _listed(ontology, prop.parents) + ".")
+        kind = prop.metadata.get("kind", "object")
+        rich.append("A datatype property." if kind == "datatype" else "An object property.")
+        path = " > ".join(x for x in (dom or "?", label, rng or "?"))
+        out.append(EntityText(curie, "property", label, full, head_noun(label), " ".join(rich), path))
     return out
+
+
+def text_fields(text: str) -> list[str]:
+    """Expand a ``text`` knob (``"both"``, ``"label+rich+head"`` ...) into field names."""
+    fields = TEXT_ALIASES.get(text, text).split("+")
+    for f in fields:
+        if f not in TEXT_FIELDS:
+            raise ValueError(
+                f"unknown entity text field {f!r}; known: {TEXT_FIELDS} and aliases {sorted(TEXT_ALIASES)}"
+            )
+    return fields
 
 
 @dataclass
 class EmbeddingMatcherConfig:
     """Knobs of :class:`EmbeddingMatcher`."""
 
-    text: str = "both"  # "label", "full" or "both" (mean of the two cosines)
+    text: str = "both"  # fields averaged: "label", "full", "both" (= label+full), "label+rich+head", ...
     calibration: str = "csls"  # "none" (raw cosine) or "csls" (hubness-corrected, see below)
     csls_k: int = 10  # neighbourhood size of the CSLS correction
     match_properties: bool = True
+
+
+def _encoder_list(encoder: Any) -> list[Any]:
+    if isinstance(encoder, (list, tuple)):
+        return list(encoder)
+    return [encoder]
+
+
+def _short_model_name(name: str) -> str:
+    return name.rsplit("/", 1)[-1]
 
 
 class EmbeddingMatcher(Matcher):
@@ -719,19 +830,33 @@ class EmbeddingMatcher(Matcher):
 
     The confidence is the cosine clipped to ``[0, 1]``.  With ``text="both"`` the
     label-only and full-description cosines are averaged, which keeps the exact
-    label signal sharp while letting comments / neighbours disambiguate.
+    label signal sharp while letting comments / neighbours disambiguate; any
+    ``+``-joined combination of :data:`TEXT_FIELDS` is accepted.
+
+    ``encoder`` may be a list of encoders: each encoder's (field-averaged) cosine is
+    calibrated on its own and the calibrated matrices are averaged (an *ensemble*).
     """
 
     def __init__(self, encoder: Any, config: EmbeddingMatcherConfig | None = None):
-        self.encoder = encoder
+        self.encoders = _encoder_list(encoder)
+        self.encoder = self.encoders[0]
         self.config = config or EmbeddingMatcherConfig()
-        self._cache: dict[str, tuple[list[EntityText], Any, Any]] = {}
+        self._cache: dict[str, tuple[list[EntityText], Any, Any]] = {}  # legacy (label, full) vectors
+        self._field_cache: dict[tuple[str, int], tuple[list[EntityText], dict[str, Any]]] = {}
 
     @property
     def name(self) -> str:  # type: ignore[override]
         c = self.config
         cal = f"{c.calibration}{c.csls_k}" if c.calibration == "csls" else c.calibration
-        return f"olaya-embedding[{self.encoder.name},{c.text},{cal}]"
+        enc = (
+            "+".join(_short_model_name(e.name) for e in self.encoders) if len(self.encoders) > 1 else self.encoder.name
+        )
+        return f"olaya-embedding[{enc},{c.text},{cal}]"
+
+    @property
+    def _legacy(self) -> bool:
+        """Single encoder on the original label / full texts: the overridable ``_encode`` path."""
+        return len(self.encoders) == 1 and self.config.text in ("label", "full", "both")
 
     def _encode(self, ontology: Ontology) -> tuple[list[EntityText], Any, Any]:
         key = ontology.name
@@ -742,20 +867,44 @@ class EmbeddingMatcher(Matcher):
             self._cache[key] = (texts, lab, full)
         return self._cache[key]
 
+    def _encode_fields(self, ontology: Ontology, which: int) -> tuple[list[EntityText], dict[str, Any]]:
+        key = (ontology.name, which)
+        if key not in self._field_cache:
+            texts = build_entity_texts(ontology)
+            enc = self.encoders[which]
+            vectors = {f: enc.encode([getattr(t, f) for t in texts]) for f in text_fields(self.config.text)}
+            self._field_cache[key] = (texts, vectors)
+        return self._field_cache[key]
+
     def similarity_matrix(self, source: Ontology, target: Ontology) -> tuple[list[EntityText], list[EntityText], Any]:
         import numpy as np
 
-        st, sl, sf = self._encode(source)
-        tt, tl, tf = self._encode(target)
-        if self.config.text == "label":
-            sim = sl @ tl.T
-        elif self.config.text == "full":
-            sim = sf @ tf.T
-        else:
-            sim = 0.5 * (sl @ tl.T + sf @ tf.T)
-        if self.config.calibration == "csls":
-            sim = csls_calibrate(sim, self.config.csls_k)
-        return st, tt, np.clip(sim, 0.0, 1.0)
+        if self._legacy:
+            st, sl, sf = self._encode(source)
+            tt, tl, tf = self._encode(target)
+            if self.config.text == "label":
+                sim = sl @ tl.T
+            elif self.config.text == "full":
+                sim = sf @ tf.T
+            else:
+                sim = 0.5 * (sl @ tl.T + sf @ tf.T)
+            if self.config.calibration == "csls":
+                sim = csls_calibrate(sim, self.config.csls_k)
+            return st, tt, np.clip(sim, 0.0, 1.0)
+
+        fields = text_fields(self.config.text)
+        total = None
+        st: list[EntityText] = []
+        tt: list[EntityText] = []
+        for which in range(len(self.encoders)):
+            st, sv = self._encode_fields(source, which)
+            tt, tv = self._encode_fields(target, which)
+            sim = sum(sv[f] @ tv[f].T for f in fields) / len(fields)
+            if self.config.calibration == "csls":
+                sim = csls_calibrate(sim, self.config.csls_k)
+            total = sim if total is None else total + sim
+        assert total is not None
+        return st, tt, np.clip(total / len(self.encoders), 0.0, 1.0)
 
     def score_all(self, source: Ontology, target: Ontology) -> list[OAEIAlignment]:
         st, tt, sim = self.similarity_matrix(source, target)
@@ -813,6 +962,7 @@ class HybridMatcherConfig:
     embedding_weight: float = 0.5
     combine: str = "sum"
     cascade_threshold: float = 0.5  # lexical acceptance threshold of the first cascade stage
+    stage2: str = "embedding"  # cascade leftovers scored by "embedding", "max", "mean" or "noisy_or" of lex and emb
     structure_weight: float = 0.0
     lexical: LexicalMatcherConfig = field(default_factory=LexicalMatcherConfig)
     embedding: EmbeddingMatcherConfig = field(default_factory=EmbeddingMatcherConfig)
@@ -829,8 +979,11 @@ class HybridMatcher(Matcher):
     @property
     def name(self) -> str:  # type: ignore[override]
         c = self.config
+        stage2 = "" if c.stage2 == "embedding" else f",stage2={c.stage2}"
+        lex = "" if self.lexical.name == "olaya-lexical" else f",{self.lexical.name}"
         return (
-            f"olaya-hybrid[{self.embedding.name},w={c.embedding_weight:.2f},{c.combine},alpha={c.structure_weight:.2f}]"
+            f"olaya-hybrid[{self.embedding.name}{lex},w={c.embedding_weight:.2f},{c.combine}{stage2},"
+            f"alpha={c.structure_weight:.2f}]"
         )
 
     def base_scores(self, source: Ontology, target: Ontology) -> dict[tuple[str, str], float]:
@@ -849,7 +1002,11 @@ class HybridMatcher(Matcher):
                 for j, t in enumerate(tt):
                     if s.kind != t.kind or t.name in taken2:
                         continue
-                    scores[(s.name, t.name)] = float(sim[i, j])
+                    em = float(sim[i, j])
+                    if c.stage2 != "embedding":
+                        em = combine_scores(lex.get((s.name, t.name), 0.0), em, c.stage2)
+                    if em > 0.0:
+                        scores[(s.name, t.name)] = em
             return scores
         scores: dict[tuple[str, str], float] = {}
         for i, s in enumerate(st):
@@ -871,6 +1028,19 @@ class HybridMatcher(Matcher):
         if alpha > 0.0:
             scores = propagate_structure(scores, source, target, alpha)
         return [OAEIAlignment(s, t, "=", round(v, 6)) for (s, t), v in sorted(scores.items()) if v > 0.0]
+
+
+def combine_scores(lex: float, emb: float, how: str) -> float:
+    """Second-stage fusion of the lexical and embedding scores of a cascade leftover pair."""
+    if how == "max":
+        return max(lex, emb)
+    if how == "mean":
+        return 0.5 * (lex + emb)
+    if how == "noisy_or":
+        return 1.0 - (1.0 - lex) * (1.0 - emb)
+    if how == "embedding":
+        return emb
+    raise ValueError(f"unknown stage2 fusion {how!r}")
 
 
 def propagate_structure(
@@ -932,6 +1102,187 @@ def select_mutual_best(scored: Iterable[OAEIAlignment]) -> list[OAEIAlignment]:
 
 def apply_threshold(alignment: Iterable[OAEIAlignment], threshold: float) -> list[OAEIAlignment]:
     return [c for c in alignment if c.measure >= threshold]
+
+
+def hungarian(cost: list[list[float]]) -> list[int]:
+    """Minimum-cost assignment of rows to columns (rows <= columns), O(n^2 m).
+
+    Returns ``assignment[row] = column``.  Standard shortest-augmenting-path form of
+    the Hungarian algorithm (Jonker-Volgenant style, as in e-maxx); no dependency.
+    """
+    n = len(cost)
+    if n == 0:
+        return []
+    m = len(cost[0])
+    assert n <= m, "hungarian() expects rows <= columns"
+    INF = float("inf")
+    u = [0.0] * (n + 1)
+    v = [0.0] * (m + 1)
+    p = [0] * (m + 1)  # p[j] = row assigned to column j (1-based), 0 = free
+    way = [0] * (m + 1)
+    for i in range(1, n + 1):
+        p[0] = i
+        j0 = 0
+        minv = [INF] * (m + 1)
+        used = [False] * (m + 1)
+        while True:
+            used[j0] = True
+            i0 = p[j0]
+            delta = INF
+            j1 = 0
+            row = cost[i0 - 1]
+            for j in range(1, m + 1):
+                if used[j]:
+                    continue
+                cur = row[j - 1] - u[i0] - v[j]
+                if cur < minv[j]:
+                    minv[j] = cur
+                    way[j] = j0
+                if minv[j] < delta:
+                    delta = minv[j]
+                    j1 = j
+            for j in range(m + 1):
+                if used[j]:
+                    u[p[j]] += delta
+                    v[j] -= delta
+                else:
+                    minv[j] -= delta
+            j0 = j1
+            if p[j0] == 0:
+                break
+        while True:
+            j1 = way[j0]
+            p[j0] = p[j1]
+            j0 = j1
+            if j0 == 0:
+                break
+    out = [-1] * n
+    for j in range(1, m + 1):
+        if p[j]:
+            out[p[j] - 1] = j - 1
+    return out
+
+
+def select_hungarian(scored: Iterable[OAEIAlignment]) -> list[OAEIAlignment]:
+    """Maximum-weight 1:1 assignment per entity kind (class / property are scored separately).
+
+    Pairs that were not scored have weight 0, so the assignment never creates a
+    correspondence with no evidence (zero-score assignments are dropped).
+    """
+    scored = list(scored)
+    if not scored:
+        return []
+    s_names = sorted({a.entity1 for a in scored})
+    t_names = sorted({a.entity2 for a in scored})
+    weight = {(a.entity1, a.entity2): a.measure for a in scored}
+    # Entities only co-occur in pairs of the same kind, so the bipartite graph splits
+    # into connected components by kind; solving the whole matrix is still correct
+    # (zero weights between kinds) and simpler.
+    transpose = len(s_names) > len(t_names)
+    rows, cols = (t_names, s_names) if transpose else (s_names, t_names)
+    cost = [[-(weight.get((c, r), 0.0) if transpose else weight.get((r, c), 0.0)) for c in cols] for r in rows]
+    assignment = hungarian(cost)
+    kept = []
+    for i, j in enumerate(assignment):
+        if j < 0:
+            continue
+        r, c = rows[i], cols[j]
+        key = (c, r) if transpose else (r, c)
+        if weight.get(key, 0.0) > 0.0:
+            kept.append(OAEIAlignment(key[0], key[1], "=", weight[key]))
+    return sorted(kept, key=lambda c: (-c.measure, c.entity1, c.entity2))
+
+
+def select_mutual_best_margin(scored: Iterable[OAEIAlignment], margin: float) -> list[OAEIAlignment]:
+    """Mutual best, keeping only pairs that beat the runner-up of *both* entities by ``margin``.
+
+    The margin is absolute (score units).  ``margin = 0`` is plain mutual best.
+    """
+    scored = list(scored)
+    kept = select_mutual_best(scored)
+    if margin <= 0.0:
+        return kept
+    second_row: dict[str, float] = {}
+    second_col: dict[str, float] = {}
+    best_row: dict[str, float] = {}
+    best_col: dict[str, float] = {}
+    for a in scored:
+        for key, best, second in ((a.entity1, best_row, second_row), (a.entity2, best_col, second_col)):
+            v = a.measure
+            if v > best.get(key, -1.0):
+                second[key] = best.get(key, 0.0)
+                best[key] = v
+            elif v > second.get(key, 0.0):
+                second[key] = v
+    return [
+        a
+        for a in kept
+        if a.measure - second_row.get(a.entity1, 0.0) >= margin and a.measure - second_col.get(a.entity2, 0.0) >= margin
+    ]
+
+
+def apply_adaptive_threshold(
+    alignment: Iterable[OAEIAlignment],
+    scored: Iterable[OAEIAlignment],
+    t_abs: float,
+    t_rel: float,
+    *,
+    mode: str = "runner_up",
+) -> list[OAEIAlignment]:
+    """Per-pair adaptive acceptance of the selected (mutual-best / assigned) pairs.
+
+    A pair is accepted if ``score >= t_abs`` **or** it passes the relative clause:
+
+    * ``mode="runner_up"``: the runner-up of *both* its row and its column is at most
+      ``t_rel * score`` (the pair dominates its competition; ``t_rel = 0`` requires a
+      runner-up of zero, ``t_rel >= 1`` disables the clause);
+    * ``mode="pair_max"``: ``score >= t_rel * max score of the whole pair`` (the
+      threshold adapts to the pair's score scale; ``t_rel >= 1`` disables the clause).
+
+    With the clause disabled this is the plain absolute threshold.
+    """
+    scored = list(scored)
+    if t_rel >= 1.0:
+        return apply_threshold(alignment, t_abs)
+    best_row: dict[str, float] = {}
+    second_row: dict[str, float] = {}
+    best_col: dict[str, float] = {}
+    second_col: dict[str, float] = {}
+    for a in scored:
+        for key, best, second in ((a.entity1, best_row, second_row), (a.entity2, best_col, second_col)):
+            v = a.measure
+            if v > best.get(key, -1.0):
+                second[key] = best.get(key, 0.0)
+                best[key] = v
+            elif v > second.get(key, 0.0):
+                second[key] = v
+    pair_max = max((a.measure for a in scored), default=0.0)
+    out = []
+    for a in alignment:
+        if a.measure >= t_abs:
+            out.append(a)
+            continue
+        if mode == "pair_max":
+            if pair_max > 0.0 and a.measure >= t_rel * pair_max:
+                out.append(a)
+        else:
+            run_up = max(second_row.get(a.entity1, 0.0), second_col.get(a.entity2, 0.0))
+            if a.measure > 0.0 and run_up <= t_rel * a.measure:
+                out.append(a)
+    return out
+
+
+def select_alignment(scored: Iterable[OAEIAlignment], selection: str = "mutual") -> list[OAEIAlignment]:
+    """Dispatch on the selection rule: ``"mutual"``, ``"hungarian"``, ``"margin=<x>"`` or ``"all"``."""
+    if selection == "mutual":
+        return select_mutual_best(scored)
+    if selection == "hungarian":
+        return select_hungarian(scored)
+    if selection.startswith("margin="):
+        return select_mutual_best_margin(scored, float(selection.split("=", 1)[1]))
+    if selection == "all":
+        return sorted(scored, key=lambda c: c.key)
+    raise ValueError(f"unknown selection rule {selection!r}")
 
 
 def coherence_repair(alignment: list[OAEIAlignment], source: Ontology, target: Ontology) -> list[OAEIAlignment]:
@@ -1048,7 +1399,7 @@ class OAEIConferenceBenchmark:
         self._ontologies: dict[str, Ontology] = {}
         self._references: dict[tuple[str, str], list[OAEIAlignment]] = {}
         self._scores: dict[tuple[str, str, str], list[OAEIAlignment]] = {}
-        self._mutual: dict[tuple[str, str, str], list[OAEIAlignment]] = {}
+        self._mutual: dict[tuple[str, str, str, str], list[OAEIAlignment]] = {}
 
     # -- data access -------------------------------------------------------
     def ontology_path(self, name: str) -> Path:
@@ -1097,27 +1448,57 @@ class OAEIConferenceBenchmark:
         *,
         mutual_best: bool = True,
         repair: bool = False,
+        selection: str = "mutual",
+        relative: float | None = None,
+        relative_mode: str = "runner_up",
     ) -> list[OAEIAlignment]:
-        key = (matcher.name, source.lower(), target.lower())
-        if mutual_best:
-            # Mutual-best selection does not depend on the threshold: cache it per matcher / pair
+        """Decode one pair: 1:1 selection (``selection``), then the threshold.
+
+        ``relative`` switches the plain threshold to the per-pair adaptive rule of
+        :func:`apply_adaptive_threshold` (``threshold`` is then the absolute clause).
+        ``mutual_best=False`` is the legacy spelling of ``selection="all"``.
+        """
+        if not mutual_best:
+            selection = "all"
+        key = (matcher.name, source.lower(), target.lower(), selection)
+        if key not in self._mutual:
+            # Selection does not depend on the threshold: cache it per matcher / pair / rule
             # so a threshold sweep only re-applies the cut-off.
-            if key not in self._mutual:
-                self._mutual[key] = select_mutual_best(self.scored_pairs(matcher, source, target))
-            alignment = self._mutual[key]
+            self._mutual[key] = select_alignment(self.scored_pairs(matcher, source, target), selection)
+        alignment = self._mutual[key]
+        if relative is None:
+            alignment = apply_threshold(alignment, threshold)
         else:
-            alignment = sorted(self.scored_pairs(matcher, source, target), key=lambda c: c.key)
-        alignment = apply_threshold(alignment, threshold)
+            scored = self.scored_pairs(matcher, source, target)
+            alignment = apply_adaptive_threshold(alignment, scored, threshold, relative, mode=relative_mode)
         if repair:
             alignment = coherence_repair(alignment, self.ontology(source), self.ontology(target))
         return alignment
 
     def evaluate_pair(
-        self, matcher: Matcher, source: str, target: str, threshold: float, *, repair: bool = False
+        self,
+        matcher: Matcher,
+        source: str,
+        target: str,
+        threshold: float,
+        *,
+        repair: bool = False,
+        selection: str = "mutual",
+        relative: float | None = None,
+        relative_mode: str = "runner_up",
     ) -> PairEvaluation:
         src, tgt = self.ontology(source), self.ontology(target)
         ref = self.reference(source, target)
-        system = self.align(matcher, source, target, threshold, repair=repair)
+        system = self.align(
+            matcher,
+            source,
+            target,
+            threshold,
+            repair=repair,
+            selection=selection,
+            relative=relative,
+            relative_mode=relative_mode,
+        )
         return PairEvaluation(
             pair=f"{source}-{target}",
             source=source,
@@ -1134,8 +1515,23 @@ class OAEIConferenceBenchmark:
         *,
         repair: bool = False,
         pairs: Iterable[tuple[str, str]] = CONFERENCE_PAIRS,
+        selection: str = "mutual",
+        relative: float | None = None,
+        relative_mode: str = "runner_up",
     ) -> BenchmarkRun:
-        evals = [self.evaluate_pair(matcher, s, t, threshold, repair=repair) for s, t in pairs]
+        evals = [
+            self.evaluate_pair(
+                matcher,
+                s,
+                t,
+                threshold,
+                repair=repair,
+                selection=selection,
+                relative=relative,
+                relative_mode=relative_mode,
+            )
+            for s, t in pairs
+        ]
         return BenchmarkRun(matcher.name, threshold, repair, evals, aggregate(evals))
 
     def sweep(
