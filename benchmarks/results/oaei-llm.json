@@ -1,0 +1,7172 @@
+{
+  "benchmark": "OAEI Conference track, reference alignment ra1",
+  "category": "LLM-based matcher (hybrid lexical + embedding candidates, language-model judge)",
+  "date_utc": "2026-10-04T03:24:50Z",
+  "commit": "148e224681a4",
+  "judge": "stub",
+  "model": "stub",
+  "effort": null,
+  "prompt_version": "oaei-judge-v1",
+  "system_prompt_sha256": "874534030e7803f0e24f397f2cbf23ed03834c091e9fb13058ef0ae04a98777f",
+  "encoder": "intfloat/e5-small-v2",
+  "candidate_generator": "candidates[olaya-hybrid[olaya-embedding[intfloat/e5-small-v2,both,csls10],w=0.50,cascade,alpha=0.00],k=3,min=0.15,rich_k=2]",
+  "candidate_config": {
+    "k": 3,
+    "min_score": 0.15,
+    "rich_k": 2
+  },
+  "pairs": [
+    "cmt-conference",
+    "cmt-confOf",
+    "cmt-edas",
+    "cmt-ekaw",
+    "cmt-iasted",
+    "cmt-sigkdd",
+    "conference-confOf",
+    "conference-edas",
+    "conference-ekaw",
+    "conference-iasted",
+    "conference-sigkdd",
+    "confOf-edas",
+    "confOf-ekaw",
+    "confOf-iasted",
+    "confOf-sigkdd",
+    "edas-ekaw",
+    "edas-iasted",
+    "edas-sigkdd",
+    "ekaw-iasted",
+    "ekaw-sigkdd",
+    "iasted-sigkdd"
+  ],
+  "candidates": {
+    "total": 9560,
+    "by_origin": {
+      "accepted": 273,
+      "hybrid": 2001,
+      "path": 1315,
+      "rich": 8545
+    },
+    "recall_ceiling_micro": {
+      "M1": 0.9653,
+      "M2": 0.9348,
+      "M3": 0.9607
+    },
+    "per_pair": {
+      "cmt-conference": {
+        "candidates": 421,
+        "M1": 1.0,
+        "M2": 0.6667,
+        "M3": 0.9333
+      },
+      "cmt-confOf": {
+        "candidates": 296,
+        "M1": 1.0,
+        "M2": 0.8333,
+        "M3": 0.9375
+      },
+      "cmt-edas": {
+        "candidates": 467,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "cmt-ekaw": {
+        "candidates": 404,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "cmt-iasted": {
+        "candidates": 535,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "cmt-sigkdd": {
+        "candidates": 333,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "conference-confOf": {
+        "candidates": 384,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "conference-edas": {
+        "candidates": 563,
+        "M1": 1.0,
+        "M2": 0.6667,
+        "M3": 0.9412
+      },
+      "conference-ekaw": {
+        "candidates": 476,
+        "M1": 0.9565,
+        "M2": 1.0,
+        "M3": 0.96
+      },
+      "conference-iasted": {
+        "candidates": 620,
+        "M1": 0.6923,
+        "M2": 1.0,
+        "M3": 0.7143
+      },
+      "conference-sigkdd": {
+        "candidates": 407,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "confOf-edas": {
+        "candidates": 430,
+        "M1": 0.9286,
+        "M2": 1.0,
+        "M3": 0.9474
+      },
+      "confOf-ekaw": {
+        "candidates": 356,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "confOf-iasted": {
+        "candidates": 492,
+        "M1": 0.8889,
+        "M2": 1.0,
+        "M3": 0.8889
+      },
+      "confOf-sigkdd": {
+        "candidates": 280,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "edas-ekaw": {
+        "candidates": 547,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "edas-iasted": {
+        "candidates": 676,
+        "M1": 0.9474,
+        "M2": 1.0,
+        "M3": 0.9474
+      },
+      "edas-sigkdd": {
+        "candidates": 431,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "ekaw-iasted": {
+        "candidates": 573,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "ekaw-sigkdd": {
+        "candidates": 349,
+        "M1": 1.0,
+        "M2": 1.0,
+        "M3": 1.0
+      },
+      "iasted-sigkdd": {
+        "candidates": 520,
+        "M1": 0.9333,
+        "M2": 1.0,
+        "M3": 0.9333
+      }
+    }
+  },
+  "cost_estimate": {
+    "claude-opus-5-5": {
+      "requests": 648,
+      "pairs": 9560,
+      "input_tokens": 1483254,
+      "output_tokens_assumed": 573600,
+      "usd": 17.41,
+      "method": "chars/4 estimate"
+    },
+    "claude-sonnet-5-5": {
+      "requests": 648,
+      "pairs": 9560,
+      "input_tokens": 1483254,
+      "output_tokens_assumed": 573600,
+      "usd": 8.7,
+      "method": "chars/4 estimate"
+    },
+    "claude-haiku-4-5": {
+      "requests": 648,
+      "pairs": 9560,
+      "input_tokens": 1483254,
+      "output_tokens_assumed": 573600,
+      "usd": 4.35,
+      "method": "chars/4 estimate"
+    }
+  },
+  "batch_size": 15,
+  "requests": 648,
+  "dataset_hashes": {
+    "ontologies/Conference.owl": "9aa78f9673b776c26f615ec7946182c60a146015038ab9c3c105d903251ff1dd",
+    "ontologies/cmt.owl": "8bf45a9de7faf24bfee5a9d90cd95f744964f90bb0ad64ad80ec4335f6f5c1db",
+    "ontologies/confOf.owl": "e869c4e75c65c5fd26523a4e73b99a3b1916823a35708798e87c549a63242625",
+    "ontologies/edas.owl": "6bf83df738c1c3cbf1321a679ee9867fe0ecf97d15a578d8483380e1f28408c3",
+    "ontologies/ekaw.owl": "e4582518c2b2afe7eca9668c88e9d0f4ab34dcb7d169ebf6880c79dac5e6edaa",
+    "ontologies/iasted.owl": "36fabbc70accc1260a3ab10fcba2bdf809edf4bb7f78030cc825a90c1f709f33",
+    "ontologies/sigkdd.owl": "c0bcbb1376ce5d9e711e3d23d809c4e214416cdcfd5a204d80fde7140deaebf4",
+    "reference_alignments/cmt-confOf.rdf": "e9c402455c838b75b74614a4019b9c1e3b63ba85ba2ab73ac104a5d059776b42",
+    "reference_alignments/cmt-conference.rdf": "6ce52b6f2e9eca110f6d7fbf12be1475063e8556e7be89bef733b7defd28b0bf",
+    "reference_alignments/cmt-edas.rdf": "d16347ed42a9f48b5695ed504d0714b627029a62848df77218b15b9de065f393",
+    "reference_alignments/cmt-ekaw.rdf": "ab825abd429d435bbef672d4386ddef78e1d0f15e6e28cd16f67907831a8a42e",
+    "reference_alignments/cmt-iasted.rdf": "cc67c2b41dc50deb8bee9c98a48007c698b825538bfc4820f1b28c41c884f187",
+    "reference_alignments/cmt-sigkdd.rdf": "3c433c01260c329f07cdce5b8d01c353bc511fe36d5aac5571954d0820888e7f",
+    "reference_alignments/confOf-edas.rdf": "f90c4427213cac1c6134d5d5ddf270268939a53c7605232209154a7b93735971",
+    "reference_alignments/confOf-ekaw.rdf": "76e8935bb0976e48d3f9c97d0caef2fd1fbae292413c5a9e8da24c6d866e865c",
+    "reference_alignments/confOf-iasted.rdf": "d32d37eb312c421ca40b7aceb7c8754af7ec418c0c4ca6b263614ecee8c9a1d6",
+    "reference_alignments/confOf-sigkdd.rdf": "7fa8b226f53473067bf45d8318ef8630b16b32f3d0c0489e5792a716137cf351",
+    "reference_alignments/conference-confOf.rdf": "acedbf5685196c14b3f8b2dba2b8ab93b9b448ba1a9252c81f30bb89086bf517",
+    "reference_alignments/conference-edas.rdf": "8a0dfa0ddea8eb6f55c569eb898d505f93e1b8cfbf9c038d6909cd7021f23233",
+    "reference_alignments/conference-ekaw.rdf": "23c0ded5a68600664ce0c669f3343e2cc6f077e028ef44d536a6aec370803d79",
+    "reference_alignments/conference-iasted.rdf": "55765ad3b30b2b796234230c8ce33d56074e1b9752cee149b7343386778fba74",
+    "reference_alignments/conference-sigkdd.rdf": "c90a348205b5e8447195aed1c722ee1086b03f0475a2055f3559e3d5499a59f1",
+    "reference_alignments/edas-ekaw.rdf": "13ae6872b60976da8d32f33795776cabba1908a03e3035ca475835f98e425fd7",
+    "reference_alignments/edas-iasted.rdf": "bfda638f4e16fa2e82d6bc33baf53f2a73bdb338977e71e84b66acf285bc17ff",
+    "reference_alignments/edas-sigkdd.rdf": "7ae3b3440772687cfd4706b910dbe22a53fc45fa5255dbbd6d7bd438210d6f1b",
+    "reference_alignments/ekaw-iasted.rdf": "20886cea3021f560b64e01917cb25c1bc2bd9d3b0b0c79ccf4cc441aefd5bfd8",
+    "reference_alignments/ekaw-sigkdd.rdf": "080dd8d9089ee5d705f082c43ecc1160d94835f3bc9474f199bdeb4d50b41ab9",
+    "reference_alignments/iasted-sigkdd.rdf": "69abc4a050b84cc8df98f4071aad382eae6ec172b64c20007f747770d4c2391a"
+  },
+  "judge_name": "stub[noise=0.00]",
+  "judgments_file": null,
+  "judgments_cached_before": 0,
+  "judgments_sent": 9560,
+  "usage_ledger": [
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 11,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 2,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 14,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 10,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 3,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 9,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 8,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 11,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 5,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 2,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 10,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 11,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 12,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 10,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 7,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 1,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 11,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 3,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 4,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 15,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    },
+    {
+      "model": "stub",
+      "n_pairs": 10,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "elapsed_s": 0.0,
+      "request_id": ""
+    }
+  ],
+  "usage_total": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "usd": 0.0
+  },
+  "judge_quality_on_candidates": {
+    "M1": {
+      "tp": 250,
+      "fp": 0,
+      "fn": 9,
+      "precision": 1.0,
+      "recall": 0.9653,
+      "f1": 0.9823,
+      "f0.5": 0.9929,
+      "f2": 0.972
+    },
+    "M2": {
+      "tp": 43,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1.0,
+      "recall": 0.9348,
+      "f1": 0.9663,
+      "f0.5": 0.9862,
+      "f2": 0.9471
+    },
+    "M3": {
+      "tp": 293,
+      "fp": 0,
+      "fn": 12,
+      "precision": 1.0,
+      "recall": 0.9607,
+      "f1": 0.9799,
+      "f0.5": 0.9919,
+      "f2": 0.9683
+    }
+  },
+  "hybrid_alignment_apriori": {
+    "M1": {
+      "micro": {
+        "tp": 176,
+        "fp": 38,
+        "fn": 83,
+        "precision": 0.8224,
+        "recall": 0.6795,
+        "f1": 0.7442,
+        "f0.5": 0.7892,
+        "f2": 0.704
+      },
+      "macro": {
+        "pairs": 21,
+        "precision": 0.8487,
+        "recall": 0.7049,
+        "f1": 0.7582
+      }
+    },
+    "M2": {
+      "micro": {
+        "tp": 17,
+        "fp": 42,
+        "fn": 29,
+        "precision": 0.2881,
+        "recall": 0.3696,
+        "f1": 0.3238,
+        "f0.5": 0.3014,
+        "f2": 0.3498
+      },
+      "macro": {
+        "pairs": 14,
+        "precision": 0.3383,
+        "recall": 0.3488,
+        "f1": 0.3146
+      }
+    },
+    "M3": {
+      "micro": {
+        "tp": 193,
+        "fp": 80,
+        "fn": 112,
+        "precision": 0.707,
+        "recall": 0.6328,
+        "f1": 0.6678,
+        "f0.5": 0.6908,
+        "f2": 0.6463
+      },
+      "macro": {
+        "pairs": 21,
+        "precision": 0.7435,
+        "recall": 0.6536,
+        "f1": 0.682
+      }
+    }
+  },
+  "apriori": {
+    "label": "mode=repair,th=0.50",
+    "aggregates": {
+      "M1": {
+        "micro": {
+          "tp": 248,
+          "fp": 0,
+          "fn": 11,
+          "precision": 1.0,
+          "recall": 0.9575,
+          "f1": 0.9783,
+          "f0.5": 0.9912,
+          "f2": 0.9657
+        },
+        "macro": {
+          "pairs": 21,
+          "precision": 1.0,
+          "recall": 0.9626,
+          "f1": 0.9795
+        }
+      },
+      "M2": {
+        "micro": {
+          "tp": 43,
+          "fp": 0,
+          "fn": 3,
+          "precision": 1.0,
+          "recall": 0.9348,
+          "f1": 0.9663,
+          "f0.5": 0.9862,
+          "f2": 0.9471
+        },
+        "macro": {
+          "pairs": 14,
+          "precision": 1.0,
+          "recall": 0.9405,
+          "f1": 0.9649
+        }
+      },
+      "M3": {
+        "micro": {
+          "tp": 291,
+          "fp": 0,
+          "fn": 14,
+          "precision": 1.0,
+          "recall": 0.9541,
+          "f1": 0.9765,
+          "f0.5": 0.9905,
+          "f2": 0.9629
+        },
+        "macro": {
+          "pairs": 21,
+          "precision": 1.0,
+          "recall": 0.9565,
+          "f1": 0.9765
+        }
+      }
+    }
+  },
+  "best_on_ra1": {
+    "label": "mode=judge,th=0.30",
+    "M1": {
+      "tp": 248,
+      "fp": 0,
+      "fn": 11,
+      "precision": 1.0,
+      "recall": 0.9575,
+      "f1": 0.9783,
+      "f0.5": 0.9912,
+      "f2": 0.9657
+    },
+    "M2": {
+      "tp": 43,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1.0,
+      "recall": 0.9348,
+      "f1": 0.9663,
+      "f0.5": 0.9862,
+      "f2": 0.9471
+    },
+    "M3": {
+      "tp": 291,
+      "fp": 0,
+      "fn": 14,
+      "precision": 1.0,
+      "recall": 0.9541,
+      "f1": 0.9765,
+      "f0.5": 0.9905,
+      "f2": 0.9629
+    }
+  },
+  "lopo_cv": {
+    "modality_selected": "M3",
+    "folds": 21,
+    "chosen": {
+      "cmt-conference": "mode=judge,th=0.30",
+      "cmt-confOf": "mode=judge,th=0.30",
+      "cmt-edas": "mode=judge,th=0.30",
+      "cmt-ekaw": "mode=judge,th=0.30",
+      "cmt-iasted": "mode=judge,th=0.30",
+      "cmt-sigkdd": "mode=judge,th=0.30",
+      "conference-confOf": "mode=judge,th=0.30",
+      "conference-edas": "mode=judge,th=0.30",
+      "conference-ekaw": "mode=judge,th=0.30",
+      "conference-iasted": "mode=judge,th=0.30",
+      "conference-sigkdd": "mode=judge,th=0.30",
+      "confOf-edas": "mode=judge,th=0.30",
+      "confOf-ekaw": "mode=judge,th=0.30",
+      "confOf-iasted": "mode=judge,th=0.30",
+      "confOf-sigkdd": "mode=judge,th=0.30",
+      "edas-ekaw": "mode=judge,th=0.30",
+      "edas-iasted": "mode=judge,th=0.30",
+      "edas-sigkdd": "mode=judge,th=0.30",
+      "ekaw-iasted": "mode=judge,th=0.30",
+      "ekaw-sigkdd": "mode=judge,th=0.30",
+      "iasted-sigkdd": "mode=judge,th=0.30"
+    },
+    "distinct_configs_chosen": [
+      "mode=judge,th=0.30"
+    ],
+    "M1": {
+      "tp": 248,
+      "fp": 0,
+      "fn": 11,
+      "precision": 1.0,
+      "recall": 0.9575,
+      "f1": 0.9783,
+      "f0.5": 0.9912,
+      "f2": 0.9657
+    },
+    "M2": {
+      "tp": 43,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1.0,
+      "recall": 0.9348,
+      "f1": 0.9663,
+      "f0.5": 0.9862,
+      "f2": 0.9471
+    },
+    "M3": {
+      "tp": 291,
+      "fp": 0,
+      "fn": 14,
+      "precision": 1.0,
+      "recall": 0.9541,
+      "f1": 0.9765,
+      "f0.5": 0.9905,
+      "f2": 0.9629
+    }
+  },
+  "lopo_cv_by_mode": {
+    "judge": {
+      "modality_selected": "M3",
+      "folds": 21,
+      "chosen": {
+        "cmt-conference": "mode=judge,th=0.30",
+        "cmt-confOf": "mode=judge,th=0.30",
+        "cmt-edas": "mode=judge,th=0.30",
+        "cmt-ekaw": "mode=judge,th=0.30",
+        "cmt-iasted": "mode=judge,th=0.30",
+        "cmt-sigkdd": "mode=judge,th=0.30",
+        "conference-confOf": "mode=judge,th=0.30",
+        "conference-edas": "mode=judge,th=0.30",
+        "conference-ekaw": "mode=judge,th=0.30",
+        "conference-iasted": "mode=judge,th=0.30",
+        "conference-sigkdd": "mode=judge,th=0.30",
+        "confOf-edas": "mode=judge,th=0.30",
+        "confOf-ekaw": "mode=judge,th=0.30",
+        "confOf-iasted": "mode=judge,th=0.30",
+        "confOf-sigkdd": "mode=judge,th=0.30",
+        "edas-ekaw": "mode=judge,th=0.30",
+        "edas-iasted": "mode=judge,th=0.30",
+        "edas-sigkdd": "mode=judge,th=0.30",
+        "ekaw-iasted": "mode=judge,th=0.30",
+        "ekaw-sigkdd": "mode=judge,th=0.30",
+        "iasted-sigkdd": "mode=judge,th=0.30"
+      },
+      "distinct_configs_chosen": [
+        "mode=judge,th=0.30"
+      ],
+      "M1": {
+        "tp": 248,
+        "fp": 0,
+        "fn": 11,
+        "precision": 1.0,
+        "recall": 0.9575,
+        "f1": 0.9783,
+        "f0.5": 0.9912,
+        "f2": 0.9657
+      },
+      "M2": {
+        "tp": 43,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.9348,
+        "f1": 0.9663,
+        "f0.5": 0.9862,
+        "f2": 0.9471
+      },
+      "M3": {
+        "tp": 291,
+        "fp": 0,
+        "fn": 14,
+        "precision": 1.0,
+        "recall": 0.9541,
+        "f1": 0.9765,
+        "f0.5": 0.9905,
+        "f2": 0.9629
+      }
+    },
+    "repair": {
+      "modality_selected": "M3",
+      "folds": 21,
+      "chosen": {
+        "cmt-conference": "mode=repair,th=0.30",
+        "cmt-confOf": "mode=repair,th=0.30",
+        "cmt-edas": "mode=repair,th=0.30",
+        "cmt-ekaw": "mode=repair,th=0.30",
+        "cmt-iasted": "mode=repair,th=0.30",
+        "cmt-sigkdd": "mode=repair,th=0.30",
+        "conference-confOf": "mode=repair,th=0.30",
+        "conference-edas": "mode=repair,th=0.30",
+        "conference-ekaw": "mode=repair,th=0.30",
+        "conference-iasted": "mode=repair,th=0.30",
+        "conference-sigkdd": "mode=repair,th=0.30",
+        "confOf-edas": "mode=repair,th=0.30",
+        "confOf-ekaw": "mode=repair,th=0.30",
+        "confOf-iasted": "mode=repair,th=0.30",
+        "confOf-sigkdd": "mode=repair,th=0.30",
+        "edas-ekaw": "mode=repair,th=0.30",
+        "edas-iasted": "mode=repair,th=0.30",
+        "edas-sigkdd": "mode=repair,th=0.30",
+        "ekaw-iasted": "mode=repair,th=0.30",
+        "ekaw-sigkdd": "mode=repair,th=0.30",
+        "iasted-sigkdd": "mode=repair,th=0.30"
+      },
+      "distinct_configs_chosen": [
+        "mode=repair,th=0.30"
+      ],
+      "M1": {
+        "tp": 248,
+        "fp": 0,
+        "fn": 11,
+        "precision": 1.0,
+        "recall": 0.9575,
+        "f1": 0.9783,
+        "f0.5": 0.9912,
+        "f2": 0.9657
+      },
+      "M2": {
+        "tp": 43,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.9348,
+        "f1": 0.9663,
+        "f0.5": 0.9862,
+        "f2": 0.9471
+      },
+      "M3": {
+        "tp": 291,
+        "fp": 0,
+        "fn": 14,
+        "precision": 1.0,
+        "recall": 0.9541,
+        "f1": 0.9765,
+        "f0.5": 0.9905,
+        "f2": 0.9629
+      }
+    },
+    "fused": {
+      "modality_selected": "M3",
+      "folds": 21,
+      "chosen": {
+        "cmt-conference": "mode=fused,w=0.75,th=0.30",
+        "cmt-confOf": "mode=fused,w=0.75,th=0.30",
+        "cmt-edas": "mode=fused,w=0.75,th=0.30",
+        "cmt-ekaw": "mode=fused,w=0.75,th=0.30",
+        "cmt-iasted": "mode=fused,w=0.75,th=0.30",
+        "cmt-sigkdd": "mode=fused,w=0.75,th=0.30",
+        "conference-confOf": "mode=fused,w=0.75,th=0.30",
+        "conference-edas": "mode=fused,w=0.75,th=0.30",
+        "conference-ekaw": "mode=fused,w=0.75,th=0.30",
+        "conference-iasted": "mode=fused,w=0.75,th=0.30",
+        "conference-sigkdd": "mode=fused,w=0.75,th=0.30",
+        "confOf-edas": "mode=fused,w=0.75,th=0.30",
+        "confOf-ekaw": "mode=fused,w=0.75,th=0.30",
+        "confOf-iasted": "mode=fused,w=0.75,th=0.30",
+        "confOf-sigkdd": "mode=fused,w=0.75,th=0.30",
+        "edas-ekaw": "mode=fused,w=0.75,th=0.30",
+        "edas-iasted": "mode=fused,w=0.75,th=0.30",
+        "edas-sigkdd": "mode=fused,w=0.75,th=0.30",
+        "ekaw-iasted": "mode=fused,w=0.75,th=0.30",
+        "ekaw-sigkdd": "mode=fused,w=0.75,th=0.30",
+        "iasted-sigkdd": "mode=fused,w=0.75,th=0.30"
+      },
+      "distinct_configs_chosen": [
+        "mode=fused,w=0.75,th=0.30"
+      ],
+      "M1": {
+        "tp": 248,
+        "fp": 0,
+        "fn": 11,
+        "precision": 1.0,
+        "recall": 0.9575,
+        "f1": 0.9783,
+        "f0.5": 0.9912,
+        "f2": 0.9657
+      },
+      "M2": {
+        "tp": 43,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.9348,
+        "f1": 0.9663,
+        "f0.5": 0.9862,
+        "f2": 0.9471
+      },
+      "M3": {
+        "tp": 291,
+        "fp": 0,
+        "fn": 14,
+        "precision": 1.0,
+        "recall": 0.9541,
+        "f1": 0.9765,
+        "f0.5": 0.9905,
+        "f2": 0.9629
+      }
+    }
+  },
+  "grid_points": 255,
+  "published": {
+    "GraphMatcher": {
+      "M1": 0.83,
+      "M3": 0.78
+    },
+    "SORBETMtch": {
+      "M1": 0.76,
+      "M3": 0.7
+    }
+  },
+  "timing": {
+    "candidates_s": 13.6,
+    "judge_s": 0.1
+  },
+  "runtime_s": 22.4
+}
