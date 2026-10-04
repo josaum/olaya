@@ -282,12 +282,24 @@ train or supply one first. See
 
 ## OWL 2 RL coverage
 
-`src/olaya/owl2_rl.py` forward-chains the schema subset of the W3C OWL 2 RL
-rules: `scm-sco`, `scm-eqc1/2`, `scm-dco`, `scm-int`, `scm-uni`, `scm-dju`,
-`scm-spo`, `scm-dom`, `scm-rng`, and unsatisfiability through self-disjointness.
-Property rules (`prp-*`) are parsed but not applied, and there is no ABox
-reasoning. The closure feeds the projection kernel so that inferred subsumption
-and disjointness are enforced, not only asserted ones.
+`src/olaya/owl2_rl.py` forward-chains the W3C OWL 2 RL rules over the TBox and an
+optional ABox of named individuals, to a fixpoint, counting every firing:
+
+- Schema: `scm-cls`, `scm-sco`, `scm-eqc1/2`, `scm-dco`, `scm-int`, `scm-uni`,
+  `owl:disjointUnionOf`, `scm-spo`, `scm-dom1/2`, `scm-rng1/2`, unsatisfiability.
+- Instance: `cax-sco`, `cax-eqc1/2`, `cax-dw`, `cls-int1`, `cls-nothing2`,
+  `prp-dom`, `prp-rng`, `prp-spo1`, `prp-spo2` (property chains), `prp-inv1/2`,
+  `prp-symp`, `prp-trp`, `prp-fp`, `prp-ifp`, `prp-pdw`, `prp-asyp`, `prp-irp`,
+  and the equality rules `eq-sym`, `eq-trans`, `eq-rep-s/o`, `eq-diff1`
+  (`owl:sameAs` is kept as an equivalence class of individuals).
+- Not supported: restrictions (`someValuesFrom`, `allValuesFrom`, `hasValue`,
+  cardinality), `complementOf`, `oneOf`, `hasKey`, n-ary `AllDisjoint*` /
+  `AllDifferent` lists, negative property assertions, datatypes and literals.
+
+Inconsistencies are returned as a list (`abox_consistency_report`), never raised.
+The per-rule status table, with reasons, is in [spec/OWL2RL.md](spec/OWL2RL.md).
+The closure feeds the projection kernel so that inferred subsumption and
+disjointness are enforced, not only asserted ones.
 
 ## Repository layout
 
