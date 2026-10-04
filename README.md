@@ -96,6 +96,11 @@ part of the headline number. Full per-pair numbers, the threshold sweep, dataset
 hashes and the published sources are in
 [`benchmarks/results/oaei-conference-ra1.md`](benchmarks/results/oaei-conference-ra1.md)
 and [`oaei-conference-ra1.json`](benchmarks/results/oaei-conference-ra1.json).
+An LLM-judge stage (candidates from the hybrid, a language model asked with
+ontology context whether each pair is equivalent; `scripts/benchmark_oaei_llm.py`,
+category LLM-based) is built and validated offline with a reference-backed stub in
+[`benchmarks/results/oaei-llm.md`](benchmarks/results/oaei-llm.md); its real-judge
+numbers are pending an API key and are not part of the table above.
 Earlier versions of this README reported hits@k with the gold target guaranteed to be
 in the candidate set and a "100% violation elimination" figure computed on synthetic
 distributions; both were retracted because they were not benchmark results.
