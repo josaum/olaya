@@ -354,3 +354,140 @@ fn test_axiom_kernel_matches_shared_golden_vectors() {
         );
     }
 }
+
+/// A distilled scorer trained on a different ontology (missing CURIEs) must be rejected when
+/// attached instead of silently scoring unknown concepts at index 0; a complete one attaches and
+/// scores.
+#[test]
+fn test_distilled_scorer_rejects_unknown_curies() {
+    use olaya_core::DistilledNeuralScorer;
+    use std::sync::Arc;
+
+    let scorer_json = |curies: &[&str]| {
+        let (buckets, dim, hidden) = (16usize, 4usize, 6usize);
+        serde_json::json!({
+            "format": "leio-cone-v1",
+            "num_buckets": buckets,
+            "dim": dim,
+            "hidden_dim": hidden,
+            "alpha_parent": 0.2,
+            "beta_disjoint": 0.3,
+            "concept_curies": curies,
+            "token_embeddings": vec![vec![0.1f32, 0.2, 0.3, 0.4]; buckets],
+            "mlp_w1": vec![vec![0.05f32; dim]; hidden],
+            "mlp_b1": vec![0.01f32; hidden],
+            "mlp_w2": vec![vec![0.05f32; hidden]; dim],
+            "mlp_b2": vec![0.01f32; dim],
+            "concept_embeddings": (0..curies.len())
+                .map(|i| vec![0.1 * (i as f32 + 1.0), 0.2, 0.3, 0.4])
+                .collect::<Vec<_>>(),
+        })
+        .to_string()
+    };
+
+    let partial = Arc::new(
+        DistilledNeuralScorer::from_json(&scorer_json(&["INCIDENT:ROOT", "INCIDENT:DATA"]))
+            .unwrap(),
+    );
+    let err = OlayaEngine::new(create_sample_arrow_ontology())
+        .unwrap()
+        .with_distilled_neural_scorer(partial)
+        .err()
+        .expect("missing CURIEs must be an error");
+    let msg = err.to_string();
+    assert!(msg.contains("2 of 4"), "{msg}");
+    assert!(msg.contains("INCIDENT:BILLING"), "{msg}");
+
+    let complete = Arc::new(
+        DistilledNeuralScorer::from_json(&scorer_json(&[
+            "INCIDENT:ROOT",
+            "INCIDENT:DATA",
+            "INCIDENT:BILLING",
+            "INCIDENT:DB_DEADLOCK",
+        ]))
+        .unwrap(),
+    );
+    let engine = OlayaEngine::new(create_sample_arrow_ontology())
+        .unwrap()
+        .with_distilled_neural_scorer(complete)
+        .unwrap();
+    let res = engine
+        .system_one("deadlock on the billing database", 4)
+        .unwrap();
+    assert!(res.axioms_verified);
+    assert!(res.confidence.is_finite());
+}
+
+/// The engine must select the same CURIEs as the Node, WASM and Python runtimes on the shared
+/// fixture (`spec/decision_parity.json`), so the runtimes stay tied together beyond the kernel.
+#[test]
+fn test_decisions_match_shared_parity_fixture() {
+    let path = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../spec/decision_parity.json"
+    );
+    let fixture: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+    let raw = fixture["ontology"]["concepts"].as_array().unwrap();
+    let id_of: std::collections::HashMap<&str, u32> = raw
+        .iter()
+        .enumerate()
+        .map(|(i, c)| (c["curie"].as_str().unwrap(), i as u32))
+        .collect();
+    let ids = |v: &serde_json::Value| -> Vec<u32> {
+        v.as_array()
+            .unwrap()
+            .iter()
+            .map(|x| id_of[x.as_str().unwrap()])
+            .collect()
+    };
+
+    let mut builder = OntologyBatchBuilder::new();
+    for (i, c) in raw.iter().enumerate() {
+        let synonyms: Vec<&str> = c["synonyms"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| s.as_str().unwrap())
+            .collect();
+        builder.append_concept(
+            i as u32,
+            c["curie"].as_str().unwrap(),
+            c["label"].as_str().unwrap(),
+            c["description"].as_str().unwrap_or(""),
+            &ids(&c["parents"]),
+            &ids(&c["disjoint_with"]),
+            &synonyms,
+        );
+    }
+    let engine = OlayaEngine::new(builder.finish().unwrap()).unwrap();
+    let top_k = fixture["max_candidates"].as_u64().unwrap() as usize;
+
+    for case in fixture["queries"].as_array().unwrap() {
+        let state = case["state"].as_str().unwrap();
+        let want = case["expected_curie"].as_str().unwrap();
+        let res = engine.system_one(state, top_k).unwrap();
+        assert_eq!(
+            res.selected_curie, want,
+            "{state:?}: {:?}",
+            res.probabilities
+        );
+        assert!(res.axioms_verified, "{state:?}");
+        assert!(
+            res.confidence > 0.0,
+            "{state:?}: confidence {} (lifted chains must not zero it)",
+            res.confidence
+        );
+        // Disjointness: the listed concepts must be in the subgraph and zeroed.
+        for excluded in case["expected_excluded"].as_array().into_iter().flatten() {
+            let curie = excluded.as_str().unwrap();
+            let prob = res
+                .probabilities
+                .iter()
+                .find(|(c, _)| c == curie)
+                .unwrap_or_else(|| panic!("{state:?}: {curie} not in subgraph"))
+                .1;
+            assert_eq!(prob, 0.0, "{state:?}: {curie} should be excluded");
+        }
+    }
+}

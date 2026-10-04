@@ -214,13 +214,25 @@ export function verifyAxioms(probs, parentEdges, disjointEdges, threshold = 0.6)
   return true;
 }
 
+// ── projectedConfidence ───────────────────────────────────────────────────────
+// spec/AXIOMS.md step 5: confidence of the calibrated (pre-lift) distribution restricted to the
+// slots that survived disjointness exclusion. Lifting copies a child's mass onto every ancestor,
+// so measuring entropy after it would report confidence 0 for a certain deep decision.
+
+export function projectedConfidence(calibrated, projected) {
+  const masked = new Float32Array(calibrated.length);
+  for (let i = 0; i < calibrated.length; i++) masked[i] = projected[i] > 0 ? calibrated[i] : 0;
+  return normalizedEntropyConfidence(masked);
+}
+
 // ── calibrateAndProject ───────────────────────────────────────────────────────
 
 export function calibrateAndProject(scores, parentEdges, disjointEdges, temp = temperatureByCardinality(scores)) {
-  const probs = softmax(scores, temp);
+  const probs      = softmax(scores, temp);
+  const calibrated = Float32Array.from(probs);
   enforceSubsumptionMonotonicityInplace(probs, parentEdges);
   enforceDisjointnessInplace(probs, disjointEdges, 0.6, parentEdges);
-  const confidence = normalizedEntropyConfidence(probs);
+  const confidence = projectedConfidence(calibrated, probs);
   return { probs, confidence };
 }
 

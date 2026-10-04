@@ -117,6 +117,28 @@ describe("O-Laya Node / TypeScript Engine", () => {
     }
   });
 
+  it("selects the same concepts as the Rust, WASM and Python runtimes (spec/decision_parity.json)", async () => {
+    const fixture = JSON.parse(
+      readFileSync(join(import.meta.dir, "..", "..", "..", "spec", "decision_parity.json"), "utf8")
+    ) as {
+      max_candidates: number;
+      ontology: unknown;
+      queries: { state: string; expected_curie: string; expected_excluded?: string[] }[];
+    };
+    const olaya = new OLaya(OntologyDAG.fromJSON(fixture.ontology));
+    for (const q of fixture.queries) {
+      const res = await olaya.systemOne(q.state, fixture.max_candidates);
+      expect(res.selectedConcept.curie, q.state).toBe(q.expected_curie);
+      expect(res.axiomsVerified, q.state).toBe(true);
+      expect(res.confidence, `${q.state}: confidence`).toBeGreaterThan(0);
+      for (const curie of q.expected_excluded ?? []) {
+        const entry = res.probabilities.find((p) => p.curie === curie);
+        expect(entry, `${q.state}: ${curie} not in subgraph`).toBeDefined();
+        expect(entry!.prob, `${q.state}: ${curie} should be excluded`).toBe(0);
+      }
+    }
+  });
+
   it("executes System 1 triage decision in < 1 ms", async () => {
     const ont = buildTestOntology();
     const olaya = new OLaya(ont);

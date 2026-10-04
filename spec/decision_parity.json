@@ -1,0 +1,117 @@
+{
+  "description": "Cross-runtime decision parity fixture. Every runtime that makes lexical decisions (Rust olaya-core, Rust olaya-wasm, Node @mycelia/olaya) must select expected_curie for each state; the Python lexical router (olaya.candidate_router) must rank it first. Scorers differ per runtime, so the states are built to carry unambiguous lexical evidence: the expected concept matches several label/synonym tokens and no competitor matches more than one. See spec/AXIOMS.md, 'Decision parity'.",
+  "ontology": {
+    "name": "parity_incidents",
+    "concepts": [
+      {
+        "curie": "INC:ROOT",
+        "label": "Operational Incident",
+        "description": "Any event degrading a production service.",
+        "synonyms": ["incident", "outage"],
+        "parents": [],
+        "disjoint_with": []
+      },
+      {
+        "curie": "INC:DATA",
+        "label": "Data Incident",
+        "description": "Problems with databases and persistent storage.",
+        "synonyms": ["database", "storage"],
+        "parents": ["INC:ROOT"],
+        "disjoint_with": ["INC:BILLING"]
+      },
+      {
+        "curie": "INC:DB_DEADLOCK",
+        "label": "Database Deadlock",
+        "description": "Transactions waiting on each other's row locks.",
+        "synonyms": ["deadlock", "lock wait"],
+        "parents": ["INC:DATA"],
+        "disjoint_with": []
+      },
+      {
+        "curie": "INC:DISK_FULL",
+        "label": "Disk Full",
+        "description": "A storage volume has run out of free space.",
+        "synonyms": ["disk space", "volume full"],
+        "parents": ["INC:DATA"],
+        "disjoint_with": []
+      },
+      {
+        "curie": "INC:BILLING",
+        "label": "Billing Incident",
+        "description": "Failures in payments, invoices or subscriptions.",
+        "synonyms": ["payment", "invoice"],
+        "parents": ["INC:ROOT"],
+        "disjoint_with": ["INC:DATA"]
+      },
+      {
+        "curie": "INC:CARD_DECLINED",
+        "label": "Card Declined",
+        "description": "Card issuer rejected a charge.",
+        "synonyms": ["declined card", "charge failed"],
+        "parents": ["INC:BILLING"],
+        "disjoint_with": []
+      },
+      {
+        "curie": "INC:NETWORK",
+        "label": "Network Incident",
+        "description": "Connectivity problems between services.",
+        "synonyms": ["packet loss", "latency"],
+        "parents": ["INC:ROOT"],
+        "disjoint_with": []
+      },
+      {
+        "curie": "INC:DNS_FAILURE",
+        "label": "DNS Resolution Failure",
+        "description": "Hostnames cannot be resolved to addresses.",
+        "synonyms": ["dns", "nxdomain"],
+        "parents": ["INC:NETWORK"],
+        "disjoint_with": []
+      },
+      {
+        "curie": "INC:SECURITY",
+        "label": "Security Incident",
+        "description": "Unauthorized access to systems or data.",
+        "synonyms": ["breach", "unauthorized"],
+        "parents": ["INC:ROOT"],
+        "disjoint_with": []
+      },
+      {
+        "curie": "INC:CREDENTIAL_LEAK",
+        "label": "Credential Leak",
+        "description": "A secret or key was exposed outside its trust boundary.",
+        "synonyms": ["leaked secret", "api key exposed"],
+        "parents": ["INC:SECURITY"],
+        "disjoint_with": []
+      }
+    ]
+  },
+  "max_candidates": 12,
+  "queries": [
+    {
+      "state": "Postgres deadlock detected while locking customer rows",
+      "expected_curie": "INC:DB_DEADLOCK",
+      "note": "Only one synonym token matches; the lifted ancestors tie with the leaf and the most specific concept must win."
+    },
+    {
+      "state": "Invoice payment charge failed, customer card declined at checkout",
+      "expected_curie": "INC:CARD_DECLINED",
+      "note": "The parent (billing) matches two synonyms, the child matches label, synonyms and description."
+    },
+    {
+      "state": "DNS resolution failure: lookup returned NXDOMAIN for api hostname",
+      "expected_curie": "INC:DNS_FAILURE",
+      "note": "Label and synonym evidence on a depth-2 concept; 'api' touches an unrelated branch."
+    },
+    {
+      "state": "Leaked API key exposed in a public repository, unauthorized access suspected",
+      "expected_curie": "INC:CREDENTIAL_LEAK",
+      "note": "The parent (security) matches its own synonym and description but the child matches more."
+    },
+    {
+      "state": "Root volume full, no disk space left on the storage node, invoice export stalled",
+      "expected_curie": "INC:DISK_FULL",
+      "expected_excluded": ["INC:BILLING"],
+      "note": "Exercises disjointness: 'invoice' routes the billing branch into the subgraph, the data branch is lifted above the threshold, so billing must be zeroed (expected_excluded is checked by the engines that run the projection kernel)."
+    }
+  ]
+}

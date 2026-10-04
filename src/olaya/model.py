@@ -34,7 +34,9 @@ class OntologyDecisionHead(nn.Module):
 
         self.classifier = nn.Linear(hidden_size, 1)
 
-        # Act / escalate auxiliary head (schema compatible with Laya/Jev)
+        # Act / escalate auxiliary head (schema compatible with Laya/Jev). It is trained against the
+        # ``act_targets`` built by ``olaya.train`` / ``scripts/train_real_ontologies.py`` and exposed by
+        # the engine as ``SystemOneResult.act_probabilities``; the ONNX export emits it as ``act_probs``.
         self.act_head = nn.Sequential(
             nn.Linear(hidden_size, hidden_size // 2),
             nn.GELU(),

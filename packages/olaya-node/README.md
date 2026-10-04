@@ -56,6 +56,38 @@ const score = await olaya.score("User entered 2FA token", "User is authenticated
 const { accepted, selected } = await olaya.noul("Out of domain prompt", ["Option A", "Option B"]);
 ```
 
+## Rating on a scale
+
+```typescript
+// Ordered level labels, lowest first. Each level's probability is its lexical overlap with the
+// state; a state matching no label gives a uniform distribution and confidence 0.
+const rating = await olaya.rate("Critical outage, customers cannot pay", ["low", "medium", "critical"]);
+// rating.level         1-based index of the selected label (3 here)
+// rating.score         expected position on the scale in [0, 1]
+// rating.confidence    normalised-entropy confidence of the level distribution
+// rating.probabilities probability per label, summing to 1
+```
+
+## MCP server and HTTP server
+
+`npx @mycelia/olaya-mcp` starts a stdio Model Context Protocol server (protocol revisions
+`2025-03-26` and `2024-11-05`) exposing four tools, `olaya_ground`, `olaya_subsumes`,
+`olaya_choice` and `olaya_score`, and one `ontology://<domain>` resource per bundled ontology.
+The bundled domains are `incident` and `gs1` (hand-written 5-class samples), `bfo`, `doid`,
+`schemaorg` and `skos` (JSON under `src/ontologies/`, embedded into `dist/` at build time, so they
+resolve the same way from any working directory); `domain` may also be a path to an ontology JSON
+file. Unknown domains are an error, not a fallback.
+
+`npx @mycelia/olaya-mcp serve --port 8080` additionally serves `POST /v1/systemone` (`choice`,
+`score` with ordered `criteria`, and `noul` with a proposition in `instructions`), `POST /v1/mcp`
+(MCP JSON-RPC over plain HTTP POST: one request, one JSON response, no SSE or sessions) and
+`GET /v1/health`. The server has no authentication, metering or billing.
+
+All decisions are lexical: token overlap between the state and class labels, synonyms and
+descriptions, calibrated and projected by the kernel in `spec/AXIOMS.md`. Confidence is the
+normalised-entropy confidence of that calibrated distribution; it says how peaked the lexical
+evidence is, not how often the engine is right.
+
 ## HTTP edge API boundary
 
 The edge `noul` contract now distinguishes supported/contradicted evidence from
