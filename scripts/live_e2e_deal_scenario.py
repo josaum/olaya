@@ -13,7 +13,6 @@ Orchestrates an air-gapped, sovereign M&A acquisition evaluation:
 from __future__ import annotations
 
 import json
-import os
 import sys
 import time
 import urllib.request
@@ -28,10 +27,11 @@ if str(DECISION_MODEL_SRC) not in sys.path:
 if str(ATLAS_SRC) not in sys.path:
     sys.path.insert(0, str(ATLAS_SRC))
 
-from olaya.pii import ObfuscationMode, PIIObfuscator
 from atlas_ma.olaya_integration import CentralStrategyEngine
 from atlas_ma.studio_deck import render_studio_strategy_deck
 from atlas_ma.studio_tbox import StudioTBoxValidator
+
+from olaya.pii import ObfuscationMode, PIIObfuscator
 
 OUTPUT_DIR = Path("/Users/josaum/projects/decision-model/output/live_deal_scenario")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -39,20 +39,12 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 def call_local_ollama(prompt: str, system: str | None = None, model: str = "qwen2.5:7b") -> dict:
     url = "http://127.0.0.1:11434/api/generate"
-    payload = {
-        "model": model,
-        "prompt": prompt,
-        "stream": False,
-        "options": {"temperature": 0.2}
-    }
+    payload = {"model": model, "prompt": prompt, "stream": False, "options": {"temperature": 0.2}}
     if system:
         payload["system"] = system
 
     req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-        method="POST"
+        url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"}, method="POST"
     )
     with urllib.request.urlopen(req, timeout=120) as resp:
         return json.loads(resp.read().decode("utf-8"))
@@ -92,7 +84,7 @@ def run_deal_scenario():
         f"and prepare board-ready execution dossier."
     )
 
-    print(f"\n[STAGE 0] Raw Confidential Deal Ingestion:")
+    print("\n[STAGE 0] Raw Confidential Deal Ingestion:")
     print(f"  • Target: {target_company}")
     print(f"  • Executive: {founder_ceo}")
     print(f"  • Deal Codename: {deal_codename}")
@@ -101,7 +93,7 @@ def run_deal_scenario():
     # ---------------------------------------------------------
     # STAGE 1: Sovereign PII & MNPI Obfuscation (On-Demand)
     # ---------------------------------------------------------
-    print(f"\n[STAGE 1] Sovereign PII/MNPI Obfuscation...")
+    print("\n[STAGE 1] Sovereign PII/MNPI Obfuscation...")
     t0_pii = time.perf_counter_ns()
     obfuscator = PIIObfuscator(salt="central-sovereign-vault-2026")
     pii_res = obfuscator.obfuscate(
@@ -117,10 +109,10 @@ def run_deal_scenario():
     print(f"  ✓ Entities detected and isolated: {len(pii_res.entities)}")
     print(f"  ✓ Risk Score: {pii_res.risk_score:.4f}")
     print(f"  ✓ Private Vault Keys Stored: {len(pii_res.vault)} surrogates")
-    print(f"\n  --- Sanitized Memo Preview ---")
+    print("\n  --- Sanitized Memo Preview ---")
     for line in pii_res.sanitized_text.splitlines()[:5]:
         print(f"    {line}")
-    print(f"    ...")
+    print("    ...")
 
     # Verify no raw sensitive data remains in sanitized string
     assert target_company not in pii_res.sanitized_text
@@ -132,17 +124,17 @@ def run_deal_scenario():
     # ---------------------------------------------------------
     # STAGE 2: Formal Strategy Ontology & Hurdle Verification
     # ---------------------------------------------------------
-    print(f"\n[STAGE 2] O-Laya Formal Strategy Ontology Grounding & Hurdle Verification...")
+    print("\n[STAGE 2] O-Laya Formal Strategy Ontology Grounding & Hurdle Verification...")
     t0_engine = time.perf_counter()
     strategy_engine = CentralStrategyEngine()
     eval_result = strategy_engine.evaluate_target(
         target_name=target_company,
-        description=f"Premium canine functional digestive probiotic chewables, high repeat velocity consumable",
+        description="Premium canine functional digestive probiotic chewables, high repeat velocity consumable",
         gross_margin=56.4,
         ebitda_margin=23.8,
         repeat_rate=0.742,
         market_rank=1,
-        retail_channels=["Pet Specialty", "E-Commerce", "FDM"]
+        retail_channels=["Pet Specialty", "E-Commerce", "FDM"],
     )
     t1_engine = time.perf_counter()
     engine_duration_ms = (t1_engine - t0_engine) * 1000.0
@@ -155,15 +147,16 @@ def run_deal_scenario():
     for hurdle, passed in eval_result.hurdle_checks.items():
         mark = "✅ PASS" if passed else "❌ DEFICIENT"
         print(f"      - {hurdle.replace('_', ' ').title()}: {mark}")
-    print(f"  ✓ Topological Monotonicity Axiom P(Child) <= P(Parent): VERIFIED ✓")
+    print("  ✓ Topological Monotonicity Axiom P(Child) <= P(Parent): VERIFIED ✓")
 
     # ---------------------------------------------------------
     # STAGE 3: Mycelia Studio TBox AST Schema Validation
     # ---------------------------------------------------------
-    print(f"\n[STAGE 3] Mycelia Studio TBox (urn:mycelia:studio:) Schema Validation...")
+    print("\n[STAGE 3] Mycelia Studio TBox (urn:mycelia:studio:) Schema Validation...")
     t0_tbox = time.perf_counter_ns()
     validator = StudioTBoxValidator()
     from atlas_ma.studio_deck import create_studio_deck_ast
+
     deck_ast = create_studio_deck_ast(eval_result, period="Q4 2026", date="October 2026")
     tbox_verdict = validator.validate_deck(deck_ast)
     t1_tbox = time.perf_counter_ns()
@@ -172,19 +165,17 @@ def run_deal_scenario():
     print(f"  ✓ TBox Validation completed in: {tbox_duration_us:.2f} µs")
     print(f"  ✓ Document Type: `{tbox_verdict.document_type}`")
     print(f"  ✓ Axioms Checked: {tbox_verdict.axioms_checked}")
-    print(f"  ✓ Disjointness Axioms Verified: CheckStatusCell ⊥ CrossStatusCell (Passed)")
+    print("  ✓ Disjointness Axioms Verified: CheckStatusCell ⊥ CrossStatusCell (Passed)")
     print(f"  ✓ TBox Schema Verdict: **{'PASSED ✅' if tbox_verdict.is_valid else 'FAILED ❌'}**")
 
     # ---------------------------------------------------------
     # STAGE 4: Sovereign Board Deck PDF & Preview Compilation
     # ---------------------------------------------------------
-    print(f"\n[STAGE 4] Sovereign Board Deck Compilation via studio-rs / Typst...")
+    print("\n[STAGE 4] Sovereign Board Deck Compilation via studio-rs / Typst...")
     t0_render = time.perf_counter()
-    out_pdf_path = OUTPUT_DIR / f"NaturaPet_Platform_Strategy_Deck.pdf"
+    out_pdf_path = OUTPUT_DIR / "NaturaPet_Platform_Strategy_Deck.pdf"
     render_result = render_studio_strategy_deck(
-        eval_result=eval_result,
-        output_pdf_path=out_pdf_path,
-        generate_png_previews=True
+        eval_result=eval_result, output_pdf_path=out_pdf_path, generate_png_previews=True
     )
     t1_render = time.perf_counter()
     render_duration_ms = (t1_render - t0_render) * 1000.0
@@ -197,7 +188,7 @@ def run_deal_scenario():
     # ---------------------------------------------------------
     # STAGE 5: Air-Gapped Local LLM Reasoning (Ollama Qwen 2.5 7B)
     # ---------------------------------------------------------
-    print(f"\n[STAGE 5] Air-Gapped Local Model Synthesis (Qwen 2.5 7B)...")
+    print("\n[STAGE 5] Air-Gapped Local Model Synthesis (Qwen 2.5 7B)...")
     llm_prompt = f"""
 You are the Chief Strategy Officer evaluating an acquisition for Central Garden & Pet (NASDAQ: CENT).
 Analyze the following SANITIZED acquisition memo and mathematical hurdle verification.
@@ -221,7 +212,7 @@ O-Laya Hurdle Verification:
     llm_res = call_local_ollama(
         prompt=llm_prompt,
         system="You are an expert M&A investment committee advisor. Keep analysis sharp, numerical, and disciplined.",
-        model="qwen2.5:7b"
+        model="qwen2.5:7b",
     )
     t1_llm = time.perf_counter()
     llm_duration_s = t1_llm - t0_llm
@@ -233,14 +224,14 @@ O-Laya Hurdle Verification:
     # ---------------------------------------------------------
     # STAGE 6: Reversible De-anonymization (Local Vault Decoding)
     # ---------------------------------------------------------
-    print(f"\n[STAGE 6] Private Local Vault De-anonymization...")
+    print("\n[STAGE 6] Private Local Vault De-anonymization...")
     t0_deanon = time.perf_counter_ns()
     final_executive_brief = obfuscator.deanonymize(sanitized_synthesis, pii_res.vault)
     t1_deanon = time.perf_counter_ns()
     deanon_duration_us = (t1_deanon - t0_deanon) / 1000.0
 
     print(f"  ✓ De-anonymization restored in: {deanon_duration_us:.2f} µs")
-    print(f"  ✓ Real entities securely reinjected on-premises into the final deliverable")
+    print("  ✓ Real entities securely reinjected on-premises into the final deliverable")
 
     # Save artifacts
     report_file = OUTPUT_DIR / "Executive_Investment_Committee_Brief.md"
@@ -270,7 +261,7 @@ O-Laya Hurdle Verification:
 - **PII / MNPI Obfuscation**: `{pii_duration_us:.2f} µs` (Risk Score: `{pii_res.risk_score:.4f}`)
 - **O-Laya Hurdle & Ontology Grounding**: `{engine_duration_ms:.2f} ms`
 - **Studio TBox Schema Validation**: `{tbox_duration_us:.2f} µs`
-- **Typst Board Deck Compilation**: `{render_duration_ms:.2f} ms` (`{render_result['pdf_size_bytes']:,}` bytes)
+- **Typst Board Deck Compilation**: `{render_duration_ms:.2f} ms` (`{render_result["pdf_size_bytes"]:,}` bytes)
 - **Local Model Inference (Qwen 2.5 7B)**: `{llm_duration_s:.2f} s`
 - **Local Vault De-anonymization**: `{deanon_duration_us:.2f} µs`
 - **Total Pipeline Execution**: `{time.perf_counter() - total_start_time:.2f} s`

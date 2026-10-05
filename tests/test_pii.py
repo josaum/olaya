@@ -110,7 +110,7 @@ def test_sovereign_reason_loop(pii_engine: PIIObfuscator):
         assert "Project Apex" not in sanitized_input
         assert "BetaCo" not in sanitized_input
         # Model responds referencing the surrogate tokens
-        return f"Approved deal for [PERSON_NAME_1] ([EMAIL_1]) under [DEAL_CODENAME_1] targeting [CUSTOM_ENTITY_1]."
+        return "Approved deal for [PERSON_NAME_1] ([EMAIL_1]) under [DEAL_CODENAME_1] targeting [CUSTOM_ENTITY_1]."
 
     result = pii_engine.sovereign_reason(
         prompt=prompt,
@@ -129,4 +129,3 @@ def test_sovereign_reason_loop(pii_engine: PIIObfuscator):
     assert "[PERSON_NAME_1]" not in result.response
     d = result.to_dict()
     assert d["zero_leak_verified"] is True
-
