@@ -302,3 +302,202 @@ def test_cross_validate_never_selects_on_the_held_out_pair():
     assert len(folds) == 7
     assert len(folds["cmt"][1]) == 6 and len(folds["cmt"][0]) == 15
     assert not any("cmt" in p.split("-") for p in folds["cmt"][0])
+
+
+# -- richer entity texts, ensembles, second-stage fusion, decoders ------------------------
+
+
+def test_build_entity_texts_rich_fields():
+    from olaya.benchmarks.oaei import build_entity_texts, text_fields
+
+    onto = Ontology("o")
+    for c in ("Document", "Paper", "Review", "RegularPaper"):
+        onto.add_concept(Concept(curie=c, label=c))
+    onto.add_subsumption("Paper", "Document")
+    onto.add_subsumption("Review", "Document")
+    onto.add_subsumption("RegularPaper", "Paper")
+    onto.add_property(ObjectProperty(curie="hasAuthor", domains={"Paper"}, ranges={"Document"}))
+    texts = {t.name: t for t in build_entity_texts(onto)}
+    assert texts["RegularPaper"].path == "Document > Paper > Regular Paper"
+    assert texts["RegularPaper"].head == "paper"
+    assert texts["Paper"].rich == (
+        "Paper. Subclass of Document. Path: Document > Paper. Superclass of Regular Paper. Siblings: Review. "
+        "Has properties has Author."
+    )
+    assert texts["Document"].rich == "Document. Superclass of Paper, Review. Is the value of has Author."
+    assert texts["hasAuthor"].path == "Paper > has Author > Document"
+    assert texts["hasAuthor"].head == "author"  # "has" is a stop word
+    assert texts["hasAuthor"].rich.endswith("An object property.")
+    # The original field is unchanged.
+    assert texts["RegularPaper"].full == "Regular Paper. Subclass of Paper."
+    assert text_fields("both") == ["label", "full"]
+    assert text_fields("label+path+head") == ["label", "path", "head"]
+    with pytest.raises(ValueError):
+        text_fields("label+bogus")
+
+
+def test_embedding_matcher_text_fields_and_ensemble():
+    from olaya.benchmarks.oaei import EmbeddingMatcher, EmbeddingMatcherConfig
+    from olaya.embeddings import HashEncoder
+
+    src, tgt = _tiny_pair()
+    one = EmbeddingMatcher(HashEncoder(), EmbeddingMatcherConfig(text="label+path", calibration="none"))
+    st, tt, sim = one.similarity_matrix(src, tgt)
+    assert sim.shape == (len(st), len(tt))
+    assert "label+path" in one.name
+    # An ensemble of the same encoder twice is the encoder itself (mean of identical matrices).
+    two = EmbeddingMatcher(
+        [HashEncoder(), HashEncoder()], EmbeddingMatcherConfig(text="label+path", calibration="none")
+    )
+    _, _, sim2 = two.similarity_matrix(src, tgt)
+    assert sim2 == pytest.approx(sim)
+    assert two.name.startswith("olaya-embedding[hash-64+hash-64,")
+    # A different second encoder changes the matrix.
+    three = EmbeddingMatcher(
+        [HashEncoder(), HashEncoder(seed=1)], EmbeddingMatcherConfig(text="label", calibration="none")
+    )
+    _, _, sim3 = three.similarity_matrix(src, tgt)
+    assert sim3.shape == sim.shape and not (sim3 == sim).all()
+
+
+def test_combine_scores_and_cascade_stage2():
+    from olaya.benchmarks.oaei import (
+        EmbeddingMatcherConfig,
+        HybridMatcher,
+        HybridMatcherConfig,
+        combine_scores,
+    )
+    from olaya.embeddings import HashEncoder
+
+    assert combine_scores(0.4, 0.2, "max") == 0.4
+    assert combine_scores(0.4, 0.2, "mean") == pytest.approx(0.3)
+    assert combine_scores(0.4, 0.2, "noisy_or") == pytest.approx(1 - 0.6 * 0.8)
+    assert combine_scores(0.4, 0.2, "embedding") == 0.2
+    with pytest.raises(ValueError):
+        combine_scores(0.4, 0.2, "bogus")
+    src, tgt = _tiny_pair()
+    src.add_concept(Concept(curie="RegularAuthor", label="Regular Author", metadata={}))
+    tgt.add_concept(Concept(curie="Author", label="Author", metadata={}))
+    emb = EmbeddingMatcherConfig(text="label", calibration="none")
+    only = HybridMatcher(HashEncoder(), HybridMatcherConfig(combine="cascade", embedding=emb))
+    fused = HybridMatcher(HashEncoder(), HybridMatcherConfig(combine="cascade", stage2="max", embedding=emb))
+    assert "stage2=max" in fused.name and "stage2" not in only.name
+    s_only = only.base_scores(src, tgt)[("RegularAuthor", "Author")]
+    s_fused = fused.base_scores(src, tgt)[("RegularAuthor", "Author")]
+    assert s_fused >= s_only  # max(lex, emb) never lowers a leftover pair
+
+
+def test_hungarian_and_select_hungarian():
+    from olaya.benchmarks.oaei import hungarian, select_hungarian
+
+    # Classic 3x3: optimal assignment cost 5 (0->1, 1->0, 2->2 ... any minimum).
+    cost = [[4, 1, 3], [2, 0, 5], [3, 2, 2]]
+    a = hungarian(cost)
+    assert sorted(a) == [0, 1, 2]
+    assert sum(cost[i][j] for i, j in enumerate(a)) == 5
+    # Rectangular (fewer rows than columns).
+    a = hungarian([[1, 9, 9], [9, 9, 1]])
+    assert a == [0, 2]
+    # Mutual best keeps A-x only (0.9); the assignment prefers A-y + B-x (1.65 > 0.9 + 0.6).
+    scored = [
+        OAEIAlignment("A", "x", measure=0.9),
+        OAEIAlignment("A", "y", measure=0.8),
+        OAEIAlignment("B", "x", measure=0.85),
+        OAEIAlignment("B", "y", measure=0.6),
+    ]
+    kept = {(c.entity1, c.entity2) for c in select_hungarian(scored)}
+    assert kept == {("A", "y"), ("B", "x")}
+    assert {(c.entity1, c.entity2) for c in select_mutual_best(scored)} == {("A", "x")}
+    assert select_hungarian([]) == []
+
+
+def test_margin_and_adaptive_threshold():
+    from olaya.benchmarks.oaei import apply_adaptive_threshold, select_mutual_best_margin
+
+    scored = [
+        OAEIAlignment("A", "x", measure=0.9),
+        OAEIAlignment("A", "y", measure=0.85),  # runner-up of A: margin 0.05
+        OAEIAlignment("B", "z", measure=0.4),  # no competition at all
+        OAEIAlignment("C", "w", measure=0.3),
+        OAEIAlignment("C", "z", measure=0.18),  # runner-up of column z and of row C
+    ]
+    assert [(c.entity1, c.entity2) for c in select_mutual_best_margin(scored, 0.0)] == [
+        ("A", "x"),
+        ("B", "z"),
+        ("C", "w"),
+    ]
+    # A-x beats its runner-up by 0.05 only and fails a 0.1 margin; C-w (0.12) and B-z pass.
+    assert [(c.entity1, c.entity2) for c in select_mutual_best_margin(scored, 0.1)] == [("B", "z"), ("C", "w")]
+    mutual = select_mutual_best(scored)
+    # Absolute clause alone (t_rel >= 1): plain threshold.
+    assert [(c.entity1, c.entity2) for c in apply_adaptive_threshold(mutual, scored, 0.5, 1.0)] == [("A", "x")]
+    # Runner-up clause: B-z's runner-up (0.18, column z) <= 0.5 * 0.4 passes; C-w's 0.18 > 0.5 * 0.3 fails.
+    kept = apply_adaptive_threshold(mutual, scored, 0.5, 0.5, mode="runner_up")
+    assert [(c.entity1, c.entity2) for c in kept] == [("A", "x"), ("B", "z")]
+    # Pair-max clause: 0.4 >= 0.4 * 0.9 passes, 0.3 does not.
+    kept = apply_adaptive_threshold(mutual, scored, 0.5, 0.4, mode="pair_max")
+    assert [(c.entity1, c.entity2) for c in kept] == [("A", "x"), ("B", "z")]
+
+
+def test_benchmark_align_selection_rules(bench: OAEIConferenceBenchmark):
+    m = LexicalMatcher()
+    mutual = bench.align(m, "cmt", "ekaw", 0.5)
+    hung = bench.align(m, "cmt", "ekaw", 0.5, selection="hungarian")
+    margin = bench.align(m, "cmt", "ekaw", 0.5, selection="margin=0.2")
+    adaptive = bench.align(m, "cmt", "ekaw", 0.5, relative=0.5)
+    for alignment in (mutual, hung, margin, adaptive):
+        assert len({c.entity1 for c in alignment}) == len(alignment) == len({c.entity2 for c in alignment})
+    assert set(margin) <= set(mutual)
+    assert set(mutual) <= set(adaptive)
+    assert bench.evaluate_pair(m, "cmt", "ekaw", 0.5, selection="hungarian").results["M1"].f1 >= 0.6
+    with pytest.raises(ValueError):
+        bench.align(m, "cmt", "ekaw", 0.5, selection="bogus")
+
+
+def test_lexical_head_weight_is_off_by_default_and_named():
+    from olaya.benchmarks.oaei import LexicalMatcherConfig
+
+    src, tgt = _tiny_pair()
+    src.add_concept(Concept(curie="RegularAuthor", label="Regular Author", metadata={}))
+    tgt.add_concept(Concept(curie="Author", label="Author", metadata={}))
+    plain = {(a.entity1, a.entity2): a.measure for a in LexicalMatcher().score_all(src, tgt)}
+    head = LexicalMatcher(LexicalMatcherConfig(head_weight=0.5))
+    boosted = {(a.entity1, a.entity2): a.measure for a in head.score_all(src, tgt)}
+    assert boosted[("RegularAuthor", "Author")] > plain[("RegularAuthor", "Author")]
+    assert head.name == "olaya-lexical[head=0.50]" and LexicalMatcher().name == "olaya-lexical"
+
+
+def test_error_analysis_records_and_categories(bench: OAEIConferenceBenchmark):
+    from olaya.benchmarks.analysis import (
+        EntityView,
+        ErrorRecord,
+        analyse_pair,
+        categorise,
+        category_counts,
+        stage_counts,
+    )
+
+    recs = analyse_pair(bench, LexicalMatcher(), "cmt", "ekaw", 0.5)
+    by_status = {s: [r for r in recs if r.status == s] for s in ("tp", "fn", "fp")}
+    res = bench.evaluate_pair(LexicalMatcher(), "cmt", "ekaw", 0.5).results["M3"]
+    assert (len(by_status["tp"]), len(by_status["fn"]), len(by_status["fp"])) == (res.tp, res.fn, res.fp)
+    assert all(r.stage in ("cascade", "scoring", "mutual-best", "threshold") for r in by_status["fn"])
+    assert all(r.category for r in by_status["fn"] + by_status["fp"])
+    assert sum(stage_counts(recs).values()) == res.fn
+    assert sum(v["all"] for v in category_counts(recs).values()) == res.fn
+    d = by_status["fn"][0].to_dict()
+    assert {"pair", "source_label", "target_label", "rank_row", "rank_col", "stage", "category"} <= set(d)
+
+    def rec(a: str, b: str, kind: str = "class") -> ErrorRecord:
+        return ErrorRecord("p", "fn", EntityView(a, kind, a, "", []), EntityView(b, kind, b, "", []), 0.0)
+
+    assert categorise(rec("Paper", "Paper")) == "identical label"
+    assert categorise(rec("Call for paper", "Call For Papers")) == "inflection / spelling"
+    assert categorise(rec("Regular author", "Author")) == "head noun shared, modifier differs"
+    assert categorise(rec("Conference_document", "Document")) == "head noun shared, modifier differs"
+    assert categorise(rec("Accepted contribution", "Accepted Paper")) == "compound / partial overlap"
+    assert categorise(rec("Chairman", "Chair")) == "synonym / paraphrase"
+    assert categorise(rec("Paper", "Contribution")) == "synonym / paraphrase"
+    assert categorise(rec("PC", "Program Committee")) == "abbreviation"
+    assert categorise(rec("hasAuthor", "writtenBy", "property")) == "property naming"
+    assert categorise(rec("hasName", "Name of conference", "property")) == "compound / partial overlap"
