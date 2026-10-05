@@ -17,6 +17,14 @@ from olaya.benchmarks.oaei import (
     cross_validate,
     evaluate_alignment,
 )
+from olaya.benchmarks.structural import (
+    StructuralMatcher,
+    StructuralMatcherConfig,
+    build_graph,
+    neighbour_aggregation,
+    similarity_flooding,
+    smooth_embeddings,
+)
 
 __all__ = [
     "CONFERENCE_PAIRS",
@@ -32,6 +40,12 @@ __all__ = [
     "OWLParser",
     "PairEvaluation",
     "StringEquivMatcher",
+    "StructuralMatcher",
+    "StructuralMatcherConfig",
+    "build_graph",
     "cross_validate",
     "evaluate_alignment",
+    "neighbour_aggregation",
+    "similarity_flooding",
+    "smooth_embeddings",
 ]
