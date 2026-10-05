@@ -1,6 +1,6 @@
 {
   "name": "@mycelia/olaya",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Ontology-Grounded System 1 Decision Model runtime for Node.js and TypeScript",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
