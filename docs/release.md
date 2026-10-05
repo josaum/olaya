@@ -1,6 +1,6 @@
 # Release packages
 
-The release version is **0.2.0** across the Python package, Node package, complete desktop bundle, and companion Code plugin. Building artifacts, attaching them to a GitHub release, and publishing packages to registries are separate operations. A successful build does not establish model accuracy or calibration.
+The release version is **0.3.0** across the Python package, Node package, complete desktop bundle, and companion Code plugin. Building artifacts, attaching them to a GitHub release, and publishing packages to registries are separate operations. A successful build does not establish model accuracy or calibration.
 
 ## Trigger
 
@@ -47,7 +47,7 @@ Then return to the repository root and test the actual artifacts:
   --node-dir dist/node
 ```
 
-The package check requires exactly one wheel and one `.tgz` in those directories. Use clean output directories for a new version. It verifies that both project manifests and both packaged versions match the release version from `pyproject.toml` and use `X.Y.Z` format. The current version produces GitHub release tag `v0.2.0`.
+The package check requires exactly one wheel and one `.tgz` in those directories. Use clean output directories for a new version. It verifies that both project manifests and both packaged versions match the release version from `pyproject.toml` and use `X.Y.Z` format. The current version produces GitHub release tag `v0.3.0`.
 
 The wheel check extracts its payload into a temporary directory outside the checkout, starts Python with `-I -B`, and asserts that every loaded `olaya` module comes from that payload. Dependencies come from the invoking interpreter's installed environment; this check does not claim that the wheel contains PyTorch or an embedded interpreter. It verifies the workflow, replay, JSON-LD and MCP modules, the `olaya-mcp = olaya.webmcp:main` entry point, lexical routing, and a workflow run/replay using a deterministic fake backend. It does not load a neural checkpoint or measure neural quality.
 
@@ -56,11 +56,11 @@ The npm check verifies `dist/index.mjs`, `dist/index.cjs`, `dist/cli.mjs`, `dist
 The source distribution gets a separate runtime gate: rebuild a wheel from the actual source archive, then test that rebuilt wheel with the same isolated package checks. For the current version:
 
 ```bash
-uv build --wheel dist/python/olaya-0.2.0.tar.gz --out-dir dist/sdist-wheel
+uv build --wheel dist/python/olaya-0.3.0.tar.gz --out-dir dist/sdist-wheel
 .venv/bin/python scripts/test-release-packages.py \
   --python-dir dist/sdist-wheel \
   --node-dir dist/node \
-  --source-archive dist/python/olaya-0.2.0.tar.gz \
+  --source-archive dist/python/olaya-0.3.0.tar.gz \
   > dist/sdist-verification.json
 ```
 
