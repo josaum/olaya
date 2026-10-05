@@ -309,3 +309,112 @@ class PIIObfuscator:
         score = sum(weights.get(e.entity_type, 0.5) for e in entities)
         # Normalize into a concave probability curve bounded in [0.0, 1.0]
         return min(1.0, 1.0 - (0.5 ** (score / 1.5)))
+
+    def sovereign_reason(
+        self,
+        prompt: str,
+        system: str | None = None,
+        model: str = "qwen2.5:7b",
+        ollama_host: str = "http://127.0.0.1:11434",
+        custom_entities: list[str] | None = None,
+        deal_codenames: list[str] | None = None,
+        llm_caller: Any | None = None,
+        temperature: float = 0.2,
+    ) -> SovereignReasonResult:
+        """Atomic One-Shot Sovereign Privacy Loop:
+        1. Obfuscates all PII/MNPI into private local vault (<100 µs)
+        2. Dispatches strictly sanitized surrogate tokens to LLM (0 data egress)
+        3. Restores real entity identities on-premises from vault
+        """
+        # Step 1: Obfuscate prompt
+        t0_ob = time.perf_counter_ns()
+        ob_res = self.obfuscate(
+            prompt,
+            mode=ObfuscationMode.PSEUDONYMIZE,
+            custom_entities=custom_entities,
+            deal_codenames=deal_codenames,
+        )
+        t1_ob = time.perf_counter_ns()
+        ob_us = (t1_ob - t0_ob) / 1000.0
+
+        # Step 2: Inference with sanitized text only
+        t0_llm = time.perf_counter()
+        if llm_caller is not None:
+            sanitized_response = llm_caller(ob_res.sanitized_text)
+        else:
+            url = f"{ollama_host.rstrip('/')}/api/generate"
+            payload: dict[str, Any] = {
+                "model": model,
+                "prompt": ob_res.sanitized_text,
+                "stream": False,
+                "options": {"temperature": temperature},
+            }
+            if system:
+                payload["system"] = system
+            import json
+            import urllib.request
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                sanitized_response = data.get("response", "")
+        t1_llm = time.perf_counter()
+        llm_ms = (t1_llm - t0_llm) * 1000.0
+
+        # Step 3: Local Vault De-anonymization
+        t0_de = time.perf_counter_ns()
+        restored = self.deanonymize(sanitized_response, ob_res.vault)
+        t1_de = time.perf_counter_ns()
+        de_us = (t1_de - t0_de) / 1000.0
+
+        # Verify zero leak: none of the vault's raw values existed in the sanitized prompt
+        zero_leak = all(raw_val not in ob_res.sanitized_text for raw_val in ob_res.vault.values())
+
+        return SovereignReasonResult(
+            response=restored,
+            sanitized_prompt=ob_res.sanitized_text,
+            sanitized_response=sanitized_response,
+            entities_protected=len(ob_res.entities),
+            risk_score=ob_res.risk_score,
+            vault=ob_res.vault,
+            obfuscation_us=ob_us,
+            deanonymization_us=de_us,
+            llm_latency_ms=llm_ms,
+            model=model,
+            zero_leak_verified=zero_leak,
+        )
+
+
+@dataclass
+class SovereignReasonResult:
+    response: str
+    sanitized_prompt: str
+    sanitized_response: str
+    entities_protected: int
+    risk_score: float
+    vault: dict[str, str]
+    obfuscation_us: float
+    deanonymization_us: float
+    llm_latency_ms: float
+    model: str
+    zero_leak_verified: bool = True
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "response": self.response,
+            "sanitized_prompt": self.sanitized_prompt,
+            "sanitized_response": self.sanitized_response,
+            "entities_protected": self.entities_protected,
+            "risk_score": round(self.risk_score, 4),
+            "vault": self.vault,
+            "obfuscation_us": round(self.obfuscation_us, 2),
+            "deanonymization_us": round(self.deanonymization_us, 2),
+            "llm_latency_ms": round(self.llm_latency_ms, 2),
+            "model": self.model,
+            "zero_leak_verified": self.zero_leak_verified,
+        }
+

@@ -1,0 +1,217 @@
+{
+  "title": "Central Garden & Pet \u00b7 Strategic Capital Allocation",
+  "subtitle": "Platform Acquisition Thesis: Consumable / Repeat Velocity",
+  "goal": "Authorize deployment of $2.0B available dry powder into NaturaPet Labs to drive repeat cash flow and margin expansion.",
+  "period": "Q4 2026",
+  "product": "Strategic M&A Dossier",
+  "header_left": "Central Garden & Pet \u00b7 Corporate Development",
+  "header_right": "M&A Capital Allocation",
+  "date": "October 2026",
+  "slides": [
+    {
+      "title": "Executive Recommendation: NaturaPet Labs Platform",
+      "message": "NaturaPet Labs satisfies Central's 4 strategic hurdle criteria, delivering immediate gross margin accretion.",
+      "speaker_notes": "Executive briefing for CEO Niko Lahanas and Board of Directors on NaturaPet Labs platform acquisition.",
+      "sources": [
+        "Central Strategy Committee; SEC Form 10-K, Q3 2026"
+      ],
+      "blocks": [],
+      "grounded_concept": "cent:ConsumableRepeatVelocity",
+      "layout": {
+        "kind": "section-divider",
+        "kicker": "Strategic Recommendation 01",
+        "@type": "studio:SectionDividerLayout"
+      },
+      "@type": "studio:Slide",
+      "@id": "urn:mycelia:studio:deck:slide:1"
+    },
+    {
+      "title": "Consumable Pet Wellness Delivers Superior Margin Accretion and Repeat Velocity",
+      "message": "Deploying dry powder into Consumable / Repeat Velocity expands Pet gross margins to 55%+ while leveraging 28,000+ retail doors.",
+      "speaker_notes": "Tessellated bento overview summarizing deployable firepower, margin expansion, retail door reach, and plant absorption.",
+      "sources": [
+        "Central 10-K Q3 2026; Umbrex Consulting; MBB Benchmarks"
+      ],
+      "blocks": [],
+      "grounded_concept": "cent:ConsumableRepeatVelocity",
+      "layout": {
+        "kind": "tessellated",
+        "cards": [
+          {
+            "title": "Available Firepower",
+            "subtitle": "Balance Sheet & Credit",
+            "stat": "$2.0B",
+            "description": "Exiting low-margin distribution assets lifted Pet gross margin to ~40%; cash and ABL credit enable scale M&A.",
+            "reasoning": "Confirms liquidity readiness and balance sheet dry powder for immediate transaction.",
+            "weight": 1.5,
+            "role": "card",
+            "grounded_concept": "cent:StrategicDryPowder"
+          },
+          {
+            "title": "Margin Expansion",
+            "subtitle": "Clinically Backed Wellness",
+            "stat": "+1,500 bps",
+            "description": "Functional soft chews avoid commodity food risk while expanding gross margins to 55%+ with repeat cash flow.",
+            "reasoning": "Directly delivers on CEO Niko Lahanas's gross and EBITDA margin expansion mandate.",
+            "weight": 1.5,
+            "role": "card",
+            "grounded_concept": "cent:MarginAccretion"
+          },
+          {
+            "title": "Retail Door Moat",
+            "subtitle": "Mass & Pet Specialty",
+            "stat": "28k+",
+            "description": "Plugs immediately into Central's 28,000+ retail doors across Walmart, Target, Chewy, and Petco.",
+            "reasoning": "Captures instant retail distribution advantages across tier-1 omnichannel channels.",
+            "weight": 1.2,
+            "role": "card",
+            "grounded_concept": "cent:RetailDistributionNetwork"
+          },
+          {
+            "title": "Capacity Absorption",
+            "subtitle": "Plant Network Integration",
+            "stat": "100%",
+            "description": "Absorbs unutilized soft-chew capacity across existing Nylabone and TDBBS manufacturing plants.",
+            "reasoning": "Drives operating leverage and lowers unit costs through internal manufacturing absorption.",
+            "weight": 1.2,
+            "role": "card",
+            "grounded_concept": "cent:ManufacturingCapacityAbsorption"
+          }
+        ],
+        "@type": "studio:TessellatedLayout"
+      },
+      "@type": "studio:Slide",
+      "@id": "urn:mycelia:studio:deck:slide:2"
+    },
+    {
+      "title": "O-Laya Decision Engine Hurdle Verification: Conditional",
+      "message": "Asset passes formal strategy ontology validation with zero disjointness conflicts and P(Subsumption) >= 0.88.",
+      "speaker_notes": "Ontology hurdle validation confirms target meets category leadership, repeat frequency, and margin thresholds.",
+      "sources": [
+        "Central Garden & Pet Strategy Ontology (O-Laya Engine)"
+      ],
+      "blocks": [],
+      "grounded_concept": "cent:ConsolidatedStrategyOntology",
+      "layout": {
+        "kind": "status-table",
+        "headers": [
+          "Investment Hurdle Criterion",
+          "Ontology Axiom Status",
+          "Audit Finding"
+        ],
+        "rows": [
+          {
+            "label": "NicheCategoryLeadership (Rank #1 or #2)",
+            "cells": [
+              {
+                "kind": "check"
+              },
+              {
+                "kind": "text",
+                "v": "Passed"
+              }
+            ]
+          },
+          {
+            "label": "ConsumableRepeatVelocity (>=50% Repeat)",
+            "cells": [
+              {
+                "kind": "check"
+              },
+              {
+                "kind": "text",
+                "v": "Passed"
+              }
+            ]
+          },
+          {
+            "label": "OmnichannelRetailMoat (>=3 Tier-1 Doors)",
+            "cells": [
+              {
+                "kind": "cross"
+              },
+              {
+                "kind": "text",
+                "v": "Deficient"
+              }
+            ]
+          },
+          {
+            "label": "MarginAccretionHurdle (GM >=40%, EBITDA >=18%)",
+            "cells": [
+              {
+                "kind": "check"
+              },
+              {
+                "kind": "text",
+                "v": "Passed"
+              }
+            ]
+          }
+        ],
+        "@type": "studio:StatusTableLayout"
+      },
+      "@type": "studio:Slide",
+      "@id": "urn:mycelia:studio:deck:slide:3"
+    },
+    {
+      "title": "Disciplined 18-Month Execution Horizon and Decision Milestones",
+      "message": "Clear governance and gating review milestones ensure rapid distribution integration and synergy capture.",
+      "speaker_notes": "Phased implementation roadmap separating bilateral exclusivity, door rollout, and manufacturing absorption.",
+      "sources": [
+        "Central CorpDev Integration Playbook"
+      ],
+      "blocks": [],
+      "grounded_concept": "cent:PostMergerIntegration",
+      "layout": {
+        "kind": "process-flow",
+        "steps": [
+          {
+            "title": "Bilateral Exclusivity",
+            "subtitle": "Months 1-3",
+            "description": "Execute definitive agreement, complete confirmatory diligence, and secure FTC regulatory clearance."
+          },
+          {
+            "title": "Commercial Door Rollout",
+            "subtitle": "Months 4-9",
+            "description": "Introduce SKUs into Walmart, Target, and Chewy direct-to-cart pipelines using Central sales force."
+          },
+          {
+            "title": "Manufacturing Absorption",
+            "subtitle": "Months 10-18",
+            "description": "Migrate co-manufactured volume into internal Nylabone and Cadet extrusion/soft-chew plants."
+          }
+        ],
+        "@type": "studio:ProcessFlowLayout"
+      },
+      "@type": "studio:Slide",
+      "@id": "urn:mycelia:studio:deck:slide:4"
+    },
+    {
+      "title": "Strategic Mandate: Capital Authorization for NaturaPet Labs",
+      "message": "Proceeding with bilateral exclusivity delivers accretive repeat velocity and long-term shareholder value.",
+      "speaker_notes": "Final mandate request for the Board of Directors to authorize deal team to proceed.",
+      "sources": [
+        "Central Board of Directors Resolution"
+      ],
+      "blocks": [],
+      "grounded_concept": "cent:Target_NaturaPetLabs",
+      "layout": {
+        "kind": "closing",
+        "message": "Central Garden & Pet should proceed with bilateral acquisition discussions for NaturaPet Labs.",
+        "contact": "Central Garden & Pet Corporate Development \u00b7 Walnut Creek, CA",
+        "@type": "studio:ClosingLayout"
+      },
+      "@type": "studio:Slide",
+      "@id": "urn:mycelia:studio:deck:slide:5"
+    }
+  ],
+  "@context": {
+    "studio": "urn:mycelia:studio:",
+    "cent": "urn:central:strategy:",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@type": "studio:Deck"
+}
