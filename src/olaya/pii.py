@@ -353,6 +353,7 @@ class PIIObfuscator:
                 payload["system"] = system
             import json
             import urllib.request
+
             req = urllib.request.Request(
                 url,
                 data=json.dumps(payload).encode("utf-8"),
@@ -417,4 +418,3 @@ class SovereignReasonResult:
             "model": self.model,
             "zero_leak_verified": self.zero_leak_verified,
         }
-
