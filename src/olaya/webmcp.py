@@ -328,6 +328,39 @@ TOOLS = [
             "required": ["sanitized_text", "vault"],
         },
     },
+    {
+        "name": "olaya_sovereign_reason",
+        "description": "One-shot atomic sovereign privacy reasoning loop: automatically obfuscates all PII/MNPI into an in-memory vault (<100 µs), sends strictly sanitized surrogate tokens to the local LLM (Qwen 2.5 7B, 0 data egress), and restores real identities on-premises from the vault. Ensures zero data leakage to model weights or external networks.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "prompt": {
+                    "type": "string",
+                    "description": "Prompt or raw memo containing confidential entities, names, deals, or numbers.",
+                },
+                "system": {
+                    "type": "string",
+                    "description": "Optional system prompt instruction.",
+                },
+                "model": {
+                    "type": "string",
+                    "description": "Local model name (defaults to 'qwen2.5:7b').",
+                    "default": "qwen2.5:7b",
+                },
+                "custom_entities": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Target company names, executive names, or banks to vault.",
+                },
+                "deal_codenames": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Deal or project code names to vault.",
+                },
+            },
+            "required": ["prompt"],
+        },
+    },
 ]
 
 RESOURCE_SUMMARY_NOTE = (
@@ -634,6 +667,19 @@ class OLayaMCPServer:
                 vault=args["vault"],
             )
             return {"restored_text": restored}
+
+        if name == "olaya_sovereign_reason":
+            from olaya.pii import PIIObfuscator
+
+            obfuscator = PIIObfuscator()
+            res = obfuscator.sovereign_reason(
+                prompt=args["prompt"],
+                system=args.get("system"),
+                model=args.get("model", "qwen2.5:7b"),
+                custom_entities=args.get("custom_entities"),
+                deal_codenames=args.get("deal_codenames"),
+            )
+            return res.to_dict()
 
         raise ValueError(f"Unknown tool: {name}")
 

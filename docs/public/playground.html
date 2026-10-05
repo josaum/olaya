@@ -1313,7 +1313,8 @@
         <a href="./index.html" class="nav-item">Home</a>
         <a href="./article.html" class="nav-item">Technical Paper</a>
         <a href="#workbench" class="nav-item">Workbench</a>
-        <a href="./index.html#agent-runtime" class="nav-item" style="color:var(--blue);font-weight:600;">Multi-Step Agent</a>
+        <a href="#privacy-shield" class="nav-item" style="color:var(--blue);font-weight:600;">Privacy Shield</a>
+        <a href="./index.html#agent-runtime" class="nav-item">Multi-Step Agent</a>
         <a href="#sorter-sim" class="nav-item">Conveyor Agent</a>
         <a href="https://github.com/josaum/olaya" target="_blank" rel="noopener" class="nav-item">GitHub</a>
       </div>
@@ -1380,6 +1381,7 @@
         <div class="apple-segmented-wrap">
           <select id="domainSelect" class="domain-mobile-select" onchange="switchDomain(this.value)">
             <option value="leio" selected>⚡ Leio Model &amp; Pricing</option>
+            <option value="enterprise_strategy">🏛️ Enterprise Strategy Strategy</option>
             <option value="gs1">📦 GS1 Supply Chain (Trade Items)</option>
             <option value="doid">🧬 Disease Ontology (DOID)</option>
             <option value="schemaorg">🌐 Schema.org (Google SEO)</option>
@@ -1389,6 +1391,7 @@
           </select>
           <div class="apple-segmented-control">
             <button id="tab-leio" class="segmented-item active" onclick="switchDomain('leio')">⚡ Leio Model &amp; Pricing</button>
+            <button id="tab-enterprise_strategy" class="segmented-item" onclick="switchDomain('enterprise_strategy')">🏛️ Enterprise Strategy</button>
             <button id="tab-gs1" class="segmented-item" onclick="switchDomain('gs1')">📦 GS1 Supply Chain</button>
             <button id="tab-doid" class="segmented-item" onclick="switchDomain('doid')">🧬 Disease (DOID)</button>
             <button id="tab-schemaorg" class="segmented-item" onclick="switchDomain('schemaorg')">🌐 Schema.org</button>
@@ -1552,6 +1555,100 @@
       </div>
     </section>
 
+    <!-- ── Sovereign Privacy Shield (Air-Gapped PII/PHI/MNPI Obfuscation) ── -->
+    <section class="apple-chapter" id="privacy-shield" style="margin-top: 60px;">
+      <div class="apple-kicker">SOVEREIGN PRIVACY SHIELD</div>
+      <h2 class="apple-section-h2">Air-gapped PII, PHI &amp; MNPI sanitization with local vault restoration.</h2>
+      <p class="apple-section-p">
+        Every sensitive token (names, SSNs, credit cards, confidential M&amp;A codenames, emails, phones, internal IP addresses) is pseudonymized client-side in &lt;&nbsp;100&nbsp;&micro;s before reaching any cloud LLM. Real identities remain exclusively inside your browser's local cryptographic vault.
+      </p>
+
+      <div class="studio-card spotlight-card">
+        <div class="studio-window-bar">
+          <div class="studio-dots">
+            <span class="studio-dot dot-red"></span>
+            <span class="studio-dot dot-yellow"></span>
+            <span class="studio-dot dot-green"></span>
+          </div>
+          <div class="studio-window-title">Sovereign Privacy Shield &middot; Cryptographic Local Vault</div>
+          <div class="studio-window-status">
+            <span class="pulse-dot" style="background: #30d158;"></span>
+            <span id="piiLatencyBadge" style="color: #30d158; font-family: var(--font-mono); font-size: 0.76rem;">0 &micro;s &middot; In-Browser</span>
+          </div>
+        </div>
+
+        <div class="studio-content">
+          <!-- Mode Selector & Presets Header -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
+            <!-- Mode Pills -->
+            <div style="display: inline-flex; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 980px; padding: 3px;">
+              <button id="piiMode-pseudonymize" class="segmented-item active" style="padding: 0.3rem 0.85rem; font-size: 0.78rem;" onclick="setPIIMode('pseudonymize')">Reversible Pseudonymize</button>
+              <button id="piiMode-redact" class="segmented-item" style="padding: 0.3rem 0.85rem; font-size: 0.78rem;" onclick="setPIIMode('redact')">Irreversible Redact</button>
+              <button id="piiMode-mask" class="segmented-item" style="padding: 0.3rem 0.85rem; font-size: 0.78rem;" onclick="setPIIMode('mask')">Partial Mask</button>
+            </div>
+
+            <!-- Telemetry Badges -->
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+              <span id="piiEntityCountBadge" class="conf-badge" style="background: rgba(48,209,88,0.12); color: #30d158; border-color: rgba(48,209,88,0.25);">0 Entities Sanitized</span>
+              <span class="conf-badge" style="background: rgba(41,151,255,0.1); color: var(--blue); border-color: rgba(41,151,255,0.2);">Zero Cloud Egress</span>
+              <span class="conf-badge" style="background: rgba(255,214,10,0.1); color: #ffd60a; border-color: rgba(255,214,10,0.2);">Air-Gapped Vault</span>
+            </div>
+          </div>
+
+          <!-- Presets Row -->
+          <div class="presets-row" style="margin-top: 0; margin-bottom: 1rem;">
+            <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 500;">Presets:</span>
+            <button class="preset-chip active" id="piiPreset-falcon" onclick="loadPIIPreset('falcon')">🏛️ Project Helios M&amp;A Memo</button>
+            <button class="preset-chip" id="piiPreset-clinical" onclick="loadPIIPreset('clinical')">🧬 Clinical PHI / Patient Triage</button>
+            <button class="preset-chip" id="piiPreset-sec" onclick="loadPIIPreset('sec')">⚖️ Executive SEC / Board MNPI</button>
+            <button class="preset-chip" id="piiPreset-clear" onclick="loadPIIPreset('clear')">Clear Input</button>
+          </div>
+
+          <!-- 2-Column Grid -->
+          <div class="workbench-grid">
+            <!-- Left: Sensitive Input -->
+            <div class="studio-panel">
+              <div class="panel-header-row">
+                <span class="panel-kicker" style="color: #ff453a;">⚠️ Raw Sensitive Text (On-Prem / Local Only)</span>
+                <span class="panel-metric-text" id="piiInputLength">0 chars</span>
+              </div>
+              <textarea id="piiRawInput" class="studio-textarea" style="min-height: 180px; font-family: var(--font-mono); font-size: 0.82rem;" placeholder="Type or paste confidential deal memo, medical chart, or customer PII..." oninput="runPIIShield()"></textarea>
+
+              <div style="margin-top: 0.75rem;">
+                <div class="panel-header-row" style="margin-bottom: 0.35rem;">
+                  <span class="panel-kicker" style="font-size: 0.7rem;">Custom Entities / Codename Whitelist (comma-separated)</span>
+                </div>
+                <input type="text" id="piiCustomEntities" class="studio-textarea" style="min-height: auto; height: 36px; padding: 0.35rem 0.65rem; font-size: 0.78rem;" placeholder="Northwind, Project Helios, John Doe, 192.168.1.100" oninput="runPIIShield()">
+              </div>
+            </div>
+
+            <!-- Right: Sanitized Egress + Vault Inspector -->
+            <div class="studio-panel">
+              <div class="panel-header-row">
+                <span class="panel-kicker" style="color: #30d158;">🛡️ Sanitized Output (Safe for Cloud / Public LLM)</span>
+                <div style="display: flex; gap: 0.4rem; align-items: center;">
+                  <button class="preset-chip" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;" onclick="copyPIISanitized(this)">Copy Sanitized</button>
+                  <button class="preset-chip" id="piiToggleRestoreBtn" style="padding: 0.15rem 0.5rem; font-size: 0.7rem; border-color: rgba(41,151,255,0.4); color: var(--blue);" onclick="togglePIIDeanonymize()">Test Vault Restore ↩</button>
+                </div>
+              </div>
+
+              <!-- Sanitized Output Box -->
+              <div id="piiSanitizedOutput" class="agent-terminal" style="min-height: 180px; max-height: 220px; font-size: 0.82rem; white-space: pre-wrap; word-break: break-word; line-height: 1.5; color: #a5d6ff;"></div>
+
+              <!-- Local Vault Table -->
+              <div style="margin-top: 0.85rem; border-top: 1px solid var(--border); padding-top: 0.65rem;">
+                <div class="panel-header-row" style="margin-bottom: 0.45rem;">
+                  <span class="panel-kicker">Local Cryptographic Vault Mapping</span>
+                  <span id="piiVaultKeyCount" style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">0 surrogates</span>
+                </div>
+                <div id="piiVaultContainer" style="max-height: 130px; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 0.6rem; font-family: var(--font-mono); font-size: 0.72rem;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Developer Integration ── -->
     <section class="apple-chapter" style="margin-top: 60px;">
       <div class="apple-kicker">DEVELOPER INTEGRATION</div>
@@ -1608,7 +1705,7 @@
   </div>
 
 <script type="module">
-import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
+import { OLaya, OntologyDAG, DEFAULT_K, obfuscatePII, deanonymizePII } from './olaya-engine.js';
 
     // The WASM build (./wasm/olaya_wasm.js + .wasm) is not committed; see README.md next to this
     // page for the wasm-pack step. It is loaded dynamically so that when it is absent the import
@@ -1674,6 +1771,22 @@ import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
           { id: "pricing", label: "Transparent $0.042/1M Pricing", text: "Input-only token metering at $0.042 per 1M tokens with 100% free unmetered output decisions." },
           { id: "sorter", label: "Autonomous Conveyor Agent", text: "Industrial cross-dock warehouse agent listening to 200kHz barcode sensor streams and firing PLC diverter chutes." },
           { id: "vpc", label: "Dedicated Enterprise VPC", text: "Air-gapped on-premise installation with private custom ontology fine-tuning and 99.999% SLA." }
+        ]
+      },
+      enterprise_strategy: {
+        name: "Enterprise Strategy Strategy & Hurdles",
+        badge: "🏛️ Enterprise Strategy Strategy",
+        title: "Interactive Live Demo: Acme Holdings Corporate Development Hurdles",
+        inputLabel: "Input Acquisition Candidate / Deal Memo / Financial Telemetry",
+        url: "./ontologies/enterprise_strategy_ontology.json",
+        downsetTarget: "cent:ConsumableRepeatVelocity",
+        downsetLabel: "satisfies_repeat_velocity_hurdle",
+        presets: [
+          { id: "northwind", label: "Northwind Labs (Falcon)", text: "Northwind Labs canine functional digestive probiotic chewables, 56.4% Gross Margin, 23.8% EBITDA Margin, 74.2% Repeat Purchase Rate, Category Rank #1." },
+          { id: "biogarden", label: "BioGarden Organic Soil", text: "Organic microbial soil inoculants and regenerative lawn bio-stimulants, 51.2% Gross Margin, 21.5% EBITDA Margin, 68.0% Repeat Purchase Rate." },
+          { id: "provet", label: "ProVet Equine Mobility", text: "High-performance equine joint mobility formulas and veterinary hoof care topicals, 49.0% Gross Margin, 19.2% EBITDA Margin, 62.5% Repeat Rate." },
+          { id: "canineomega", label: "CanineOmega Wild Salmon", text: "Wild Alaskan salmon oil and cold-pressed marine lipid liquid pumps for dogs and cats, 54.0% Gross Margin, 22.6% EBITDA Margin, 76.0% Repeat Rate." },
+          { id: "ecopest", label: "EcoPest Essential Oils", text: "Botanical essential oil pest repellents and organic mosquito barrier solutions, 53.5% Gross Margin, 24.0% EBITDA Margin, 65.0% Repeat Rate." }
         ]
       },
       gs1: {
@@ -1786,7 +1899,7 @@ import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
         sel.value = domainKey;
       }
 
-      ['leio', 'gs1', 'schemaorg', 'bfo', 'skos', 'incident', 'doid'].forEach(k => {
+      ['leio', 'enterprise_strategy', 'gs1', 'schemaorg', 'bfo', 'skos', 'incident', 'doid'].forEach(k => {
         const btn = document.getElementById(`tab-${k}`);
         if (!btn) return;
         if (k === domainKey) {
@@ -2532,6 +2645,169 @@ import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
     });
   }
 
+  // ── Sovereign Privacy Shield Controller ────────────────────────────────────
+  function escapeHTML(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  const PII_PRESETS = {
+    falcon: {
+      raw: `CONFIDENTIAL - PROJECT HELIOS ACQUISITION MEMO\nDate: October 5, 2026\nAuthor: CEO Michael Harrison (michael.harrison@acme-corp.example, direct: (925) 948-4000)\nSubject: Acquisition of Northwind Labs LLC by Acme Holdings Corp\n\nInvestment Committee:\nWe are pleased to submit Project Helios for formal Phase 2 due diligence. Northwind Labs generated $48.2M trailing twelve month revenue with 56.4% Gross Margin and $11.5M EBITDA (23.8% margin).\nKey contact: Dr. Sarah Jenkins (MD, Chief Science Officer, SSN: 123-45-6789, sarah.jenkins@northwind-labs.example).\nThe target's primary AWS production cluster is located at 192.168.1.45 under Operation Helios.\nProposed valuation: $135,000,000 via corporate debt facility #4532-8891-2309-8812.`,
+      custom: "Northwind Labs, Project Helios, Operation Helios, Acme Holdings"
+    },
+    clinical: {
+      raw: `PATIENT CLINICAL TRIAGE RECORD\nPatient: Johnathan Edward Vance\nDOB: 1984-03-12 | SSN: 987-65-4321 | Mobile: (415) 890-1234\nEmail: jvance84@gmail.com\nAttending Physician: Dr. Elena Rostova, MD (elena.rostova@ucsf.health)\nClinical Notes: Patient admitted with stage 3 angiosarcoma presenting high vascular endothelial swelling.\nInsurance Billing ID: CC #4111-2222-3333-4444. Hospital Node IP: 10.0.4.15.`,
+      custom: "Johnathan Edward Vance"
+    },
+    sec: {
+      raw: `STRICTLY CONFIDENTIAL - EXECUTIVE AUDIT & MNPI MEMO\nTo: Board of Directors\nFrom: CFO Robert Sterling (robert.sterling@acme-corp.example, +1-408-555-0199)\nNotice: Material Non-Public Information under SEC Rule 10b-5.\nRegarding Project Titan and unannounced Q3 earnings beat of $0.48 vs $0.32 consensus.\nWire transfer authorization to escrow account 5500-1234-5678-9012 authorized by President Linda Zhao.`,
+      custom: "Project Titan, Linda Zhao, Robert Sterling"
+    },
+    clear: {
+      raw: "",
+      custom: ""
+    }
+  };
+
+  let currentPIIMode = 'pseudonymize';
+  let currentPIIVault = {};
+  let currentPIISanitized = '';
+  let isPIIDeanonymized = false;
+
+  function setPIIMode(mode) {
+    currentPIIMode = mode;
+    ['pseudonymize', 'redact', 'mask'].forEach(m => {
+      const btn = document.getElementById(`piiMode-${m}`);
+      if (btn) {
+        if (m === mode) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+    });
+    runPIIShield();
+  }
+
+  function loadPIIPreset(presetKey) {
+    ['falcon', 'clinical', 'sec', 'clear'].forEach(k => {
+      const btn = document.getElementById(`piiPreset-${k}`);
+      if (btn) {
+        if (k === presetKey) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+    });
+
+    const preset = PII_PRESETS[presetKey] || PII_PRESETS.falcon;
+    const rawInput = document.getElementById('piiRawInput');
+    const customInput = document.getElementById('piiCustomEntities');
+    if (rawInput) rawInput.value = preset.raw;
+    if (customInput) customInput.value = preset.custom;
+    runPIIShield();
+  }
+
+  function runPIIShield() {
+    const rawEl = document.getElementById('piiRawInput');
+    const customEl = document.getElementById('piiCustomEntities');
+    const outEl = document.getElementById('piiSanitizedOutput');
+    const lenEl = document.getElementById('piiInputLength');
+    const latencyEl = document.getElementById('piiLatencyBadge');
+    const entityBadge = document.getElementById('piiEntityCountBadge');
+    const vaultContainer = document.getElementById('piiVaultContainer');
+    const vaultCountEl = document.getElementById('piiVaultKeyCount');
+    const restoreBtn = document.getElementById('piiToggleRestoreBtn');
+
+    if (!rawEl) return;
+    const rawText = rawEl.value || "";
+    if (lenEl) lenEl.textContent = `${rawText.length} chars`;
+
+    const customTokens = (customEl ? customEl.value : "")
+      .split(',')
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+
+    const result = obfuscatePII(rawText, currentPIIMode, customTokens);
+    currentPIIVault = result.vault;
+    currentPIISanitized = result.sanitizedText;
+    isPIIDeanonymized = false;
+
+    if (restoreBtn) {
+      restoreBtn.textContent = 'Test Vault Restore ↩';
+      restoreBtn.style.color = 'var(--blue)';
+    }
+
+    if (latencyEl) {
+      latencyEl.textContent = `${result.latencyUs < 1000 ? result.latencyUs.toFixed(1) + ' µs' : (result.latencyUs/1000).toFixed(2) + ' ms'} · In-Browser`;
+    }
+
+    if (entityBadge) {
+      const count = result.entities.length;
+      entityBadge.textContent = `${count} ${count === 1 ? 'Entity' : 'Entities'} Sanitized`;
+      entityBadge.style.color = count > 0 ? '#30d158' : 'var(--text-muted)';
+    }
+
+    if (outEl) {
+      outEl.textContent = result.sanitizedText;
+    }
+
+    if (vaultContainer) {
+      const entries = Object.entries(result.vault);
+      if (vaultCountEl) vaultCountEl.textContent = `${entries.length} vault surrogates`;
+      if (entries.length === 0) {
+        vaultContainer.innerHTML = '<div style="color: var(--text-tertiary); font-style: italic;">Vault empty. Type or load a preset containing PII/MNPI to populate.</div>';
+      } else {
+        vaultContainer.innerHTML = entries.map(([surrogate, realVal]) => {
+          return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.15rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <span style="color: #70b7ff; font-weight: 600;">${escapeHTML(surrogate)}</span>
+            <span style="color: var(--text-muted); margin: 0 0.5rem;">&rarr;</span>
+            <span style="color: #30d158; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%;">${escapeHTML(realVal)}</span>
+          </div>`;
+        }).join('');
+      }
+    }
+  }
+
+  function togglePIIDeanonymize() {
+    const outEl = document.getElementById('piiSanitizedOutput');
+    const restoreBtn = document.getElementById('piiToggleRestoreBtn');
+    if (!outEl) return;
+
+    if (!isPIIDeanonymized) {
+      const restored = deanonymizePII(currentPIISanitized, currentPIIVault);
+      outEl.textContent = restored;
+      isPIIDeanonymized = true;
+      if (restoreBtn) {
+        restoreBtn.textContent = 'View Sanitized 🛡️';
+        restoreBtn.style.color = '#30d158';
+      }
+    } else {
+      outEl.textContent = currentPIISanitized;
+      isPIIDeanonymized = false;
+      if (restoreBtn) {
+        restoreBtn.textContent = 'Test Vault Restore ↩';
+        restoreBtn.style.color = 'var(--blue)';
+      }
+    }
+  }
+
+  async function copyPIISanitized(btn) {
+    if (!currentPIISanitized) return;
+    try {
+      await navigator.clipboard.writeText(currentPIISanitized);
+      const origText = btn.textContent;
+      btn.textContent = '✓ Copied';
+      btn.style.color = '#30d158';
+      setTimeout(() => {
+        btn.textContent = origText;
+        btn.style.color = '';
+      }, 1800);
+    } catch (e) {
+      console.error('Clipboard copy failed:', e);
+    }
+  }
+
   // ── Explicit Global Window Exports for Inline HTML Handlers ──────────────
   window.switchDomain = switchDomain;
   window.copyJsonOutput = copyJsonOutput;
@@ -2545,6 +2821,11 @@ import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
   window.copySnippet = copySnippet;
   window.copyCurlExample = copyCurlExample;
   window.copyPythonExample = copyPythonExample;
+  window.setPIIMode = setPIIMode;
+  window.loadPIIPreset = loadPIIPreset;
+  window.runPIIShield = runPIIShield;
+  window.togglePIIDeanonymize = togglePIIDeanonymize;
+  window.copyPIISanitized = copyPIISanitized;
 
   // ── Document Initialization ──────────────────────────────────────────────
   function initPage() {
@@ -2552,6 +2833,7 @@ import { OLaya, OntologyDAG, DEFAULT_K } from './olaya-engine.js';
     initSpotlights();
     updateSliderTrack(1000000);
     switchDomain('leio');
+    loadPIIPreset('falcon');
   }
 
   if (document.readyState === 'loading') {

@@ -98,3 +98,35 @@ def test_empty_and_clean_text(pii_engine: PIIObfuscator):
     assert res.sanitized_text == text
     assert len(res.entities) == 0
     assert res.risk_score == 0.0
+
+
+def test_sovereign_reason_loop(pii_engine: PIIObfuscator):
+    prompt = "Review transaction for CEO Alice Adams (alice@corp.com) regarding Project Apex acquisition of BetaCo."
+
+    def mock_llm(sanitized_input: str) -> str:
+        # Assert LLM never sees real names
+        assert "Alice Adams" not in sanitized_input
+        assert "alice@corp.com" not in sanitized_input
+        assert "Project Apex" not in sanitized_input
+        assert "BetaCo" not in sanitized_input
+        # Model responds referencing the surrogate tokens
+        return f"Approved deal for [PERSON_NAME_1] ([EMAIL_1]) under [DEAL_CODENAME_1] targeting [CUSTOM_ENTITY_1]."
+
+    result = pii_engine.sovereign_reason(
+        prompt=prompt,
+        custom_entities=["BetaCo"],
+        deal_codenames=["Project Apex"],
+        llm_caller=mock_llm,
+    )
+
+    assert result.zero_leak_verified is True
+    assert result.entities_protected >= 4
+    # The output returned to the caller should have real entities restored!
+    assert "Alice Adams" in result.response
+    assert "alice@corp.com" in result.response
+    assert "Project Apex" in result.response
+    assert "BetaCo" in result.response
+    assert "[PERSON_NAME_1]" not in result.response
+    d = result.to_dict()
+    assert d["zero_leak_verified"] is True
+

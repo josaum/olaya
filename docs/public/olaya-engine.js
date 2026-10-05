@@ -524,3 +524,143 @@ export class OLaya {
     return { accepted: true, selected: result.choice, rejectionConfidence: 1 - result.confidence };
   }
 }
+
+// ── Sovereign PII / PHI / MNPI Obfuscator (In-Browser Client) ───────────────
+
+const EMAIL_RE = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g;
+const PHONE_RE = /(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g;
+const SSN_RE = /\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/g;
+const CC_RE = /\b(?:\d{4}[-\s]?){3}\d{4}\b/g;
+const IPV4_RE = /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g;
+const DEAL_RE = /\b(?:Project|Operation)\s+([A-Z][A-Za-z0-9_-]+)\b/g;
+const HONORIFIC_RE = /\b(?:Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.|CEO|CFO|COO|President)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b/g;
+
+export function obfuscatePII(text, mode = "pseudonymize", customEntities = [], dealCodenames = []) {
+  const t0 = performance.now();
+  const spans = [];
+
+  // 1. Custom entities
+  for (const ent of customEntities) {
+    if (!ent || ent.trim().length < 2) continue;
+    const re = new RegExp(`\\b${ent.trim().replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}\\b`, 'gi');
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      spans.push({ start: m.index, end: m.index + m[0].length, type: "CUSTOM_ENTITY", orig: m[0] });
+    }
+  }
+
+  // 2. Deal codenames
+  let m;
+  while ((m = DEAL_RE.exec(text)) !== null) {
+    spans.push({ start: m.index, end: m.index + m[0].length, type: "DEAL_CODENAME", orig: m[0] });
+  }
+  for (const code of dealCodenames) {
+    if (!code || code.trim().length < 2) continue;
+    const re = new RegExp(`\\b${code.trim().replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}\\b`, 'gi');
+    while ((m = re.exec(text)) !== null) {
+      spans.push({ start: m.index, end: m.index + m[0].length, type: "DEAL_CODENAME", orig: m[0] });
+    }
+  }
+
+  // 3. SSN
+  while ((m = SSN_RE.exec(text)) !== null) {
+    spans.push({ start: m.index, end: m.index + m[0].length, type: "SSN", orig: m[0] });
+  }
+
+  // 4. Credit cards
+  while ((m = CC_RE.exec(text)) !== null) {
+    spans.push({ start: m.index, end: m.index + m[0].length, type: "CREDIT_CARD", orig: m[0] });
+  }
+
+  // 5. Emails
+  while ((m = EMAIL_RE.exec(text)) !== null) {
+    spans.push({ start: m.index, end: m.index + m[0].length, type: "EMAIL", orig: m[0] });
+  }
+
+  // 6. Phones
+  while ((m = PHONE_RE.exec(text)) !== null) {
+    const digits = m[0].replace(/\D/g, '');
+    if (digits.length >= 10 && digits.length <= 15) {
+      spans.push({ start: m.index, end: m.index + m[0].length, type: "PHONE", orig: m[0] });
+    }
+  }
+
+  // 7. IPv4
+  while ((m = IPV4_RE.exec(text)) !== null) {
+    spans.push({ start: m.index, end: m.index + m[0].length, type: "IP_ADDRESS", orig: m[0] });
+  }
+
+  // 8. Honorific names
+  while ((m = HONORIFIC_RE.exec(text)) !== null) {
+    spans.push({ start: m.index, end: m.index + m[0].length, type: "PERSON_NAME", orig: m[0] });
+  }
+
+  // Sort and remove overlaps
+  spans.sort((a, b) => a.start - b.start || (b.end - b.start) - (a.end - a.start));
+  const nonOverlapping = [];
+  let lastEnd = -1;
+  for (const s of spans) {
+    if (s.start >= lastEnd) {
+      nonOverlapping.push(s);
+      lastEnd = s.end;
+    }
+  }
+
+  const counts = {};
+  const cache = {};
+  const vault = {};
+  const entities = [];
+  let output = "";
+  let cursor = 0;
+
+  for (const s of nonOverlapping) {
+    output += text.slice(cursor, s.start);
+    const key = `${s.type}:${s.orig.toLowerCase()}`;
+    let rep;
+    if (cache[key]) {
+      rep = cache[key];
+    } else {
+      if (mode === "redact") {
+        rep = `[REDACTED_${s.type}]`;
+      } else if (mode === "mask") {
+        if (s.type === "EMAIL" && s.orig.includes("@")) {
+          const [u, d] = s.orig.split("@");
+          rep = `${u[0]}***@${d}`;
+        } else if (s.type === "PHONE" || s.type === "SSN") {
+          const d = s.orig.replace(/\D/g, '');
+          rep = `***-**-${d.slice(-4)}`;
+        } else {
+          rep = s.orig.length > 2 ? `${s.orig[0]}***${s.orig.slice(-1)}` : "***";
+        }
+      } else {
+        counts[s.type] = (counts[s.type] || 0) + 1;
+        rep = `[${s.type}_${counts[s.type]}]`;
+      }
+      cache[key] = rep;
+    }
+    vault[rep] = s.orig;
+    entities.push({ type: s.type, original: s.orig, replacement: rep, start: s.start, end: s.end });
+    output += rep;
+    cursor = s.end;
+  }
+  output += text.slice(cursor);
+
+  const latencyUs = (performance.now() - t0) * 1000;
+  return {
+    sanitizedText: output,
+    entities,
+    vault,
+    mode,
+    latencyUs: Math.round(latencyUs * 10) / 10,
+    riskScore: entities.length > 0 ? Math.min(1.0, 1.0 - Math.pow(0.5, entities.length / 2)) : 0
+  };
+}
+
+export function deanonymizePII(sanitizedText, vault) {
+  let result = sanitizedText;
+  const sortedTokens = Object.keys(vault).sort((a, b) => b.length - a.length);
+  for (const token of sortedTokens) {
+    result = result.split(token).join(vault[token]);
+  }
+  return result;
+}
