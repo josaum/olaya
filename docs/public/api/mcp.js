@@ -140,14 +140,14 @@ const LEIO_CONCEPTS = [
     "id": 7,
     "curie": "leio:PythonSDK",
     "label": "Python Open-Weights SDK",
-    "description": "Official Python SDK (pip install olaya) with PyTorch, ModernBERT, ONNX runtime, and hard-negative mining trainers.",
+    "description": "Official Python SDK (pip install leio) with PyTorch, ModernBERT, ONNX runtime, and hard-negative mining trainers.",
     "parents": [
       1
     ],
     "disjointWith": [],
     "synonyms": [
       "python sdk",
-      "pip install olaya",
+      "pip install leio",
       "python library",
       "open weights"
     ]
@@ -156,7 +156,7 @@ const LEIO_CONCEPTS = [
     "id": 8,
     "curie": "leio:NodeMCPServer",
     "label": "Node.js MCP Server",
-    "description": "Zero-install Node.js Model Context Protocol daemon (npx @mycelia/olaya-mcp) exposing decision tools to Claude Desktop, Cursor, and Windsurf.",
+    "description": "Zero-install Node.js Model Context Protocol daemon (npx leio) exposing decision tools to Claude Desktop, Cursor, and Windsurf.",
     "parents": [
       1
     ],
@@ -172,14 +172,14 @@ const LEIO_CONCEPTS = [
     "id": 9,
     "curie": "leio:PythonMCPServer",
     "label": "Python MCP Server",
-    "description": "Zero-install Python Model Context Protocol server (uvx olaya-mcp) providing stdio and SSE transports for AI agent integration.",
+    "description": "Zero-install Python Model Context Protocol server (uvx leio) providing stdio and SSE transports for AI agent integration.",
     "parents": [
       1
     ],
     "disjointWith": [],
     "synonyms": [
       "python mcp",
-      "uvx olaya-mcp",
+      "uvx leio",
       "agent wedge",
       "mcp daemon"
     ]

@@ -72,8 +72,8 @@ jobs:
         env:
           RELEASE_VERSION: ${{ needs.plan.outputs.version }}
         run: |
-          uv build --wheel "dist/python/olaya-$RELEASE_VERSION.tar.gz" --out-dir "$RUNNER_TEMP/sdist-wheel"
-          .venv/bin/python scripts/test-release-packages.py --python-dir "$RUNNER_TEMP/sdist-wheel" --source-archive "dist/python/olaya-$RELEASE_VERSION.tar.gz" > dist/sdist-verification.json
+          uv build --wheel "dist/python/leio-$RELEASE_VERSION.tar.gz" --out-dir "$RUNNER_TEMP/sdist-wheel"
+          .venv/bin/python scripts/test-release-packages.py --python-dir "$RUNNER_TEMP/sdist-wheel" --source-archive "dist/python/leio-$RELEASE_VERSION.tar.gz" > dist/sdist-verification.json
       - uses: actions/upload-artifact@v4
         with:
           name: release-packages-${{ needs.plan.outputs.version }}
@@ -124,9 +124,9 @@ jobs:
   registries:
     # Registry publication. PyPI uses trusted publishing (OIDC): the `pypi`
     # environment must be registered as a pending/trusted publisher for the
-    # `olaya` project on pypi.org. npm needs an `NPM_TOKEN` repository secret
-    # with publish rights on the @mycelia scope until trusted publishing is
-    # enabled for the package; `--provenance` attaches the build attestation.
+    # `leio` project on pypi.org. npm needs an `NPM_TOKEN` repository secret
+    # with publish rights for the `leio` package until trusted publishing is
+    # enabled for it; `--provenance` attaches the build attestation.
     needs: [plan, packages, desktop]
     runs-on: ubuntu-latest
     environment: pypi
@@ -154,7 +154,7 @@ jobs:
           RELEASE_VERSION: ${{ needs.plan.outputs.version }}
         run: |
           test -n "$NODE_AUTH_TOKEN"
-          npm publish "release-packages/node/mycelia-olaya-$RELEASE_VERSION.tgz" --provenance --access public
+          npm publish "release-packages/node/leio-$RELEASE_VERSION.tgz" --provenance --access public
 
   publish:
     needs: [plan, packages, desktop, registries]

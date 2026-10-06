@@ -1,4 +1,4 @@
-# @mycelia/olaya
+# leio
 
 Ontology-Grounded System 1 Decision Model runtime for Node.js and TypeScript.
 Non-autoregressive lexical inference engine exposing structured decision primitives.
@@ -14,7 +14,7 @@ The package runtime and the HTTP edge demo have distinct response contracts.
 ## Quick Start
 
 ```typescript
-import { Concept, OntologyDAG, OLaya } from "@mycelia/olaya";
+import { Concept, OntologyDAG, OLaya } from "leio";
 
 const ontology = new OntologyDAG([
   {
@@ -70,7 +70,7 @@ const rating = await olaya.rate("Critical outage, customers cannot pay", ["low",
 
 ## MCP server and HTTP server
 
-`npx @mycelia/olaya` starts a stdio Model Context Protocol server (protocol revisions
+`npx leio` starts a stdio Model Context Protocol server (protocol revisions
 `2025-03-26` and `2024-11-05`) exposing four tools, `olaya_ground`, `olaya_subsumes`,
 `olaya_choice` and `olaya_score`, and one `ontology://<domain>` resource per bundled ontology.
 The bundled domains are `incident` and `gs1` (hand-written 5-class samples), `bfo`, `doid`,
@@ -78,7 +78,7 @@ The bundled domains are `incident` and `gs1` (hand-written 5-class samples), `bf
 resolve the same way from any working directory); `domain` may also be a path to an ontology JSON
 file. Unknown domains are an error, not a fallback.
 
-`npx @mycelia/olaya serve --port 8080` additionally serves `POST /v1/systemone` (`choice`,
+`npx leio serve --port 8080` additionally serves `POST /v1/systemone` (`choice`,
 `score` with ordered `criteria`, and `noul` with a proposition in `instructions`), `POST /v1/mcp`
 (MCP JSON-RPC over plain HTTP POST: one request, one JSON response, no SSE or sessions) and
 `GET /v1/health`. The server has no authentication, metering or billing.

@@ -1,5 +1,5 @@
 {
-  "description": "Cross-runtime decision parity fixture. Every runtime that makes lexical decisions (Rust olaya-core, Rust olaya-wasm, Node @mycelia/olaya) must select expected_curie for each state; the Python lexical router (olaya.candidate_router) must rank it first. Scorers differ per runtime, so the states are built to carry unambiguous lexical evidence: the expected concept matches several label/synonym tokens and no competitor matches more than one. See spec/AXIOMS.md, 'Decision parity'.",
+  "description": "Cross-runtime decision parity fixture. Every runtime that makes lexical decisions (Rust olaya-core, Rust olaya-wasm, Node leio) must select expected_curie for each state; the Python lexical router (olaya.candidate_router) must rank it first. Scorers differ per runtime, so the states are built to carry unambiguous lexical evidence: the expected concept matches several label/synonym tokens and no competitor matches more than one. See spec/AXIOMS.md, 'Decision parity'.",
   "ontology": {
     "name": "parity_incidents",
     "concepts": [

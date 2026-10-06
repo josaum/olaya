@@ -56,11 +56,11 @@ The npm check verifies `dist/index.mjs`, `dist/index.cjs`, `dist/cli.mjs`, `dist
 The source distribution gets a separate runtime gate: rebuild a wheel from the actual source archive, then test that rebuilt wheel with the same isolated package checks. For the current version:
 
 ```bash
-uv build --wheel dist/python/olaya-0.3.0.tar.gz --out-dir dist/sdist-wheel
+uv build --wheel dist/python/leio-0.3.1.tar.gz --out-dir dist/sdist-wheel
 .venv/bin/python scripts/test-release-packages.py \
   --python-dir dist/sdist-wheel \
   --node-dir dist/node \
-  --source-archive dist/python/olaya-0.3.0.tar.gz \
+  --source-archive dist/python/leio-0.3.1.tar.gz \
   > dist/sdist-verification.json
 ```
 
@@ -86,6 +86,6 @@ Keep the verification JSON, provenance JSON and SHA256 manifest with the release
 
 GitHub release assets include the Python wheel and source archive, npm tarball, macOS ARM64 MCPB, companion Code plugin, skill packages, checksums, provenance and verification output produced by the release build. Build jobs retain their intermediate Actions artifacts for 14 days. The final job downloads both successful artifact sets, creates release notes and checksums, attaches assets to a draft release, and publishes that GitHub release after upload. Confirm the uploaded asset list and completed jobs before describing a release as delivered. GitHub release access follows the repository's visibility and permissions; uploading assets does not make a private repository public.
 
-Registry publication is the `registries` job. It runs only after `packages` and `desktop` verified the artefacts, publishes the wheel and source archive to PyPI through trusted publishing (the `pypi` GitHub environment registered on pypi.org for project `olaya`, no stored token), and publishes the npm tarball to `@mycelia/olaya` with `--provenance` using the `NPM_TOKEN` repository secret. The GitHub release is created only after both registries accepted the version.
+Registry publication is the `registries` job. It runs only after `packages` and `desktop` verified the artefacts, publishes the wheel and source archive to PyPI through trusted publishing (the `pypi` GitHub environment registered on pypi.org for project `olaya`, no stored token), and publishes the npm tarball to `leio` with `--provenance` using the `NPM_TOKEN` repository secret. The GitHub release is created only after both registries accepted the version.
 
 Hosted CI builds are unsigned by default. A developer identity stored in a user's macOS Keychain stays on that Mac; do not export a private signing key to hosted CI. After a successful GitHub release, an authorized local signing step can download the fresh CI-built MCPB, use that Keychain identity, and upload a separate `-signed` variant without replacing the unsigned artifact. Recompute checksums and repeat artifact verification after signing or any other mutation. Signing and notarization require their own recorded verification; an unsigned functional smoke test is not a signing result.
