@@ -21,6 +21,7 @@ Read this before anything else.
 | Ontology DAG, OWL 2 RL schema closure, axiom projection kernel | Implemented, deterministic, tested in Python, Rust and Node against shared golden vectors |
 | OWL / RDF / SKOS / OBO ingestion to Arrow IPC (`owl-fast-core`, `olaya-core`) | Implemented; 13 real ontologies tracked as fixtures and exercised in tests |
 | Formal Concept Analysis engine (`owl-fast-core::fca`) | Implemented and tested |
+| Lean 4 proof core (`lean/`) | Steps 3–4 of the axiom kernel and the verifier are formalised over integer scores; `project_verified` and 15 supporting theorems, no `sorry`, axioms audited in CI. Softmax, confidence, and the `K`-sweep convergence bound are **not** proven. See [`spec/AXIOMS.md`](spec/AXIOMS.md). |
 | TBox-bound workflow compiler, interpreter, JSON-LD traces, inference-free replay | Implemented and tested |
 | Lexical scoring (label / synonym / description overlap with IDF) | Implemented in every runtime. **This is what every shipped runtime uses to score.** |
 | Neural scoring head (Python, PyTorch) | Implemented and trainable. **No trained weights are committed.** `OLaya()` without a checkpoint is a randomly initialised encoder; its scores are not meaningful. |

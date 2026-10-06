@@ -1,0 +1,12 @@
+# Lean 4 proof core for the O-Laya axiom projection kernel (spec/AXIOMS.md, steps 3-4 and the
+# verifier). Core Lean only: no Mathlib, no Batteries, no package dependencies. The toolchain is
+# pinned in lean-toolchain; bump it deliberately.
+name = "olaya-axioms-lean"
+defaultTargets = ["OlayaAxioms", "olaya-axioms-oracle"]
+
+[[lean_lib]]
+name = "OlayaAxioms"
+
+[[lean_exe]]
+name = "olaya-axioms-oracle"
+root = "Oracle"
