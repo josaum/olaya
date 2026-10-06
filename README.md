@@ -28,7 +28,7 @@ Read this before anything else.
 | ONNX path in Rust (`onnx` feature) | Compiles. No model to load, no end-to-end test. |
 | WebAssembly build | Builds in CI for `wasm32-unknown-unknown`; kernel unit-tested. |
 | Calibration | Temperature fitting (`calibration.py`) is implemented and used at inference when a checkpoint carries a fitted temperature. Without one, confidence is normalised entropy with a fixed cardinality temperature and is **not** an empirically calibrated probability. |
-| Published packages | `leio` on PyPI (`uvx leio`, `pip install leio`) and `@josaum/leio` on npm (`npx @josaum/leio`), published by the release workflow from the tagged commit with build provenance. |
+| Published packages | **Not yet on PyPI or npm.** `release.yml` publishes `leio` (PyPI) and `@josaum/leio` (npm) from the tagged commit; until the first publish, install from a locally built wheel (see Installation). |
 | HTTP edge demo (`/api/systemone`) | Live, lexical only, no ontology DAG. See [the edge contract](spec/systemone-reliability.md). |
 
 No accuracy, ECE, or latency number in this repository applies to a trained
@@ -147,11 +147,23 @@ returns a bounded negation-aware lexical score with explicit abstention.
 
 ## Installation
 
-From the registries:
+Until the first registry publish lands, install from a wheel built in this checkout. The
+Enterprise Strategy toolkit consumes O-Laya the same way (a hash-pinned vendored wheel).
 
 ```bash
-uvx leio            # Python MCP server, no install step (pulls torch; ~2 GB)
-npx @josaum/leio       # Node MCP server, zero dependencies
+uv build --wheel --out-dir dist                      # dist/leio-0.3.1-py3-none-any.whl
+uvx --from dist/leio-0.3.1-py3-none-any.whl leio     # MCP server straight from the wheel
+uv pip install dist/leio-0.3.1-py3-none-any.whl      # into a venv: provides `leio`, `leio-mcp`, `olaya-mcp`
+```
+
+The wheel's base dependencies include torch (about 2 GB); `olaya.pii` alone is standard library.
+
+Registry installs, live once the release workflow has published `leio` to PyPI and
+`@josaum/leio` to npm (wired in `release.yml`; first publish pending):
+
+```bash
+uvx leio                # Python MCP server, no install step
+npx @josaum/leio        # Node MCP server, zero dependencies
 pip install leio        # Python SDK
 ```
 
