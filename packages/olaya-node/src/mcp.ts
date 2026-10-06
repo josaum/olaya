@@ -446,7 +446,7 @@ export function installNodeMCPConfig(client: "claude" | "cursor" = "claude", dry
 
   configData.mcpServers["olaya"] = {
     command: "npx",
-    args: ["@mycelia/olaya-mcp"],
+    args: ["@mycelia/olaya"],
   };
 
   const outJson = JSON.stringify(configData, null, 2);

@@ -121,8 +121,43 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  publish:
+  registries:
+    # Registry publication. PyPI uses trusted publishing (OIDC): the `pypi`
+    # environment must be registered as a pending/trusted publisher for the
+    # `olaya` project on pypi.org. npm needs an `NPM_TOKEN` repository secret
+    # with publish rights on the @mycelia scope until trusted publishing is
+    # enabled for the package; `--provenance` attaches the build attestation.
     needs: [plan, packages, desktop]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-packages-${{ needs.plan.outputs.version }}
+          path: release-packages
+      - name: Publish wheel and source archive to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: release-packages/python/
+          print-hash: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - name: Publish the Node package to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          RELEASE_VERSION: ${{ needs.plan.outputs.version }}
+        run: |
+          test -n "$NODE_AUTH_TOKEN"
+          npm publish "release-packages/node/mycelia-olaya-$RELEASE_VERSION.tgz" --provenance --access public
+
+  publish:
+    needs: [plan, packages, desktop, registries]
     runs-on: ubuntu-latest
     permissions:
       contents: write

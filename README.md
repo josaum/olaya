@@ -27,7 +27,7 @@ Read this before anything else.
 | ONNX path in Rust (`onnx` feature) | Compiles. No model to load, no end-to-end test. |
 | WebAssembly build | Builds in CI for `wasm32-unknown-unknown`; kernel unit-tested. |
 | Calibration | Temperature fitting (`calibration.py`) is implemented and used at inference when a checkpoint carries a fitted temperature. Without one, confidence is normalised entropy with a fixed cardinality temperature and is **not** an empirically calibrated probability. |
-| Published packages (`uvx olaya-mcp`, `npx @mycelia/olaya-mcp`) | **Not published.** Install from source. |
+| Published packages | `olaya` on PyPI (`uvx olaya-mcp`, `pip install olaya`) and `@mycelia/olaya` on npm (`npx @mycelia/olaya`), published by the release workflow from the tagged commit with build provenance. |
 | HTTP edge demo (`/api/systemone`) | Live, lexical only, no ontology DAG. See [the edge contract](spec/systemone-reliability.md). |
 
 No accuracy, ECE, or latency number in this repository applies to a trained
@@ -146,7 +146,15 @@ returns a bounded negation-aware lexical score with explicit abstention.
 
 ## Installation
 
-Everything installs from source; no pre-built artefacts are committed.
+From the registries:
+
+```bash
+uvx olaya-mcp            # Python MCP server, no install step (pulls torch; ~2 GB)
+npx @mycelia/olaya       # Node MCP server, zero dependencies
+pip install olaya        # Python SDK
+```
+
+From source (no pre-built artefacts are committed):
 
 ### Python
 
