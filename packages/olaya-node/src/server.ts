@@ -1,5 +1,5 @@
 /**
- * HTTP server for @josaum/leio.
+ * HTTP server for leio-decision.
  *
  * 1. POST /v1/systemone — Jev-style request shape (`state` + named `questions`), answered by the
  *    package's lexical primitives: `choice`, `score` (an ordered scale of `criteria` labels, via
