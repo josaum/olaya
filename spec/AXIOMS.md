@@ -13,6 +13,7 @@ Implementations:
 | Rust | `crates/olaya-core/src/axioms.rs` → `calibrate_and_project_inplace` | `test_axiom_kernel_matches_shared_golden_vectors` |
 | Rust (wasm) | `crates/olaya-wasm/src/lib.rs` → `calibrate_and_project` | `kernel_matches_shared_golden_vectors` (runs natively) |
 | Node | `packages/olaya-node/src/axioms.ts` → `calibrateAndProject` | `"matches the shared axiom golden vectors"` |
+| Lean 4 (proof core) | `lean/OlayaAxioms/` → `project` (steps 3–4 only, integer scores) | `project_verified` is a theorem; `tests/test_lean_oracle.py` checks the Python reference against the verified oracle |
 
 `docs/public/olaya-engine.js` carries the same kernel for the demo pages but has no test harness.
 
@@ -66,6 +67,24 @@ verify the listed kernel implementations, not the deployed HTTP demo.
    the ancestor chain and report confidence `0` (see the `deep_chain_of_ten` golden case, whose
    confidence is `≈ 0.79`, not `0`). It is measured *after* disjointness exclusion because an
    excluded sibling is no longer a competing hypothesis.
+
+## Formal proofs (Lean 4)
+
+`lean/` is a core-Lean-only Lake project (no Mathlib) that formalises steps 3–4 and the
+verification clauses over integer (fixed-point) scores. Proven, with no `sorry` and no axiom
+beyond `propext` / `Quot.sound` (CI audits this):
+
+- step 3 (`lift`): the result is monotone, never lower than the input, and is the *least* monotone
+  function above the input (so it is the fixed point "repeat until no change" describes); a
+  monotone input is returned unchanged;
+- step 4 (`disjointAll`): never raises a score, keeps monotonicity, keeps non-negativity, and leaves
+  every disjoint pair with `min = 0` or `max < threshold`; the zeroed set is child-closed, contains
+  the loser, and holds only its descendants;
+- `verifyAxioms` decides exactly the two clauses below, and `project_verified`: whatever
+  `project` returns for a non-negative input passes `verifyAxioms`.
+
+Not formalised: steps 1–2 (softmax) and 5 (entropy confidence). Not proven: that `K` sweeps
+always suffice for step 3; `lift` carries a fuel bound and the oracle test observes convergence.
 
 ## Verification
 

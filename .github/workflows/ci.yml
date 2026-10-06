@@ -78,6 +78,38 @@ jobs:
           .venv/bin/python scripts/gen_axiom_golden.py
           git diff --exit-code -- spec/axioms_golden.json
 
+  lean:
+    name: Lean 4 (proof core, no sorry, axiom audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: lean
+          use-mathlib-cache: false
+          build-args: --log-level=info
+          axiom-audit: true
+          axiom-audit-root: OlayaAxioms
+          leanchecker: true
+      - name: No sorry anywhere in the proof core
+        working-directory: lean
+        run: |
+          ! grep -rn --include='*.lean' -E '\bsorry\b' .
+          lake build 2>&1 | tee build.log
+          ! grep -q "declaration uses 'sorry'" build.log
+          test "$(grep -c "depends on axioms" build.log)" -ge 16
+          ! grep "depends on axioms" build.log | grep -vE "\[(propext|Quot\.sound|Classical\.choice)(, (propext|Quot\.sound|Classical\.choice))*\]"
+      - name: Lake manifest is committed and unchanged by the build
+        run: git diff --exit-code -- lean/lake-manifest.json
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Python reference agrees with the verified Lean oracle
+        run: |
+          uv venv --clear
+          uv pip install numpy pydantic pytest
+          PYTHONPATH=src .venv/bin/python -m pytest -q tests/test_lean_oracle.py
+
   node:
     name: Node (tsc, bun test)
     runs-on: ubuntu-latest
