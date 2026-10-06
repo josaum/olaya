@@ -91,6 +91,7 @@ jobs:
           axiom-audit: true
           axiom-audit-root: OlayaAxioms
           leanchecker: true
+          leanchecker-args: OlayaAxioms   # default derives the module from the package name
       - name: No sorry anywhere in the proof core
         working-directory: lean
         run: |
