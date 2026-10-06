@@ -1,5 +1,5 @@
 {
-  "name": "leio",
+  "name": "@josaum/leio",
   "version": "0.3.1",
   "description": "Ontology-Grounded System 1 Decision Model runtime for Node.js and TypeScript",
   "main": "./dist/index.cjs",

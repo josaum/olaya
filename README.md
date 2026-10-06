@@ -27,7 +27,7 @@ Read this before anything else.
 | ONNX path in Rust (`onnx` feature) | Compiles. No model to load, no end-to-end test. |
 | WebAssembly build | Builds in CI for `wasm32-unknown-unknown`; kernel unit-tested. |
 | Calibration | Temperature fitting (`calibration.py`) is implemented and used at inference when a checkpoint carries a fitted temperature. Without one, confidence is normalised entropy with a fixed cardinality temperature and is **not** an empirically calibrated probability. |
-| Published packages | `leio` on PyPI (`uvx leio`, `pip install leio`) and `leio` on npm (`npx leio`), published by the release workflow from the tagged commit with build provenance. |
+| Published packages | `leio` on PyPI (`uvx leio`, `pip install leio`) and `@josaum/leio` on npm (`npx @josaum/leio`), published by the release workflow from the tagged commit with build provenance. |
 | HTTP edge demo (`/api/systemone`) | Live, lexical only, no ontology DAG. See [the edge contract](spec/systemone-reliability.md). |
 
 No accuracy, ECE, or latency number in this repository applies to a trained
@@ -150,7 +150,7 @@ From the registries:
 
 ```bash
 uvx leio            # Python MCP server, no install step (pulls torch; ~2 GB)
-npx leio       # Node MCP server, zero dependencies
+npx @josaum/leio       # Node MCP server, zero dependencies
 pip install leio        # Python SDK
 ```
 
@@ -257,7 +257,7 @@ cd packages/olaya-node && bun install && bun test && bun run build
 ```
 
 ```typescript
-import { OntologyDAG, OLaya } from "leio";
+import { OntologyDAG, OLaya } from "@josaum/leio";
 
 const dag = new OntologyDAG([
   { id: 0, curie: "INCIDENT:DATA", label: "Data & Storage Incident", parents: [], disjointWith: [1], synonyms: ["database"] },

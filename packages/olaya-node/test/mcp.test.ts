@@ -216,6 +216,6 @@ describe("OLayaNodeMCPServer (MCP Protocol)", () => {
     const msg = installNodeMCPConfig("claude", true);
     expect(msg).toContain("[Dry-Run]");
     expect(msg).toContain("olaya");
-    expect(msg).toContain("leio");
+    expect(msg).toContain("@josaum/leio");
   });
 });
