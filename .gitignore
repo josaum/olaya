@@ -27,3 +27,4 @@ node_modules/
 docs/public/.vercel/
 .leio-code/
 .claude/
+.lake/
