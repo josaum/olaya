@@ -74,8 +74,8 @@ print(json.dumps({'loaded_modules': loaded, 'workflow_live_and_replay': True, 'n
 NODE_SMOKE = r"""
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
-const esm = await import('@josaum/leio');
-const cjs = createRequire(import.meta.url)('@josaum/leio');
+const esm = await import('olaya');
+const cjs = createRequire(import.meta.url)('olaya');
 for (const [format, api] of [['esm', esm], ['cjs', cjs]]) {
   assert.equal(typeof api.OntologyDAG, 'function');
   assert.equal(typeof api.OLaya, 'function');
@@ -181,7 +181,7 @@ def verify_node(tarball: Path, destination: Path, version: str) -> dict:
                 shutil.copyfileobj(source, output)
     package = destination / "package"
     metadata = json.loads((package / "package.json").read_text())
-    assert metadata["name"] == "@josaum/leio"
+    assert metadata["name"] == "olaya"
     assert metadata["version"] == version
     assert metadata["exports"]["."]["import"] == "./dist/index.mjs"
     assert metadata["exports"]["."]["require"] == "./dist/index.cjs"
@@ -192,7 +192,7 @@ def verify_node(tarball: Path, destination: Path, version: str) -> dict:
     assert node is not None, "Node is required to test the built package"
     script = destination / "smoke.mjs"
     script.write_text(NODE_SMOKE)
-    package_link = destination / "node_modules/@josaum/leio"
+    package_link = destination / "node_modules/olaya"
     package_link.parent.mkdir(parents=True)
     package_link.symlink_to(package, target_is_directory=True)
     env = dict(os.environ)

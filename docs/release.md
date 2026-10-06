@@ -56,11 +56,11 @@ The npm check verifies `dist/index.mjs`, `dist/index.cjs`, `dist/cli.mjs`, `dist
 The source distribution gets a separate runtime gate: rebuild a wheel from the actual source archive, then test that rebuilt wheel with the same isolated package checks. For the current version:
 
 ```bash
-uv build --wheel dist/python/olaya-0.3.1.tar.gz --out-dir dist/sdist-wheel
+uv build --wheel dist/python/olaya-0.3.2.tar.gz --out-dir dist/sdist-wheel
 .venv/bin/python scripts/test-release-packages.py \
   --python-dir dist/sdist-wheel \
   --node-dir dist/node \
-  --source-archive dist/python/olaya-0.3.1.tar.gz \
+  --source-archive dist/python/olaya-0.3.2.tar.gz \
   > dist/sdist-verification.json
 ```
 

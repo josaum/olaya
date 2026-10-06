@@ -159,7 +159,7 @@ jobs:
           test -n "$NODE_AUTH_TOKEN"
           npm install -g npm@latest   # staged publishing needs npm >= 11.15
           npm --version
-          npm stage publish "release-packages/node/josaum-leio-$RELEASE_VERSION.tgz" --access public
+          npm stage publish "release-packages/node/olaya-$RELEASE_VERSION.tgz" --access public
           echo "::notice::leio $RELEASE_VERSION is staged on npm; approve it under Staged Packages on npmjs.com (2FA) to make it installable."
 
   publish:

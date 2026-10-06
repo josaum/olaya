@@ -156,7 +156,7 @@ const LEIO_CONCEPTS = [
     "id": 8,
     "curie": "leio:NodeMCPServer",
     "label": "Node.js MCP Server",
-    "description": "Zero-install Node.js Model Context Protocol daemon (npx @josaum/leio) exposing decision tools to Claude Desktop, Cursor, and Windsurf.",
+    "description": "Zero-install Node.js Model Context Protocol daemon (npx olaya) exposing decision tools to Claude Desktop, Cursor, and Windsurf.",
     "parents": [
       1
     ],
