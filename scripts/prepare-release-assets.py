@@ -56,7 +56,7 @@ def main():
     accuracy = provenance["model"]["historical_validation_accuracy"]
     notes = f"""O-Laya {version}, built and verified from commit `{commit}`.
 
-Included assets: Python wheel and source archive; `@josaum/leio` npm tarball;
+Included assets: Python wheel and source archive; `leio-decision` npm tarball;
 complete macOS Apple Silicon MCPB; three native skills and skill ZIPs; companion
 Claude Code plugin; package/Desktop verification reports, runtime/model provenance
 and SHA-256 checksums.

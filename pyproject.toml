@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "olaya"
-version = "0.3.1"
+name = "leio-decision"
+version = "0.3.2"
 description = "Ontology-Grounded System 1 Decision Model"
 authors = [
     { name = "Dionisio & Team" }
@@ -30,6 +30,7 @@ llm = [
 ]
 
 [project.scripts]
+leio-decision = "olaya.webmcp:main"
 olaya = "olaya.webmcp:main"
 leio = "olaya.webmcp:main"
 leio-mcp = "olaya.webmcp:main"

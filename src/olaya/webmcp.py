@@ -445,7 +445,7 @@ class OLayaMCPServer:
         self.mode = mode
         self.server_info = {
             "name": "leio",
-            "version": "0.3.1",
+            "version": "0.3.2",
             "protocolVersion": "2024-11-05",
         }
 
@@ -944,7 +944,7 @@ class OLayaMCPServer:
                     self.end_headers()
                     status_info = {
                         "name": "leio",
-                        "version": "0.3.1",
+                        "version": "0.3.2",
                         "protocolVersion": "2024-11-05",
                         "status": "ready",
                         "supportedDomains": ["gs1", "schemaorg", "doid", "incident", "leio"],

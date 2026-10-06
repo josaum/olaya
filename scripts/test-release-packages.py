@@ -74,8 +74,8 @@ print(json.dumps({'loaded_modules': loaded, 'workflow_live_and_replay': True, 'n
 NODE_SMOKE = r"""
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
-const esm = await import('@josaum/leio');
-const cjs = createRequire(import.meta.url)('@josaum/leio');
+const esm = await import('leio-decision');
+const cjs = createRequire(import.meta.url)('leio-decision');
 for (const [format, api] of [['esm', esm], ['cjs', cjs]]) {
   assert.equal(typeof api.OntologyDAG, 'function');
   assert.equal(typeof api.OLaya, 'function');
@@ -120,12 +120,12 @@ def verify_wheel(wheel: Path, destination: Path, version: str) -> dict:
         metadata_paths = [name for name in names if name.endswith(".dist-info/METADATA")]
         assert len(metadata_paths) == 1
         metadata = Parser().parsestr(archive.read(metadata_paths[0]).decode())
-        assert metadata["Name"] == "olaya"
+        assert metadata["Name"] == "leio-decision"
         assert metadata["Version"] == version
         entries_path = metadata_paths[0].removesuffix("METADATA") + "entry_points.txt"
         entries = configparser.ConfigParser()
         entries.read_string(archive.read(entries_path).decode())
-        assert entries["console_scripts"]["olaya"] == "olaya.webmcp:main"
+        assert entries["console_scripts"]["leio-decision"] == "olaya.webmcp:main"
         assert entries["console_scripts"]["leio"] == "olaya.webmcp:main"
         assert entries["console_scripts"]["olaya-mcp"] == "olaya.webmcp:main"
         for name in names:
@@ -181,18 +181,18 @@ def verify_node(tarball: Path, destination: Path, version: str) -> dict:
                 shutil.copyfileobj(source, output)
     package = destination / "package"
     metadata = json.loads((package / "package.json").read_text())
-    assert metadata["name"] == "@josaum/leio"
+    assert metadata["name"] == "leio-decision"
     assert metadata["version"] == version
     assert metadata["exports"]["."]["import"] == "./dist/index.mjs"
     assert metadata["exports"]["."]["require"] == "./dist/index.cjs"
     assert metadata["types"] == "./dist/index.d.ts"
-    assert metadata["bin"]["leio"] == "./dist/cli.mjs"
+    assert metadata["bin"]["leio-decision"] == "./dist/cli.mjs"
     assert metadata["bin"]["olaya-mcp"] == "./dist/cli.mjs"
     node = shutil.which("node")
     assert node is not None, "Node is required to test the built package"
     script = destination / "smoke.mjs"
     script.write_text(NODE_SMOKE)
-    package_link = destination / "node_modules/@josaum/leio"
+    package_link = destination / "node_modules/leio-decision"
     package_link.parent.mkdir(parents=True)
     package_link.symlink_to(package, target_is_directory=True)
     env = dict(os.environ)
@@ -211,12 +211,12 @@ def verify_node(tarball: Path, destination: Path, version: str) -> dict:
 
 def verify_source_archive(archive_path: Path, version: str) -> dict:
     """Verify sdist identity; runtime coverage comes from its separately rebuilt wheel."""
-    assert archive_path.name == f"olaya-{version}.tar.gz", "Source archive filename version mismatch"
+    assert archive_path.name == f"leio_decision-{version}.tar.gz", "Source archive filename version mismatch"
     with tarfile.open(archive_path, "r:gz") as archive:
         members = archive.getmembers()
         names = [entry.name for entry in members]
         assert len(names) == len(set(names)), "Duplicate source archive member"
-        prefix = f"olaya-{version}"
+        prefix = f"leio_decision-{version}"
         for entry in members:
             relative = safe_relative(entry.name)
             assert relative.parts[0] == prefix, "Unexpected source archive root"
@@ -225,7 +225,7 @@ def verify_source_archive(archive_path: Path, version: str) -> dict:
         assert metadata_path in names, "Source archive package metadata missing"
         with archive.extractfile(metadata_path) as stream:
             metadata = Parser().parsestr(stream.read().decode())
-        assert metadata["Name"] == "olaya"
+        assert metadata["Name"] == "leio-decision"
         assert metadata["Version"] == version
     return {
         "file": archive_path.name,
