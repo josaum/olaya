@@ -1,5 +1,5 @@
 /**
- * Model Context Protocol (MCP) server for @mycelia/olaya over stdio. Zero external dependencies.
+ * Model Context Protocol (MCP) server for @josaum/leio over stdio. Zero external dependencies.
  *
  * Implements the JSON-RPC 2.0 base lifecycle (initialize, ping, notifications), `tools/*` and
  * `resources/*` of the 2024-11-05 and 2025-03-26 protocol revisions. No prompts, sampling,
@@ -446,7 +446,7 @@ export function installNodeMCPConfig(client: "claude" | "cursor" = "claude", dry
 
   configData.mcpServers["olaya"] = {
     command: "npx",
-    args: ["@mycelia/olaya-mcp"],
+    args: ["@josaum/leio"],
   };
 
   const outJson = JSON.stringify(configData, null, 2);

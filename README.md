@@ -27,7 +27,7 @@ Read this before anything else.
 | ONNX path in Rust (`onnx` feature) | Compiles. No model to load, no end-to-end test. |
 | WebAssembly build | Builds in CI for `wasm32-unknown-unknown`; kernel unit-tested. |
 | Calibration | Temperature fitting (`calibration.py`) is implemented and used at inference when a checkpoint carries a fitted temperature. Without one, confidence is normalised entropy with a fixed cardinality temperature and is **not** an empirically calibrated probability. |
-| Published packages (`uvx olaya-mcp`, `npx @mycelia/olaya-mcp`) | **Not published.** Install from source. |
+| Published packages | `leio` on PyPI (`uvx leio`, `pip install leio`) and `@josaum/leio` on npm (`npx @josaum/leio`), published by the release workflow from the tagged commit with build provenance. |
 | HTTP edge demo (`/api/systemone`) | Live, lexical only, no ontology DAG. See [the edge contract](spec/systemone-reliability.md). |
 
 No accuracy, ECE, or latency number in this repository applies to a trained
@@ -138,7 +138,7 @@ ancestor of another candidate.
 |---|---|---|---|
 | **Rust** | `olaya-core` (`crates/olaya-core`) | Lexical; optional ONNX cross-encoder behind the `onnx` feature (no bundled model) | Arrow-native ontology batches, OWL/Turtle ingestion via `owl-fast-core`, constant-time routing per query |
 | **Python** | `olaya` (`src/olaya`) | Transformer marker-pooling head (untrained unless you supply a checkpoint) | Full `system_one` API: `concept`, `subsumes`, `choice`, `score`, `noul`; training, calibration, workflows, MCP server |
-| **Node / TypeScript** | `@mycelia/olaya` (`packages/olaya-node`) | Lexical | Zero-dependency ESM + CJS; `systemOne`, `choice`, `score`, `noul`; MCP server |
+| **Node / TypeScript** | `leio` (`packages/olaya-node`) | Lexical | Zero-dependency ESM + CJS; `systemOne`, `choice`, `score`, `noul`; MCP server |
 
 The `noul` primitive differs by design: Python returns `P(true)` for a yes/no
 statement, Node returns an out-of-domain rejection decision, and the edge demo
@@ -146,7 +146,15 @@ returns a bounded negation-aware lexical score with explicit abstention.
 
 ## Installation
 
-Everything installs from source; no pre-built artefacts are committed.
+From the registries:
+
+```bash
+uvx leio            # Python MCP server, no install step (pulls torch; ~2 GB)
+npx @josaum/leio       # Node MCP server, zero dependencies
+pip install leio        # Python SDK
+```
+
+From source (no pre-built artefacts are committed):
 
 ### Python
 
@@ -249,7 +257,7 @@ cd packages/olaya-node && bun install && bun test && bun run build
 ```
 
 ```typescript
-import { OntologyDAG, OLaya } from "@mycelia/olaya";
+import { OntologyDAG, OLaya } from "@josaum/leio";
 
 const dag = new OntologyDAG([
   { id: 0, curie: "INCIDENT:DATA", label: "Data & Storage Incident", parents: [], disjointWith: [1], synonyms: ["database"] },
@@ -353,7 +361,7 @@ olaya/
 │   ├── owl-fast-core/          # OWL / RDF / SKOS extraction on oxrdf, FCA engine
 │   └── mycelia-ort-utils/      # ONNX Runtime session helpers
 ├── src/olaya/                  # Python engine, model, training, calibration, workflows, MCP
-├── packages/olaya-node/        # @mycelia/olaya
+├── packages/olaya-node/        # leio
 ├── benchmarks/                 # OAEI runner, latency scripts, results/
 ├── tests/fixtures/oaei/        # Vendored OAEI Conference ontologies + reference alignments
 ├── models/*.arrow              # Compiled ontology fixtures (no model weights)
