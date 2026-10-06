@@ -109,7 +109,8 @@ jobs:
         run: |
           uv venv --clear
           uv pip install numpy pydantic pytest
-          PYTHONPATH=src .venv/bin/python -m pytest -q tests/test_lean_oracle.py
+          # --noconftest: tests/conftest.py imports torch, which this job does not install.
+          PYTHONPATH=src .venv/bin/python -m pytest -q --noconftest tests/test_lean_oracle.py
 
   node:
     name: Node (tsc, bun test)
