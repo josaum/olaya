@@ -71,8 +71,9 @@ verify the listed kernel implementations, not the deployed HTTP demo.
 ## Formal proofs (Lean 4)
 
 `lean/` is a core-Lean-only Lake project (no Mathlib) that formalises steps 3–4 and the
-verification clauses over integer (fixed-point) scores. Proven, with no `sorry` and no axiom
-beyond `propext` / `Quot.sound` (CI audits this):
+verification clauses over integer (fixed-point) scores. Proven, with no `sorry`; the theorems
+use only `propext` and `Quot.sound`, and CI fails on any axiom outside the standard three
+(`propext`, `Quot.sound`, `Classical.choice`):
 
 - step 3 (`lift`): the result is monotone, never lower than the input, and is the *least* monotone
   function above the input (so it is the fixed point "repeat until no change" describes); a
