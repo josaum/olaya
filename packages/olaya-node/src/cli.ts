@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * CLI entrypoint for @mycelia/olaya-mcp: a zero-dependency Model Context Protocol server.
+ * CLI entrypoint for @josaum/leio: a zero-dependency Model Context Protocol server.
  */
 
 import { OLayaNodeMCPServer, installNodeMCPConfig, LATEST_PROTOCOL_VERSION, DEFAULT_DOMAIN } from "./mcp.js";
@@ -13,12 +13,12 @@ function printHelp(): void {
 O-Laya Model Context Protocol (MCP) server and lexical decision HTTP server
 
 Usage:
-  npx @mycelia/olaya-mcp                           Start stdio MCP server (protocol ${LATEST_PROTOCOL_VERSION} / 2024-11-05)
-  npx @mycelia/olaya-mcp serve [--port 8080]       Start HTTP server (/v1/systemone, /v1/mcp, /v1/health)
-  npx @mycelia/olaya-mcp ground "<text>" [--domain ${DEFAULT_DOMAIN}]
+  npx @josaum/leio                           Start stdio MCP server (protocol ${LATEST_PROTOCOL_VERSION} / 2024-11-05)
+  npx @josaum/leio serve [--port 8080]       Start HTTP server (/v1/systemone, /v1/mcp, /v1/health)
+  npx @josaum/leio ground "<text>" [--domain ${DEFAULT_DOMAIN}]
                                                    Ground an observation from the CLI
-  npx @mycelia/olaya-mcp install --client claude   Configure Claude Desktop
-  npx @mycelia/olaya-mcp install --client cursor   Configure Cursor IDE
+  npx @josaum/leio install --client claude   Configure Claude Desktop
+  npx @josaum/leio install --client cursor   Configure Cursor IDE
 `);
 }
 

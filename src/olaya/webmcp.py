@@ -444,8 +444,8 @@ class OLayaMCPServer:
     def __init__(self, mode: str = "auto"):
         self.mode = mode
         self.server_info = {
-            "name": "olaya-mcp",
-            "version": "0.3.0",
+            "name": "leio",
+            "version": "0.3.1",
             "protocolVersion": "2024-11-05",
         }
 
@@ -943,8 +943,8 @@ class OLayaMCPServer:
                     self.send_header("Content-Type", "application/json")
                     self.end_headers()
                     status_info = {
-                        "name": "olaya-mcp",
-                        "version": "0.3.0",
+                        "name": "leio",
+                        "version": "0.3.1",
                         "protocolVersion": "2024-11-05",
                         "status": "ready",
                         "supportedDomains": ["gs1", "schemaorg", "doid", "incident", "leio"],
@@ -987,9 +987,9 @@ def install_mcp_config(client: str = "claude", dry_run: bool = False) -> str:
     if "mcpServers" not in config_data:
         config_data["mcpServers"] = {}
 
-    config_data["mcpServers"]["olaya"] = {
+    config_data["mcpServers"]["leio"] = {
         "command": "uvx",
-        "args": ["olaya-mcp"],
+        "args": ["leio"],
     }
 
     out_json = json.dumps(config_data, indent=2)

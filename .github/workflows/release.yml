@@ -72,8 +72,8 @@ jobs:
         env:
           RELEASE_VERSION: ${{ needs.plan.outputs.version }}
         run: |
-          uv build --wheel "dist/python/olaya-$RELEASE_VERSION.tar.gz" --out-dir "$RUNNER_TEMP/sdist-wheel"
-          .venv/bin/python scripts/test-release-packages.py --python-dir "$RUNNER_TEMP/sdist-wheel" --source-archive "dist/python/olaya-$RELEASE_VERSION.tar.gz" > dist/sdist-verification.json
+          uv build --wheel "dist/python/leio-$RELEASE_VERSION.tar.gz" --out-dir "$RUNNER_TEMP/sdist-wheel"
+          .venv/bin/python scripts/test-release-packages.py --python-dir "$RUNNER_TEMP/sdist-wheel" --source-archive "dist/python/leio-$RELEASE_VERSION.tar.gz" > dist/sdist-verification.json
       - uses: actions/upload-artifact@v4
         with:
           name: release-packages-${{ needs.plan.outputs.version }}
@@ -121,8 +121,49 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  publish:
+  registries:
+    # Registry publication. PyPI uses trusted publishing (OIDC): the `pypi`
+    # environment must be registered as a pending/trusted publisher for the
+    # `leio` project on pypi.org. npm uses staged publishing: the tarball is
+    # staged with a stage-only granular token (`NPM_TOKEN`, no 2FA bypass) and
+    # becomes installable only after a maintainer approves it with 2FA on
+    # npmjs.com. Staging may create the package on first use. Once the package
+    # exists and has a trusted publisher configured, drop the token and stage
+    # through OIDC.
     needs: [plan, packages, desktop]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-packages-${{ needs.plan.outputs.version }}
+          path: release-packages
+      - name: Publish wheel and source archive to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: release-packages/python/
+          print-hash: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - name: Stage the Node package on npm for 2FA approval
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          RELEASE_VERSION: ${{ needs.plan.outputs.version }}
+        run: |
+          test -n "$NODE_AUTH_TOKEN"
+          npm install -g npm@latest   # staged publishing needs npm >= 11.15
+          npm --version
+          npm stage publish "release-packages/node/josaum-leio-$RELEASE_VERSION.tgz" --access public
+          echo "::notice::leio $RELEASE_VERSION is staged on npm; approve it under Staged Packages on npmjs.com (2FA) to make it installable."
+
+  publish:
+    needs: [plan, packages, desktop, registries]
     runs-on: ubuntu-latest
     permissions:
       contents: write
