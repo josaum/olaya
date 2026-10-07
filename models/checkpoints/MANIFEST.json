@@ -152,6 +152,34 @@
         "schemaorg_test_recall_at_5": 0.8333333333333334
       },
       "report": "benchmarks/results/router-eval-joint.json"
+    },
+    "joint60": {
+      "file": "olaya_embed_joint60.pt",
+      "sha256": "7824ad7266535489053e7e266b5a7b14e44946b22c788aa43b06a9c807047abd",
+      "size_bytes": 133506253,
+      "base_model": "BAAI/bge-small-en-v1.5",
+      "format": "olaya-bi-encoder-v1 (state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
+      "domains": [
+        "gs1",
+        "incident",
+        "schemaorg"
+      ],
+      "train_pairs": 849,
+      "classes": 736,
+      "commit": "3ec52f19450802dc604913f4a17b5dc56988f335",
+      "budget_minutes": 60.0,
+      "loss": "InfoNCE (temperature 0.05) over in-batch gold class texts + one sibling hard negative per query + 2 mined hard negatives per query re-mined each epoch",
+      "metrics": {
+        "mean_validation_top1": 0.7348862503398893,
+        "mean_validation_top1_zero_shot_base": 0.5243386003605345,
+        "gs1_test_top1": 0.65625,
+        "incident_test_top1": 0.8125,
+        "schemaorg_test_top1": 0.6416666666666667,
+        "gs1_test_recall_at_5": 0.828125,
+        "incident_test_recall_at_5": 0.9375,
+        "schemaorg_test_recall_at_5": 0.8166666666666667
+      },
+      "report": "benchmarks/results/router-eval-joint60.json"
     }
   }
 }
