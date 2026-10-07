@@ -686,11 +686,12 @@ def test_validate_verdicts_accepts_renamed_array_and_relation_only_items():
         "results": [
             {"id": 1, "relation": "equivalent", "confidence": 0.9},
             {"id": 2, "relation": "disjoint", "confidence": 0.8},
+            {"id": 3, "equivalent": True, "confidence": 0.7},
         ]
     }
-    out = validate_verdicts(data, 2)
-    assert [v.equivalent for v in out] == [True, False]
-    assert [v.relation for v in out] == ["equivalent", "unrelated"]
+    out = validate_verdicts(data, 3)
+    assert [v.equivalent for v in out] == [True, False, True]
+    assert [v.relation for v in out] == ["equivalent", "unrelated", "equivalent"]
 
 
 def test_openai_judge_rejudges_pairs_missing_from_a_partial_batch(cmt_ekaw):

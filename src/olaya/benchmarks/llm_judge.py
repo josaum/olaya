@@ -762,6 +762,8 @@ def validate_verdicts(data: Any, n: int, *, allow_partial: bool = False) -> list
         except (KeyError, TypeError, ValueError) as exc:
             raise ValueError(f"verdict {idx} lacks a numeric id / confidence: {item!r}") from exc
         rel = _canonical_relation(item.get("relation"))
+        if rel is None and isinstance(item.get("equivalent"), bool):
+            rel = "equivalent" if item["equivalent"] else "unrelated"  # relation omitted: derive it
         if "equivalent" not in item and rel in RELATIONS:
             item = {**item, "equivalent": rel == "equivalent"}
         elif isinstance(item.get("equivalent"), str):
