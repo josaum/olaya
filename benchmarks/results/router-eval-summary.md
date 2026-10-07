@@ -29,7 +29,7 @@ negatives) after a temperature fitted on the calibration split.
 | schemaorg | zero-shot bge-small cosine (a-priori default) | 0.525 | 0.550 | 0.308 | 0.475 | 0.778 | 0.050 |
 | schemaorg | best zero-shot by validation: bge-large cosine | 0.667 | 0.667 | 0.375 | 0.600 | 0.863 | 0.034 |
 | schemaorg | best hybrid by validation: e5-large hybrid-union | 0.633 | 0.625 | 0.100 | 0.558 | 0.889 | 0.049 |
-| schemaorg | fine-tuned bge-small cosine (`194dad4f3aeb`) | 0.867 | 0.767 | 0.517 | 0.825 | 0.949 | 0.027 |
+| schemaorg | fine-tuned bge-small cosine (`a804f232a05d`) | 0.867 | 0.758 | 0.558 | 0.833 | 0.949 | 0.049 |
 
 ## Deployment path (`OLaya.system_one`, router top-10, leaves scored) on the test split
 
@@ -106,16 +106,31 @@ negatives) after a temperature fitted on the calibration split.
 | schemaorg | csls | bge-small cosine | 0.267 | 0.367 | 0.367 |
 | schemaorg | hybrid-union | bge-small cosine | 0.300 | 0.400 | 0.400 |
 | schemaorg | hybrid-rrf | bge-small cosine | 0.192 | 0.317 | 0.317 |
+| schemaorg | lexical [routed] | bge-small cosine | 0.133 | 0.167 | 0.167 |
+| schemaorg | cosine [routed] | bge-small cosine | 0.308 | 0.475 | 0.483 |
+| schemaorg | csls [routed] | bge-small cosine | 0.275 | 0.375 | 0.375 |
+| schemaorg | hybrid-union [routed] | bge-small cosine | 0.308 | 0.400 | 0.400 |
+| schemaorg | hybrid-rrf [routed] | bge-small cosine | 0.192 | 0.325 | 0.325 |
 | schemaorg | lexical | bge-large cosine | 0.142 | 0.158 | 0.158 |
 | schemaorg | cosine | bge-large cosine | 0.383 | 0.592 | 0.600 |
 | schemaorg | csls | bge-large cosine | 0.392 | 0.517 | 0.517 |
 | schemaorg | hybrid-union | bge-large cosine | 0.400 | 0.508 | 0.508 |
 | schemaorg | hybrid-rrf | bge-large cosine | 0.200 | 0.325 | 0.325 |
+| schemaorg | lexical [routed] | bge-large cosine | 0.142 | 0.167 | 0.167 |
+| schemaorg | cosine [routed] | bge-large cosine | 0.375 | 0.600 | 0.617 |
+| schemaorg | csls [routed] | bge-large cosine | 0.375 | 0.508 | 0.508 |
+| schemaorg | hybrid-union [routed] | bge-large cosine | 0.375 | 0.500 | 0.500 |
+| schemaorg | hybrid-rrf [routed] | bge-large cosine | 0.183 | 0.333 | 0.342 |
 | schemaorg | lexical | fine-tuned bge-small | 0.158 | 0.158 | 0.158 |
-| schemaorg | cosine | fine-tuned bge-small | 0.508 | 0.725 | 0.750 |
-| schemaorg | csls | fine-tuned bge-small | 0.508 | 0.725 | 0.750 |
-| schemaorg | hybrid-union | fine-tuned bge-small | 0.508 | 0.675 | 0.675 |
-| schemaorg | hybrid-rrf | fine-tuned bge-small | 0.333 | 0.375 | 0.375 |
+| schemaorg | cosine | fine-tuned bge-small | 0.558 | 0.733 | 0.742 |
+| schemaorg | csls | fine-tuned bge-small | 0.567 | 0.750 | 0.767 |
+| schemaorg | hybrid-union | fine-tuned bge-small | 0.558 | 0.708 | 0.708 |
+| schemaorg | hybrid-rrf | fine-tuned bge-small | 0.333 | 0.392 | 0.392 |
+| schemaorg | lexical [routed] | fine-tuned bge-small | 0.167 | 0.167 | 0.167 |
+| schemaorg | cosine [routed] | fine-tuned bge-small | 0.558 | 0.833 | 0.850 |
+| schemaorg | csls [routed] | fine-tuned bge-small | 0.558 | 0.833 | 0.842 |
+| schemaorg | hybrid-union [routed] | fine-tuned bge-small | 0.558 | 0.783 | 0.783 |
+| schemaorg | hybrid-rrf [routed] | fine-tuned bge-small | 0.333 | 0.425 | 0.425 |
 
 ## Choices
 
@@ -145,7 +160,7 @@ encoder here is trained on the class-disjoint train split; the committed checkpo
 
 - gs1: zero-shot bge-small cosine top-1 0.375 vs lexical 0.281 on 64 test rows (better, no training on the corpus; a-priori choice); fine-tuned minilm top-1 0.609 (selected on validation, test scored once; 4 of the test classes were unseen in training, every other test class was seen through other generation batches).
 - incident: zero-shot bge-small cosine top-1 0.562 vs lexical 0.562 on 16 test rows (not better, no training on the corpus; a-priori choice); fine-tuned bge-small top-1 0.688 (selected on validation, test scored once; 1 of the test classes were unseen in training, every other test class was seen through other generation batches); the calibration-split temperature fit saturated for bge-small, minilm, mpnet, bge-base, e5-large, bge-large (9 calibration tasks), so their ECE is not a calibrated-probability claim.
-- schemaorg: zero-shot bge-small cosine top-1 0.308 vs lexical 0.100 on 120 test rows (better, no training on the corpus; a-priori choice); fine-tuned bge-small top-1 0.517 (selected on validation, test scored once; 9 of the test classes were unseen in training, every other test class was seen through other generation batches).
+- schemaorg: zero-shot bge-small cosine top-1 0.308 vs lexical 0.100 on 120 test rows (better, no training on the corpus; a-priori choice); fine-tuned bge-small top-1 0.558 (selected on validation, test scored once; 9 of the test classes were unseen in training, every other test class was seen through other generation batches).
 
 Established on these corpora: an off-the-shelf sentence encoder over path-context class texts raises the
 candidate ceiling and the zero-shot top-1 above the lexical router without any training, the hybrid routers
