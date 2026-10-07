@@ -381,7 +381,7 @@ def test_validate_verdicts_schema_semantics():
         {"verdicts": [{**_verdicts(1)[0], "relation": "maybe"}]},
         {"verdicts": [{**_verdicts(1)[0], "confidence": 1.5}]},
         {"verdicts": [{**_verdicts(1)[0], "equivalent": 3}]},
-        {"verdicts": [{"id": 1, "equivalent": True}]},
+        {"verdicts": [{"id": 1, "confidence": 0.5}]},
         {"answer": 1},
         {"verdicts": _verdicts(1) + _verdicts(1)},
     ):

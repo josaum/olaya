@@ -764,7 +764,11 @@ def validate_verdicts(data: Any, n: int, *, allow_partial: bool = False) -> list
         if "confidence" not in item:
             item = {**item, "confidence": 0.5}  # no confidence reported: neutral
         try:
-            vid = int(item.get("id", idx))
+            raw_id = item.get("id", idx)
+            try:
+                vid = int(raw_id)
+            except (TypeError, ValueError):
+                vid = idx  # non-numeric id (e.g. an entity name): fall back to the position in the list
             conf = float(item["confidence"])
         except (KeyError, TypeError, ValueError) as exc:
             raise ValueError(f"verdict {idx} lacks a numeric id / confidence: {item!r}") from exc
