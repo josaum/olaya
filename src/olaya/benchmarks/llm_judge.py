@@ -30,7 +30,8 @@ Pipeline (every step deterministic and cacheable):
    knobs are chosen by leave-one-pair-out cross-validation like the other benchmarks.
 
 Judges: :class:`AnthropicJudge` (the real model, official SDK, key from the
-environment), :class:`StubJudge` (answers from the reference alignment with optional
+environment), :class:`OpenAICompatJudge` (any OpenAI-compatible ``chat/completions`` server -
+Qwen Cloud, Z.ai / Zhipu GLM, ... - standard-library HTTP, key from the environment), :class:`StubJudge` (answers from the reference alignment with optional
 noise; tests and the offline sanity run) and :class:`NullJudge` (always unrelated).
 """
 
@@ -40,8 +41,13 @@ import hashlib
 import json
 import os
 import random
+import re
+import threading
 import time
-from collections.abc import Iterable, Mapping, Sequence
+import urllib.error
+import urllib.request
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
@@ -70,6 +76,59 @@ MODEL_PRICES_USD_PER_MTOK = {
     "claude-haiku-4-5": (1.0, 5.0),
 }
 RELATIONS = ("equivalent", "subsumes", "subsumed_by", "related", "unrelated")
+_RELATION_ALIASES = {
+    "equal": "equivalent",
+    "same": "equivalent",
+    "sameas": "equivalent",
+    "broader": "subsumes",
+    "narrower": "subsumed_by",
+    "disjoint": "unrelated",
+    "different": "unrelated",
+    "none": "unrelated",
+    "not_equivalent": "unrelated",
+    "overlapping": "related",
+    "similar": "related",
+}
+
+
+def _canonical_relation(rel: Any) -> Any:
+    """Map common free-text relation labels a model may emit onto RELATIONS; unknown values pass through."""
+    if not isinstance(rel, str):
+        return rel
+    key = rel.strip().lower().replace("-", "_").replace(" ", "_")
+    if key in RELATIONS:
+        return key
+    return _RELATION_ALIASES.get(key, rel)
+
+
+#: OpenAI-compatible judge: generic defaults and the Z.ai preset (``--judge zai``).
+OPENAI_DEFAULT_MODEL = "qwen3.8-flash"
+OPENAI_API_KEY_ENV = "LLM_JUDGE_API_KEY"
+OPENAI_BASE_URL_ENV = "LLM_JUDGE_BASE_URL"
+ZAI_DEFAULT_MODEL = "glm-5.3-flash"
+ZAI_DEFAULT_BASE_URL = "https://api.z.ai/api/paas/v4"
+ZAI_PRICING_URL = "https://docs.z.ai/guides/overview/pricing"
+ZAI_API_KEY_ENV = ("ZAI_API_KEY", "Z_AI_API_KEY")
+#: USD per million tokens (input, output) per provider label.  Z.ai read from ZAI_PRICING_URL on
+#: 2026-10-07 (no cache discount modelled).  Providers / models not listed here cost 0: pricing not pinned,
+#: fill from the provider's pricing page (Qwen Cloud: https://maas.qwencloudapi.com).
+PROVIDER_MODEL_PRICES_USD_PER_MTOK: dict[str, dict[str, tuple[float, float]]] = {
+    "anthropic": MODEL_PRICES_USD_PER_MTOK,
+    "zai": {
+        "glm-5.3-flash": (0.15, 0.50),
+        "glm-5.3-flashx": (0.37, 1.25),
+        "glm-5.3": (1.4, 4.4),
+        "glm-4.7-flash": (0.0, 0.0),
+        "glm-4.7-flashx": (0.07, 0.40),
+        "glm-4.5-flash": (0.0, 0.0),
+    },
+}
+
+
+def price_for(provider: str, model: str) -> tuple[float, float]:
+    """(input, output) USD per million tokens, ``(0, 0)`` when not pinned."""
+    return PROVIDER_MODEL_PRICES_USD_PER_MTOK.get(provider, {}).get(model, (0.0, 0.0))
+
 
 _MAX_LISTED = 10
 
@@ -397,9 +456,10 @@ class Usage:
     cache_creation_input_tokens: int = 0
     elapsed_s: float = 0.0
     request_id: str = ""
+    provider: str = "anthropic"
 
     def cost_usd(self) -> float:
-        inp, out = MODEL_PRICES_USD_PER_MTOK.get(self.model, (0.0, 0.0))
+        inp, out = price_for(self.provider, self.model)
         cached = self.cache_read_input_tokens * inp * 0.1
         return (
             self.input_tokens * inp + self.cache_creation_input_tokens * inp * 1.25 + cached + self.output_tokens * out
@@ -473,6 +533,15 @@ Decide for each pair whether the two entities denote the same concept or the sam
 - Prefer "subsumes" / "subsumed_by" when one entity is strictly more general than the other, "related" when they overlap without being equivalent, and "unrelated" otherwise.
 
 Report your confidence that the relation you chose is the one a reference alignment would contain (0 = guess, 1 = certain). Answer only through the JSON schema, one verdict per pair in the given order, keeping the ids."""
+
+#: Appended to the user message for JSON-mode providers that do not enforce OUTPUT_SCHEMA server-side.
+OPENAI_OUTPUT_INSTRUCTION = (
+    "Respond with exactly one JSON object of the form "
+    '{"verdicts": [{"id": 1, "equivalent": true, "confidence": 0.9, "relation": "equivalent", "rationale": "..."}, ...]} '
+    "containing one verdict for EVERY pair above, ids 1..N in order, no other keys. "
+    '"relation" must be one of equivalent, subsumes, subsumed_by, related, unrelated; '
+    '"equivalent" is true only when relation is equivalent.'
+)
 
 OUTPUT_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -596,6 +665,371 @@ class AnthropicJudge:
         return verdicts, usage
 
 
+# ---------------------------------------------------------------------------
+# OpenAI-compatible judge (Qwen Cloud, Z.ai / GLM, ...) over the standard library
+# ---------------------------------------------------------------------------
+
+#: ``transport(url, headers, body, timeout) -> (status, body_bytes)``; raises :class:`TransportError`
+#: on connection errors / timeouts.  Tests inject a fake; the default is :func:`urllib_transport`.
+Transport = Callable[[str, Mapping[str, str], bytes | None, float], tuple[int, bytes]]
+
+
+class TransportError(RuntimeError):
+    """Connection failure or timeout (retried)."""
+
+
+class HTTPStatusError(RuntimeError):
+    def __init__(self, status: int, body: str):
+        super().__init__(f"HTTP {status}: {body[:500]}")
+        self.status = status
+        self.body = body
+
+
+def urllib_transport(url: str, headers: Mapping[str, str], body: bytes | None, timeout: float) -> tuple[int, bytes]:
+    req = urllib.request.Request(url, data=body, headers=dict(headers), method="POST" if body is not None else "GET")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310 - https URL from config
+            return int(resp.status), resp.read()
+    except urllib.error.HTTPError as exc:
+        return int(exc.code), exc.read()
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        raise TransportError(str(exc)) from exc
+
+
+def resolve_api_key(names: Sequence[str] | str = OPENAI_API_KEY_ENV, env: Mapping[str, str] | None = None) -> str:
+    """The first non-empty environment variable among ``names`` (never hardcoded)."""
+    env = os.environ if env is None else env
+    names = (names,) if isinstance(names, str) else tuple(names)
+    for name in names:
+        value = (env.get(name) or "").strip()
+        if value:
+            return value
+    raise RuntimeError(f"no API key: set {' or '.join(names)} in the environment")
+
+
+def has_api_key_in(names: Sequence[str] | str) -> bool:
+    names = (names,) if isinstance(names, str) else names
+    return any(os.environ.get(n) for n in names)
+
+
+_FENCE_RE = re.compile(r"```[a-zA-Z0-9_-]*\s*\n?(.*?)```", re.DOTALL)
+
+
+def extract_json(text: str) -> Any:
+    """The first JSON object or array in ``text`` (code fences and leading / trailing prose ignored)."""
+    candidates = [m.strip() for m in _FENCE_RE.findall(text)] + [text]
+    decoder = json.JSONDecoder()
+    for chunk in candidates:
+        for i, ch in enumerate(chunk):
+            if ch not in "{[":
+                continue
+            try:
+                value, _ = decoder.raw_decode(chunk, i)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(value, dict | list):
+                return value
+    raise ValueError(f"no JSON object or array in judge response: {text[:200]!r}")
+
+
+def validate_verdicts(data: Any, n: int, *, allow_partial: bool = False) -> list[Judgment] | dict[int, Judgment]:
+    """``OUTPUT_SCHEMA`` semantics applied to a parsed response: one verdict per pair id ``1..n``.
+
+    With ``allow_partial`` the validated verdicts are returned as ``{id: Judgment}`` and missing
+    ids are left to the caller (used to re-judge them individually).
+    """
+    if isinstance(data, list):
+        data = {"verdicts": data}
+    if isinstance(data, dict) and not isinstance(data.get("verdicts"), list):
+        # Models in JSON mode often rename the array ("results", "judgments", ...): accept a single list value.
+        lists = [v for v in data.values() if isinstance(v, list)]
+        if len(lists) == 1:
+            data = {"verdicts": lists[0]}
+    if not isinstance(data, dict) or not isinstance(data.get("verdicts"), list):
+        raise ValueError("judge response has no 'verdicts' array")
+    by_id: dict[int, Judgment] = {}
+    for idx, item in enumerate(data["verdicts"], 1):
+        if isinstance(item, dict) and isinstance(item.get("verdict"), dict) and "confidence" not in item:
+            item = {
+                **item["verdict"],
+                **{k: v for k, v in item.items() if k != "verdict"},
+            }  # {"verdict": {...}} wrapper
+        if not isinstance(item, dict):
+            raise ValueError(f"verdict {idx} is not an object")
+        if "relation" not in item:
+            for alias in ("verdict", "label", "decision"):  # {"id": 1, "verdict": "equivalent"}
+                if isinstance(item.get(alias), str):
+                    item = {**item, "relation": item[alias]}
+                    break
+        if "confidence" not in item:
+            item = {**item, "confidence": 0.5}  # no confidence reported: neutral
+        try:
+            raw_id = item.get("id", idx)
+            try:
+                vid = int(raw_id)
+            except (TypeError, ValueError):
+                vid = idx  # non-numeric id (e.g. an entity name): fall back to the position in the list
+            conf = float(item["confidence"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError(f"verdict {idx} lacks a numeric id / confidence: {item!r}") from exc
+        rel = _canonical_relation(item.get("relation"))
+        if rel is None and isinstance(item.get("equivalent"), bool):
+            rel = "equivalent" if item["equivalent"] else "unrelated"  # relation omitted: derive it
+        if "equivalent" not in item and rel in RELATIONS:
+            item = {**item, "equivalent": rel == "equivalent"}
+        elif isinstance(item.get("equivalent"), str):
+            item = {**item, "equivalent": item["equivalent"].strip().lower() in ("true", "yes", "1")}
+        if not isinstance(item.get("equivalent"), bool):
+            raise ValueError(f"verdict {vid}: 'equivalent' must be a boolean")
+        if rel not in RELATIONS:
+            raise ValueError(f"verdict {vid}: relation {rel!r} not in {RELATIONS}")
+        if not 0.0 <= conf <= 1.0:
+            raise ValueError(f"verdict {vid}: confidence {conf} outside [0, 1]")
+        if vid in by_id:
+            if allow_partial:
+                continue  # JSON-mode models occasionally repeat an id; keep the first verdict
+            raise ValueError(f"verdict id {vid} repeated")
+        by_id[vid] = Judgment(item["equivalent"], conf, rel, str(item.get("rationale", "")))
+    if allow_partial:
+        return by_id
+    missing = [i for i in range(1, n + 1) if i not in by_id]
+    if missing:
+        raise ValueError(f"judge response is missing pair(s) {missing}")
+    return [by_id[i] for i in range(1, n + 1)]
+
+
+class OpenAICompatJudge:
+    """Judge over any OpenAI-compatible ``POST {base_url}/chat/completions`` server.
+
+    ``provider`` is a short label (``qwen``, ``zai``) used for the cache filename, the results and
+    the price table.  ``base_url`` falls back to ``LLM_JUDGE_BASE_URL``; the key is read from the
+    environment variable(s) in ``api_key_env`` (default ``LLM_JUDGE_API_KEY``) unless ``api_key``
+    is given.  Requests use ``temperature 0`` and, with ``json_mode``, ``response_format
+    json_object`` (dropped automatically after a 400 that mentions ``response_format``);
+    ``thinking`` adds the Z.ai-style ``{"type": "enabled" | "disabled"}`` field (``None`` = not
+    sent; dropped automatically after a 400 that mentions it).  The answer is parsed with
+    :func:`extract_json` (fences / prose tolerated; any ``reasoning_content`` ignored) and checked
+    with :func:`validate_verdicts`.  429 / 5xx / transport errors are retried with exponential
+    backoff (``max_retries``).  Instances are thread-safe.
+    """
+
+    def __init__(
+        self,
+        model: str = OPENAI_DEFAULT_MODEL,
+        *,
+        provider: str = "openai",
+        base_url: str | None = None,
+        api_key: str | None = None,
+        api_key_env: Sequence[str] | str = OPENAI_API_KEY_ENV,
+        json_mode: bool = True,
+        thinking: str | None = None,
+        thinking_style: str = "auto",
+        max_tokens: int = 16000,
+        timeout: float = 180.0,
+        max_retries: int = 5,
+        backoff_s: float = 1.0,
+        transport: Transport | None = None,
+        sleep: Callable[[float], None] = time.sleep,
+    ):
+        if thinking not in (None, "off", "on"):
+            raise ValueError("thinking must be None, 'off' or 'on'")
+        if thinking_style not in ("auto", "zai", "qwen"):
+            raise ValueError("thinking_style must be 'auto', 'zai' or 'qwen'")
+        if thinking_style == "auto":
+            thinking_style = "qwen" if "qwen" in f"{provider} {model}".lower() else "zai"
+        self.thinking_style = thinking_style
+        base_url = base_url or os.environ.get(OPENAI_BASE_URL_ENV) or ""
+        if not base_url:
+            raise RuntimeError(f"no base URL: pass base_url or set {OPENAI_BASE_URL_ENV}")
+        self.model = model
+        self.provider = provider
+        self.base_url = base_url.rstrip("/")
+        self.api_key = api_key if api_key is not None else resolve_api_key(api_key_env)
+        self.json_mode = json_mode
+        self.thinking = thinking
+        self.max_tokens = max_tokens
+        self.timeout = timeout
+        self.max_retries = max_retries
+        self.backoff_s = backoff_s
+        self.transport: Transport = transport if transport is not None else urllib_transport
+        self.sleep = sleep
+        self._lock = threading.Lock()
+        self._partial_rejudged = 0
+        self._unparseable = 0
+        self.name = (
+            f"{provider}[{model},json={'on' if json_mode else 'off'},thinking={thinking or 'unset'},{PROMPT_VERSION}]"
+        )
+
+    @classmethod
+    def zai(cls, model: str = ZAI_DEFAULT_MODEL, **kwargs: Any) -> OpenAICompatJudge:
+        """The Z.ai / Zhipu GLM preset: base URL from ``ZAI_BASE_URL``, key from ``ZAI_API_KEY`` / ``Z_AI_API_KEY``."""
+        kwargs.setdefault("provider", "zai")
+        kwargs.setdefault("base_url", os.environ.get("ZAI_BASE_URL") or ZAI_DEFAULT_BASE_URL)
+        kwargs.setdefault("api_key_env", (*ZAI_API_KEY_ENV, OPENAI_API_KEY_ENV))
+        kwargs.setdefault("thinking", "off")
+        return cls(model, **kwargs)
+
+    def _headers(self) -> dict[str, str]:
+        return {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+
+    def _request_body(self, batch: Sequence[JudgeRequest], nudge: bool = False) -> dict[str, Any]:
+        body: dict[str, Any] = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {
+                    "role": "user",
+                    "content": render_batch(batch)
+                    + "\n"
+                    + OPENAI_OUTPUT_INSTRUCTION
+                    + (
+                        "\nYour previous answer did not follow this format. Answer again with ONLY the JSON object.\n"
+                        if nudge
+                        else "\n"
+                    ),
+                },
+            ],
+            "temperature": 0,
+            "max_tokens": self.max_tokens,
+            "stream": False,
+        }
+        if self.json_mode:
+            body["response_format"] = {"type": "json_object"}
+        if self.thinking is not None:
+            if self.thinking_style == "qwen":
+                # DashScope / Qwen compatible mode: a boolean switch; Qwen thinks by default.
+                body["enable_thinking"] = self.thinking == "on"
+            else:
+                body["thinking"] = {"type": "enabled" if self.thinking == "on" else "disabled"}
+        return body
+
+    def _call(self, url: str, body: bytes | None) -> dict[str, Any]:
+        """One request with retries on 429 / 5xx / transport errors; returns the decoded JSON body."""
+        last: Exception | None = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                status, raw = self.transport(url, self._headers(), body, self.timeout)
+            except TransportError as exc:
+                last = exc
+            else:
+                text = raw.decode("utf-8", errors="replace")
+                if status == 200:
+                    try:
+                        return json.loads(text)
+                    except json.JSONDecodeError as exc:
+                        raise HTTPStatusError(status, f"non-JSON body: {text}") from exc
+                last = HTTPStatusError(status, text)
+                if not (status == 429 or status >= 500):
+                    raise last
+            if attempt < self.max_retries:
+                self.sleep(self.backoff_s * (2**attempt) + random.random() * 0.1)
+        assert last is not None
+        raise RuntimeError(f"{self.provider} request failed after {self.max_retries + 1} attempts: {last}") from last
+
+    def _chat(self, batch: Sequence[JudgeRequest], nudge: bool = False) -> dict[str, Any]:
+        """``_call`` with the one-time fallbacks: drop ``response_format`` / ``thinking`` on a 400 naming them."""
+        url = f"{self.base_url}/chat/completions"
+        for _ in range(3):
+            body = json.dumps(self._request_body(batch, nudge=nudge)).encode("utf-8")
+            try:
+                return self._call(url, body)
+            except HTTPStatusError as exc:
+                if exc.status != 400:
+                    raise
+                with self._lock:
+                    if self.json_mode and "response_format" in exc.body:
+                        self.json_mode = False
+                        continue
+                    if self.thinking is not None and "thinking" in exc.body:
+                        self.thinking = None
+                        continue
+                raise
+        raise AssertionError("unreachable")
+
+    def list_models(self) -> list[str]:
+        """Model ids from ``GET {base_url}/models`` (OpenAI listing shape; some providers do not serve it)."""
+        data = self._call(f"{self.base_url}/models", None)
+        items = data.get("data", data) if isinstance(data, dict) else data
+        if not isinstance(items, list):
+            raise RuntimeError(f"unexpected models listing: {str(data)[:300]}")
+        return sorted(str(m.get("id", m)) if isinstance(m, dict) else str(m) for m in items)
+
+    def judge(self, batch: Sequence[JudgeRequest], *, _retry: bool = False) -> tuple[list[Judgment], Usage]:
+        t0 = time.perf_counter()
+        data = self._chat(batch, nudge=_retry)
+        try:
+            choice = data["choices"][0]
+        except (KeyError, IndexError, TypeError) as exc:
+            raise RuntimeError(f"{self.provider} response has no choices: {str(data)[:300]}") from exc
+        if choice.get("finish_reason") == "length":
+            if len(batch) == 1:
+                # A single-pair answer that never terminates is a runaway generation: abstain.
+                with self._lock:
+                    self._unparseable += 1
+                verdict = Judgment(False, 0.0, "unrelated", "unparseable judge response: truncated at max_tokens")
+                u = data.get("usage") or {}
+                usage = Usage(
+                    model=self.model,
+                    n_pairs=1,
+                    input_tokens=int(u.get("prompt_tokens", 0) or 0),
+                    output_tokens=int(u.get("completion_tokens", 0) or 0),
+                    provider=self.provider,
+                    request_id=str(data.get("id", "")),
+                    latency_s=time.perf_counter() - t0,
+                )
+                return [verdict], usage
+            raise RuntimeError("judge response truncated (max_tokens); lower the batch size")
+        content = (choice.get("message") or {}).get("content") or ""
+        if not isinstance(content, str):  # some providers return content parts
+            content = "".join(p.get("text", "") for p in content if isinstance(p, dict))
+        try:
+            by_id = validate_verdicts(extract_json(content), len(batch), allow_partial=True)
+            assert isinstance(by_id, dict)
+            missing = [i for i in range(1, len(batch) + 1) if i not in by_id]
+            if missing and len(batch) == 1:
+                raise ValueError("judge response is missing pair(s) [1]")
+            for i in missing:
+                # Models in JSON mode sometimes stop early; re-judge the leftovers one pair at a time.
+                single, _ = self.judge([batch[i - 1]])
+                by_id[i] = single[0]
+                self._partial_rejudged += 1
+            verdicts = [by_id[i] for i in range(1, len(batch) + 1)]
+        except ValueError as exc:
+            dump = os.environ.get("OLAYA_JUDGE_DEBUG_DIR")
+            if dump:
+                Path(dump).mkdir(parents=True, exist_ok=True)
+                (Path(dump) / f"bad-response-{int(time.time() * 1000)}.txt").write_text(content, encoding="utf-8")
+            if not _retry:
+                # One re-ask with an explicit nudge; if still unparseable, abstain rather than kill the run.
+                try:
+                    return self.judge(batch, _retry=True)
+                except ValueError:
+                    pass
+            if len(batch) == 1:
+                with self._lock:
+                    self._unparseable += 1
+                verdicts = [Judgment(False, 0.0, "unrelated", f"unparseable judge response: {content[:120]!r}")]
+            else:
+                raise ValueError(f"{exc} (raw content starts: {content[:300]!r})") from exc
+        u = data.get("usage") or {}
+        details = u.get("prompt_tokens_details") or {}
+        usage = Usage(
+            model=self.model,
+            n_pairs=len(batch),
+            input_tokens=int(u.get("prompt_tokens", 0) or 0),
+            output_tokens=int(u.get("completion_tokens", 0) or 0),
+            cache_read_input_tokens=int(details.get("cached_tokens", 0) or 0),
+            elapsed_s=round(time.perf_counter() - t0, 3),
+            request_id=str(data.get("id", "") or ""),
+            provider=self.provider,
+        )
+        return verdicts, usage
+
+
 def make_judge(kind: str, **kwargs: Any) -> Judge:
     if kind == "null":
         return NullJudge()
@@ -603,6 +1037,10 @@ def make_judge(kind: str, **kwargs: Any) -> Judge:
         return StubJudge(kwargs.pop("reference"), **kwargs)
     if kind == "anthropic":
         return AnthropicJudge(**kwargs)
+    if kind == "openai":
+        return OpenAICompatJudge(**kwargs)
+    if kind == "zai":
+        return OpenAICompatJudge.zai(**kwargs)
     raise ValueError(f"unknown judge {kind!r}")
 
 
@@ -617,6 +1055,7 @@ class JudgmentCache:
     def __init__(self, path: Path):
         self.path = Path(path)
         self._records: dict[str, dict[str, Any]] = {}
+        self._lock = threading.Lock()
         if self.path.exists():
             for line in self.path.read_text(encoding="utf-8").splitlines():
                 if line.strip():
@@ -642,11 +1081,14 @@ class JudgmentCache:
             "kind": req.source.kind,
             "verdict": asdict(verdict),
         }
-        self._records[key] = rec
-        if flush:
-            self.path.parent.mkdir(parents=True, exist_ok=True)
-            with self.path.open("a", encoding="utf-8") as fh:
-                fh.write(json.dumps(rec, sort_keys=True) + "\n")
+        with self._lock:
+            if self._records.get(key) == rec:
+                return  # idempotent: a verdict already stored is not appended twice
+            self._records[key] = rec
+            if flush:
+                self.path.parent.mkdir(parents=True, exist_ok=True)
+                with self.path.open("a", encoding="utf-8") as fh:
+                    fh.write(json.dumps(rec, sort_keys=True) + "\n")
 
     def rewrite(self) -> None:
         """Rewrite the file sorted by key (canonical form for committing)."""
@@ -670,8 +1112,13 @@ def judge_candidates(
     *,
     batch_size: int = 15,
     ledger: list[Usage] | None = None,
+    concurrency: int = 1,
 ) -> dict[tuple[str, str], Judgment]:
-    """Verdict for every candidate; only pairs missing from ``cache`` are sent to ``judge``."""
+    """Verdict for every candidate; only pairs missing from ``cache`` are sent to ``judge``.
+
+    With ``concurrency > 1`` the batches are sent from a thread pool (the judge must be
+    thread-safe; :class:`OpenAICompatJudge` is); results, ledger and cache writes keep the batch order.
+    """
     requests = [JudgeRequest(source_cards[c.source], target_cards[c.target]) for c in cands.candidates]
     out: dict[tuple[str, str], Judgment] = {}
     pending: list[tuple[str, JudgeRequest]] = []
@@ -684,8 +1131,13 @@ def judge_candidates(
             pending.append((key, req))
     # Deterministic order: by kind, then names (the candidates are already sorted by name).
     pending.sort(key=lambda kr: (kr[1].source.kind, kr[1].pair))
-    for batch in batched([r for _, r in pending], batch_size):
-        verdicts, usage = judge.judge(batch)
+    batches = batched([r for _, r in pending], batch_size)
+    if concurrency > 1 and len(batches) > 1:
+        with ThreadPoolExecutor(max_workers=concurrency) as pool:
+            results = list(pool.map(judge.judge, batches))
+    else:
+        results = [judge.judge(b) for b in batches]
+    for batch, (verdicts, usage) in zip(batches, results, strict=True):
         if ledger is not None:
             ledger.append(usage)
         for req, verdict in zip(batch, verdicts, strict=True):
@@ -778,8 +1230,12 @@ def cost_estimate(
     *,
     output_tokens_per_pair: int = 60,
     counted_input: Sequence[int] | None = None,
+    prices: Mapping[str, tuple[float, float]] | None = None,
 ) -> dict[str, dict[str, Any]]:
-    """Per-model cost estimate of judging ``batches`` (input from chars / 4 or ``counted_input``)."""
+    """Per-model cost estimate of judging ``batches`` (input from chars / 4 or ``counted_input``).
+
+    ``prices`` defaults to the Anthropic table; pass ``PROVIDER_MODEL_PRICES_USD_PER_MTOK[provider]``.
+    """
     sys_tokens = estimate_tokens(SYSTEM_PROMPT)
     inputs = (
         list(counted_input)
@@ -790,7 +1246,7 @@ def cost_estimate(
     total_in = sum(inputs)
     total_out = n_pairs * output_tokens_per_pair
     out = {}
-    for model, (pin, pout) in MODEL_PRICES_USD_PER_MTOK.items():
+    for model, (pin, pout) in (MODEL_PRICES_USD_PER_MTOK if prices is None else prices).items():
         out[model] = {
             "requests": len(batches),
             "pairs": n_pairs,
@@ -821,24 +1277,36 @@ __all__ = [
     "DECODE_MODES",
     "DEFAULT_MODEL",
     "MODEL_PRICES_USD_PER_MTOK",
+    "OPENAI_API_KEY_ENV",
+    "OPENAI_BASE_URL_ENV",
+    "OPENAI_DEFAULT_MODEL",
     "OUTPUT_SCHEMA",
+    "PROVIDER_MODEL_PRICES_USD_PER_MTOK",
     "PROMPT_VERSION",
     "RELATIONS",
     "SUPPORTED_MODELS",
     "SYSTEM_PROMPT",
+    "ZAI_API_KEY_ENV",
+    "ZAI_DEFAULT_BASE_URL",
+    "ZAI_DEFAULT_MODEL",
+    "ZAI_PRICING_URL",
     "AnthropicJudge",
     "Candidate",
     "CandidateConfig",
     "CandidateGenerator",
     "CandidateSet",
     "EntityCard",
+    "HTTPStatusError",
     "Judge",
     "JudgeRequest",
     "Judgment",
     "JudgmentCache",
     "NullJudge",
+    "OpenAICompatJudge",
     "PairJudgeResult",
     "StubJudge",
+    "Transport",
+    "TransportError",
     "Usage",
     "batched",
     "config_label",
@@ -846,10 +1314,16 @@ __all__ = [
     "decode",
     "entity_cards",
     "estimate_tokens",
+    "extract_json",
     "has_api_key",
+    "has_api_key_in",
     "judge_candidates",
     "judge_quality",
     "make_judge",
+    "price_for",
     "render_batch",
+    "resolve_api_key",
     "topk_pairs",
+    "urllib_transport",
+    "validate_verdicts",
 ]

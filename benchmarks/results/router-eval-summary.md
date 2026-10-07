@@ -1,0 +1,112 @@
+# Candidate routers on the LLM-distilled corpora: summary
+
+Labels are **LLM-distilled and filtered, not human** (see `decision-head-summary.md`). Same corpora, same
+batch-disjoint splits and same test rows as the decision-head reports. Every encoder / variant choice is made
+on the validation split; the test split is scored once per configuration. The ceiling is the fraction of test
+rows whose gold class the router puts in its top-8; top-1 / recall@5 use the router's own score over the full
+ontology (no gold candidate injected); ECE is on the decision head's `concept` test tasks (gold + 5 hard
+negatives) after a temperature fitted on the calibration split.
+
+| domain | system | ceiling@8 | leaf ceiling (top-10) | top-1 | recall@5 | concept task top-1 | ECE |
+|---|---|---|---|---|---|---|---|
+| gs1 | lexical | 0.562 | 0.562 | 0.281 | 0.531 | 0.524 | 0.136 |
+| gs1 | lexical router + trained head (committed) | - | - | 0.141 | 0.469 | 0.190 | 0.208 |
+| gs1 | zero-shot e5-small cosine | 0.641 | 0.641 | 0.266 | 0.547 | 0.651 | 0.179 |
+| gs1 | zero-shot bge-small cosine (a-priori default) | 0.766 | 0.797 | 0.375 | 0.688 | 0.698 | 0.112 |
+| gs1 | best zero-shot by validation: bge-base cosine | 0.734 | 0.797 | 0.406 | 0.703 | 0.746 | 0.122 |
+| gs1 | best hybrid by validation: bge-base hybrid-union | 0.812 | 0.812 | 0.281 | 0.719 | 0.746 | 0.122 |
+| gs1 | fine-tuned minilm cosine (`43aa1ceda29f`) | 0.938 | 0.922 | 0.609 | 0.922 | 0.889 | 0.065 |
+| incident | lexical | 0.875 | 0.750 | 0.562 | 0.875 | 0.688 | 0.316 |
+| incident | lexical router + trained head (committed) | - | - | 0.188 | 0.688 | 0.438 | 0.261 |
+| incident | zero-shot e5-small cosine | 0.938 | 0.812 | 0.438 | 0.875 | 0.688 | 0.245 |
+| incident | zero-shot bge-small cosine (a-priori default) | 0.938 | 0.812 | 0.562 | 0.938 | 0.875 | 0.125 |
+| incident | best zero-shot by validation: bge-base cosine | 0.938 | 0.812 | 0.625 | 0.938 | 1.000 | 0.000 |
+| incident | best hybrid by validation: bge-base hybrid-rrf | 0.938 | 0.812 | 0.688 | 0.938 | 1.000 | 0.000 |
+| incident | fine-tuned bge-small cosine (`93b502740517`) | 1.000 | 0.812 | 0.688 | 1.000 | 0.875 | 0.125 |
+| schemaorg | lexical | 0.208 | 0.225 | 0.100 | 0.175 | 0.419 | 0.109 |
+| schemaorg | lexical router + trained head (committed) | - | - | 0.075 | 0.142 | 0.179 | 0.111 |
+| schemaorg | zero-shot e5-small cosine | 0.617 | 0.600 | 0.275 | 0.483 | 0.803 | 0.046 |
+| schemaorg | zero-shot bge-small cosine (a-priori default) | 0.525 | 0.550 | 0.308 | 0.475 | 0.778 | 0.050 |
+| schemaorg | best zero-shot by validation: bge-large cosine | 0.667 | 0.667 | 0.375 | 0.600 | 0.863 | 0.034 |
+| schemaorg | best hybrid by validation: e5-large hybrid-union | 0.633 | 0.625 | 0.100 | 0.558 | 0.889 | 0.049 |
+| schemaorg | fine-tuned bge-small cosine (`194dad4f3aeb`) | 0.867 | 0.767 | 0.517 | 0.825 | 0.949 | 0.027 |
+
+## Deployment path (`OLaya.system_one`, router top-10, leaves scored) on the test split
+
+| domain | router | scorer | top-1 | recall@5 | gold among scored leaves |
+|---|---|---|---|---|---|
+| gs1 | lexical | lexical top-1 | 0.281 | 0.531 | 0.562 |
+| gs1 | lexical | trained head (committed) | 0.141 | 0.469 | - |
+| gs1 | lexical | bge-small cosine | 0.453 | 0.547 | 0.547 |
+| gs1 | cosine | bge-small cosine | 0.375 | 0.688 | 0.719 |
+| gs1 | csls | bge-small cosine | 0.359 | 0.672 | 0.672 |
+| gs1 | hybrid-union | bge-small cosine | 0.375 | 0.734 | 0.734 |
+| gs1 | hybrid-rrf | bge-small cosine | 0.406 | 0.625 | 0.625 |
+| gs1 | lexical | bge-base cosine | 0.359 | 0.547 | 0.547 |
+| gs1 | cosine | bge-base cosine | 0.406 | 0.703 | 0.719 |
+| gs1 | csls | bge-base cosine | 0.406 | 0.703 | 0.734 |
+| gs1 | hybrid-union | bge-base cosine | 0.406 | 0.734 | 0.750 |
+| gs1 | hybrid-rrf | bge-base cosine | 0.359 | 0.562 | 0.625 |
+| gs1 | lexical | fine-tuned minilm | 0.516 | 0.547 | 0.547 |
+| gs1 | cosine | fine-tuned minilm | 0.625 | 0.891 | 0.891 |
+| gs1 | csls | fine-tuned minilm | 0.625 | 0.891 | 0.891 |
+| gs1 | hybrid-union | fine-tuned minilm | 0.625 | 0.875 | 0.875 |
+| gs1 | hybrid-rrf | fine-tuned minilm | 0.500 | 0.641 | 0.641 |
+| incident | lexical | lexical top-1 | 0.562 | 0.875 | 0.750 |
+| incident | lexical | trained head (committed) | 0.188 | 0.688 | - |
+| incident | lexical | bge-small cosine | 0.625 | 0.750 | 0.750 |
+| incident | cosine | bge-small cosine | 0.562 | 0.812 | 0.812 |
+| incident | csls | bge-small cosine | 0.562 | 0.812 | 0.812 |
+| incident | hybrid-union | bge-small cosine | 0.562 | 0.750 | 0.812 |
+| incident | hybrid-rrf | bge-small cosine | 0.562 | 0.750 | 0.812 |
+| incident | lexical | bge-base cosine | 0.688 | 0.750 | 0.750 |
+| incident | cosine | bge-base cosine | 0.625 | 0.750 | 0.812 |
+| incident | csls | bge-base cosine | 0.625 | 0.750 | 0.812 |
+| incident | hybrid-union | bge-base cosine | 0.625 | 0.750 | 0.812 |
+| incident | hybrid-rrf | bge-base cosine | 0.625 | 0.750 | 0.812 |
+| incident | lexical | fine-tuned bge-small | 0.688 | 0.750 | 0.750 |
+| incident | cosine | fine-tuned bge-small | 0.688 | 0.812 | 0.812 |
+| incident | csls | fine-tuned bge-small | 0.688 | 0.812 | 0.812 |
+| incident | hybrid-union | fine-tuned bge-small | 0.688 | 0.812 | 0.812 |
+| incident | hybrid-rrf | fine-tuned bge-small | 0.688 | 0.812 | 0.812 |
+| schemaorg | lexical | lexical top-1 | 0.100 | 0.175 | 0.225 |
+| schemaorg | lexical | trained head (committed) | 0.075 | 0.142 | - |
+| schemaorg | lexical | bge-small cosine | 0.133 | 0.158 | 0.158 |
+| schemaorg | cosine | bge-small cosine | 0.300 | 0.458 | 0.475 |
+| schemaorg | csls | bge-small cosine | 0.267 | 0.367 | 0.367 |
+| schemaorg | hybrid-union | bge-small cosine | 0.300 | 0.400 | 0.400 |
+| schemaorg | hybrid-rrf | bge-small cosine | 0.192 | 0.317 | 0.317 |
+| schemaorg | lexical | bge-large cosine | 0.142 | 0.158 | 0.158 |
+| schemaorg | cosine | bge-large cosine | 0.383 | 0.592 | 0.600 |
+| schemaorg | csls | bge-large cosine | 0.392 | 0.517 | 0.517 |
+| schemaorg | hybrid-union | bge-large cosine | 0.400 | 0.508 | 0.508 |
+| schemaorg | hybrid-rrf | bge-large cosine | 0.200 | 0.325 | 0.325 |
+| schemaorg | lexical | fine-tuned bge-small | 0.158 | 0.158 | 0.158 |
+| schemaorg | cosine | fine-tuned bge-small | 0.508 | 0.725 | 0.750 |
+| schemaorg | csls | fine-tuned bge-small | 0.508 | 0.725 | 0.750 |
+| schemaorg | hybrid-union | fine-tuned bge-small | 0.508 | 0.675 | 0.675 |
+| schemaorg | hybrid-rrf | fine-tuned bge-small | 0.333 | 0.375 | 0.375 |
+
+## Choices
+
+- A-priori default encoder (best mean validation top-1 among the small encoders e5-small, bge-small, minilm): **bge-small** (bge-small 0.524, e5-small 0.408, minilm 0.447)
+- gs1: default_small = {"encoder": "minilm", "variant": "cosine", "validation_top1": 0.4745762711864407}; best_zero_shot = {"encoder": "bge-base", "variant": "cosine", "validation_top1": 0.5084745762711864}; best_hybrid = {"encoder": "bge-base", "variant": "hybrid-union", "validation_ceiling_at_8": 0.7966101694915254}
+- incident: default_small = {"encoder": "bge-small", "variant": "cosine", "validation_top1": 0.8235294117647058}; best_zero_shot = {"encoder": "bge-base", "variant": "cosine", "validation_top1": 0.9411764705882353}; best_hybrid = {"encoder": "bge-base", "variant": "hybrid-rrf", "validation_ceiling_at_8": 1.0}
+- schemaorg: default_small = {"encoder": "bge-small", "variant": "cosine", "validation_top1": 0.32575757575757575}; best_zero_shot = {"encoder": "bge-large", "variant": "cosine", "validation_top1": 0.4090909090909091}; best_hybrid = {"encoder": "e5-large", "variant": "hybrid-union", "validation_ceiling_at_8": 0.7803030303030303}
+
+## What is and is not established
+
+- gs1: zero-shot bge-small cosine top-1 0.375 vs lexical 0.281 on 64 test rows (better, no training on the corpus; a-priori choice); fine-tuned minilm top-1 0.609 (selected on validation, test scored once; 4 of the test classes were unseen in training, every other test class was seen through other generation batches).
+- incident: zero-shot bge-small cosine top-1 0.562 vs lexical 0.562 on 16 test rows (not better, no training on the corpus; a-priori choice); fine-tuned bge-small top-1 0.688 (selected on validation, test scored once; 1 of the test classes were unseen in training, every other test class was seen through other generation batches); the calibration-split temperature fit saturated for bge-small, minilm, mpnet, bge-base, e5-large, bge-large (9 calibration tasks), so their ECE is not a calibrated-probability claim.
+- schemaorg: zero-shot bge-small cosine top-1 0.308 vs lexical 0.100 on 120 test rows (better, no training on the corpus; a-priori choice); fine-tuned bge-small top-1 0.517 (selected on validation, test scored once; 9 of the test classes were unseen in training, every other test class was seen through other generation batches).
+
+Established on these corpora: an off-the-shelf sentence encoder over path-context class texts raises the
+candidate ceiling and the zero-shot top-1 above the lexical router without any training, the hybrid routers
+do not beat the best embedding ranking on the ceiling once the embedding is decent, and a short contrastive
+fine-tune of a small encoder is the best scorer on every domain. Not established: human-judged accuracy
+(labels are LLM-distilled and filtered), behaviour on ambiguous or no-answer inputs, transfer to classes the
+fine-tuned encoder never saw (the split is by generation batch, not by class), robustness of the small-split
+numbers (16 incident test rows), and anything about the shipped Rust / Node runtimes, which remain lexical.
+
+Per-domain reports: `router-eval-gs1.md`, `router-eval-incident.md`, `router-eval-schemaorg.md`.
+Fine-tuned checkpoints are gitignored; `models/checkpoints/MANIFEST.json` (`embedding_checkpoints`) records their hashes and metrics.

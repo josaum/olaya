@@ -4,7 +4,7 @@ Date: 2026-10-04T03:24:50Z  ·  Commit: `148e224681a4`  ·  Runtime: 22.4 s (can
 
 **Category: LLM-based matcher.**  Judge: `stub[noise=0.00]` (model `stub`, prompt `oaei-judge-v1`, system prompt sha256 `874534030e78`), judgments in `None`.  Candidate generator: `candidates[olaya-hybrid[olaya-embedding[intfloat/e5-small-v2,both,csls10],w=0.50,cascade,alpha=0.00],k=3,min=0.15,rich_k=2]` on `intfloat/e5-small-v2`.
 
-> **No language model was used for this run.**  The judge is the `stub[noise=0.00]` stand-in, which answers from the reference alignment; the numbers below validate the candidate ceiling, the cache and the decoding, not a matcher.  Real-judge numbers are pending an `ANTHROPIC_API_KEY` (`scripts/benchmark_oaei_llm.py --judge anthropic`).
+> **No language model was used for this run.**  The judge is the `stub[noise=0.00]` stand-in, which answers from the reference alignment; the numbers below validate the candidate ceiling, the cache and the decoding, not a matcher.  Real-judge numbers are pending an `ANTHROPIC_API_KEY` (`scripts/benchmark_oaei_llm.py --judge anthropic`) or an OpenAI-compatible server (`--judge openai --base-url ...`, or `--judge zai`; see the backend note under Design).
 
 ## Design
 
@@ -29,6 +29,26 @@ asked, with the ontology context of both entities, whether each candidate pair i
    `claude-opus-5-5` by default (`--model claude-sonnet-5-5` / `claude-haiku-4-5`), adaptive thinking,
    `output_config.effort` = `--effort` (default medium), `max_retries=5`, 300 s timeout, key from the
    environment only.
+
+   **OpenAI-compatible backend** (`--judge openai`; `--judge zai` is the Z.ai preset): the same prompt and
+   schema through `POST <base-url>/chat/completions` of any OpenAI-compatible server, standard-library HTTP
+   (no SDK).  Flags / env: `--base-url` (env `LLM_JUDGE_BASE_URL`), `--api-key-env NAME` (the variable
+   holding the key, default `LLM_JUDGE_API_KEY`; never stored), `--provider` (short label, e.g. `qwen`),
+   `--model`, `--list-models` (`GET <base-url>/models`), `--json-mode on|off` (`response_format
+   json_object`, default on, dropped automatically after a 400 that names it), `--thinking off|on` (Z.ai
+   style `thinking {"type": ...}`; not sent unless given), `--concurrency` (default 4, thread pool).
+   Always `temperature 0`, a fence / prose-tolerant JSON parser validated against the same schema
+   (`equivalent`, `confidence`, `relation`, `rationale` per pair), `reasoning_content` ignored, 180 s
+   timeout, 5 retries with exponential backoff on 429 / 5xx / timeouts, cache appends under a lock.
+   Judgments: `benchmarks/results/llm-judgments/<provider>__<model>.jsonl`.  First target, Qwen Cloud:
+   `LLM_JUDGE_API_KEY=... .venv/bin/python scripts/benchmark_oaei_llm.py --judge openai --base-url
+   https://maas.qwencloudapi.com/compatible-mode/v1 --provider qwen --model qwen3.8-flash`.
+   Z.ai preset: `ZAI_API_KEY=... scripts/benchmark_oaei_llm.py --judge zai` (base `ZAI_BASE_URL` or
+   `https://api.z.ai/api/paas/v4`, alias `Z_AI_API_KEY`, model `glm-5.3-flash`, thinking off).
+   Prices (USD per M tokens, input / output) are pinned per provider in `PROVIDER_MODEL_PRICES_USD_PER_MTOK`:
+   Z.ai from https://docs.z.ai/guides/overview/pricing on 2026-10-07 (glm-5.3-flash 0.15 / 0.50,
+   glm-5.3-flashx 0.37 / 1.25, glm-5.3 1.4 / 4.4, glm-4.7-flash and glm-4.5-flash free); every other
+   provider / model is costed at 0 with a note - pricing not pinned, fill from the provider's pricing page.
 3. **Cache**: one JSON line per verdict keyed by `sha256(model, prompt version, rendered pair)` under
    `benchmarks/results/llm-judgments/<model>.jsonl`; a rerun sends only unjudged pairs; the per-request
    token usage is kept in the results JSON (`usage_ledger`).

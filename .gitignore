@@ -28,3 +28,8 @@ docs/public/.vercel/
 .leio-code/
 .claude/
 .lake/
+
+# LLM-distilled corpora are committed (data/ is otherwise ignored)
+!/data/
+/data/*
+!/data/corpora/

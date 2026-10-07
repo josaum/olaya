@@ -1,0 +1,130 @@
+{
+  "note": "Checkpoints are not committed; rebuild with scripts/train_from_corpus.py. Entries record what the reported numbers came from.",
+  "checkpoints": {
+    "gs1": {
+      "file": "olaya_gs1.pt",
+      "sha256": "c1ec2e0aa46b4214b4987eefa4157f66ed947818ddaed8a096e2c955d0a3a9bd",
+      "size_bytes": 63607060,
+      "corpus_sha256": "c442463da3977bc0c905e9b248a8b89d1634bdc40fa077f6c1a05f487a2b9583",
+      "ontology_file_sha256": "de76db39ebb2332465d5440887b5f9167dac43b7fbb9ddba3f0f5046d2b243f8",
+      "commit": "896cb8c2b71e29c7eea2a79b6f2d0bb68db8b0c0",
+      "temperature": 1.2612453699111938,
+      "metrics": {
+        "validation_accuracy": 0.5694915254237288,
+        "test_task_top1": 0.5579937304075235,
+        "test_task_ece": 0.1644484857126463,
+        "retrieval_top1": 0.140625,
+        "retrieval_recall_at_5": 0.46875,
+        "lexical_top1": 0.28125
+      },
+      "report": "benchmarks/results/decision-head-gs1.json"
+    },
+    "schemaorg": {
+      "file": "olaya_schemaorg.pt",
+      "sha256": "f2c8f4503f6313aa80b6e011c85d7a0413b14b383f08c3b477e83d0652e66037",
+      "size_bytes": 63607962,
+      "corpus_sha256": "3253d80a8d766154ec5a8008443df2ad72730ff8c3082f3239beb73be07d0bc7",
+      "ontology_file_sha256": "abc5112d312b7ed8362345789b711c0af876a7a0404c4c84ab3b492060a52f14",
+      "commit": "dafadc4ffe3604c898070ad91e7638287cea32bd",
+      "temperature": 1.2090133428573608,
+      "metrics": {
+        "validation_accuracy": 0.49770992366412214,
+        "test_task_top1": 0.52428810720268,
+        "test_task_ece": 0.07808502659925462,
+        "retrieval_top1": 0.075,
+        "retrieval_recall_at_5": 0.14166666666666666,
+        "lexical_top1": 0.1
+      },
+      "report": "benchmarks/results/decision-head-schemaorg.json"
+    },
+    "incident": {
+      "file": "olaya_incident.pt",
+      "sha256": "f8271b8ce94785bdb763b9b82b09724e571e6f513bcc46f4889366ffe8052298",
+      "size_bytes": 63607289,
+      "corpus_sha256": "289385a90d5bca1243b226ae4da99b93f81d365e9ff265168dcb78d2f9f594dd",
+      "ontology_file_sha256": "c2fc17f23d2d4e10c3acbe2c6801fa2036a0111e0147e3122b9f0123ce776e93",
+      "commit": "3d3b39ea7e475e4dc52ed8860dadc3371b1abf6a",
+      "temperature": 1.0771201848983765,
+      "metrics": {
+        "validation_accuracy": 0.5058823529411764,
+        "test_task_top1": 0.3875,
+        "test_task_ece": 0.24783744066953659,
+        "retrieval_top1": 0.1875,
+        "retrieval_recall_at_5": 0.6875,
+        "lexical_top1": 0.5625
+      },
+      "report": "benchmarks/results/decision-head-incident.json"
+    }
+  },
+  "embedding_checkpoints": {
+    "incident": {
+      "file": "olaya_embed_incident.pt",
+      "sha256": "93b5027405178091ff9976eb399ba8f8595cdee40da7bc6321915c4f7ae422f7",
+      "size_bytes": 133506458,
+      "base_model": "BAAI/bge-small-en-v1.5",
+      "format": "olaya-bi-encoder-v1 (state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
+      "corpus_sha256": "289385a90d5bca1243b226ae4da99b93f81d365e9ff265168dcb78d2f9f594dd",
+      "ontology_file_sha256": "c2fc17f23d2d4e10c3acbe2c6801fa2036a0111e0147e3122b9f0123ce776e93",
+      "commit": "ed07ef4400a2f91dca48f46ed14b16d8da26c978",
+      "temperature": 0.0005,
+      "metrics": {
+        "validation_top1": 1.0,
+        "validation_top1_zero_shot_base": 0.8235294117647058,
+        "validation_top1_lexical": 0.5882352941176471,
+        "test_top1": 0.6875,
+        "test_recall_at_5": 1.0,
+        "test_ceiling_at_8": 1.0,
+        "test_concept_task_top1": 0.875,
+        "test_concept_task_ece": 0.125,
+        "lexical_test_top1": 0.5625
+      },
+      "report": "benchmarks/results/router-eval-incident.json"
+    },
+    "gs1": {
+      "file": "olaya_embed_gs1.pt",
+      "sha256": "43aa1ceda29fbf5f6b3947abc216d43557015ab12e6638b6c98d36ebdc739e0e",
+      "size_bytes": 90887001,
+      "base_model": "sentence-transformers/all-MiniLM-L6-v2",
+      "format": "olaya-bi-encoder-v1 (state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
+      "corpus_sha256": "c442463da3977bc0c905e9b248a8b89d1634bdc40fa077f6c1a05f487a2b9583",
+      "ontology_file_sha256": "de76db39ebb2332465d5440887b5f9167dac43b7fbb9ddba3f0f5046d2b243f8",
+      "commit": "ed07ef4400a2f91dca48f46ed14b16d8da26c978",
+      "temperature": 0.05296268625886444,
+      "metrics": {
+        "validation_top1": 0.711864406779661,
+        "validation_top1_zero_shot_base": 0.4745762711864407,
+        "validation_top1_lexical": 0.1694915254237288,
+        "test_top1": 0.609375,
+        "test_recall_at_5": 0.921875,
+        "test_ceiling_at_8": 0.9375,
+        "test_concept_task_top1": 0.8888888888888888,
+        "test_concept_task_ece": 0.06483252890526299,
+        "lexical_test_top1": 0.28125
+      },
+      "report": "benchmarks/results/router-eval-gs1.json"
+    },
+    "schemaorg": {
+      "file": "olaya_embed_schemaorg.pt",
+      "sha256": "194dad4f3aebb5a4101c447ae31e4701ce18940470875235e146c60197fbd4b9",
+      "size_bytes": 133506663,
+      "base_model": "BAAI/bge-small-en-v1.5",
+      "format": "olaya-bi-encoder-v1 (state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
+      "corpus_sha256": "3253d80a8d766154ec5a8008443df2ad72730ff8c3082f3239beb73be07d0bc7",
+      "ontology_file_sha256": "abc5112d312b7ed8362345789b711c0af876a7a0404c4c84ab3b492060a52f14",
+      "commit": "ed07ef4400a2f91dca48f46ed14b16d8da26c978",
+      "temperature": 0.03341719587843075,
+      "metrics": {
+        "validation_top1": 0.6439393939393939,
+        "validation_top1_zero_shot_base": 0.32575757575757575,
+        "validation_top1_lexical": 0.09848484848484848,
+        "test_top1": 0.5166666666666667,
+        "test_recall_at_5": 0.825,
+        "test_ceiling_at_8": 0.8666666666666667,
+        "test_concept_task_top1": 0.9487179487179487,
+        "test_concept_task_ece": 0.027073444973709237,
+        "lexical_test_top1": 0.1
+      },
+      "report": "benchmarks/results/router-eval-schemaorg.json"
+    }
+  }
+}
