@@ -296,3 +296,23 @@ def test_mined_hard_negatives_rank_non_gold_classes_deterministically():
     assert mined_hard_negatives(q, c, classes, ["A", "D"], per_query=0) == [[], []]
     # A gold class is never its own negative even when it scores highest.
     assert "A" not in mined[0] and "D" not in mined[1]
+
+
+def test_resolve_device_defaults_to_cpu_and_refuses_unavailable_devices(monkeypatch):
+    import types
+
+    from olaya.embeddings import EncoderUnavailable, resolve_device
+
+    fake = types.SimpleNamespace(
+        cuda=types.SimpleNamespace(is_available=lambda: False),
+        backends=types.SimpleNamespace(mps=types.SimpleNamespace(is_available=lambda: False)),
+    )
+    monkeypatch.delenv("OLAYA_ENCODER_DEVICE", raising=False)
+    assert resolve_device(None, fake) == "cpu"
+    assert resolve_device("auto", fake) == "cpu"
+    monkeypatch.setenv("OLAYA_ENCODER_DEVICE", "MPS")
+    with pytest.raises(EncoderUnavailable):
+        resolve_device(None, fake)
+    fake.backends.mps = types.SimpleNamespace(is_available=lambda: True)
+    assert resolve_device("auto", fake) == "mps"
+    assert resolve_device("cpu", fake) == "cpu"
