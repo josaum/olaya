@@ -119,7 +119,7 @@ class SystemOneResult:
 
     ``model`` records weight provenance: ``checkpoint-sha256:<prefix>`` for a loaded checkpoint,
     ``untrained-random-init`` for freshly initialised weights, or ``injected-model`` for a model
-    object supplied by the caller. ``act_probabilities`` maps each question id to the auxiliary
+    object supplied by the caller; an injected scorer appends ``+scorer:<name>``. ``act_probabilities`` maps each question id to the auxiliary
     act/escalate head's P(act) for that question's sequence (trained against escalation targets in
     ``olaya.train``; it is not an ontology-projected quantity).
     """
@@ -141,9 +141,25 @@ class OLaya:
         tokenizer: Any | None = None,
         device: str | None = None,
         weights_path: str | Path | bool | None = None,
+        router: Any | None = None,
+        scorer: Any | None = None,
     ):
         self.ontology = ontology or create_incident_ontology()
-        self.router = CandidateRouter(self.ontology, max_candidates=12)
+        # ``router`` is any object with ``extract_decision_subgraph(state_text, root_curie, max_candidates)``
+        # over this ontology (``olaya.embedding_router`` provides embedding and hybrid routers); the
+        # default stays the lexical router. ``scorer`` replaces the decision head's candidate logits
+        # for ``concept`` questions only: ``scorer.score(state_text, candidate_curies)`` returns one
+        # raw score per candidate and ``scorer.temperature`` is the temperature those scores are
+        # softmaxed with (see ``_calibrated_logits``). The projection, lineage and axiom checks are
+        # unchanged; every other question type still goes through the model.
+        if router is not None and getattr(router, "ontology", self.ontology) is not self.ontology:
+            raise ValueError("injected router must be built over the engine's ontology")
+        self.router = router if router is not None else CandidateRouter(self.ontology, max_candidates=12)
+        if scorer is not None:
+            if not callable(getattr(scorer, "score", None)):
+                raise TypeError("scorer must provide score(state_text, candidate_curies)")
+            _validated_temperature(getattr(scorer, "temperature", None), Path("<scorer>"))
+        self.scorer = scorer
 
         if device is None:
             if torch.backends.mps.is_available():
@@ -191,6 +207,9 @@ class OLaya:
             self.model = model
             self.model_id = INJECTED_MODEL_ID
 
+        if self.scorer is not None:
+            self.model_id = f"{self.model_id}+scorer:{getattr(self.scorer, 'name', type(self.scorer).__name__)}"
+
         self.model.to(self.device)
         self.model.eval()
 
@@ -225,17 +244,20 @@ class OLaya:
     def _encode_text(self, text: str) -> list[int]:
         return self.tokenizer.encode(text, add_special_tokens=False)
 
-    def _calibrated_logits(self, raw_scores: np.ndarray) -> np.ndarray:
+    def _calibrated_logits(self, raw_scores: np.ndarray, temperature: float | None = None) -> np.ndarray:
         """Apply the temperature rule from the module docstring to the candidate-slot logits.
 
         ``raw_scores`` must already be restricted to the real candidate slots (no padding). With a
         fitted temperature ``T`` the returned logits are ``raw * T_card(k) / T``; the downstream
         projection divides by ``T_card(k)`` again, so the effective softmax is ``softmax(raw / T)``.
+        ``temperature`` overrides the checkpoint's fitted value (used for an injected scorer).
         """
-        if self.calibrated_temperature is None:
+        if temperature is None:
+            temperature = self.calibrated_temperature
+        if temperature is None:
             return raw_scores
         k = len(raw_scores)
-        return raw_scores * (temperature_by_cardinality(k) / self.calibrated_temperature)
+        return raw_scores * (temperature_by_cardinality(k) / temperature)
 
     def system_one(self, state: Any, questions: dict[str, dict[str, Any]]) -> SystemOneResult:
         """Evaluate typed questions against input state in a single forward pass."""
@@ -406,6 +428,14 @@ class OLaya:
             # Only real candidate slots: padded slots (masked to -1e4 by the head) never enter the softmax.
             raw_scores = self._calibrated_logits(logits_np[i, :num_markers])
             act_probabilities[qid] = round(float(act_np[i, 1]), 4)
+
+            if qtype == "concept" and self.scorer is not None:
+                scored = np.asarray(self.scorer.score(state_text, b.candidate_curies), dtype=np.float64)
+                if scored.shape != (num_markers,):
+                    raise ValueError(
+                        f"Question {qid!r}: scorer returned {scored.shape} scores for {num_markers} candidates."
+                    )
+                raw_scores = self._calibrated_logits(scored, temperature=float(self.scorer.temperature))
 
             if qtype == "concept":
                 candidate_probs, marginals, confidence = project_hierarchical_distribution(

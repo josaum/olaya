@@ -24,15 +24,18 @@ Read this before anything else.
 | Lean 4 proof core (`lean/`) | Steps 3–4 of the axiom kernel and the verifier are formalised over integer scores; `project_verified` and 15 supporting theorems, no `sorry`, axioms audited in CI. Softmax, confidence, and the `K`-sweep convergence bound are **not** proven. See [`spec/AXIOMS.md`](spec/AXIOMS.md). |
 | TBox-bound workflow compiler, interpreter, JSON-LD traces, inference-free replay | Implemented and tested |
 | Lexical scoring (label / synonym / description overlap with IDF) | Implemented in every runtime. **This is what every shipped runtime uses to score.** |
-| Neural scoring head (Python, PyTorch) | Implemented and trainable. **No trained weights are committed.** `OLaya()` without a checkpoint is a randomly initialised encoder; its scores are not meaningful. |
+| Neural scoring head (Python, PyTorch) | Implemented and trainable. **No trained weights are committed.** `OLaya()` without a checkpoint is a randomly initialised encoder; its scores are not meaningful. A head can be trained on the committed LLM-distilled corpora (`scripts/train_from_corpus.py`, `data/corpora/`); on all three domains it **does not beat the lexical router** on full-ontology retrieval, see [`benchmarks/results/decision-head-summary.md`](benchmarks/results/decision-head-summary.md). |
 | ONNX path in Rust (`onnx` feature) | Compiles. No model to load, no end-to-end test. |
+| Embedding candidate router and zero-shot scorer (Python, `olaya.embedding_router`) | Implemented, injectable into `OLaya(router=..., scorer=...)`; the axiom projection, lineage and `axioms_verified` are unchanged. On the same LLM-distilled test rows a zero-shot `bge-small` over path-context class texts beats the lexical router on full-ontology top-1 on gs1 (0.375 vs 0.281) and Schema.org (0.308 vs 0.100) and ties on incident (0.562); a 15-minute contrastive fine-tune of a small encoder reaches 0.688 / 0.609 / 0.517 (incident / gs1 / Schema.org; test classes were seen in training through other batches). Not used by any shipped runtime; checkpoints are not committed. See [`benchmarks/results/router-eval-summary.md`](benchmarks/results/router-eval-summary.md). |
 | WebAssembly build | Builds in CI for `wasm32-unknown-unknown`; kernel unit-tested. |
 | Calibration | Temperature fitting (`calibration.py`) is implemented and used at inference when a checkpoint carries a fitted temperature. Without one, confidence is normalised entropy with a fixed cardinality temperature and is **not** an empirically calibrated probability. |
 | Published packages | `leio-decision` on PyPI and npm (part of the leio suite with `leio-code`), published by `release.yml` from the tagged commit; `olaya` 0.3.1 on PyPI is the same code under its previous name. Until the first `leio-decision` publish, install from a locally built wheel (see Installation). |
 | HTTP edge demo (`/api/systemone`) | Live, lexical only, no ontology DAG. See [the edge contract](spec/systemone-reliability.md). |
 
-No accuracy, ECE, or latency number in this repository applies to a trained
-neural model, because none is committed. The only external benchmark we report
+No trained neural model is committed. The only numbers for a trained head are the
+negative results in `benchmarks/results/decision-head-*.md` (LLM-distilled labels, not
+human; the head loses to the lexical router on every domain), so no accuracy or ECE
+number here is a claim about a shipped model. The only external benchmark we report
 is the OAEI Conference track below, run with the lexical matcher on vendored
 upstream data, reproducible with one command.
 
@@ -61,19 +64,27 @@ vendored upstream data in `tests/fixtures/oaei/`).
 | SORBETMtch | 0.78 / 0.75 / 0.76 | 0.78 / 0.64 / 0.70 |
 | LogMap | 0.84 / 0.63 / 0.72 | 0.81 / 0.58 / 0.68 |
 | Matcha | 0.76 / 0.68 / 0.72 | 0.70 / 0.64 / 0.67 |
+| **olaya-hybrid + LLM judge (qwen3.8-max), leave-one-pair-out CV** | 0.79 / 0.82 / **0.80** | 0.73 / 0.79 / **0.76** |
 | **olaya-hybrid (this repo, leave-one-pair-out CV)** | 0.81 / 0.69 / 0.75 | 0.69 / 0.66 / 0.68 |
 | **olaya-hybrid + structure (this repo, leave-one-pair-out CV, union grid)** | 0.81 / 0.69 / 0.75 | 0.69 / 0.66 / 0.68 |
 | **olaya-lexical (this repo, threshold 0.50)** | 0.83 / 0.64 / 0.73 | 0.73 / 0.60 / 0.66 |
 | edna (baseline) | 0.88 / 0.54 / 0.67 | 0.79 / 0.47 / 0.59 |
 | StringEquiv (baseline) | 0.88 / 0.50 / 0.64 | 0.80 / 0.43 / 0.56 |
 
-Where we land: the hybrid's headline is cross-validated (threshold and fusion
-weight chosen on the other 20 pairs for each held-out pair), which makes it the
-honest number; the best configuration picked on the full set scores 0.76 / 0.69.
-It ranks third on both tables: below GraphMatcher by 0.08 (M1) and 0.10 (M3),
-below SORBETMtch by 0.01 and 0.02, tied with LogMap on M3 and above LogMap and
-Matcha on M1. The lexical matcher alone is 0.02 behind the hybrid on both. It is
-not state of the art. Structural propagation did not help: seeded by the hybrid, the
+Where we land: the best system is the hybrid followed by an LLM judge
+(`qwen3.8-max` asked, with ontology context, whether each candidate pair is
+equivalent; verdicts cached in `benchmarks/results/llm-judgments/` so the result
+replays offline). Its headline is cross-validated (decoding mode and threshold
+chosen on the other 20 pairs for each held-out pair) and lands **second** on both
+tables: below GraphMatcher by 0.03 (M1) and 0.02 (M3), above SORBETMtch by 0.04
+and 0.06. The judge adds recall (classes 0.69 to 0.82) at some precision. It is an
+LLM-based matcher and is reported as such; it is not state of the art. Three more
+judges (`qwen3.8-flash`, `glm-5.2`, `deepseek-v4.1-flash`, each 0.76 to 0.77 M1
+alone) and majority / weighted / anchor ensembles over all four do not move the
+headline (best combiner +0.006 M3). Without the judge, the hybrid ranks third
+(0.75 / 0.68) and the lexical matcher alone is 0.02 behind it. See
+[`benchmarks/results/oaei-llm-qwen3.8-max.md`](benchmarks/results/oaei-llm-qwen3.8-max.md)
+and [`oaei-llm-ensemble.md`](benchmarks/results/oaei-llm-ensemble.md). Structural propagation did not help: seeded by the hybrid, the
 best structural grid point scores 0.75 / 0.69 on ra1 (optimistic), but when the
 hybrid and structural grids are cross-validated together the selection never picks
 a structural config once the hybrid grid contains the path text, so the headline
@@ -97,11 +108,13 @@ part of the headline number. Full per-pair numbers, the threshold sweep, dataset
 hashes and the published sources are in
 [`benchmarks/results/oaei-conference-ra1.md`](benchmarks/results/oaei-conference-ra1.md)
 and [`oaei-conference-ra1.json`](benchmarks/results/oaei-conference-ra1.json).
-An LLM-judge stage (candidates from the hybrid, a language model asked with
-ontology context whether each pair is equivalent; `scripts/benchmark_oaei_llm.py`,
-category LLM-based) is built and validated offline with a reference-backed stub in
-[`benchmarks/results/oaei-llm.md`](benchmarks/results/oaei-llm.md); its real-judge
-numbers are pending an API key and are not part of the table above.
+The LLM-judge stage (`scripts/benchmark_oaei_llm.py`, category LLM-based) runs
+against any OpenAI-compatible server (`--judge openai --base-url ... --provider
+<label> --model <id>` with `LLM_JUDGE_API_KEY`), the Anthropic API (`--judge
+anthropic`) or Z.ai (`--judge zai`); the candidate ceiling is M1 0.965 / M3 0.961
+and a reference-backed stub reproduces ra1 at F1 0.98, which bounds what any judge
+can reach. Replaying the committed verdicts needs no key:
+`scripts/benchmark_oaei_llm_ensemble.py --judgments qwen__qwen3.8-max`.
 Earlier versions of this README reported hits@k with the gold target guaranteed to be
 in the candidate set and a "100% violation elimination" figure computed on synthetic
 distributions; both were retracted because they were not benchmark results.

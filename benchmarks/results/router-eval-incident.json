@@ -1,0 +1,4034 @@
+{
+  "domain": "incident",
+  "seed": 42,
+  "commit": "ed07ef4400a2f91dca48f46ed14b16d8da26c978",
+  "corpus": {
+    "path": "data/corpora/incident.jsonl",
+    "rows": 109,
+    "classes": 13,
+    "ontology_concepts": 13,
+    "ontology_file_sha256": "c2fc17f23d2d4e10c3acbe2c6801fa2036a0111e0147e3122b9f0123ce776e93",
+    "split_rows": {
+      "train": 67,
+      "validation": 17,
+      "calibration": 9,
+      "test": 16
+    },
+    "split_report": {
+      "unit": "generation batch (one LLM generation call); classes are NOT held out",
+      "train": {
+        "rows": 67,
+        "batches": 27,
+        "classes": 12,
+        "classes_unseen_in_train": []
+      },
+      "validation": {
+        "rows": 17,
+        "batches": 7,
+        "classes": 6,
+        "classes_unseen_in_train": []
+      },
+      "calibration": {
+        "rows": 9,
+        "batches": 4,
+        "classes": 4,
+        "classes_unseen_in_train": []
+      },
+      "test": {
+        "rows": 16,
+        "batches": 7,
+        "classes": 6,
+        "classes_unseen_in_train": [
+          "INCIDENT:BILLING"
+        ]
+      }
+    },
+    "concept_tasks": {
+      "calibration": 9,
+      "test": 16
+    }
+  },
+  "protocol": {
+    "class_text": "label. description. Path: root > ... > label. Also called synonyms. (olaya.embedding_router.class_context_text)",
+    "state_text": "the raw observation text (string state), for every router including the lexical one",
+    "csls_k": 10,
+    "engine_top_k": 10,
+    "hybrid_union": "interleave lexical and embedding top lists",
+    "hybrid_rrf": "reciprocal-rank fusion, k=60, equal weights",
+    "scorer": "cosine similarity of the state to the class text, temperature fitted on the calibration split concept tasks (gold + 5 hard negatives)",
+    "selection": "every 'best' / 'default' choice below is made on the validation split; test is evaluated once per configuration"
+  },
+  "lexical": {
+    "name": "lexical",
+    "validation": {
+      "rows": 17,
+      "top1": 0.5882352941176471,
+      "recall_at_5": 1.0,
+      "mrr": 0.7598039215686274,
+      "coverage": 0.9411764705882353,
+      "ceiling": {
+        "1": 0.5882352941176471,
+        "3": 0.9411764705882353,
+        "5": 1.0,
+        "8": 1.0,
+        "16": 1.0,
+        "32": 1.0
+      },
+      "leaf_ceiling_top10": 0.9411764705882353
+    },
+    "test": {
+      "rows": 16,
+      "top1": 0.5625,
+      "recall_at_5": 0.875,
+      "mrr": 0.6822916666666667,
+      "coverage": 1.0,
+      "ceiling": {
+        "1": 0.5625,
+        "3": 0.8125,
+        "5": 0.875,
+        "8": 0.875,
+        "16": 0.875,
+        "32": 0.875
+      },
+      "leaf_ceiling_top10": 0.75
+    },
+    "task": {
+      "temperature": 0.01,
+      "temperature_fit_saturated": true,
+      "temperature_fit": "grid search of the masked NLL on the calibration tasks, base * 10^[-2, 2]",
+      "calibration_tasks": 9,
+      "test_tasks": 16,
+      "raw": {
+        "count": 16,
+        "accuracy": 0.6875,
+        "top3_accuracy": 0.9375,
+        "nll": 0.9265702962875366,
+        "ece": 0.2810985203832388,
+        "mce": 0.43256309628486633,
+        "brier": 0.4601283073425293,
+        "avg_confidence": 0.601198136806488,
+        "abstention_curve": [
+          {
+            "threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "threshold": 0.3,
+            "coverage": 0.875,
+            "accuracy_when_answered": 0.7857142686843872
+          },
+          {
+            "threshold": 0.5,
+            "coverage": 0.5,
+            "accuracy_when_answered": 0.875
+          },
+          {
+            "threshold": 0.6,
+            "coverage": 0.5,
+            "accuracy_when_answered": 0.875
+          },
+          {
+            "threshold": 0.7,
+            "coverage": 0.4375,
+            "accuracy_when_answered": 0.8571428656578064
+          },
+          {
+            "threshold": 0.8,
+            "coverage": 0.3125,
+            "accuracy_when_answered": 1.0
+          },
+          {
+            "threshold": 0.9,
+            "coverage": 0.1875,
+            "accuracy_when_answered": 1.0
+          },
+          {
+            "threshold": 0.95,
+            "coverage": 0.125,
+            "accuracy_when_answered": 1.0
+          }
+        ]
+      },
+      "calibrated": {
+        "count": 16,
+        "accuracy": 0.6875,
+        "top3_accuracy": 0.875,
+        "nll": 8.64777660369873,
+        "ece": 0.3164991848170758,
+        "mce": 0.32887949546178186,
+        "brier": 0.6276962757110596,
+        "avg_confidence": 0.9876498579978943,
+        "abstention_curve": [
+          {
+            "threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "threshold": 0.3,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "threshold": 0.5,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "threshold": 0.6,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "threshold": 0.7,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "threshold": 0.8,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "threshold": 0.9,
+            "coverage": 0.9375,
+            "accuracy_when_answered": 0.6666666865348816
+          },
+          {
+            "threshold": 0.95,
+            "coverage": 0.875,
+            "accuracy_when_answered": 0.6428571343421936
+          }
+        ]
+      }
+    }
+  },
+  "encoders": {
+    "e5-small": {
+      "encoder": "intfloat/e5-small-v2",
+      "variants": {
+        "cosine": {
+          "router": "embedding:intfloat/e5-small-v2",
+          "validation": {
+            "rows": 17,
+            "top1": 0.5882352941176471,
+            "recall_at_5": 1.0,
+            "mrr": 0.7274509803921569,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5882352941176471,
+              "3": 0.9411764705882353,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.4375,
+            "recall_at_5": 0.875,
+            "mrr": 0.6491529304029305,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.4375,
+              "3": 0.875,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "csls": {
+          "router": "embedding:intfloat/e5-small-v2+csls10",
+          "validation": {
+            "rows": 17,
+            "top1": 0.6470588235294118,
+            "recall_at_5": 1.0,
+            "mrr": 0.7862745098039214,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.6470588235294118,
+              "3": 0.9411764705882353,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.4375,
+            "recall_at_5": 0.875,
+            "mrr": 0.616786858974359,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.4375,
+              "3": 0.75,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-union": {
+          "router": "hybrid-union(embedding:intfloat/e5-small-v2)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.5882352941176471,
+            "recall_at_5": 1.0,
+            "mrr": 0.7372549019607844,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5882352941176471,
+              "3": 0.8235294117647058,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.875,
+            "mrr": 0.6804029304029305,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.75,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-rrf": {
+          "router": "hybrid-rrf(embedding:intfloat/e5-small-v2)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.6470588235294118,
+            "recall_at_5": 1.0,
+            "mrr": 0.8137254901960783,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.6470588235294118,
+              "3": 1.0,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.625,
+            "recall_at_5": 0.875,
+            "mrr": 0.7429029304029304,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.625,
+              "3": 0.875,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        }
+      },
+      "task": {
+        "temperature": 0.008891397050194615,
+        "temperature_fit_saturated": false,
+        "temperature_fit": "grid search of the masked NLL on the calibration tasks, base * 10^[-2, 2]",
+        "calibration_tasks": 9,
+        "test_tasks": 16,
+        "raw": {
+          "count": 16,
+          "accuracy": 0.6875,
+          "top3_accuracy": 1.0,
+          "nll": 1.2191554307937622,
+          "ece": 0.3514638841152191,
+          "mce": 0.5403134822845459,
+          "brier": 0.5971912741661072,
+          "avg_confidence": 0.3360361158847809,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.6875
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 0.4375,
+              "accuracy_when_answered": 0.8571428656578064
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            }
+          ]
+        },
+        "calibrated": {
+          "count": 16,
+          "accuracy": 0.6875,
+          "top3_accuracy": 1.0,
+          "nll": 0.5885251760482788,
+          "ece": 0.24538250267505646,
+          "mce": 0.5620909929275513,
+          "brier": 0.35146087408065796,
+          "avg_confidence": 0.7354624271392822,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.6875
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.6875
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 0.8125,
+              "accuracy_when_answered": 0.7692307829856873
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 0.6875,
+              "accuracy_when_answered": 0.9090909361839294
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 0.5625,
+              "accuracy_when_answered": 0.8888888955116272
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 0.4375,
+              "accuracy_when_answered": 0.8571428656578064
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.3125,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.25,
+              "accuracy_when_answered": 1.0
+            }
+          ]
+        }
+      },
+      "engine": {
+        "lexical": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:intfloat/e5-small-v2)",
+          "top1": 0.4375,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 0.9375,
+          "gold_among_scored_leaf_candidates": 0.75,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.4375
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 0.9375,
+              "accuracy_when_answered": 0.4666666666666667
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 0.625,
+              "accuracy_when_answered": 0.6
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 0.5,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 0.3125,
+              "accuracy_when_answered": 0.8
+            }
+          ],
+          "latency_ms_median": 13.99
+        },
+        "cosine": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:intfloat/e5-small-v2)",
+          "top1": 0.4375,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.4375
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 0.625,
+              "accuracy_when_answered": 0.6
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 0.5,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 0.375,
+              "accuracy_when_answered": 0.6666666666666666
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 0.1875,
+              "accuracy_when_answered": 0.6666666666666666
+            }
+          ],
+          "latency_ms_median": 19.19
+        },
+        "csls": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:intfloat/e5-small-v2)",
+          "top1": 0.4375,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.75,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.4375
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 0.625,
+              "accuracy_when_answered": 0.6
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 0.5,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 0.375,
+              "accuracy_when_answered": 0.6666666666666666
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 0.1875,
+              "accuracy_when_answered": 0.6666666666666666
+            }
+          ],
+          "latency_ms_median": 15.21
+        },
+        "hybrid-union": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:intfloat/e5-small-v2)",
+          "top1": 0.4375,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.4375
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 0.625,
+              "accuracy_when_answered": 0.6
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 0.5,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 0.375,
+              "accuracy_when_answered": 0.6666666666666666
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 0.1875,
+              "accuracy_when_answered": 0.6666666666666666
+            }
+          ],
+          "latency_ms_median": 18.84
+        },
+        "hybrid-rrf": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:intfloat/e5-small-v2)",
+          "top1": 0.4375,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.4375
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 0.6875,
+              "accuracy_when_answered": 0.5454545454545454
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 0.5,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 0.375,
+              "accuracy_when_answered": 0.6666666666666666
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 0.125,
+              "accuracy_when_answered": 1.0
+            }
+          ],
+          "latency_ms_median": 15.33
+        }
+      },
+      "runtime_s": 2.7,
+      "info": {
+        "model": "intfloat/e5-small-v2",
+        "revision": "main",
+        "commit_sha": "ffb93f3bd4047442299a41ebb6fa998a38507c52",
+        "dim": 384,
+        "max_length": 128,
+        "prefix": "query: ",
+        "pooling": "mean",
+        "normalize": true,
+        "batch_size": 32,
+        "cache": "/root/.cache/olaya/embeddings/intfloat__e5-small-v2/ffb93f3bd4047442299a41ebb6fa998a38507c52"
+      }
+    },
+    "bge-small": {
+      "encoder": "BAAI/bge-small-en-v1.5",
+      "variants": {
+        "cosine": {
+          "router": "embedding:BAAI/bge-small-en-v1.5",
+          "validation": {
+            "rows": 17,
+            "top1": 0.8235294117647058,
+            "recall_at_5": 0.9411764705882353,
+            "mrr": 0.8823529411764706,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.8235294117647058,
+              "3": 0.9411764705882353,
+              "5": 0.9411764705882353,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7156250000000001,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.875,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "csls": {
+          "router": "embedding:BAAI/bge-small-en-v1.5+csls10",
+          "validation": {
+            "rows": 17,
+            "top1": 0.8235294117647058,
+            "recall_at_5": 1.0,
+            "mrr": 0.8823529411764706,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.8235294117647058,
+              "3": 0.8823529411764706,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5,
+            "recall_at_5": 0.875,
+            "mrr": 0.6297619047619047,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5,
+              "3": 0.625,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-union": {
+          "router": "hybrid-union(embedding:BAAI/bge-small-en-v1.5)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.5882352941176471,
+            "recall_at_5": 1.0,
+            "mrr": 0.7843137254901961,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5882352941176471,
+              "3": 1.0,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7072916666666668,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.8125,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-rrf": {
+          "router": "hybrid-rrf(embedding:BAAI/bge-small-en-v1.5)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.8235294117647058,
+            "recall_at_5": 1.0,
+            "mrr": 0.9117647058823529,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.8235294117647058,
+              "3": 1.0,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7677083333333334,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.625,
+              "3": 0.875,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        }
+      },
+      "task": {
+        "temperature": 0.0005,
+        "temperature_fit_saturated": true,
+        "temperature_fit": "grid search of the masked NLL on the calibration tasks, base * 10^[-2, 2]",
+        "calibration_tasks": 9,
+        "test_tasks": 16,
+        "raw": {
+          "count": 16,
+          "accuracy": 0.875,
+          "top3_accuracy": 1.0,
+          "nll": 0.5581914186477661,
+          "ece": 0.2873214278370142,
+          "mce": 0.7273424863815308,
+          "brier": 0.2676083445549011,
+          "avg_confidence": 0.637192964553833,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 0.9375,
+              "accuracy_when_answered": 0.8666666746139526
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 0.8125,
+              "accuracy_when_answered": 0.9230769276618958
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 0.4375,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 0.375,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 0.25,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.1875,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.125,
+              "accuracy_when_answered": 1.0
+            }
+          ]
+        },
+        "calibrated": {
+          "count": 16,
+          "accuracy": 0.875,
+          "top3_accuracy": 1.0,
+          "nll": 3.2643938064575195,
+          "ece": 0.12496715784072876,
+          "mce": 0.12496715784072876,
+          "brier": 0.2500000298023224,
+          "avg_confidence": 0.9999671578407288,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            }
+          ]
+        }
+      },
+      "engine": {
+        "lexical": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-small-en-v1.5)",
+          "top1": 0.625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 0.9375,
+          "gold_among_scored_leaf_candidates": 0.75,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 14.62
+        },
+        "cosine": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-small-en-v1.5)",
+          "top1": 0.5625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 15.65
+        },
+        "csls": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-small-en-v1.5)",
+          "top1": 0.5625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 16.26
+        },
+        "hybrid-union": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-small-en-v1.5)",
+          "top1": 0.5625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 18.3
+        },
+        "hybrid-rrf": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-small-en-v1.5)",
+          "top1": 0.5625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 17.48
+        }
+      },
+      "runtime_s": 2.3,
+      "info": {
+        "model": "BAAI/bge-small-en-v1.5",
+        "revision": "main",
+        "commit_sha": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+        "dim": 384,
+        "max_length": 128,
+        "prefix": "",
+        "pooling": "mean",
+        "normalize": true,
+        "batch_size": 32,
+        "cache": "/root/.cache/olaya/embeddings/BAAI__bge-small-en-v1.5/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a"
+      }
+    },
+    "minilm": {
+      "encoder": "sentence-transformers/all-MiniLM-L6-v2",
+      "variants": {
+        "cosine": {
+          "router": "embedding:sentence-transformers/all-MiniLM-L6-v2",
+          "validation": {
+            "rows": 17,
+            "top1": 0.6470588235294118,
+            "recall_at_5": 1.0,
+            "mrr": 0.7960784313725489,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.6470588235294118,
+              "3": 0.9411764705882353,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7256410256410257,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.875,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "csls": {
+          "router": "embedding:sentence-transformers/all-MiniLM-L6-v2+csls10",
+          "validation": {
+            "rows": 17,
+            "top1": 0.7058823529411765,
+            "recall_at_5": 0.9411764705882353,
+            "mrr": 0.8235294117647058,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.7058823529411765,
+              "3": 0.9411764705882353,
+              "5": 0.9411764705882353,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.875,
+            "mrr": 0.7239583333333334,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.875,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-union": {
+          "router": "hybrid-union(embedding:sentence-transformers/all-MiniLM-L6-v2)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.5882352941176471,
+            "recall_at_5": 1.0,
+            "mrr": 0.7450980392156863,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5882352941176471,
+              "3": 0.8823529411764706,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.699599358974359,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.8125,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-rrf": {
+          "router": "hybrid-rrf(embedding:sentence-transformers/all-MiniLM-L6-v2)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.7058823529411765,
+            "recall_at_5": 1.0,
+            "mrr": 0.8431372549019607,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.7058823529411765,
+              "3": 1.0,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7360576923076922,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.875,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        }
+      },
+      "task": {
+        "temperature": 0.0005,
+        "temperature_fit_saturated": true,
+        "temperature_fit": "grid search of the masked NLL on the calibration tasks, base * 10^[-2, 2]",
+        "calibration_tasks": 9,
+        "test_tasks": 16,
+        "raw": {
+          "count": 16,
+          "accuracy": 0.875,
+          "top3_accuracy": 1.0,
+          "nll": 0.2224360853433609,
+          "ece": 0.17290433309972286,
+          "mce": 0.5084229707717896,
+          "brier": 0.10125379264354706,
+          "avg_confidence": 0.8271941542625427,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 0.9375,
+              "accuracy_when_answered": 0.9333333373069763
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 0.875,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 0.875,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 0.625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.375,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.375,
+              "accuracy_when_answered": 1.0
+            }
+          ]
+        },
+        "calibrated": {
+          "count": 16,
+          "accuracy": 0.875,
+          "top3_accuracy": 1.0,
+          "nll": 1.1566119194030762,
+          "ece": 0.12498712539672852,
+          "mce": 0.12498712539672852,
+          "brier": 0.24994835257530212,
+          "avg_confidence": 0.9999871253967285,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            }
+          ]
+        }
+      },
+      "engine": {
+        "lexical": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:sentence-transformers/all-MiniLM-L6-v2)",
+          "top1": 0.5625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 0.9375,
+          "gold_among_scored_leaf_candidates": 0.75,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 14.11
+        },
+        "cosine": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:sentence-transformers/all-MiniLM-L6-v2)",
+          "top1": 0.5625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 17.69
+        },
+        "csls": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:sentence-transformers/all-MiniLM-L6-v2)",
+          "top1": 0.5625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 17.43
+        },
+        "hybrid-union": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:sentence-transformers/all-MiniLM-L6-v2)",
+          "top1": 0.5625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 16.94
+        },
+        "hybrid-rrf": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:sentence-transformers/all-MiniLM-L6-v2)",
+          "top1": 0.5625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 17.89
+        }
+      },
+      "runtime_s": 2.8,
+      "info": {
+        "model": "sentence-transformers/all-MiniLM-L6-v2",
+        "revision": "main",
+        "commit_sha": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "dim": 384,
+        "max_length": 128,
+        "prefix": "",
+        "pooling": "mean",
+        "normalize": true,
+        "batch_size": 32,
+        "cache": "/root/.cache/olaya/embeddings/sentence-transformers__all-MiniLM-L6-v2/1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+      }
+    },
+    "mpnet": {
+      "encoder": "sentence-transformers/all-mpnet-base-v2",
+      "variants": {
+        "cosine": {
+          "router": "embedding:sentence-transformers/all-mpnet-base-v2",
+          "validation": {
+            "rows": 17,
+            "top1": 0.6470588235294118,
+            "recall_at_5": 1.0,
+            "mrr": 0.7813725490196077,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.6470588235294118,
+              "3": 0.8823529411764706,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7354166666666667,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.625,
+              "3": 0.8125,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "csls": {
+          "router": "embedding:sentence-transformers/all-mpnet-base-v2+csls10",
+          "validation": {
+            "rows": 17,
+            "top1": 0.7647058823529411,
+            "recall_at_5": 1.0,
+            "mrr": 0.8431372549019608,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.7647058823529411,
+              "3": 0.8823529411764706,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7285984848484849,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.625,
+              "3": 0.8125,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-union": {
+          "router": "hybrid-union(embedding:sentence-transformers/all-mpnet-base-v2)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.5882352941176471,
+            "recall_at_5": 0.9411764705882353,
+            "mrr": 0.7500000000000001,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5882352941176471,
+              "3": 0.8823529411764706,
+              "5": 0.9411764705882353,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.6906249999999999,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.6875,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-rrf": {
+          "router": "hybrid-rrf(embedding:sentence-transformers/all-mpnet-base-v2)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.8235294117647058,
+            "recall_at_5": 1.0,
+            "mrr": 0.892156862745098,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.8235294117647058,
+              "3": 1.0,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7510416666666667,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.625,
+              "3": 0.875,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        }
+      },
+      "task": {
+        "temperature": 0.0005,
+        "temperature_fit_saturated": true,
+        "temperature_fit": "grid search of the masked NLL on the calibration tasks, base * 10^[-2, 2]",
+        "calibration_tasks": 9,
+        "test_tasks": 16,
+        "raw": {
+          "count": 16,
+          "accuracy": 0.75,
+          "top3_accuracy": 1.0,
+          "nll": 0.4990723729133606,
+          "ece": 0.20901085063815117,
+          "mce": 0.5337878863016765,
+          "brier": 0.29637032747268677,
+          "avg_confidence": 0.8340301513671875,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 0.875,
+              "accuracy_when_answered": 0.8571428656578064
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 0.875,
+              "accuracy_when_answered": 0.8571428656578064
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 0.8125,
+              "accuracy_when_answered": 0.8461538553237915
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 0.6875,
+              "accuracy_when_answered": 0.8181818127632141
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.5,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.5,
+              "accuracy_when_answered": 1.0
+            }
+          ]
+        },
+        "calibrated": {
+          "count": 16,
+          "accuracy": 0.75,
+          "top3_accuracy": 0.9375,
+          "nll": 5.118821620941162,
+          "ece": 0.24999940395355225,
+          "mce": 0.24999940395355225,
+          "brier": 0.49999767541885376,
+          "avg_confidence": 0.9999994039535522,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            }
+          ]
+        }
+      },
+      "engine": {
+        "lexical": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:sentence-transformers/all-mpnet-base-v2)",
+          "top1": 0.625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 0.9375,
+          "gold_among_scored_leaf_candidates": 0.75,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 12.88
+        },
+        "cosine": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:sentence-transformers/all-mpnet-base-v2)",
+          "top1": 0.625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 16.0
+        },
+        "csls": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:sentence-transformers/all-mpnet-base-v2)",
+          "top1": 0.625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 20.64
+        },
+        "hybrid-union": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:sentence-transformers/all-mpnet-base-v2)",
+          "top1": 0.625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 15.19
+        },
+        "hybrid-rrf": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:sentence-transformers/all-mpnet-base-v2)",
+          "top1": 0.625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 17.99
+        }
+      },
+      "runtime_s": 2.7,
+      "info": {
+        "model": "sentence-transformers/all-mpnet-base-v2",
+        "revision": "main",
+        "commit_sha": "e8c3b32edf5434bc2275fc9bab85f82640a19130",
+        "dim": 768,
+        "max_length": 128,
+        "prefix": "",
+        "pooling": "mean",
+        "normalize": true,
+        "batch_size": 32,
+        "cache": "/root/.cache/olaya/embeddings/sentence-transformers__all-mpnet-base-v2/e8c3b32edf5434bc2275fc9bab85f82640a19130"
+      }
+    },
+    "bge-base": {
+      "encoder": "BAAI/bge-base-en-v1.5",
+      "variants": {
+        "cosine": {
+          "router": "embedding:BAAI/bge-base-en-v1.5",
+          "validation": {
+            "rows": 17,
+            "top1": 0.9411764705882353,
+            "recall_at_5": 1.0,
+            "mrr": 0.9529411764705882,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.9411764705882353,
+              "3": 0.9411764705882353,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7704326923076923,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.625,
+              "3": 0.875,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "csls": {
+          "router": "embedding:BAAI/bge-base-en-v1.5+csls10",
+          "validation": {
+            "rows": 17,
+            "top1": 0.8235294117647058,
+            "recall_at_5": 1.0,
+            "mrr": 0.8970588235294118,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.8235294117647058,
+              "3": 0.9411764705882353,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7256410256410257,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.875,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-union": {
+          "router": "hybrid-union(embedding:BAAI/bge-base-en-v1.5)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.5882352941176471,
+            "recall_at_5": 1.0,
+            "mrr": 0.7843137254901961,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5882352941176471,
+              "3": 1.0,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7100160256410256,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.8125,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-rrf": {
+          "router": "hybrid-rrf(embedding:BAAI/bge-base-en-v1.5)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.9411764705882353,
+            "recall_at_5": 1.0,
+            "mrr": 0.9705882352941176,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.9411764705882353,
+              "3": 1.0,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.6875,
+            "recall_at_5": 0.9375,
+            "mrr": 0.7985576923076922,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.6875,
+              "3": 0.875,
+              "5": 0.9375,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        }
+      },
+      "task": {
+        "temperature": 0.0005,
+        "temperature_fit_saturated": true,
+        "temperature_fit": "grid search of the masked NLL on the calibration tasks, base * 10^[-2, 2]",
+        "calibration_tasks": 9,
+        "test_tasks": 16,
+        "raw": {
+          "count": 16,
+          "accuracy": 1.0,
+          "top3_accuracy": 1.0,
+          "nll": 0.5188049077987671,
+          "ece": 0.3781390115618706,
+          "mce": 0.6272884607315063,
+          "brier": 0.2301509976387024,
+          "avg_confidence": 0.6218609809875488,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 0.6875,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 0.5,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 0.3125,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 0.1875,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.125,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            }
+          ]
+        },
+        "calibrated": {
+          "count": 16,
+          "accuracy": 1.0,
+          "top3_accuracy": 1.0,
+          "nll": 7.450581485102248e-09,
+          "ece": 0.0,
+          "mce": 0.0,
+          "brier": 1.120384243618656e-15,
+          "avg_confidence": 1.0,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 1.0,
+              "accuracy_when_answered": 1.0
+            }
+          ]
+        }
+      },
+      "engine": {
+        "lexical": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-base-en-v1.5)",
+          "top1": 0.6875,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 0.9375,
+          "gold_among_scored_leaf_candidates": 0.75,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.6875
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.6875
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.6875
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.6875
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.6875
+            }
+          ],
+          "latency_ms_median": 14.5
+        },
+        "cosine": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-base-en-v1.5)",
+          "top1": 0.625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 17.33
+        },
+        "csls": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-base-en-v1.5)",
+          "top1": 0.625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 16.89
+        },
+        "hybrid-union": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-base-en-v1.5)",
+          "top1": 0.625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 20.88
+        },
+        "hybrid-rrf": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-base-en-v1.5)",
+          "top1": 0.625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 19.76
+        }
+      },
+      "runtime_s": 2.7,
+      "info": {
+        "model": "BAAI/bge-base-en-v1.5",
+        "revision": "main",
+        "commit_sha": "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a",
+        "dim": 768,
+        "max_length": 128,
+        "prefix": "",
+        "pooling": "mean",
+        "normalize": true,
+        "batch_size": 32,
+        "cache": "/root/.cache/olaya/embeddings/BAAI__bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a"
+      }
+    },
+    "e5-large": {
+      "encoder": "intfloat/e5-large-v2",
+      "variants": {
+        "cosine": {
+          "router": "embedding:intfloat/e5-large-v2",
+          "validation": {
+            "rows": 17,
+            "top1": 0.8235294117647058,
+            "recall_at_5": 1.0,
+            "mrr": 0.8823529411764706,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.8235294117647058,
+              "3": 0.8823529411764706,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.625,
+            "recall_at_5": 0.875,
+            "mrr": 0.7429029304029304,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.625,
+              "3": 0.875,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "csls": {
+          "router": "embedding:intfloat/e5-large-v2+csls10",
+          "validation": {
+            "rows": 17,
+            "top1": 0.7647058823529411,
+            "recall_at_5": 1.0,
+            "mrr": 0.872549019607843,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.7647058823529411,
+              "3": 1.0,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5,
+            "recall_at_5": 0.875,
+            "mrr": 0.660536858974359,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5,
+              "3": 0.8125,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-union": {
+          "router": "hybrid-union(embedding:intfloat/e5-large-v2)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.5882352941176471,
+            "recall_at_5": 1.0,
+            "mrr": 0.7549019607843137,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5882352941176471,
+              "3": 0.8823529411764706,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.875,
+            "mrr": 0.7012362637362637,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.75,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-rrf": {
+          "router": "hybrid-rrf(embedding:intfloat/e5-large-v2)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.8235294117647058,
+            "recall_at_5": 1.0,
+            "mrr": 0.9019607843137254,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.8235294117647058,
+              "3": 1.0,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.6875,
+            "recall_at_5": 0.875,
+            "mrr": 0.7793612637362637,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.6875,
+              "3": 0.8125,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        }
+      },
+      "task": {
+        "temperature": 0.0005,
+        "temperature_fit_saturated": true,
+        "temperature_fit": "grid search of the masked NLL on the calibration tasks, base * 10^[-2, 2]",
+        "calibration_tasks": 9,
+        "test_tasks": 16,
+        "raw": {
+          "count": 16,
+          "accuracy": 0.75,
+          "top3_accuracy": 1.0,
+          "nll": 1.1786139011383057,
+          "ece": 0.39600803423672915,
+          "mce": 0.6859316229820251,
+          "brier": 0.57041335105896,
+          "avg_confidence": 0.35399195551872253,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 0.5625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 0.125,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0625,
+              "accuracy_when_answered": 1.0
+            }
+          ]
+        },
+        "calibrated": {
+          "count": 16,
+          "accuracy": 0.75,
+          "top3_accuracy": 1.0,
+          "nll": 5.029701232910156,
+          "ece": 0.24997162818908691,
+          "mce": 0.24997162818908691,
+          "brier": 0.4998864233493805,
+          "avg_confidence": 0.9999716281890869,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.75
+            }
+          ]
+        }
+      },
+      "engine": {
+        "lexical": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:intfloat/e5-large-v2)",
+          "top1": 0.5625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 0.9375,
+          "gold_among_scored_leaf_candidates": 0.75,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 17.99
+        },
+        "cosine": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:intfloat/e5-large-v2)",
+          "top1": 0.5625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 20.2
+        },
+        "csls": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:intfloat/e5-large-v2)",
+          "top1": 0.5625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.75,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 18.12
+        },
+        "hybrid-union": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:intfloat/e5-large-v2)",
+          "top1": 0.5625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 22.06
+        },
+        "hybrid-rrf": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:intfloat/e5-large-v2)",
+          "top1": 0.5625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.5625
+            }
+          ],
+          "latency_ms_median": 18.99
+        }
+      },
+      "runtime_s": 3.2,
+      "info": {
+        "model": "intfloat/e5-large-v2",
+        "revision": "main",
+        "commit_sha": "f169b11e22de13617baa190a028a32f3493550b6",
+        "dim": 1024,
+        "max_length": 128,
+        "prefix": "query: ",
+        "pooling": "mean",
+        "normalize": true,
+        "batch_size": 32,
+        "cache": "/root/.cache/olaya/embeddings/intfloat__e5-large-v2/f169b11e22de13617baa190a028a32f3493550b6"
+      }
+    },
+    "bge-large": {
+      "encoder": "BAAI/bge-large-en-v1.5",
+      "variants": {
+        "cosine": {
+          "router": "embedding:BAAI/bge-large-en-v1.5",
+          "validation": {
+            "rows": 17,
+            "top1": 0.7647058823529411,
+            "recall_at_5": 1.0,
+            "mrr": 0.8627450980392156,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.7647058823529411,
+              "3": 1.0,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.625,
+            "recall_at_5": 0.875,
+            "mrr": 0.7552083333333334,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.625,
+              "3": 0.875,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "csls": {
+          "router": "embedding:BAAI/bge-large-en-v1.5+csls10",
+          "validation": {
+            "rows": 17,
+            "top1": 0.7647058823529411,
+            "recall_at_5": 1.0,
+            "mrr": 0.8549019607843136,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.7647058823529411,
+              "3": 0.9411764705882353,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.625,
+            "recall_at_5": 0.875,
+            "mrr": 0.7537202380952381,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.625,
+              "3": 0.875,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-union": {
+          "router": "hybrid-union(embedding:BAAI/bge-large-en-v1.5)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.5882352941176471,
+            "recall_at_5": 1.0,
+            "mrr": 0.7549019607843137,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5882352941176471,
+              "3": 0.8823529411764706,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.5625,
+            "recall_at_5": 0.875,
+            "mrr": 0.6927083333333334,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.5625,
+              "3": 0.75,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        },
+        "hybrid-rrf": {
+          "router": "hybrid-rrf(embedding:BAAI/bge-large-en-v1.5)",
+          "validation": {
+            "rows": 17,
+            "top1": 0.8823529411764706,
+            "recall_at_5": 1.0,
+            "mrr": 0.9313725490196078,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.8823529411764706,
+              "3": 1.0,
+              "5": 1.0,
+              "8": 1.0,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.9411764705882353
+          },
+          "test": {
+            "rows": 16,
+            "top1": 0.625,
+            "recall_at_5": 0.875,
+            "mrr": 0.7552083333333334,
+            "coverage": 1.0,
+            "ceiling": {
+              "1": 0.625,
+              "3": 0.875,
+              "5": 0.875,
+              "8": 0.9375,
+              "16": 1.0,
+              "32": 1.0
+            },
+            "leaf_ceiling_top10": 0.8125
+          }
+        }
+      },
+      "task": {
+        "temperature": 0.0005,
+        "temperature_fit_saturated": true,
+        "temperature_fit": "grid search of the masked NLL on the calibration tasks, base * 10^[-2, 2]",
+        "calibration_tasks": 9,
+        "test_tasks": 16,
+        "raw": {
+          "count": 16,
+          "accuracy": 0.875,
+          "top3_accuracy": 1.0,
+          "nll": 0.5415279865264893,
+          "ece": 0.27382255904376507,
+          "mce": 0.4604951739311218,
+          "brier": 0.25038522481918335,
+          "avg_confidence": 0.639330267906189,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 0.5625,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 0.5,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 0.4375,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 0.25,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.125,
+              "accuracy_when_answered": 1.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.125,
+              "accuracy_when_answered": 1.0
+            }
+          ]
+        },
+        "calibrated": {
+          "count": 16,
+          "accuracy": 0.875,
+          "top3_accuracy": 1.0,
+          "nll": 2.095252752304077,
+          "ece": 0.12482762336730957,
+          "mce": 0.12482762336730957,
+          "brier": 0.24931129813194275,
+          "avg_confidence": 0.9998276233673096,
+          "abstention_curve": [
+            {
+              "threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.875
+            }
+          ]
+        }
+      },
+      "engine": {
+        "lexical": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-large-en-v1.5)",
+          "top1": 0.625,
+          "recall_at_5": 0.75,
+          "gold_in_routed_subgraph": 0.9375,
+          "gold_among_scored_leaf_candidates": 0.75,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 14.54
+        },
+        "cosine": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-large-en-v1.5)",
+          "top1": 0.625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 16.51
+        },
+        "csls": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-large-en-v1.5)",
+          "top1": 0.625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 17.64
+        },
+        "hybrid-union": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-large-en-v1.5)",
+          "top1": 0.625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 18.03
+        },
+        "hybrid-rrf": {
+          "rows": 16,
+          "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-large-en-v1.5)",
+          "top1": 0.625,
+          "recall_at_5": 0.8125,
+          "gold_in_routed_subgraph": 1.0,
+          "gold_among_scored_leaf_candidates": 0.8125,
+          "axioms_verified_rate": 1.0,
+          "abstention_curve": [
+            {
+              "confidence_threshold": 0.0,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.3,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.5,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.7,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            },
+            {
+              "confidence_threshold": 0.9,
+              "coverage": 1.0,
+              "accuracy_when_answered": 0.625
+            }
+          ],
+          "latency_ms_median": 16.3
+        }
+      },
+      "runtime_s": 2.5,
+      "info": {
+        "model": "BAAI/bge-large-en-v1.5",
+        "revision": "main",
+        "commit_sha": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+        "dim": 1024,
+        "max_length": 128,
+        "prefix": "",
+        "pooling": "mean",
+        "normalize": true,
+        "batch_size": 32,
+        "cache": "/root/.cache/olaya/embeddings/BAAI__bge-large-en-v1.5/d4aa6901d3a41ba39fb536a557fa166f842b0e09"
+      }
+    }
+  },
+  "committed_decision_head": {
+    "report": "benchmarks/results/decision-head-incident.json",
+    "checkpoint_sha256": "f8271b8ce94785bdb763b9b82b09724e571e6f513bcc46f4889366ffe8052298",
+    "concept_top1": 0.4375,
+    "concept_top3": 0.75,
+    "concept_ece": 0.2612814512103796,
+    "retrieval_top1": 0.1875,
+    "retrieval_recall_at_5": 0.6875,
+    "gold_among_scored_leaf_candidates": null,
+    "lexical_top1": 0.5625,
+    "lexical_recall_at_5": 0.875
+  },
+  "selection": {
+    "default_small": {
+      "encoder": "bge-small",
+      "variant": "cosine",
+      "validation_top1": 0.8235294117647058
+    },
+    "best_zero_shot": {
+      "encoder": "bge-base",
+      "variant": "cosine",
+      "validation_top1": 0.9411764705882353
+    },
+    "best_hybrid": {
+      "encoder": "bge-base",
+      "variant": "hybrid-rrf",
+      "validation_ceiling_at_8": 1.0
+    }
+  },
+  "fine_tuned": {
+    "encoder": "BAAI/bge-small-en-v1.5+ft:93b502740517",
+    "variants": {
+      "cosine": {
+        "router": "embedding:BAAI/bge-small-en-v1.5+ft:93b502740517",
+        "validation": {
+          "rows": 17,
+          "top1": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "coverage": 1.0,
+          "ceiling": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "8": 1.0,
+            "16": 1.0,
+            "32": 1.0
+          },
+          "leaf_ceiling_top10": 0.9411764705882353
+        },
+        "test": {
+          "rows": 16,
+          "top1": 0.6875,
+          "recall_at_5": 1.0,
+          "mrr": 0.8062499999999999,
+          "coverage": 1.0,
+          "ceiling": {
+            "1": 0.6875,
+            "3": 0.875,
+            "5": 1.0,
+            "8": 1.0,
+            "16": 1.0,
+            "32": 1.0
+          },
+          "leaf_ceiling_top10": 0.8125
+        }
+      },
+      "csls": {
+        "router": "embedding:BAAI/bge-small-en-v1.5+ft:93b502740517+csls10",
+        "validation": {
+          "rows": 17,
+          "top1": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "coverage": 1.0,
+          "ceiling": {
+            "1": 1.0,
+            "3": 1.0,
+            "5": 1.0,
+            "8": 1.0,
+            "16": 1.0,
+            "32": 1.0
+          },
+          "leaf_ceiling_top10": 0.9411764705882353
+        },
+        "test": {
+          "rows": 16,
+          "top1": 0.6875,
+          "recall_at_5": 0.9375,
+          "mrr": 0.8041666666666667,
+          "coverage": 1.0,
+          "ceiling": {
+            "1": 0.6875,
+            "3": 0.875,
+            "5": 0.9375,
+            "8": 1.0,
+            "16": 1.0,
+            "32": 1.0
+          },
+          "leaf_ceiling_top10": 0.8125
+        }
+      },
+      "hybrid-union": {
+        "router": "hybrid-union(embedding:BAAI/bge-small-en-v1.5+ft:93b502740517)",
+        "validation": {
+          "rows": 17,
+          "top1": 0.5882352941176471,
+          "recall_at_5": 1.0,
+          "mrr": 0.7941176470588235,
+          "coverage": 1.0,
+          "ceiling": {
+            "1": 0.5882352941176471,
+            "3": 1.0,
+            "5": 1.0,
+            "8": 1.0,
+            "16": 1.0,
+            "32": 1.0
+          },
+          "leaf_ceiling_top10": 0.9411764705882353
+        },
+        "test": {
+          "rows": 16,
+          "top1": 0.5625,
+          "recall_at_5": 0.9375,
+          "mrr": 0.7447916666666666,
+          "coverage": 1.0,
+          "ceiling": {
+            "1": 0.5625,
+            "3": 0.875,
+            "5": 0.9375,
+            "8": 1.0,
+            "16": 1.0,
+            "32": 1.0
+          },
+          "leaf_ceiling_top10": 0.8125
+        }
+      },
+      "hybrid-rrf": {
+        "router": "hybrid-rrf(embedding:BAAI/bge-small-en-v1.5+ft:93b502740517)",
+        "validation": {
+          "rows": 17,
+          "top1": 0.9411764705882353,
+          "recall_at_5": 1.0,
+          "mrr": 0.9705882352941176,
+          "coverage": 1.0,
+          "ceiling": {
+            "1": 0.9411764705882353,
+            "3": 1.0,
+            "5": 1.0,
+            "8": 1.0,
+            "16": 1.0,
+            "32": 1.0
+          },
+          "leaf_ceiling_top10": 0.9411764705882353
+        },
+        "test": {
+          "rows": 16,
+          "top1": 0.75,
+          "recall_at_5": 0.9375,
+          "mrr": 0.8541666666666667,
+          "coverage": 1.0,
+          "ceiling": {
+            "1": 0.75,
+            "3": 0.9375,
+            "5": 0.9375,
+            "8": 1.0,
+            "16": 1.0,
+            "32": 1.0
+          },
+          "leaf_ceiling_top10": 0.8125
+        }
+      }
+    },
+    "task": {
+      "temperature": 0.0005,
+      "temperature_fit_saturated": true,
+      "temperature_fit": "grid search of the masked NLL on the calibration tasks, base * 10^[-2, 2]",
+      "calibration_tasks": 9,
+      "test_tasks": 16,
+      "raw": {
+        "count": 16,
+        "accuracy": 0.875,
+        "top3_accuracy": 1.0,
+        "nll": 0.24356603622436523,
+        "ece": 0.07020123861730099,
+        "mce": 0.4632103145122528,
+        "brier": 0.1361893117427826,
+        "avg_confidence": 0.9073992967605591,
+        "abstention_curve": [
+          {
+            "threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.875
+          },
+          {
+            "threshold": 0.3,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.875
+          },
+          {
+            "threshold": 0.5,
+            "coverage": 0.9375,
+            "accuracy_when_answered": 0.9333333373069763
+          },
+          {
+            "threshold": 0.6,
+            "coverage": 0.9375,
+            "accuracy_when_answered": 0.9333333373069763
+          },
+          {
+            "threshold": 0.7,
+            "coverage": 0.9375,
+            "accuracy_when_answered": 0.9333333373069763
+          },
+          {
+            "threshold": 0.8,
+            "coverage": 0.75,
+            "accuracy_when_answered": 1.0
+          },
+          {
+            "threshold": 0.9,
+            "coverage": 0.6875,
+            "accuracy_when_answered": 1.0
+          },
+          {
+            "threshold": 0.95,
+            "coverage": 0.6875,
+            "accuracy_when_answered": 1.0
+          }
+        ]
+      },
+      "calibrated": {
+        "count": 16,
+        "accuracy": 0.875,
+        "top3_accuracy": 1.0,
+        "nll": 2.777021884918213,
+        "ece": 0.125,
+        "mce": 0.125,
+        "brier": 0.25,
+        "avg_confidence": 1.0,
+        "abstention_curve": [
+          {
+            "threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.875
+          },
+          {
+            "threshold": 0.3,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.875
+          },
+          {
+            "threshold": 0.5,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.875
+          },
+          {
+            "threshold": 0.6,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.875
+          },
+          {
+            "threshold": 0.7,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.875
+          },
+          {
+            "threshold": 0.8,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.875
+          },
+          {
+            "threshold": 0.9,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.875
+          },
+          {
+            "threshold": 0.95,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.875
+          }
+        ]
+      }
+    },
+    "engine": {
+      "lexical": {
+        "rows": 16,
+        "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-small-en-v1.5+ft:93b502740517)",
+        "top1": 0.6875,
+        "recall_at_5": 0.75,
+        "gold_in_routed_subgraph": 0.9375,
+        "gold_among_scored_leaf_candidates": 0.75,
+        "axioms_verified_rate": 1.0,
+        "abstention_curve": [
+          {
+            "confidence_threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.3,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.5,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.7,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.9,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          }
+        ],
+        "latency_ms_median": 14.04
+      },
+      "cosine": {
+        "rows": 16,
+        "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-small-en-v1.5+ft:93b502740517)",
+        "top1": 0.6875,
+        "recall_at_5": 0.8125,
+        "gold_in_routed_subgraph": 1.0,
+        "gold_among_scored_leaf_candidates": 0.8125,
+        "axioms_verified_rate": 1.0,
+        "abstention_curve": [
+          {
+            "confidence_threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.3,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.5,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.7,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.9,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          }
+        ],
+        "latency_ms_median": 18.28
+      },
+      "csls": {
+        "rows": 16,
+        "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-small-en-v1.5+ft:93b502740517)",
+        "top1": 0.6875,
+        "recall_at_5": 0.8125,
+        "gold_in_routed_subgraph": 1.0,
+        "gold_among_scored_leaf_candidates": 0.8125,
+        "axioms_verified_rate": 1.0,
+        "abstention_curve": [
+          {
+            "confidence_threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.3,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.5,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.7,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.9,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          }
+        ],
+        "latency_ms_median": 17.05
+      },
+      "hybrid-union": {
+        "rows": 16,
+        "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-small-en-v1.5+ft:93b502740517)",
+        "top1": 0.6875,
+        "recall_at_5": 0.8125,
+        "gold_in_routed_subgraph": 1.0,
+        "gold_among_scored_leaf_candidates": 0.8125,
+        "axioms_verified_rate": 1.0,
+        "abstention_curve": [
+          {
+            "confidence_threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.3,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.5,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.7,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.9,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          }
+        ],
+        "latency_ms_median": 18.33
+      },
+      "hybrid-rrf": {
+        "rows": 16,
+        "model_id": "untrained-random-init+scorer:scorer(embedding:BAAI/bge-small-en-v1.5+ft:93b502740517)",
+        "top1": 0.6875,
+        "recall_at_5": 0.8125,
+        "gold_in_routed_subgraph": 1.0,
+        "gold_among_scored_leaf_candidates": 0.8125,
+        "axioms_verified_rate": 1.0,
+        "abstention_curve": [
+          {
+            "confidence_threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.3,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.5,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.7,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          },
+          {
+            "confidence_threshold": 0.9,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.6875
+          }
+        ],
+        "latency_ms_median": 17.45
+      }
+    },
+    "runtime_s": 4.2,
+    "finetune": {
+      "base_model": "BAAI/bge-small-en-v1.5",
+      "base_key": "bge-small",
+      "checkpoint": "models/checkpoints/olaya_embed_incident.pt",
+      "sha256": "93b5027405178091ff9976eb399ba8f8595cdee40da7bc6321915c4f7ae422f7",
+      "size_bytes": 133506458,
+      "epochs_run": 20,
+      "best_epoch": 5,
+      "best_validation_top1": 1.0,
+      "zero_shot_validation_top1": 0.8235294117647058,
+      "train_pairs": 67,
+      "budget_minutes": 15.0,
+      "batch_size": 16,
+      "lr": 2e-05,
+      "runtime_s": 188.5,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.9121289700269699,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 11.952510133000033
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.6087403297424316,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 23.2969794010005
+        },
+        {
+          "epoch": 3,
+          "train_loss": 0.3138088246807456,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 32.366509283001506
+        },
+        {
+          "epoch": 4,
+          "train_loss": 0.17649732530117035,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 41.482671747000495
+        },
+        {
+          "epoch": 5,
+          "train_loss": 0.08754180073738098,
+          "validation": 1.0,
+          "elapsed_s": 50.34258567500001
+        },
+        {
+          "epoch": 6,
+          "train_loss": 0.05638438374735415,
+          "validation": 1.0,
+          "elapsed_s": 60.489096849001726
+        },
+        {
+          "epoch": 7,
+          "train_loss": 0.03314731898717582,
+          "validation": 1.0,
+          "elapsed_s": 69.2864762950012
+        },
+        {
+          "epoch": 8,
+          "train_loss": 0.013443542085587979,
+          "validation": 1.0,
+          "elapsed_s": 78.72415526700024
+        },
+        {
+          "epoch": 9,
+          "train_loss": 0.00622144941589795,
+          "validation": 1.0,
+          "elapsed_s": 88.23105785600092
+        },
+        {
+          "epoch": 10,
+          "train_loss": 0.004440177581273019,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 96.78657988800114
+        },
+        {
+          "epoch": 11,
+          "train_loss": 0.002995351963909343,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 105.53182573000049
+        },
+        {
+          "epoch": 12,
+          "train_loss": 0.0022928077960386872,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 114.66902752100032
+        },
+        {
+          "epoch": 13,
+          "train_loss": 0.001708851446164772,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 124.57395703600014
+        },
+        {
+          "epoch": 14,
+          "train_loss": 0.0014821025659330189,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 133.86307153800044
+        },
+        {
+          "epoch": 15,
+          "train_loss": 0.0010999588761478663,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 143.35708435200104
+        },
+        {
+          "epoch": 16,
+          "train_loss": 0.0010834905377123504,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 151.9804597020011
+        },
+        {
+          "epoch": 17,
+          "train_loss": 0.0008869811645126902,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 161.09726342100112
+        },
+        {
+          "epoch": 18,
+          "train_loss": 0.000763728104357142,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 170.11348819400155
+        },
+        {
+          "epoch": 19,
+          "train_loss": 0.0009844454703852533,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 179.49799113600056
+        },
+        {
+          "epoch": 20,
+          "train_loss": 0.0007111137878382578,
+          "validation": 0.9411764705882353,
+          "elapsed_s": 187.77962267300063
+        }
+      ],
+      "loss": "InfoNCE (temperature 0.05) over in-batch gold class texts + one sibling hard negative per query"
+    },
+    "selected_on_validation": {
+      "tuned": 1.0,
+      "zero_shot_base": 0.8235294117647058,
+      "lexical": 0.5882352941176471,
+      "is_best": true
+    }
+  },
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Linux-6.18.44-fc-v77-x86_64-with-glibc2.39",
+    "torch": "2.14.1+cu130",
+    "numpy": "2.4.6",
+    "torch_threads": 4
+  },
+  "runtime_s": 215.5,
+  "limitations": [
+    "Labels are LLM-distilled (generated for a class by one model, kept only when a second model agreed) and filtered; they are not human labels.",
+    "The split holds out generation batches (register x seed), not classes; the fine-tuned encoder has seen almost every test class in training (see corpus.split_report).",
+    "Zero-shot encoders never saw the corpus; their temperature is the only fitted parameter (calibration split).",
+    "The concept-task metrics have the gold candidate present (5 hard negatives); the full-ontology and engine-path numbers are the deployment comparison.",
+    "The state passed to every router is the raw observation text; the decision head reports used a JSON state wrapper for the engine path."
+  ]
+}
