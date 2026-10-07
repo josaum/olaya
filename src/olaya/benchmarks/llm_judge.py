@@ -855,6 +855,7 @@ class OpenAICompatJudge:
         self.sleep = sleep
         self._lock = threading.Lock()
         self._partial_rejudged = 0
+        self._unparseable = 0
         self.name = (
             f"{provider}[{model},json={'on' if json_mode else 'off'},thinking={thinking or 'unset'},{PROMPT_VERSION}]"
         )
@@ -875,12 +876,22 @@ class OpenAICompatJudge:
             "Accept": "application/json",
         }
 
-    def _request_body(self, batch: Sequence[JudgeRequest]) -> dict[str, Any]:
+    def _request_body(self, batch: Sequence[JudgeRequest], nudge: bool = False) -> dict[str, Any]:
         body: dict[str, Any] = {
             "model": self.model,
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": render_batch(batch) + "\n" + OPENAI_OUTPUT_INSTRUCTION + "\n"},
+                {
+                    "role": "user",
+                    "content": render_batch(batch)
+                    + "\n"
+                    + OPENAI_OUTPUT_INSTRUCTION
+                    + (
+                        "\nYour previous answer did not follow this format. Answer again with ONLY the JSON object.\n"
+                        if nudge
+                        else "\n"
+                    ),
+                },
             ],
             "temperature": 0,
             "max_tokens": self.max_tokens,
@@ -919,11 +930,11 @@ class OpenAICompatJudge:
         assert last is not None
         raise RuntimeError(f"{self.provider} request failed after {self.max_retries + 1} attempts: {last}") from last
 
-    def _chat(self, batch: Sequence[JudgeRequest]) -> dict[str, Any]:
+    def _chat(self, batch: Sequence[JudgeRequest], nudge: bool = False) -> dict[str, Any]:
         """``_call`` with the one-time fallbacks: drop ``response_format`` / ``thinking`` on a 400 naming them."""
         url = f"{self.base_url}/chat/completions"
         for _ in range(3):
-            body = json.dumps(self._request_body(batch)).encode("utf-8")
+            body = json.dumps(self._request_body(batch, nudge=nudge)).encode("utf-8")
             try:
                 return self._call(url, body)
             except HTTPStatusError as exc:
@@ -947,9 +958,9 @@ class OpenAICompatJudge:
             raise RuntimeError(f"unexpected models listing: {str(data)[:300]}")
         return sorted(str(m.get("id", m)) if isinstance(m, dict) else str(m) for m in items)
 
-    def judge(self, batch: Sequence[JudgeRequest]) -> tuple[list[Judgment], Usage]:
+    def judge(self, batch: Sequence[JudgeRequest], *, _retry: bool = False) -> tuple[list[Judgment], Usage]:
         t0 = time.perf_counter()
-        data = self._chat(batch)
+        data = self._chat(batch, nudge=_retry)
         try:
             choice = data["choices"][0]
         except (KeyError, IndexError, TypeError) as exc:
@@ -976,7 +987,18 @@ class OpenAICompatJudge:
             if dump:
                 Path(dump).mkdir(parents=True, exist_ok=True)
                 (Path(dump) / f"bad-response-{int(time.time() * 1000)}.txt").write_text(content, encoding="utf-8")
-            raise ValueError(f"{exc} (raw content starts: {content[:300]!r})") from exc
+            if not _retry:
+                # One re-ask with an explicit nudge; if still unparseable, abstain rather than kill the run.
+                try:
+                    return self.judge(batch, _retry=True)
+                except ValueError:
+                    pass
+            if len(batch) == 1:
+                with self._lock:
+                    self._unparseable += 1
+                verdicts = [Judgment(False, 0.0, "unrelated", f"unparseable judge response: {content[:120]!r}")]
+            else:
+                raise ValueError(f"{exc} (raw content starts: {content[:300]!r})") from exc
         u = data.get("usage") or {}
         details = u.get("prompt_tokens_details") or {}
         usage = Usage(
