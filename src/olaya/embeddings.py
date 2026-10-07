@@ -182,7 +182,11 @@ class TransformerEncoder:
         cache_root: Path | None = None,
         use_cache: bool = True,
         threads: int | None = None,
+        device: str | None = None,
     ):
+        """``device``: ``"cpu"`` (default), ``"mps"``, ``"cuda"`` or ``"auto"`` (the best available).
+        Defaults to the ``OLAYA_ENCODER_DEVICE`` environment variable when set. Embeddings are
+        returned on the host as float32 whatever the device; the cache is device-independent."""
         try:
             import torch
             from transformers import AutoModel, AutoTokenizer
@@ -198,6 +202,8 @@ class TransformerEncoder:
             self.model = AutoModel.from_pretrained(model, revision=revision)
         except Exception as exc:  # noqa: BLE001 - network / missing files / bad checkpoint
             raise EncoderUnavailable(f"cannot load {model}@{revision}: {exc}") from exc
+        self.device = resolve_device(device, torch)
+        self.model.to(self.device)
         self.model.eval()
         self.name = model
         self.revision = revision
@@ -229,7 +235,7 @@ class TransformerEncoder:
                 batch = [self.prefix + t for t in texts[i : i + self.batch_size]]
                 enc = self.tokenizer(
                     batch, padding=True, truncation=True, max_length=self.max_length, return_tensors="pt"
-                )
+                ).to(self.device)
                 hidden = self.model(**enc).last_hidden_state.float()
                 mask = enc["attention_mask"].unsqueeze(-1).float()
                 pooled = (hidden * mask).sum(1) / mask.sum(1).clamp(min=1e-9)
@@ -259,6 +265,28 @@ class TransformerEncoder:
                 self.cache.put_many([text_key(self.prefix + t) for t in uniq], vecs)
                 self.cache.flush()
         return result
+
+
+def resolve_device(device: str | None, torch: Any) -> str:
+    """Pick the torch device for an encoder: explicit > ``OLAYA_ENCODER_DEVICE`` > ``cpu``.
+
+    ``"auto"`` prefers CUDA, then Apple MPS, then CPU. An unavailable explicit device is an error
+    rather than a silent fallback, so a run that was meant to be fast never quietly becomes slow.
+    """
+    import os
+
+    choice = (device or os.environ.get("OLAYA_ENCODER_DEVICE") or "cpu").lower()
+    if choice == "auto":
+        if torch.cuda.is_available():
+            return "cuda"
+        if getattr(torch.backends, "mps", None) is not None and torch.backends.mps.is_available():
+            return "mps"
+        return "cpu"
+    if choice == "cuda" and not torch.cuda.is_available():
+        raise EncoderUnavailable("device 'cuda' requested but CUDA is not available")
+    if choice == "mps" and not (getattr(torch.backends, "mps", None) is not None and torch.backends.mps.is_available()):
+        raise EncoderUnavailable("device 'mps' requested but Apple MPS is not available")
+    return choice
 
 
 def _resolve_commit(model: str, revision: str) -> str:
@@ -318,6 +346,7 @@ __all__ = [
     "EmbeddingCache",
     "Encoder",
     "EncoderInfo",
+    "resolve_device",
     "EncoderUnavailable",
     "HashEncoder",
     "TransformerEncoder",

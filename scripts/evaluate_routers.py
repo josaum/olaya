@@ -48,7 +48,7 @@ import torch
 from scripts.train_from_corpus import CONCEPT_ROOT, INSTRUCTION, ONTOLOGIES, task_metrics
 
 from olaya.candidate_router import CandidateRouter
-from olaya.corpus import CorpusRow, read_jsonl, split_corpus, split_report, to_observations
+from olaya.corpus import CorpusRow, read_jsonl, split_corpus, split_corpus_by_class, split_report, to_observations
 from olaya.embedding_router import (
     EmbeddingRouter,
     EmbeddingScorer,
@@ -109,11 +109,15 @@ def say(msg: str) -> None:
 
 
 def load_domain(
-    domain: str, corpus_dir: Path, seed: int
+    domain: str, corpus_dir: Path, seed: int, split_unit: str = "batch"
 ) -> tuple[Ontology, Path, list[CorpusRow], dict[str, list[CorpusRow]]]:
     ontology_path = ONTOLOGIES[domain]
     ontology = Ontology.from_json(ontology_path.read_text(encoding="utf-8"))
     rows = read_jsonl(corpus_dir / f"{domain}.jsonl")
+    if split_unit == "class":
+        # Class-disjoint: no test class was seen in training. The corpus manifest describes the
+        # batch split, so it is not checked here.
+        return ontology, ontology_path, rows, split_corpus_by_class(rows, seed=seed)
     splits = split_corpus(rows, seed=seed)
     manifest_path = corpus_dir / f"{domain}.manifest.json"
     if manifest_path.is_file():
@@ -304,7 +308,11 @@ class DomainContext:
     def __init__(self, args: argparse.Namespace, domain: str):
         self.domain = domain
         self.root = CONCEPT_ROOT.get(domain)
-        self.ontology, self.ontology_path, self.rows, self.splits = load_domain(domain, args.corpus_dir, args.seed)
+        self.split_unit = args.split
+        self.policies = tuple(args.candidate_policy)
+        self.ontology, self.ontology_path, self.rows, self.splits = load_domain(
+            domain, args.corpus_dir, args.seed, split_unit=self.split_unit
+        )
         self.tokenizer = load_local_tokenizer()
         self.lexical = CandidateRouter(self.ontology)
         self.class_texts = build_class_texts(self.ontology)
@@ -361,23 +369,26 @@ class DomainContext:
         temperature = report["task"]["temperature"]
         if engine_variants:
             engine_reports: dict[str, Any] = {}
-            for rname, router in (
-                ("lexical", self.lexical),
-                ("cosine", cos),
-                ("csls", variants["csls"]),
-                ("hybrid-union", variants["hybrid-union"]),
-                ("hybrid-rrf", variants["hybrid-rrf"]),
-            ):
-                scorer = EmbeddingScorer(cos, temperature=temperature)
-                engine = OLaya(
-                    ontology=self.ontology,
-                    tokenizer=self.tokenizer,
-                    device="cpu",
-                    weights_path=False,
-                    router=router,
-                    scorer=scorer,
-                )
-                engine_reports[rname] = engine_path(engine, self.splits["test"], self.root, self.ontology)
+            for policy in self.policies:
+                for rname, router in (
+                    ("lexical", self.lexical),
+                    ("cosine", cos),
+                    ("csls", variants["csls"]),
+                    ("hybrid-union", variants["hybrid-union"]),
+                    ("hybrid-rrf", variants["hybrid-rrf"]),
+                ):
+                    scorer = EmbeddingScorer(cos, temperature=temperature)
+                    engine = OLaya(
+                        ontology=self.ontology,
+                        tokenizer=self.tokenizer,
+                        device="cpu",
+                        weights_path=False,
+                        router=router,
+                        scorer=scorer,
+                        candidate_policy=policy,
+                    )
+                    name = rname if policy == "leaves" else f"{rname} [{policy}]"
+                    engine_reports[name] = engine_path(engine, self.splits["test"], self.root, self.ontology)
             report["engine"] = engine_reports
         report["runtime_s"] = round(time.perf_counter() - t0, 1)
         return report
@@ -498,6 +509,8 @@ def evaluate_domain(args: argparse.Namespace, domain: str) -> dict[str, Any]:
     report: dict[str, Any] = {
         "domain": domain,
         "seed": args.seed,
+        "split_unit": args.split,
+        "candidate_policies": list(args.candidate_policy),
         "commit": _git_commit(),
         "corpus": {
             "path": _rel(args.corpus_dir / f"{domain}.jsonl"),
@@ -506,7 +519,7 @@ def evaluate_domain(args: argparse.Namespace, domain: str) -> dict[str, Any]:
             "ontology_concepts": len(ctx.ontology.concepts),
             "ontology_file_sha256": _sha256(ctx.ontology_path),
             "split_rows": {k: len(v) for k, v in ctx.splits.items()},
-            "split_report": split_report(ctx.splits),
+            "split_report": split_report(ctx.splits, unit=args.split),
             "concept_tasks": {k: len(v) for k, v in ctx.tasks.items()},
         },
         "protocol": {
@@ -514,6 +527,7 @@ def evaluate_domain(args: argparse.Namespace, domain: str) -> dict[str, Any]:
             "state_text": "the raw observation text (string state), for every router including the lexical one",
             "csls_k": CSLS_K,
             "engine_top_k": ENGINE_TOP_K,
+            "candidate_policy": "engine rows marked [routed] score every routed concept (OLaya(candidate_policy='routed')); unmarked rows score the routed leaves only (default, shared with the Rust / Node runtimes)",
             "hybrid_union": "interleave lexical and embedding top lists",
             "hybrid_rrf": "reciprocal-rank fusion, k=60, equal weights",
             "scorer": "cosine similarity of the state to the class text, temperature fitted on the calibration split concept tasks (gold + 5 hard negatives)",
@@ -542,7 +556,25 @@ def evaluate_domain(args: argparse.Namespace, domain: str) -> dict[str, Any]:
             f"ceiling@8 cos {v['cosine']['test']['ceiling']['8']:.3f} rrf {v['hybrid-rrf']['test']['ceiling']['8']:.3f} "
             f"task top-1 {entry['task']['calibrated']['accuracy']:.3f} ECE {entry['task']['calibrated']['ece']:.3f} ({entry['runtime_s']} s)"
         )
-    ok = [k for k, e in report["encoders"].items() if "variants" in e]
+    for ckpt in args.encoder_checkpoint or []:
+        key = f"ckpt:{Path(ckpt).stem}"
+        say(f"{domain}: encoder {key}")
+        try:
+            encoder = load_finetuned_encoder(Path(ckpt), threads=THREADS, batch_size=32)
+        except Exception as exc:  # noqa: BLE001
+            say(f"{domain}: skipping {key}: {exc}")
+            report["encoders"][key] = {"error": str(exc)}
+            continue
+        entry = evaluate_encoder_safely(ctx, encoder)
+        entry["checkpoint"] = {"path": _rel(Path(ckpt)), "sha256": _sha256(Path(ckpt))}
+        report["encoders"][key] = entry
+        if "variants" in entry:
+            v = entry["variants"]
+            say(
+                f"{domain}/{key}: test top-1 cos {v['cosine']['test']['top1']:.3f} ceiling@8 {v['cosine']['test']['ceiling']['8']:.3f} "
+                f"task top-1 {entry['task']['calibrated']['accuracy']:.3f} ECE {entry['task']['calibrated']['ece']:.3f}"
+            )
+    ok = [k for k, e in report["encoders"].items() if "variants" in e and not k.startswith("ckpt:")]
     selection: dict[str, Any] = {}
     if ok:
         small = [k for k in SMALL_ENCODERS if k in ok]
@@ -583,7 +615,7 @@ def evaluate_domain(args: argparse.Namespace, domain: str) -> dict[str, Any]:
                 "lexical": lex_val,
                 "is_best": is_best,
             }
-        if is_best:
+        if is_best and args.split == "batch":
             update_manifest(
                 args.output_dir / "MANIFEST.json",
                 domain,
@@ -625,14 +657,19 @@ def evaluate_domain(args: argparse.Namespace, domain: str) -> dict[str, Any]:
     report["runtime_s"] = round(time.perf_counter() - t_start, 1)
     report["limitations"] = [
         "Labels are LLM-distilled (generated for a class by one model, kept only when a second model agreed) and filtered; they are not human labels.",
-        "The split holds out generation batches (register x seed), not classes; the fine-tuned encoder has seen almost every test class in training (see corpus.split_report).",
+        (
+            "The split holds out generation batches (register x seed), not classes; the fine-tuned encoder has seen almost every test class in training (see corpus.split_report)."
+            if args.split == "batch"
+            else "The split holds out whole classes: no test class has a training row, so the fine-tuned numbers measure transfer to unseen classes, with fewer rows per split and the class-text side never adapted."
+        ),
         "Zero-shot encoders never saw the corpus; their temperature is the only fitted parameter (calibration split).",
         "The concept-task metrics have the gold candidate present (5 hard negatives); the full-ontology and engine-path numbers are the deployment comparison.",
         "The state passed to every router is the raw observation text; the decision head reports used a JSON state wrapper for the engine path.",
     ]
-    out = args.results_dir / f"router-eval-{domain}.json"
+    suffix = "" if args.split == "batch" else f"-{args.split}disjoint"
+    out = args.results_dir / f"router-eval-{domain}{suffix}.json"
     out.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
-    (args.results_dir / f"router-eval-{domain}.md").write_text(render_markdown(report), encoding="utf-8")
+    (args.results_dir / f"router-eval-{domain}{suffix}.md").write_text(render_markdown(report), encoding="utf-8")
     say(f"{domain}: wrote {out} ({report['runtime_s']} s)")
     return report
 
@@ -657,8 +694,13 @@ def render_markdown(r: dict[str, Any]) -> str:
     lines = [
         f"# Candidate routers on the LLM-distilled {d} corpus",
         "",
-        "Labels are LLM-distilled and filtered, **not human**. Same corpus, same batch-disjoint split and same test",
-        f"rows as `decision-head-{d}.md`; every choice of encoder / variant is made on the validation split and test",
+        "Labels are LLM-distilled and filtered, **not human**. "
+        + (
+            f"Same corpus, same batch-disjoint split and same test rows as `decision-head-{d}.md`; "
+            if r.get("split_unit", "batch") == "batch"
+            else "**Class-disjoint split**: every test class is unseen in training (seeded 60/15/10/15 over classes); "
+        )
+        + "every choice of encoder / variant is made on the validation split and test",
         "is evaluated once per configuration. The state given to every router is the raw observation text.",
         "",
         f"- Corpus `{r['corpus']['path']}`: {r['corpus']['rows']} rows, {r['corpus']['classes']} classes used of {r['corpus']['ontology_concepts']} ontology concepts; split rows {r['corpus']['split_rows']}",
@@ -773,8 +815,10 @@ def render_markdown(r: dict[str, Any]) -> str:
 
 
 def write_summary(results_dir: Path) -> None:
-    reports = [json.loads(p.read_text()) for p in sorted(results_dir.glob("router-eval-*.json"))]
-    reports = [r for r in reports if "domain" in r]
+    all_reports = [json.loads(p.read_text()) for p in sorted(results_dir.glob("router-eval-*.json"))]
+    all_reports = [r for r in all_reports if "domain" in r]
+    reports = [r for r in all_reports if r.get("split_unit", "batch") == "batch"]
+    class_reports = [r for r in all_reports if r.get("split_unit") == "class"]
     if not reports:
         return
     # A-priori default: the small encoder with the best mean validation top-1 (cosine) over the domains.
@@ -897,6 +941,40 @@ def write_summary(results_dir: Path) -> None:
     ]
     for r in reports:
         lines.append(f"- {r['domain']}: " + "; ".join(f"{k} = {json.dumps(v)}" for k, v in r["selection"].items()))
+    if class_reports:
+        lines += [
+            "",
+            "## Class-disjoint split (transfer to classes never seen in training)",
+            "",
+            "Same corpora, split 60/15/10/15 over *classes* (seeded), so no test class has a training row. The fine-tuned",
+            "encoder here is trained on the class-disjoint train split; the committed checkpoints are not reused.",
+            "",
+            "| domain | test rows (classes) | system | ceiling@8 | top-1 | recall@5 | engine top-1 (leaves) | engine top-1 [routed] |",
+            "|---|---|---|---|---|---|---|---|",
+        ]
+        for r in class_reports:
+            d = r["domain"]
+            sr = r["corpus"]["split_report"]["test"]
+            cells = f"{sr['rows']} ({sr['classes']})"
+            lex = r["lexical"]["test"]
+            lines.append(
+                f"| {d} | {cells} | lexical | {lex['ceiling']['8']:.3f} | {lex['top1']:.3f} | {lex['recall_at_5']:.3f} | - | - |"
+            )
+            shown = [k for k in ("bge-small",) if "variants" in r["encoders"].get(k, {})]
+            shown += [k for k in r["encoders"] if k.startswith("ckpt:") and "variants" in r["encoders"][k]]
+            entries = [(k, r["encoders"][k]) for k in shown]
+            if "fine_tuned" in r:
+                entries.append(
+                    (f"fine-tuned {r['fine_tuned']['finetune']['base_key']} (class-disjoint train)", r["fine_tuned"])
+                )
+            for name, e in entries:
+                m = e["variants"]["cosine"]["test"]
+                eng = e.get("engine", {})
+                lv = eng.get("cosine", {}).get("top1")
+                rv = eng.get("cosine [routed]", {}).get("top1")
+                lines.append(
+                    f"| {d} | {cells} | {name} cosine | {m['ceiling']['8']:.3f} | {m['top1']:.3f} | {m['recall_at_5']:.3f} | {_f(lv)} | {_f(rv)} |"
+                )
     lines += ["", "## What is and is not established", ""]
     for r in reports:
         d = r["domain"]
@@ -954,6 +1032,25 @@ def main() -> None:
     parser.add_argument("--finetune-batch-size", type=int, default=16)
     parser.add_argument("--finetune-lr", type=float, default=2e-5)
     parser.add_argument("--summary", action="store_true", help="only rebuild router-eval-summary.md")
+    parser.add_argument(
+        "--split",
+        choices=("batch", "class"),
+        default="batch",
+        help="hold out generation batches (default) or whole classes",
+    )
+    parser.add_argument(
+        "--candidate-policy",
+        nargs="+",
+        choices=("leaves", "routed"),
+        default=["leaves", "routed"],
+        help="engine candidate policies to evaluate (rows marked [routed] score every routed concept)",
+    )
+    parser.add_argument(
+        "--encoder-checkpoint",
+        action="append",
+        type=Path,
+        help="repeatable; evaluate a fine-tuned olaya-bi-encoder-v1 checkpoint as an extra encoder (reported as ckpt:<stem>)",
+    )
     args = parser.parse_args()
     args.results_dir.mkdir(parents=True, exist_ok=True)
     if not args.summary:
