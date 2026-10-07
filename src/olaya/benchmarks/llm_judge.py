@@ -966,6 +966,22 @@ class OpenAICompatJudge:
         except (KeyError, IndexError, TypeError) as exc:
             raise RuntimeError(f"{self.provider} response has no choices: {str(data)[:300]}") from exc
         if choice.get("finish_reason") == "length":
+            if len(batch) == 1:
+                # A single-pair answer that never terminates is a runaway generation: abstain.
+                with self._lock:
+                    self._unparseable += 1
+                verdict = Judgment(False, 0.0, "unrelated", "unparseable judge response: truncated at max_tokens")
+                u = data.get("usage") or {}
+                usage = Usage(
+                    model=self.model,
+                    n_pairs=1,
+                    input_tokens=int(u.get("prompt_tokens", 0) or 0),
+                    output_tokens=int(u.get("completion_tokens", 0) or 0),
+                    provider=self.provider,
+                    request_id=str(data.get("id", "")),
+                    latency_s=time.perf_counter() - t0,
+                )
+                return [verdict], usage
             raise RuntimeError("judge response truncated (max_tokens); lower the batch size")
         content = (choice.get("message") or {}).get("content") or ""
         if not isinstance(content, str):  # some providers return content parts
