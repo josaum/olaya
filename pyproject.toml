@@ -11,22 +11,45 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [
-    "torch>=2.2.0",
-    "transformers>=4.40.0",
-    "numpy>=1.26.0",
-    "pydantic>=2.5.0",
-    "onnxruntime>=1.17.0",
-]
+# The base install is pure standard library so a consumer can take one
+# capability without the rest. The distribution is leio-decision; the import
+# name stays olaya. Pick what you need:
+#   leio-decision[pii]        the PII/MNPI obfuscator (no third-party dependency
+#                             today; the extra exists so the intent is explicit
+#                             and future needs land there)
+#   leio-decision[reasoning]  ontology axioms, calibration arithmetic (numpy, pydantic)
+#   leio-decision[ml]         the trained decision head (torch, transformers, onnxruntime)
+#   leio-decision[llm]        the LLM-judge matcher stage (anthropic)
+#   leio-decision[gemma]      EmbeddingGemma 2 encoder (sentence-transformers, peft)
+#   leio-decision[all]        everything above
+dependencies = []
 
 [project.optional-dependencies]
+pii = []
+reasoning = [
+    "numpy>=1.26.0",
+    "pydantic>=2.5.0",
+]
+ml = [
+    "numpy>=1.26.0",
+    "pydantic>=2.5.0",
+    "torch>=2.2.0",
+    "transformers>=4.40.0",
+    "onnxruntime>=1.17.0",
+]
+llm = [
+    "anthropic>=0.40",
+]
+all = [
+    # Self-reference by the distribution name. The old import-name form would
+    # resolve to the separate, older `olaya` package on PyPI.
+    "leio-decision[reasoning,ml,llm,gemma]",
+]
 dev = [
     "pytest>=8.0.0",
     "ruff>=0.3.0",
     "rdflib>=7.0.0",
-]
-llm = [
-    "anthropic>=0.40",
+    "leio-decision[all]",
 ]
 gemma = [
     # google/embeddinggemma-2 through olaya.embeddings.SentenceTransformerEncoder
