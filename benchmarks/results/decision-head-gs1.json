@@ -1,0 +1,914 @@
+{
+  "domain": "gs1",
+  "seed": 42,
+  "commit": "896cb8c2b71e29c7eea2a79b6f2d0bb68db8b0c0",
+  "corpus": {
+    "path": "data/corpora/gs1.jsonl",
+    "rows": 422,
+    "classes": 63,
+    "corpus_sha256": "c442463da3977bc0c905e9b248a8b89d1634bdc40fa077f6c1a05f487a2b9583",
+    "ontology_file_sha256": "de76db39ebb2332465d5440887b5f9167dac43b7fbb9ddba3f0f5046d2b243f8",
+    "generator_models": [
+      "qwen3.8-flash"
+    ],
+    "labeller_models": [
+      "qwen3.8-max"
+    ],
+    "label_provenance": "LLM-distilled: generated for a class, label-substring filtered, kept only when an independent labeller call agreed. Not human-labelled."
+  },
+  "split": {
+    "rows": {
+      "train": 258,
+      "validation": 59,
+      "calibration": 41,
+      "test": 64
+    },
+    "expanded_tasks": {
+      "train": 1286,
+      "validation": 295,
+      "calibration": 205,
+      "test": 319
+    },
+    "report": {
+      "unit": "generation batch (one LLM generation call); classes are NOT held out",
+      "train": {
+        "rows": 258,
+        "batches": 102,
+        "classes": 54,
+        "classes_unseen_in_train": []
+      },
+      "validation": {
+        "rows": 59,
+        "batches": 25,
+        "classes": 20,
+        "classes_unseen_in_train": [
+          "ChemicalHazardousProduct",
+          "DietTypeCodeDetails",
+          "Place",
+          "SizeDetails"
+        ]
+      },
+      "calibration": {
+        "rows": 41,
+        "batches": 17,
+        "classes": 16,
+        "classes_unseen_in_train": [
+          "DietTypeCodeDetails",
+          "Place",
+          "Product",
+          "SizeDetails",
+          "TypeCode"
+        ]
+      },
+      "test": {
+        "rows": 64,
+        "batches": 25,
+        "classes": 23,
+        "classes_unseen_in_train": [
+          "ColdChainStorageLogistics",
+          "ElectronicsBatteryProduct",
+          "OrganicClaimDetails",
+          "Product"
+        ]
+      }
+    },
+    "evidence": {
+      "train": {
+        "observations": 258,
+        "groups": 102,
+        "group_ids": [
+          "015fe5b1ffd632f6e9518da7d09b6b4ef6d3fe6684027f4cd2a2b49777cbbd92",
+          "03d0be3d364f19c1838c7dd3afaabd0f5831bddd31a291daf43ea48a1f73be64",
+          "04049b790e1946f706192199d1b1bf95346dffe9752a98ef0f465a8f6bcb8ed8",
+          "04dc1178b77acb4b272ee939e029c4c200ad84c0b1d2ac24563bb5069ae5ed98",
+          "0b2d3f593e2702056a9ea0264e241388cf52739015b25650ac96007dfbad864d",
+          "12805b39a51a507ea1ae7a88a4f04abe242fe38f200becc19a2670a7946568c4",
+          "138f2a694a448f2d349a48f5f554e0e7f6a622ab370da837727e30a5997112fc",
+          "14007591cc701438f4f392c680c1e7e1a8e02345e1d5054748e98141d7744b49",
+          "1711633300943854103941ee03221e62c8115d17ce858e280cbe71a680b17f5b",
+          "1808e11c511eb5310faf7d81a8c90a28e7fdfeeeba6a6eb5c21d2a25584a71fd",
+          "196538f08e7614aee5938230491edf753067d4378220c931d22f597585706955",
+          "199ea27366ae098282b3337a5b3898e475b48ca3631acb52e6e9d11f81a9f5d9",
+          "1b6277b5adaccb680aa7530c5bd276dbc421ccb0b1f4b627173ee3a7d41e1bf6",
+          "1ce735fa360b8af6924025851ab3ed8ceda7817de66f0ef4ae67b788baeea7b6",
+          "211663d1334606cd4a86b75f8fe102b11f755c08da60046f42870c9635c025ce",
+          "26dbd3b144ed172785c8c3f31ed7943ef13319b4848c557771c9b247aad65c04",
+          "2d8b6370a45c5428137db8f857ccb9bc1ad675c531ab5326a3f5a5d950a88ad3",
+          "2e50e548111978198b093374b2b94e54e9b6f3e3576d655f71f29bc76eda7e2f",
+          "34361f0f9b2fa19409c18b458e0afeb3580609f899fe0c3b187a84e22da6abd9",
+          "35622dfe7f205f6f39b6d2bfa4dc51ebb796290b9fba3414a3a184436e2023c1",
+          "35c93b149434036c14f254f36a8f2e26cabfe788dd8a0cb08f43551a96f009f7",
+          "3b1eae764a4765e63e00ebf5f2f06716863d56c6df809f60f410a38caac716a6",
+          "3c62d0b3533dea3ad25ab4ed791a8f6548eed4d0acb5d562ae8425666c10e876",
+          "4195beec6fd46cd14049dcea8cb747e4940a493a85fc86828933cbb58c074e00",
+          "4218fdbeeaeddf63a72e502bfc9aeb92fb7b90fd66b1615f7153ef59c5fea101",
+          "434c1cae24aec66307fa612f5bcf16f5ed21f8e2a65f8f2c323a1720bdc12ca5",
+          "43b94bb419b860fccc4612163fa01b1cb8d03dbff593c9f74be515a2324f047c",
+          "473f7b2a0d232a40959f9e6262040b13ff06a51f2ba0752230a6bb49640ad233",
+          "4d8303032303638b4be881d84fbf02c4ac3582dd628082a246d12f1e213f9511",
+          "4e9bc3d6ec59be8913161033577f35aa71718bd2272525eeb298de2d29bdce31",
+          "4f316e1ff05d288152a3caa57766614fc8dc7b794f32deb1fa16e5cea3adb216",
+          "4f9c0f5ff74109f93c1b35f05240f81d122332d3c3b58f1649ff9b21b2b3fbb2",
+          "5135c82965c2a669f65d49cd716e810bd1035acc25b4171a9d12d7ed5e18d286",
+          "521a6ed0a9471c6a004d6da7ad61c9e1d70b2d4e5dea8856eca860ddf59900d5",
+          "580ce7a8050629abd19f208bd733014e20236d71ea1d56388938c11ba2aa44aa",
+          "59147baea37b871da03cc13d5cd1db92baef92e863e5581c65481d8b8c97e92d",
+          "5ad412f1f891c3ca47b1d9fbd4258ed1eaddc546b35464ddc3e7b52170a9b8c3",
+          "5b00272859edd4c4d3dca3c0dd0293b3d258529c80f0c79c07d9566fd47177bf",
+          "5d78ae2c6ea5ca98d1c8ae25f1d5995e5b5fc3c42fbe65e1e1dc6ffb9b3c7c8b",
+          "5eabc6f350572ce23c6d3d10a51a91a85e17c5ce9cce6a2ae4c2355a2176c687",
+          "66f6e772258851f669e70ed8abbe80a1c81fe1f0970765c7b8f999a250aa6e46",
+          "6dc13d4f18315f39c06968a0f6575291d0c3170022f2fc559f6d44d1aebe84e3",
+          "717887578c223f4783999acf69d95fda3f0e294b8a373e417d28c0185d0385f7",
+          "724a2881b316adadb9d25db9044241b39abacc596f6d59d5e7343804d2c58c0d",
+          "74070a0b362a97044eab0aeb5538b7bd527133abec26aa4f953efb2599308fac",
+          "74ebfdaffe1ba0c0e3c1319bc26dc47db3ee56a8b5c2d0dad0fcf32faba68775",
+          "75ca724fc735d2cf73dde2e781880b2e2536007d186cd31463a1002f6268676e",
+          "77451943574fb27cba2139823053c6bf2ac3d04145b57acdb833294b8a7b033e",
+          "7a2fdf7b015fc6870ae28dd8fe097b19239332b923f94ba0c3400ab276d0109f",
+          "7ad895a8fa6d7db99aa7e83800b0c69789dd5bc7d1d64995935e2da98a5a4ee6",
+          "7d99091c3697e50a3226b7c44de7a45fe419b4640a7f3ff79d230b50e0dda86e",
+          "84843accfd8ac8ce2b3b3d34641d5fac1761559d682b4ebf3f5bb490c9342ad6",
+          "89b94cbe46b955420acac8392a331e965d7ab74f6f7fd1da5f8a41e5e19040ef",
+          "8a16d460e30c09c39b49f1ede327dc265b22ac5cd5c70eaea8ff589cbf3e94a9",
+          "8acce75af2a33bc6948d4331a223d77404bc72710e478d2f9398ce381717b919",
+          "8c2727ee517a3f2420201e8a467751cfae3e162cb31504938dd778c78625814c",
+          "8e33e2afeb35dd29633811a49462f04772f6367be163794e1ad706df68f8c499",
+          "8eb41670625124d2dcd388470c390d76ecb83961f3a19cbfcb2d9af9d82ebd19",
+          "91d471da7fad26f1623c3e0b1e687788280e13b1e7b83e710686fe6416b58b51",
+          "92f104fbc9f5a85f5050e7446c8a1e813520a08cee489e2238797667de98e278",
+          "955519a0ecbb40eb98457449aab99a628e21f0657fc1345dc58da809607263e8",
+          "9601be425177be13d22faf7cd5871b2e415936fa58d15b1a67a6c045afda5ec8",
+          "96ce837c5776355e0ad2b952ba3e8d792407e7822eae314464d779508500db85",
+          "a0fcb754720481aef729c96271d801c9684cf7109de681dbf77a7d743bbeff72",
+          "a2d80d1afc0ae6cd31bdf517bda7e8d5f962920bd6a7e455561a5d0abae31e7a",
+          "a4ee1d6a9ac00d44277933d96c28b7f4d1ace398c1f989b94af1af0d36d83bb9",
+          "aa4940c1b6d4f1eb730518f9881a6f59fb07c8d4a41043576dea847bd099b3de",
+          "ab7a3dab67e9fd91b70f3a53fc1900e139561d6eb3a7b74ed6f2a98c6794654a",
+          "acdbbef9f7b1615ddf6a490c60b25a571cb9d70b42309d6d86e2acc9c23b6ee5",
+          "b0513de4bf745d05338a2bfc9ec8a0dbc58ce59ea0c2020e387f50de4b454b0d",
+          "b10a184645e5eb65d796166e50719c07a838ddb6f381ab0801d9b448d871f0dc",
+          "b2750dab28e52952b11044e05fd66df54a060c255063cc9e0f5a71c744fc44f7",
+          "b5ebb3fd8711e7c17d2fa858d7980b8b84af769705a10c8241bc572f6f004ce1",
+          "b906558baa6d8bb854c23dcfa41b4f60ab4747011e81ab7ab726e10bef7bc04b",
+          "bd7605e465302f7656c757f1541b4e4f73fdcf0ede8db1148b31747a085b8c1a",
+          "bf4d94a5dfebca1822dd7725b52b6e16e529d5922c6a37314dec3e7ba24ec1ac",
+          "c0183c761797b9318f9f58cbc98101cb8297c7f0d7dddaf1968e46efd646c5c2",
+          "c23847886b3a10cf8dc2b4f6960fafe2da1c5717a9735568e1345caf7631f22b",
+          "c37ca514803511df4b7c99e4b9f8b2290ed3bdc2338df528fd714689731c76d0",
+          "c3ca71f1160ff9f8a39839290f5880c5d55bda744d3e6638ba2b4c278bad9570",
+          "c69ec1efbebdcdfd0cc88bbaadbf469fcfdba23e9a59d0829a2933a928ba73b6",
+          "cb1bd97831e935e3d20d57cdc9e3f42a9d17a800a188ac3485e1c63b0397cd6f",
+          "cbaaf796f49f9b51771df53d63caf091c675862e11c771c8a74517e2c204581a",
+          "cc60f84687169cf61ffa806f06ca21d4238eefe77e817ffd50b0d56fec715e64",
+          "ccc09b79c6cbb3fb12084044a65fb30ade6bb85b2bb03b73a56ad834c62193d5",
+          "d3b5dcf9d6faff26452e000a1d26544d35abd7d966db9bbf8d53e8731ec70741",
+          "d5cad2310824612a8416bb717e01e1440218ea9dba0ae5bad996fe1c3c7eb7dc",
+          "d6ea76861a9549a42731c08d835711b523829dc20995b114b1960229e56bddec",
+          "df418303aa6c01a18012344442b79d80d9a99c2c44c66326fe32952743e36ea0",
+          "e0a0f6f61dc5ec37120bae5ab6152413039cc0df9672103b09b4788e23830f6c",
+          "e0e5f7a06332861988c17b37e46379a1a37678ee636f63927c670f4b03bdaf06",
+          "e86e1e7d7135b2bf77e964b84e01a20bd960f8606c8900de1f035890677bb9c5",
+          "e89a5513f216420f37feccbfe4d65f18fa5ec985725b45b48408307ff5020105",
+          "e9cc574a4093b04ea195e6d5ce8cbcc64d188f6be0be42a25d3c9b0780565a60",
+          "ecd5a462645202c8dcbd26bb8337c811d7de845f6afe12d121dcb9dca9004b05",
+          "f37faaca3972753b25eb551e1da3d6222f34dec970a4c3978eabbdcf743555c1",
+          "f5404eba9ffefb39e94246a58f7ed2a26849b136c96bd327e618b577d498a96e",
+          "f5d30e176af60e0270b956adca37526e1d06322b7d39e93321e73645e137e084",
+          "f805c89d6fec7c9ed86ae7d3314145b114a3100fa0a7e5bd78ef42e4807b4f20",
+          "f9e1a637c807cbf56f7d8041edbca53d4d3a9d83fb2a5a04941ee13b309fbddb",
+          "fd8aa98399f546b1fdf947dad11e2c514d18264552ffdc0053ed5f688ac4be1e",
+          "fe814c785887ef49bf5e4b2d979c49b5c1e85e97f34c03906a3666a7fae02278"
+        ],
+        "evidence_sha256": "b383e444e0b96f13e84b9107d5370e37f9e7989228c1eb8f159969ec0fa792f6"
+      },
+      "validation": {
+        "observations": 59,
+        "groups": 25,
+        "group_ids": [
+          "05328c6942a255e8001da6dfa6ee70d8aad002fb68cc48ef1a5a16b4eab0a1b1",
+          "0f7d8f4cdc0655d7e58ba8b31ac40a655eff97fcbde4e81b06a153b294300ebd",
+          "15c7c008e6f0a81ddf7a229cd86bb01c5d3d6fb0ab7cff738e2a7229bcc519b4",
+          "2d3d5140218ce8930c9834ba0c329b9a58fd816e32d0ecab12bac59fc5324018",
+          "3b98fda596e4b005b2a1b100939e9bf95a94ae1374293f32406fdd2276255b0e",
+          "4bb0a08175737fe104327a9dbd458e1cbd8fda021734b977eb815d4879cd7961",
+          "4d9a65e4177be8720fd0ee4230b50cc4e39f0361f03a810d1cd28b4f49980099",
+          "567f9640182696c0ddf25604c55049ce4db23326eca32d5a1fdc4d32664dabcb",
+          "62b02f3480141d300cea6e95fdcd1d9f0a72537fce515cfa5b727ab13d544223",
+          "70c145748d7e1cc1affb6683a7caf6e9d44e9123034ece83175f832c8305d8f2",
+          "75e44795166d57b3dca092f1ead77af3910de9790a435051d61571a5d4c1685f",
+          "77236726ba8d030481b55a82e9fd141a086023043f8fcfde24ccdaacdbe05e99",
+          "7d07a496bfd0351fa950f8e72f70d5e79bee7ac184a75a72ec19ba6f06d7e741",
+          "8767e29ab0a851e6b0ebb5122474e4ebffc7f4db6739d433a267d7b1f94f51ac",
+          "89f0af991ba8f47b1ee42321261618572f85cbbf6f69279953f017faa67add14",
+          "8d4b6fc79e88309f15f0670f842a7bf41b5ce86560105778ecd4e821a6c37653",
+          "97190f9ee5accc30211a2115d3fa4822a097e166fd338667502d210d048e21c4",
+          "a2604a38798ddeb25fca5725f01c5d2339cfbdcd9517bc6b3f02520c31f650a6",
+          "a8fa428a7c4f629735a09735f9ef73f28cec47d7ca2244be4265e19f069c37e5",
+          "af80dc5ae73bc895b4dc188bcdafc7f233980bbefd81d8db3a8b21d66443ddbe",
+          "b0d4a537d3557b9bff33ed019f440681efb837cfdf927cf54485cd998b38b1c2",
+          "b22ab8df4acd2b56c6b1a73a2b8603c0c542d152c1bbd263ce23e1e4b4d3a9be",
+          "c3058325ef28d6db5d8b1a37ad8ba91d29698f8469745b628c8ce18d406dbb12",
+          "f42c6c579f5e15e123043e5a4a02c187a340f2ba9eae64cb9953096d5f410de6",
+          "fcbdfaf0e3b2127d95d1522c25b16a964fa49030b4b8546baf8051165b807dc6"
+        ],
+        "evidence_sha256": "b2be8b587af839b5f84569f88b825cf3e21e17afb4aaedfedfb530d92a28806e"
+      },
+      "calibration": {
+        "observations": 41,
+        "groups": 17,
+        "group_ids": [
+          "035017c05fd78fa6b11998ced47029a357cc1c42500fe0f7282f357b6d465a2f",
+          "10ddca4f39525160859fbe63cca2c9652f01ce458ba349aeb0edcc5071f4ccdb",
+          "1f0e2fd0b3221bcba0ff99bd5e6a65f95aeb687be341e4e069e6069f4f672aaa",
+          "3e73b594374aec2337e073ff9a823893536842129175ee58344774c62373cf83",
+          "40c0f1789ac09c0fb632ebc57d243e7b728b47c57968593f6f7df8b0ba75f1de",
+          "622fc21a8049c100c10d88454c2a5c71036f8bb18049d24ceec807941cdda8a6",
+          "6a9cde8b9497a58ade7ccf698922ce407dba492ca3cbe925638f7f2e56878dff",
+          "7ed848f79ec083ede9222c226643bb8b8097952ccc9990c7a6320aad52a74eb1",
+          "7f3c4d472554a1f2478f43dd998d9d57134d134a066271e72289cbaf783c1b46",
+          "80ccd4601d952424442655206ea80bad769482bd49d45505aff659f6d2dc5b8f",
+          "87bdbf08f3fceea44e2b6a5326f74217129f1bf22d7a74aff270fc097e271cb9",
+          "8c5a64f452f8f0f5b6fe0f1394269ae0bc34ee590c452a57705957bcb7b80e8a",
+          "e9804bd0d5ee2a4018e20077c5aba794091bc87cb608098a96e1ca1794430938",
+          "edf967de8dd640d093784daa24e5cdc9a19df9944e17ed963c17802e764cb397",
+          "f05c56bbb6dbf301392bf497681d06324e90cccc3cb7bd9e217ec44ed37ce4a4",
+          "f525eb54ba186c85db4f76077e1d325578025b8bd6dac120bea103cfd01441b2",
+          "f79b661990306fd391f8490d82d4e4b8a62400c24b2651afb217c4fadd4110b6"
+        ],
+        "evidence_sha256": "53ed35600a27600d000d49cb5d110678de866cb9ac28c2e4e4efe06f1f46ec95"
+      },
+      "test": {
+        "observations": 64,
+        "groups": 25,
+        "group_ids": [
+          "06ce218b67a81f364c54e5942404dca8ea7300e0d363b521abec68a31f7f73b2",
+          "095ed3b9da771ae4d848a071b1317e15a6296373e01675fdd16db375995540fe",
+          "0a6a9e30cbd71de6bdfcac2723c08beacc81eac9891dd548f3a3b7349cc21882",
+          "1d28a0c73fa3989f2ae9371284fd452876df643999b0dc8b27daff9d4a53871b",
+          "1ed6d2a91319abe0c4e28057d4079ced179bc93ad504415d85de029ebd78ab8f",
+          "265bc5a1d8455a90661228cfaf69d88ffdfadcd4d7d4ea2cbf431d1cc5da6641",
+          "2a2a628e7d72ce04d153f1b2c6e6ec042e2b272de6230686cb3f6072a69033da",
+          "3aa19584276025ce20634a7987e2fd1d9901eb124695399bf4a72ef77e3095c7",
+          "4ea0df3b9cd45d37c7f1c38dae47e33d76c642d59ddae10a5aa62b6cdda813d8",
+          "539591193f92df3edda6925abd2a45aabb3d0fb671dbf8a2f22621ae9fb72fd8",
+          "5402f05db841d967c43f1bd4601df56a27fcaa688396a607952f4afbb8d2a9c8",
+          "55de500c5000011d4515add1f09969f6128c00ecc6a0300171b6750d3d10bd73",
+          "577233bade26b6ec1118080843f861c167bd6507c3b515f75a6fe16b1c041273",
+          "5a0321bed79884119f0a28e6a8bc63fdf2500c269005915dab5cade4f22d56fd",
+          "67082428fbb45f735892dca27e1cd18cb70b3a85613b89f5129d656783e54b0e",
+          "9dcc5d2e965998e2407e46c1bdf11dbe1275c2a38441e8ce5af645272058bb15",
+          "9ee91de43943cee59b136fd7b123ccf2116222faccfc706f10fe2d69d421118e",
+          "a92255a348bec8d355c4a2c253183e136371dbe9a7ec849814941fcd087f1aa4",
+          "c196cf7570190cde82c234dd64b3f5a0333e288d369a84d50efb9bc946282257",
+          "d2adb7849708949970349e9b278425fff7f26fe2a82470c0f27d1e1337d10448",
+          "dc2fe216aeb2a7524983fc75e2bacb308f091e4967322af1b1da6772968c993f",
+          "eb7787973103712a8dcda2f2bb6da020f3d04408cde16cc48a6df5889b66c1af",
+          "f6d6a16a23e86ccddb024a01262829a0cdfbada111e7df85e2bc34737a90f845",
+          "f86a3c0bec8552970926b337f7af9db89fd0c0927d375734eb5d67e70319e192",
+          "fd3b021f6b34d057fc4c13cad1bfcf2c8bebc60cbc8a3004c36d960a77a69feb"
+        ],
+        "evidence_sha256": "2dde7bf36f31d935007563cb35353708e0ffa5123f24af1b6ffd173657fdde45"
+      }
+    }
+  },
+  "training": {
+    "backbone": "custom_bert (4 layers, hidden 256, 4 heads)",
+    "epochs_run": 12,
+    "max_epochs": 12,
+    "budget_minutes": 25.0,
+    "batch_size": 16,
+    "lr": 0.0002,
+    "torch_threads": 4,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 1.2482803513065652,
+        "train_acc": 0.4867807153965785,
+        "val_acc": 0.4576271186440678,
+        "elapsed_s": 85.2
+      },
+      {
+        "epoch": 2,
+        "train_loss": 1.1556968316319942,
+        "train_acc": 0.5552099533437014,
+        "val_acc": 0.4745762711864407,
+        "elapsed_s": 204.5
+      },
+      {
+        "epoch": 3,
+        "train_loss": 1.084974206068653,
+        "train_acc": 0.5668740279937792,
+        "val_acc": 0.4847457627118644,
+        "elapsed_s": 284.0
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.9215464228604852,
+        "train_acc": 0.6049766718506998,
+        "val_acc": 0.49491525423728816,
+        "elapsed_s": 364.7
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.8076973291429724,
+        "train_acc": 0.6446345256609642,
+        "val_acc": 0.511864406779661,
+        "elapsed_s": 445.6
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.7435920637095141,
+        "train_acc": 0.6702954898911353,
+        "val_acc": 0.5457627118644067,
+        "elapsed_s": 528.8
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.6877203506778224,
+        "train_acc": 0.6842923794712286,
+        "val_acc": 0.5254237288135594,
+        "elapsed_s": 612.0
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.6241897306119673,
+        "train_acc": 0.7216174183514774,
+        "val_acc": 0.5627118644067797,
+        "elapsed_s": 696.8
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.5611276989962043,
+        "train_acc": 0.7527216174183515,
+        "val_acc": 0.5627118644067797,
+        "elapsed_s": 782.4
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.5323533317534771,
+        "train_acc": 0.7558320373250389,
+        "val_acc": 0.5694915254237288,
+        "elapsed_s": 862.6
+      },
+      {
+        "epoch": 11,
+        "train_loss": 0.4994818028265358,
+        "train_acc": 0.7877138413685848,
+        "val_acc": 0.5491525423728814,
+        "elapsed_s": 943.2
+      },
+      {
+        "epoch": 12,
+        "train_loss": 0.4812912854770109,
+        "train_acc": 0.78149300155521,
+        "val_acc": 0.5627118644067797,
+        "elapsed_s": 1018.0
+      }
+    ],
+    "selection_validation_accuracy": 0.5694915254237288,
+    "runtime_s": 1024.4
+  },
+  "calibration": {
+    "temperature": 1.2612453699111938,
+    "fit_set_before": {
+      "ece": 0.24566272119196453,
+      "mce": 0.5534406701723734,
+      "avg_confidence": 0.7381519079208374,
+      "accuracy": 0.4926829268292683,
+      "nll": 2.0038886070251465,
+      "bin_accuracies": [
+        0.0,
+        0.0,
+        0.2727272727272727,
+        0.24,
+        0.34782608695652173,
+        0.16666666666666666,
+        0.08333333333333333,
+        0.6,
+        0.3125,
+        0.7373737373737373
+      ],
+      "bin_confidences": [
+        0.05,
+        0.1933051347732544,
+        0.2709212601184845,
+        0.34572774171829224,
+        0.4512960612773895,
+        0.5580762028694153,
+        0.6367740035057068,
+        0.7426052093505859,
+        0.8304476737976074,
+        0.9857877492904663
+      ],
+      "bin_counts": [
+        0,
+        2,
+        11,
+        25,
+        23,
+        12,
+        12,
+        5,
+        16,
+        99
+      ]
+    },
+    "fit_set_after": {
+      "ece": 0.2205936904360608,
+      "mce": 0.5028908361088146,
+      "avg_confidence": 0.7132766246795654,
+      "accuracy": 0.4926829268292683,
+      "nll": 1.7141393423080444,
+      "bin_accuracies": [
+        0.0,
+        0.0,
+        0.21052631578947367,
+        0.3333333333333333,
+        0.25,
+        0.125,
+        0.42857142857142855,
+        0.375,
+        0.36363636363636365,
+        0.7666666666666667
+      ],
+      "bin_confidences": [
+        0.05,
+        0.18766748905181885,
+        0.2737692892551422,
+        0.35107240080833435,
+        0.436776727437973,
+        0.556323230266571,
+        0.6447437405586243,
+        0.7653979063034058,
+        0.8665271997451782,
+        0.9810104370117188
+      ],
+      "bin_counts": [
+        0,
+        2,
+        19,
+        24,
+        20,
+        16,
+        7,
+        16,
+        11,
+        90
+      ]
+    },
+    "fit_set_tasks": 205
+  },
+  "test_task_metrics": {
+    "raw": {
+      "count": 319,
+      "accuracy": 0.5579937304075235,
+      "top3_accuracy": 0.846394956111908,
+      "nll": 1.5135626792907715,
+      "ece": 0.19063104348122883,
+      "mce": 0.4510126829147339,
+      "brier": 0.5999510288238525,
+      "avg_confidence": 0.7486248016357422,
+      "abstention_curve": [
+        {
+          "threshold": 0.0,
+          "coverage": 1.0,
+          "accuracy_when_answered": 0.5579937100410461
+        },
+        {
+          "threshold": 0.3,
+          "coverage": 0.9467084639498433,
+          "accuracy_when_answered": 0.5761589407920837
+        },
+        {
+          "threshold": 0.5,
+          "coverage": 0.7210031347962382,
+          "accuracy_when_answered": 0.686956524848938
+        },
+        {
+          "threshold": 0.6,
+          "coverage": 0.64576802507837,
+          "accuracy_when_answered": 0.737864077091217
+        },
+        {
+          "threshold": 0.7,
+          "coverage": 0.6018808777429467,
+          "accuracy_when_answered": 0.7552083134651184
+        },
+        {
+          "threshold": 0.8,
+          "coverage": 0.5705329153605015,
+          "accuracy_when_answered": 0.7802197933197021
+        },
+        {
+          "threshold": 0.9,
+          "coverage": 0.5172413793103449,
+          "accuracy_when_answered": 0.800000011920929
+        },
+        {
+          "threshold": 0.95,
+          "coverage": 0.4670846394984326,
+          "accuracy_when_answered": 0.8322147727012634
+        }
+      ]
+    },
+    "calibrated": {
+      "count": 319,
+      "accuracy": 0.5579937304075235,
+      "top3_accuracy": 0.846394956111908,
+      "nll": 1.323829174041748,
+      "ece": 0.1644484857126463,
+      "mce": 0.43222737626025554,
+      "brier": 0.5794495940208435,
+      "avg_confidence": 0.7224421501159668,
+      "abstention_curve": [
+        {
+          "threshold": 0.0,
+          "coverage": 1.0,
+          "accuracy_when_answered": 0.5579937100410461
+        },
+        {
+          "threshold": 0.3,
+          "coverage": 0.9216300940438872,
+          "accuracy_when_answered": 0.5918367505073547
+        },
+        {
+          "threshold": 0.5,
+          "coverage": 0.7021943573667712,
+          "accuracy_when_answered": 0.7008928656578064
+        },
+        {
+          "threshold": 0.6,
+          "coverage": 0.6206896551724138,
+          "accuracy_when_answered": 0.747474730014801
+        },
+        {
+          "threshold": 0.7,
+          "coverage": 0.5799373040752351,
+          "accuracy_when_answered": 0.7729730010032654
+        },
+        {
+          "threshold": 0.8,
+          "coverage": 0.542319749216301,
+          "accuracy_when_answered": 0.7861271500587463
+        },
+        {
+          "threshold": 0.9,
+          "coverage": 0.4827586206896552,
+          "accuracy_when_answered": 0.8311688303947449
+        },
+        {
+          "threshold": 0.95,
+          "coverage": 0.36990595611285265,
+          "accuracy_when_answered": 0.8898305296897888
+        }
+      ]
+    },
+    "per_task_calibrated": {
+      "choice": {
+        "count": 64,
+        "accuracy": 0.265625,
+        "top3_accuracy": 0.671875,
+        "nll": 1.9189457893371582,
+        "ece": 0.1795240114443004,
+        "mce": 0.9018895030021667,
+        "brier": 0.8637394309043884,
+        "avg_confidence": 0.4451490044593811,
+        "abstention_curve": [
+          {
+            "threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.265625
+          },
+          {
+            "threshold": 0.3,
+            "coverage": 0.875,
+            "accuracy_when_answered": 0.2678571343421936
+          },
+          {
+            "threshold": 0.5,
+            "coverage": 0.3125,
+            "accuracy_when_answered": 0.30000001192092896
+          },
+          {
+            "threshold": 0.6,
+            "coverage": 0.15625,
+            "accuracy_when_answered": 0.30000001192092896
+          },
+          {
+            "threshold": 0.7,
+            "coverage": 0.09375,
+            "accuracy_when_answered": 0.3333333432674408
+          },
+          {
+            "threshold": 0.8,
+            "coverage": 0.03125,
+            "accuracy_when_answered": 0.0
+          },
+          {
+            "threshold": 0.9,
+            "coverage": 0.015625,
+            "accuracy_when_answered": 0.0
+          },
+          {
+            "threshold": 0.95,
+            "coverage": 0.0,
+            "accuracy_when_answered": null
+          }
+        ]
+      },
+      "concept": {
+        "count": 63,
+        "accuracy": 0.19047619047619047,
+        "top3_accuracy": 0.5714285969734192,
+        "nll": 2.523085355758667,
+        "ece": 0.2081759607508069,
+        "mce": 0.9674277901649475,
+        "brier": 0.9659695029258728,
+        "avg_confidence": 0.39865219593048096,
+        "abstention_curve": [
+          {
+            "threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.190476194024086
+          },
+          {
+            "threshold": 0.3,
+            "coverage": 0.7301587301587301,
+            "accuracy_when_answered": 0.21739129722118378
+          },
+          {
+            "threshold": 0.5,
+            "coverage": 0.19047619047619047,
+            "accuracy_when_answered": 0.1666666716337204
+          },
+          {
+            "threshold": 0.6,
+            "coverage": 0.12698412698412698,
+            "accuracy_when_answered": 0.125
+          },
+          {
+            "threshold": 0.7,
+            "coverage": 0.07936507936507936,
+            "accuracy_when_answered": 0.0
+          },
+          {
+            "threshold": 0.8,
+            "coverage": 0.06349206349206349,
+            "accuracy_when_answered": 0.0
+          },
+          {
+            "threshold": 0.9,
+            "coverage": 0.015873015873015872,
+            "accuracy_when_answered": 0.0
+          },
+          {
+            "threshold": 0.95,
+            "coverage": 0.015873015873015872,
+            "accuracy_when_answered": 0.0
+          }
+        ]
+      },
+      "noul": {
+        "count": 64,
+        "accuracy": 0.71875,
+        "top3_accuracy": 1.0,
+        "nll": 0.8057873845100403,
+        "ece": 0.21467330306768417,
+        "mce": 0.37481486797332764,
+        "brier": 0.4498368203639984,
+        "avg_confidence": 0.9334233403205872,
+        "abstention_curve": [
+          {
+            "threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.71875
+          },
+          {
+            "threshold": 0.3,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.71875
+          },
+          {
+            "threshold": 0.5,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.71875
+          },
+          {
+            "threshold": 0.6,
+            "coverage": 0.9375,
+            "accuracy_when_answered": 0.75
+          },
+          {
+            "threshold": 0.7,
+            "coverage": 0.9375,
+            "accuracy_when_answered": 0.75
+          },
+          {
+            "threshold": 0.8,
+            "coverage": 0.90625,
+            "accuracy_when_answered": 0.7586206793785095
+          },
+          {
+            "threshold": 0.9,
+            "coverage": 0.84375,
+            "accuracy_when_answered": 0.7777777910232544
+          },
+          {
+            "threshold": 0.95,
+            "coverage": 0.671875,
+            "accuracy_when_answered": 0.8372092843055725
+          }
+        ]
+      },
+      "score": {
+        "count": 64,
+        "accuracy": 0.703125,
+        "top3_accuracy": 0.984375,
+        "nll": 1.1224387884140015,
+        "ece": 0.22537259757518768,
+        "mce": 0.6770698428153992,
+        "brier": 0.46748021245002747,
+        "avg_confidence": 0.9284975528717041,
+        "abstention_curve": [
+          {
+            "threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.703125
+          },
+          {
+            "threshold": 0.3,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.703125
+          },
+          {
+            "threshold": 0.5,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.703125
+          },
+          {
+            "threshold": 0.6,
+            "coverage": 0.953125,
+            "accuracy_when_answered": 0.7377049326896667
+          },
+          {
+            "threshold": 0.7,
+            "coverage": 0.9375,
+            "accuracy_when_answered": 0.75
+          },
+          {
+            "threshold": 0.8,
+            "coverage": 0.90625,
+            "accuracy_when_answered": 0.7586206793785095
+          },
+          {
+            "threshold": 0.9,
+            "coverage": 0.796875,
+            "accuracy_when_answered": 0.7843137383460999
+          },
+          {
+            "threshold": 0.95,
+            "coverage": 0.609375,
+            "accuracy_when_answered": 0.8974359035491943
+          }
+        ]
+      },
+      "subsumes": {
+        "count": 64,
+        "accuracy": 0.90625,
+        "top3_accuracy": 1.0,
+        "nll": 0.2676268517971039,
+        "ece": 0.05460598412901162,
+        "mce": 0.3437795639038086,
+        "brier": 0.15626130998134613,
+        "avg_confidence": 0.9014295935630798,
+        "abstention_curve": [
+          {
+            "threshold": 0.0,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.90625
+          },
+          {
+            "threshold": 0.3,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.90625
+          },
+          {
+            "threshold": 0.5,
+            "coverage": 1.0,
+            "accuracy_when_answered": 0.90625
+          },
+          {
+            "threshold": 0.6,
+            "coverage": 0.921875,
+            "accuracy_when_answered": 0.9152542352676392
+          },
+          {
+            "threshold": 0.7,
+            "coverage": 0.84375,
+            "accuracy_when_answered": 0.9444444179534912
+          },
+          {
+            "threshold": 0.8,
+            "coverage": 0.796875,
+            "accuracy_when_answered": 0.9411764740943909
+          },
+          {
+            "threshold": 0.9,
+            "coverage": 0.734375,
+            "accuracy_when_answered": 0.978723406791687
+          },
+          {
+            "threshold": 0.95,
+            "coverage": 0.546875,
+            "accuracy_when_answered": 0.9714285731315613
+          }
+        ]
+      }
+    },
+    "note": "gold is always among the candidates (5 hard negatives + gold for concept/choice); not retrieval"
+  },
+  "full_ontology_retrieval": {
+    "model": {
+      "rows": 64,
+      "top1": 0.140625,
+      "recall_at_5": 0.46875,
+      "gold_in_routed_subgraph": 0.5625,
+      "abstention_curve": [
+        {
+          "confidence_threshold": 0.0,
+          "coverage": 1.0,
+          "accuracy_when_answered": 0.140625
+        },
+        {
+          "confidence_threshold": 0.3,
+          "coverage": 0.25,
+          "accuracy_when_answered": 0.125
+        },
+        {
+          "confidence_threshold": 0.5,
+          "coverage": 0.046875,
+          "accuracy_when_answered": 0.3333333333333333
+        },
+        {
+          "confidence_threshold": 0.7,
+          "coverage": 0.015625,
+          "accuracy_when_answered": 1.0
+        },
+        {
+          "confidence_threshold": 0.9,
+          "coverage": 0.0,
+          "accuracy_when_answered": null
+        }
+      ],
+      "latency_ms_median": 16.2,
+      "note": "OLaya.system_one over the full ontology; candidate_probabilities are over the routed leaves after axiom projection."
+    },
+    "lexical_baseline": {
+      "test_observations": 64,
+      "ontology_concepts": 63,
+      "observed_target_classes": 23,
+      "top1_accuracy_with_abstention": 0.28125,
+      "recall_at_5": 0.53125,
+      "macro_recall_at_5": 0.5253623188405798,
+      "macro_precision": 0.2882882882882883,
+      "macro_recall": 0.1824324324324324,
+      "macro_f1": 0.209009009009009,
+      "macro_label_policy": "Union of test target and non-abstained predicted classes; zero division = 0",
+      "answered": 63,
+      "coverage": 0.984375,
+      "abstained": 1,
+      "abstention_counts": {
+        "tied_top_score": 1
+      },
+      "tie_policy": "Top1 abstains at equal scores within 1e-12; top5 uses router CURIE tie order",
+      "latency_ms": {
+        "samples": 64,
+        "median": 0.130951,
+        "p95": 0.244589,
+        "percentile_method": "nearest rank",
+        "scope": "Query token evidence check, full ontology routing, tie/abstention and top5 selection; excludes index build, generation, split, metrics and file IO",
+        "warmup": "none; includes first query"
+      }
+    },
+    "eval_runtime_s": 1.6
+  },
+  "checkpoint": {
+    "path": "models/checkpoints/olaya_gs1.pt",
+    "sha256": "c1ec2e0aa46b4214b4987eefa4157f66ed947818ddaed8a096e2c955d0a3a9bd",
+    "size_bytes": 63607060,
+    "model_id": "checkpoint-sha256:c1ec2e0aa46b"
+  },
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Linux-6.18.44-fc-v77-x86_64-with-glibc2.39",
+    "torch": "2.14.1+cu130",
+    "numpy": "2.4.6"
+  },
+  "llm_cost_usd_estimate": 0.0,
+  "limitations": [
+    "Labels are LLM-distilled (generated for a class by one model, kept only when a second model agreed) and filtered; they are not human labels.",
+    "The split holds out generation batches (register x seed), not classes; some test classes may be unseen in training (see split.report).",
+    "Task metrics have the gold candidate present; full_ontology_retrieval is the deployment path and the number to compare with the lexical baseline."
+  ]
+}

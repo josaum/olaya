@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "ontology_sha256": "f381801bcb5d420f3b526e8d42641959bcdad88325bd10f49ad2092d5aed433c",
+  "splits": {
+    "train": {
+      "observations": 67,
+      "groups": 27,
+      "group_ids": [
+        "030711e43fd5a73d7eec2dbd5be3d8e1429f8074012f973436cf96155572bd0c",
+        "10998bfe2ad6b2d2e416754fd65305de57e9443945022259b433720b4b5db36c",
+        "1293aa9437941ab4355b31c203a9442297f33d21c7b51b3946051f1c67d384d2",
+        "293cf331414fc096e46b599971bf6ead6d421f67c9451f71b06d12a6f323bb97",
+        "2be72086d187172aa2fa9114bb2c9ee77b0b1a4453295963290079b149f437ce",
+        "2cca60d76c5129a24e0531353b2373675f8abcf6ba51f417909c432627573e7d",
+        "2d5f5591de731a3eb94d7e2ff791c324df3e80c495dfbd684093f5543e937fea",
+        "3264a4d1c29308e9394ef1df720b65f7c3c99f252fa46ef8adb7a2f2b8013b98",
+        "56555bd5c5dbebb21a72a047d64174508969a98b36cc7f96407fb42826f24bc5",
+        "62e3569591414ebcf8687db51819802c9652fb11b3da4ac70ef22c63633ed445",
+        "65d244943cd349b0ac0d62a184c239ad967c9f034185641e2dc4f0ce03f5aa71",
+        "6e7bfa1f467ad4de4b528f275a8502ed189aa2e7efe33a970032f2f65331a68e",
+        "7201d1ad2b31723954d6b8d1a8118fb65c7b9d86f7ab5e4c5d9988ca3c5b8117",
+        "72396b80cc9faa6b2353dd40860b742350d899acca883bd5451d46a02f2dbc66",
+        "748000acc31f6269b124e4d51cae9565c7f7022a5352f8941a8e4bdcc5ebb482",
+        "74a1e5fc93eec45604b3664f23d9e56b08c525ddb2663114a373cf8558b283ff",
+        "7d5b13daa8a956d142dc0c9bc12509bca4b0ed894f347647a0e28367e7e1df95",
+        "8a2385aaa817b37b16e3f392f1bc312559efc652203fc2abd667ce42d531de94",
+        "91861e270a9380ca650d4a4cd46a10e99c630e23437ae5fdf98473e554193a92",
+        "a67a54551ce20d268b81d7e8c8507c5cdfaf8f3c5c1e589f09892faadafb9acd",
+        "b84ae7a5229c07951dec57f1e82e69728a25b1a47530758872ae959da725b5be",
+        "c25b366eed13de65b26b1a3c12f702e5fa6e5d2b78ab1ee373044a12d4fc18e4",
+        "d1e31c2412fff5942241f56c2ef6debde84ad981943a87876a5465ae21bc80a9",
+        "dba59997b04087ee2e4f755d1f030991d3812acb13ee9a5e4b7fa085895d0526",
+        "ddb3791d713becd70c1442c96519a0a4c7b78719b5f461818efce1af2413ded6",
+        "dfeb5e9ace21400b79dc71e7ff77bbebb2ec486db737d1cc45c4c17113bbb962",
+        "fe117c4bb8a28d54f185d1edd441814dde2d051754aa19d2a97865a439c9e975"
+      ],
+      "evidence_sha256": "b5e576147816d601d1da5b397d3b990aaeb0a72ce24aa48103110335b82b27ea"
+    },
+    "validation": {
+      "observations": 17,
+      "groups": 7,
+      "group_ids": [
+        "08436a2b7379b6692983a793cae67e120916240674e592c4b7b815accdf905ab",
+        "49706d96df51e1b945bcfb7bd27f4d5360a54ac5f935dc981e3eb6189d270788",
+        "5fc5863e3a6125ad5a5570b18e4c6dfe7b8d6aa78185120a1ad0d068a82e3351",
+        "cf5a4647bd6aa1a9079afe13dc9556d7b139609cd1093383498feddfdf218d0d",
+        "d62a30c60637e0771eada20f331a75d711028433870a23a51e8acd35dff95656",
+        "f08f155dabe2d6e6da6fb14aec966d66673fa6aa89abf9c147cdfb2bf42cc5c0",
+        "fc662f092af9365222b34bfa0a54e6adeecc17065c106053bde454fbf238f8df"
+      ],
+      "evidence_sha256": "ba5e0b697c5906f4c0ea9edab50ff09e3ecd43846946907a3a6a928b36243881"
+    },
+    "calibration": {
+      "observations": 9,
+      "groups": 4,
+      "group_ids": [
+        "155ace54f3548221cc2c066d91c6c773aa9a8ad24b8d12607cfd75e038a6c2ef",
+        "1e6b2c3786b10fbcc2a4137f2161979865723b1f3ea220ad1d2285c04e123b5e",
+        "7873b99d2a0ce31b7af4ef19e92fdc7c71427d7321c06c63c9057a1e057110bf",
+        "cbf096283bf790ba3eacd9a128c5fb28154e32945a1b607bbf0e8abe149cc39f"
+      ],
+      "evidence_sha256": "0bd1d59b2713c93cb100fb140187e5c8563700e2eb0509a27a275e18e19b199b"
+    },
+    "test": {
+      "observations": 16,
+      "groups": 7,
+      "group_ids": [
+        "06ece66d0196948a5bef65e510076fbbe6b4a6ca3b1dab41462f545049aefb34",
+        "1eb8071d3f95989936f7af340864dc58e2845a1136754d9a9187a4bb22e302ee",
+        "24d1b86267990a0728c8850da4ba18a8de5a8b7fc6d87cdba204535d2fec2f7d",
+        "344c523b81a91218145f96c3b3833b392497e9766958786f63cb093ea07c17fd",
+        "4541b720b6ea0002cb545bfa7477019ba64f637532bb5b8b07ac01a8428e008f",
+        "4d2f6b9d2d50feaf519e5383d87bd2cfa9c318e54dd89688ee74cbd148bbc0d1",
+        "de864353f701ff8f1e7cfbde9673dd9e7000bbe3e19bf5d6433712e2b42d0b67"
+      ],
+      "evidence_sha256": "9f32a9bc7a900c4d106279b47eb40a60d76382d5bbf543dff0d1f04754c90ef9"
+    }
+  },
+  "corpus_sha256": "289385a90d5bca1243b226ae4da99b93f81d365e9ff265168dcb78d2f9f594dd",
+  "rows": 109,
+  "classes": 13,
+  "ontology_file_sha256": "c2fc17f23d2d4e10c3acbe2c6801fa2036a0111e0147e3122b9f0123ce776e93",
+  "prompt_version": "corpus-v1",
+  "generator_models": [
+    "qwen3.8-flash"
+  ],
+  "labeller_models": [
+    "qwen3.8-max"
+  ],
+  "build_stats": {
+    "classes": 13,
+    "generation_calls": 52,
+    "generated": 155,
+    "leaked": 11,
+    "duplicates": 0,
+    "labelling_calls": 144,
+    "disagreed": 35,
+    "label_failures": 0,
+    "kept": 109,
+    "rate_limited": false,
+    "stopped_early": "",
+    "generation_errors": 0
+  },
+  "split_report": {
+    "unit": "generation batch (one LLM generation call); classes are NOT held out",
+    "train": {
+      "rows": 67,
+      "batches": 27,
+      "classes": 12,
+      "classes_unseen_in_train": []
+    },
+    "validation": {
+      "rows": 17,
+      "batches": 7,
+      "classes": 6,
+      "classes_unseen_in_train": []
+    },
+    "calibration": {
+      "rows": 9,
+      "batches": 4,
+      "classes": 4,
+      "classes_unseen_in_train": []
+    },
+    "test": {
+      "rows": 16,
+      "batches": 7,
+      "classes": 6,
+      "classes_unseen_in_train": [
+        "INCIDENT:BILLING"
+      ]
+    }
+  },
+  "label_provenance": "LLM-distilled: generated for a class, label-substring filtered, kept only when an independent labeller call agreed. Not human-labelled.",
+  "build_runtime_s": 124.9,
+  "llm_usage": {
+    "calls": 196,
+    "prompt_tokens": 81614,
+    "completion_tokens": 19136,
+    "rate_limit_hits": 0,
+    "cost_usd_estimate": 0.0,
+    "cost_note": "prices for these models are not pinned in this repository; cost is reported as 0"
+  }
+}

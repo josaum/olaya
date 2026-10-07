@@ -24,15 +24,17 @@ Read this before anything else.
 | Lean 4 proof core (`lean/`) | Steps 3–4 of the axiom kernel and the verifier are formalised over integer scores; `project_verified` and 15 supporting theorems, no `sorry`, axioms audited in CI. Softmax, confidence, and the `K`-sweep convergence bound are **not** proven. See [`spec/AXIOMS.md`](spec/AXIOMS.md). |
 | TBox-bound workflow compiler, interpreter, JSON-LD traces, inference-free replay | Implemented and tested |
 | Lexical scoring (label / synonym / description overlap with IDF) | Implemented in every runtime. **This is what every shipped runtime uses to score.** |
-| Neural scoring head (Python, PyTorch) | Implemented and trainable. **No trained weights are committed.** `OLaya()` without a checkpoint is a randomly initialised encoder; its scores are not meaningful. |
+| Neural scoring head (Python, PyTorch) | Implemented and trainable. **No trained weights are committed.** `OLaya()` without a checkpoint is a randomly initialised encoder; its scores are not meaningful. A head can be trained on the committed LLM-distilled corpora (`scripts/train_from_corpus.py`, `data/corpora/`); on all three domains it **does not beat the lexical router** on full-ontology retrieval, see [`benchmarks/results/decision-head-summary.md`](benchmarks/results/decision-head-summary.md). |
 | ONNX path in Rust (`onnx` feature) | Compiles. No model to load, no end-to-end test. |
 | WebAssembly build | Builds in CI for `wasm32-unknown-unknown`; kernel unit-tested. |
 | Calibration | Temperature fitting (`calibration.py`) is implemented and used at inference when a checkpoint carries a fitted temperature. Without one, confidence is normalised entropy with a fixed cardinality temperature and is **not** an empirically calibrated probability. |
 | Published packages | `leio-decision` on PyPI and npm (part of the leio suite with `leio-code`), published by `release.yml` from the tagged commit; `olaya` 0.3.1 on PyPI is the same code under its previous name. Until the first `leio-decision` publish, install from a locally built wheel (see Installation). |
 | HTTP edge demo (`/api/systemone`) | Live, lexical only, no ontology DAG. See [the edge contract](spec/systemone-reliability.md). |
 
-No accuracy, ECE, or latency number in this repository applies to a trained
-neural model, because none is committed. The only external benchmark we report
+No trained neural model is committed. The only numbers for a trained head are the
+negative results in `benchmarks/results/decision-head-*.md` (LLM-distilled labels, not
+human; the head loses to the lexical router on every domain), so no accuracy or ECE
+number here is a claim about a shipped model. The only external benchmark we report
 is the OAEI Conference track below, run with the lexical matcher on vendored
 upstream data, reproducible with one command.
 
