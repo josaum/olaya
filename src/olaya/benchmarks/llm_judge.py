@@ -749,6 +749,11 @@ def validate_verdicts(data: Any, n: int, *, allow_partial: bool = False) -> list
         raise ValueError("judge response has no 'verdicts' array")
     by_id: dict[int, Judgment] = {}
     for idx, item in enumerate(data["verdicts"], 1):
+        if isinstance(item, dict) and isinstance(item.get("verdict"), dict) and "confidence" not in item:
+            item = {
+                **item["verdict"],
+                **{k: v for k, v in item.items() if k != "verdict"},
+            }  # {"verdict": {...}} wrapper
         if not isinstance(item, dict):
             raise ValueError(f"verdict {idx} is not an object")
         try:
