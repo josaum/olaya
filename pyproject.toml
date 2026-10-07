@@ -28,6 +28,10 @@ dev = [
 llm = [
     "anthropic>=0.40",
 ]
+pii = [
+    # Standalone olaya[pii] install: PII obfuscation without the full stack.
+    "pydantic>=2.0",
+]
 gemma = [
     # google/embeddinggemma-2 through olaya.embeddings.SentenceTransformerEncoder
     "sentence-transformers[image]>=6.1",

@@ -15,11 +15,26 @@ Modes:
 from __future__ import annotations
 
 import hashlib
+import os
 import re
+import secrets
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
+
+SALT_ENV = "OLAYA_PII_SALT"
+
+
+def default_salt() -> str:
+    """``OLAYA_PII_SALT`` if set, else a fresh per-process secret.
+
+    A salt baked into source would let anyone with the source reverse ``hash``
+    surrogates by dictionary. A per-process secret keeps ``hash`` deterministic
+    within one process, which is all referential integrity needs.
+    """
+    return os.environ.get(SALT_ENV) or secrets.token_hex(16)
 
 
 class ObfuscationMode(str, Enum):  # noqa: UP042 - preserve existing Enum string representation
@@ -27,6 +42,12 @@ class ObfuscationMode(str, Enum):  # noqa: UP042 - preserve existing Enum string
     MASK = "mask"
     PSEUDONYMIZE = "pseudonymize"
     HASH = "hash"
+
+    @property
+    def reversible(self) -> bool:
+        """Only pseudonymize and hash can be undone: redact and mask map
+        distinct originals to the same string, so no vault can restore them."""
+        return self in (ObfuscationMode.PSEUDONYMIZE, ObfuscationMode.HASH)
 
 
 @dataclass(frozen=True)
@@ -48,9 +69,14 @@ class ObfuscationResult:
     latency_us: float
     vault: dict[str, str] = field(default_factory=dict)  # token -> original
 
+    @property
+    def reversible(self) -> bool:
+        return ObfuscationMode(self.mode).reversible
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "sanitized_text": self.sanitized_text,
+            "reversible": self.reversible,
             "entity_count": len(self.entities),
             "entities": [
                 {
@@ -69,7 +95,7 @@ class ObfuscationResult:
 
 
 # High-precision regular expressions
-EMAIL_REGEX = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b")
+EMAIL_REGEX = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
 PHONE_REGEX = re.compile(r"(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b")
 SSN_REGEX = re.compile(r"\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b")
 CREDIT_CARD_REGEX = re.compile(r"\b(?:\d{4}[-\s]?){3}\d{4}\b")
@@ -81,11 +107,13 @@ DATE_OF_BIRTH_REGEX = re.compile(
     re.IGNORECASE,
 )
 STREET_ADDRESS_REGEX = re.compile(
-    r"\b\d{1,5}\s+[A-Za-z0-9.\s]+(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Drive|Dr|Lane|Ln|Way|Court|Ct|Circle|Cir)\b",
+    r"\b\d{1,5}\s+[A-Za-z0-9.\s]+?\s(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Drive|Dr"
+    r"|Lane|Ln|Way|Court|Ct|Circle|Cir|Terrace|Ter|Place|Pl|Parkway|Pkwy|Highway|Hwy|Square|Sq)\b\.?",
     re.IGNORECASE,
 )
 HONORIFIC_NAME_REGEX = re.compile(
-    r"\b(?:Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.|CEO|CFO|COO|President)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b"
+    r"\b(?:Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.|CEO|CFO|COO|CTO|President|Chairman|Chairwoman)"
+    r"\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b"
 )
 DEAL_CODENAME_REGEX = re.compile(r"\b(?:Project|Operation)\s+([A-Z][A-Za-z0-9_-]+)\b")
 
@@ -93,8 +121,17 @@ DEAL_CODENAME_REGEX = re.compile(r"\b(?:Project|Operation)\s+([A-Z][A-Za-z0-9_-]
 class PIIObfuscator:
     """Air-gapped, zero-allocation-optimized PII/PHI/MNPI obfuscation engine."""
 
-    def __init__(self, salt: str = "leio-sovereign-vault-2026"):
-        self.salt = salt
+    def __init__(
+        self,
+        salt: str | None = None,
+        candidate_filter: Callable[[str, str], bool] | None = None,
+    ):
+        """``salt`` defaults to :func:`default_salt`. ``candidate_filter(entity_type, text)``
+        runs on every regex candidate before overlap resolution; returning False
+        drops it. Consumers plug structural validators in here (Luhn for cards,
+        SSA rules for SSNs) so a regex only proposes and a validator decides."""
+        self.salt = salt if salt is not None else default_salt()
+        self.candidate_filter = candidate_filter
 
     def obfuscate(
         self,
@@ -168,6 +205,9 @@ class PIIObfuscator:
         for m in HONORIFIC_NAME_REGEX.finditer(text):
             found_spans.append((m.start(), m.end(), "PERSON_NAME", m.group(0)))
 
+        if self.candidate_filter is not None:
+            found_spans = [span for span in found_spans if self.candidate_filter(span[2], span[3])]
+
         # Sort spans by start asc, length desc to handle overlaps cleanly
         found_spans.sort(key=lambda s: (s[0], -(s[1] - s[0])))
 
@@ -201,7 +241,11 @@ class PIIObfuscator:
                 entity_to_pseudonym,
             )
 
-            vault[replacement] = orig
+            if mode.reversible:
+                existing = vault.get(replacement)
+                if existing is not None and existing != orig:
+                    raise ValueError(f"surrogate collision for {replacement}; the vault would not be reversible")
+                vault[replacement] = orig
             entities_result.append(
                 PIIEntity(
                     entity_type=etype,
@@ -232,13 +276,17 @@ class PIIObfuscator:
             vault=vault,
         )
 
-    def deanonymize(self, sanitized_text: str, vault: dict[str, str]) -> str:
-        """Restore original text using the private local de-anonymization vault."""
-        result = sanitized_text
-        # Sort keys by length descending to prevent sub-string collision
-        for token in sorted(vault.keys(), key=len, reverse=True):
-            result = result.replace(token, vault[token])
-        return result
+    @staticmethod
+    def deanonymize(sanitized_text: str, vault: dict[str, str]) -> str:
+        """Restore original text using the private local de-anonymization vault.
+
+        One pass, longest token first, so a restored value can never be matched
+        again as another token (sequential replace could turn ``[A_1]`` into
+        ``[A_2]`` and then into the wrong original)."""
+        if not vault:
+            return sanitized_text
+        pattern = re.compile("|".join(re.escape(k) for k in sorted(vault, key=len, reverse=True)))
+        return pattern.sub(lambda m: vault[m.group(0)], sanitized_text)
 
     def _generate_replacement(
         self,

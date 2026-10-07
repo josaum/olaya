@@ -1,6 +1,8 @@
 """O-Laya: Ontology-Grounded System 1 Decision Model."""
 
-from olaya.axioms import calibrate_and_project_distribution, enforce_subsumption_monotonicity
+# Pure standard-library surface first: importing `olaya.pii` must work on a
+# base install (`olaya[pii]`). Anything that needs numpy or the ML stack is
+# guarded below and simply absent when its extra is not installed.
 from olaya.candidate_router import CandidateRouter
 from olaya.ontology import Concept, Individual, ObjectProperty, Ontology, create_incident_ontology
 from olaya.owl2_rl import OWL2RLReasoner, abox_consistency_report
@@ -9,6 +11,11 @@ from olaya.real_abox import RealABoxFact, load_atlas_real_abox
 from olaya.sequence import SequenceBundle, build_ontology_sequence
 from olaya.workflow import CompiledWorkflow, compile_workflow, run_workflow
 from olaya.workflow_replay import replay_workflow
+
+try:
+    from olaya.axioms import calibrate_and_project_distribution, enforce_subsumption_monotonicity
+except ImportError:  # olaya[reasoning] not installed
+    pass
 
 try:
     from olaya.calibration import CalibrationMetrics, compute_ece, fit_temperature
