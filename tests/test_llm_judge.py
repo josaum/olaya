@@ -380,7 +380,7 @@ def test_validate_verdicts_schema_semantics():
     for bad in (
         {"verdicts": [{**_verdicts(1)[0], "relation": "maybe"}]},
         {"verdicts": [{**_verdicts(1)[0], "confidence": 1.5}]},
-        {"verdicts": [{**_verdicts(1)[0], "equivalent": "yes"}]},
+        {"verdicts": [{**_verdicts(1)[0], "equivalent": 3}]},
         {"verdicts": [{"id": 1, "equivalent": True}]},
         {"answer": 1},
         {"verdicts": _verdicts(1) + _verdicts(1)},
@@ -438,7 +438,7 @@ def test_openai_compat_judge_request_and_parsing(cmt_ekaw):
     assert body["model"] == "qwen3.8-flash" and body["temperature"] == 0 and body["stream"] is False
     assert body["response_format"] == {"type": "json_object"} and "thinking" not in body
     assert body["messages"][0] == {"role": "system", "content": SYSTEM_PROMPT}
-    assert body["messages"][1]["content"] == render_batch(batch)
+    assert body["messages"][1]["content"].startswith(render_batch(batch))
     verdicts2, _ = judge.judge(batch)  # reasoning_content is ignored
     assert verdicts2 == verdicts
     assert _judge(transport, thinking="on", thinking_style="zai")._request_body(batch)["thinking"] == {
@@ -497,8 +497,12 @@ def test_openai_compat_judge_retries_then_succeeds_and_gives_up(cmt_ekaw):
         _judge(FakeTransport([(500, b"boom")]), max_retries=2).judge(batch)
     with pytest.raises(RuntimeError, match="truncated"):
         _judge(FakeTransport([(200, _chat_response("{", finish="length"))])).judge(batch)
-    with pytest.raises(ValueError, match="missing pair"):
-        _judge(FakeTransport([(200, _chat_response(json.dumps(_verdicts(1))))])).judge(batch)
+    # a partial batch is completed by re-judging the missing pairs one at a time
+    partial = FakeTransport(
+        [(200, _chat_response(json.dumps(_verdicts(1))))]
+        + [(200, _chat_response(json.dumps(_verdicts(1))))] * (len(batch) - 1)
+    )
+    assert len(_judge(partial).judge(batch)[0]) == len(batch)
 
 
 def test_list_models():
@@ -673,3 +677,44 @@ def test_qwen_thinking_style_and_relation_aliases():
     assert _canonical_relation("Subsumed-By") == "subsumed_by"
     assert _canonical_relation("equivalent") == "equivalent"
     assert _canonical_relation("weird") == "weird"
+
+
+def test_validate_verdicts_accepts_renamed_array_and_relation_only_items():
+    from olaya.benchmarks.llm_judge import validate_verdicts
+
+    data = {
+        "results": [
+            {"id": 1, "relation": "equivalent", "confidence": 0.9},
+            {"id": 2, "relation": "disjoint", "confidence": 0.8},
+        ]
+    }
+    out = validate_verdicts(data, 2)
+    assert [v.equivalent for v in out] == [True, False]
+    assert [v.relation for v in out] == ["equivalent", "unrelated"]
+
+
+def test_openai_judge_rejudges_pairs_missing_from_a_partial_batch(cmt_ekaw):
+    from olaya.benchmarks.llm_judge import OpenAICompatJudge
+
+    cands, src_cards, tgt_cards, _ = cmt_ekaw
+    batch = [JudgeRequest(src_cards[c.source], tgt_cards[c.target]) for c in cands.candidates[:3]]
+    transport = FakeTransport(
+        [
+            (200, _chat_response(json.dumps({"verdicts": _verdicts(3)[:1]}))),  # only pair 1 answered
+            (
+                200,
+                _chat_response(
+                    json.dumps(
+                        {"verdicts": [{**_verdicts(1)[0], "id": 1, "equivalent": False, "relation": "unrelated"}]}
+                    )
+                ),
+            ),
+            (200, _chat_response(json.dumps({"verdicts": [{**_verdicts(1)[0], "id": 1}]}))),
+        ]
+    )
+    judge = OpenAICompatJudge(
+        "qwen3.8-flash", provider="qwen", base_url=QWEN_URL, api_key="sk-test", transport=transport
+    )
+    verdicts, _ = judge.judge(batch)
+    assert len(verdicts) == 3 and verdicts[1].equivalent is False and verdicts[2].equivalent is True
+    assert len(transport.calls) == 3 and judge._partial_rejudged == 2

@@ -534,6 +534,15 @@ Decide for each pair whether the two entities denote the same concept or the sam
 
 Report your confidence that the relation you chose is the one a reference alignment would contain (0 = guess, 1 = certain). Answer only through the JSON schema, one verdict per pair in the given order, keeping the ids."""
 
+#: Appended to the user message for JSON-mode providers that do not enforce OUTPUT_SCHEMA server-side.
+OPENAI_OUTPUT_INSTRUCTION = (
+    "Respond with exactly one JSON object of the form "
+    '{"verdicts": [{"id": 1, "equivalent": true, "confidence": 0.9, "relation": "equivalent", "rationale": "..."}, ...]} '
+    "containing one verdict for EVERY pair above, ids 1..N in order, no other keys. "
+    '"relation" must be one of equivalent, subsumes, subsumed_by, related, unrelated; '
+    '"equivalent" is true only when relation is equivalent.'
+)
+
 OUTPUT_SCHEMA: dict[str, Any] = {
     "type": "object",
     "properties": {
@@ -723,10 +732,19 @@ def extract_json(text: str) -> Any:
     raise ValueError(f"no JSON object or array in judge response: {text[:200]!r}")
 
 
-def validate_verdicts(data: Any, n: int) -> list[Judgment]:
-    """``OUTPUT_SCHEMA`` semantics applied to a parsed response: one verdict per pair id ``1..n``."""
+def validate_verdicts(data: Any, n: int, *, allow_partial: bool = False) -> list[Judgment] | dict[int, Judgment]:
+    """``OUTPUT_SCHEMA`` semantics applied to a parsed response: one verdict per pair id ``1..n``.
+
+    With ``allow_partial`` the validated verdicts are returned as ``{id: Judgment}`` and missing
+    ids are left to the caller (used to re-judge them individually).
+    """
     if isinstance(data, list):
         data = {"verdicts": data}
+    if isinstance(data, dict) and not isinstance(data.get("verdicts"), list):
+        # Models in JSON mode often rename the array ("results", "judgments", ...): accept a single list value.
+        lists = [v for v in data.values() if isinstance(v, list)]
+        if len(lists) == 1:
+            data = {"verdicts": lists[0]}
     if not isinstance(data, dict) or not isinstance(data.get("verdicts"), list):
         raise ValueError("judge response has no 'verdicts' array")
     by_id: dict[int, Judgment] = {}
@@ -738,16 +756,24 @@ def validate_verdicts(data: Any, n: int) -> list[Judgment]:
             conf = float(item["confidence"])
         except (KeyError, TypeError, ValueError) as exc:
             raise ValueError(f"verdict {idx} lacks a numeric id / confidence: {item!r}") from exc
+        rel = _canonical_relation(item.get("relation"))
+        if "equivalent" not in item and rel in RELATIONS:
+            item = {**item, "equivalent": rel == "equivalent"}
+        elif isinstance(item.get("equivalent"), str):
+            item = {**item, "equivalent": item["equivalent"].strip().lower() in ("true", "yes", "1")}
         if not isinstance(item.get("equivalent"), bool):
             raise ValueError(f"verdict {vid}: 'equivalent' must be a boolean")
-        rel = _canonical_relation(item.get("relation"))
         if rel not in RELATIONS:
             raise ValueError(f"verdict {vid}: relation {rel!r} not in {RELATIONS}")
         if not 0.0 <= conf <= 1.0:
             raise ValueError(f"verdict {vid}: confidence {conf} outside [0, 1]")
         if vid in by_id:
+            if allow_partial:
+                continue  # JSON-mode models occasionally repeat an id; keep the first verdict
             raise ValueError(f"verdict id {vid} repeated")
         by_id[vid] = Judgment(item["equivalent"], conf, rel, str(item.get("rationale", "")))
+    if allow_partial:
+        return by_id
     missing = [i for i in range(1, n + 1) if i not in by_id]
     if missing:
         raise ValueError(f"judge response is missing pair(s) {missing}")
@@ -810,6 +836,7 @@ class OpenAICompatJudge:
         self.transport: Transport = transport if transport is not None else urllib_transport
         self.sleep = sleep
         self._lock = threading.Lock()
+        self._partial_rejudged = 0
         self.name = (
             f"{provider}[{model},json={'on' if json_mode else 'off'},thinking={thinking or 'unset'},{PROMPT_VERSION}]"
         )
@@ -835,7 +862,7 @@ class OpenAICompatJudge:
             "model": self.model,
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": render_batch(batch)},
+                {"role": "user", "content": render_batch(batch) + "\n" + OPENAI_OUTPUT_INSTRUCTION + "\n"},
             ],
             "temperature": 0,
             "max_tokens": self.max_tokens,
@@ -914,7 +941,24 @@ class OpenAICompatJudge:
         content = (choice.get("message") or {}).get("content") or ""
         if not isinstance(content, str):  # some providers return content parts
             content = "".join(p.get("text", "") for p in content if isinstance(p, dict))
-        verdicts = validate_verdicts(extract_json(content), len(batch))
+        try:
+            by_id = validate_verdicts(extract_json(content), len(batch), allow_partial=True)
+            assert isinstance(by_id, dict)
+            missing = [i for i in range(1, len(batch) + 1) if i not in by_id]
+            if missing and len(batch) == 1:
+                raise ValueError("judge response is missing pair(s) [1]")
+            for i in missing:
+                # Models in JSON mode sometimes stop early; re-judge the leftovers one pair at a time.
+                single, _ = self.judge([batch[i - 1]])
+                by_id[i] = single[0]
+                self._partial_rejudged += 1
+            verdicts = [by_id[i] for i in range(1, len(batch) + 1)]
+        except ValueError as exc:
+            dump = os.environ.get("OLAYA_JUDGE_DEBUG_DIR")
+            if dump:
+                Path(dump).mkdir(parents=True, exist_ok=True)
+                (Path(dump) / f"bad-response-{int(time.time() * 1000)}.txt").write_text(content, encoding="utf-8")
+            raise ValueError(f"{exc} (raw content starts: {content[:300]!r})") from exc
         u = data.get("usage") or {}
         details = u.get("prompt_tokens_details") or {}
         usage = Usage(
