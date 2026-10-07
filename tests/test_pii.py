@@ -42,8 +42,8 @@ def test_referential_integrity(pii_engine: PIIObfuscator):
 def test_reversible_deanonymization(pii_engine: PIIObfuscator):
     original = (
         "CONFIDENTIAL: Project Helios target company is NorthwindBio, led by Dr. Robert Miller. "
-        "SSN: 123-45-6789. Email: robert.miller@petarmor.com. Address: 742 Evergreen Terrace. "
-        "Card: 4532-1234-5678-9012."
+        "SSN: 321-54-9876. Email: robert.miller@petarmor.com. Address: 742 Evergreen Terrace. "
+        "Card: 4532-0151-1283-0366."
     )
     res = pii_engine.obfuscate(
         original,
@@ -55,7 +55,7 @@ def test_reversible_deanonymization(pii_engine: PIIObfuscator):
     # Ensure none of the sensitive values exist in sanitized output
     assert "Project Helios" not in res.sanitized_text
     assert "NorthwindBio" not in res.sanitized_text
-    assert "123-45-6789" not in res.sanitized_text
+    assert "321-54-9876" not in res.sanitized_text
     assert "robert.miller@petarmor.com" not in res.sanitized_text
     assert "742 Evergreen Terrace" not in res.sanitized_text
 
@@ -74,12 +74,45 @@ def test_redact_mode(pii_engine: PIIObfuscator):
 
 
 def test_mask_mode(pii_engine: PIIObfuscator):
-    text = "Card 4111-2222-3333-4444 and SSN 987-65-4321 with email test@gmail.com"
+    text = "Card 4532-0151-1283-0366 and SSN 321-54-9876 with email test@gmail.com"
     res = pii_engine.obfuscate(text, mode=ObfuscationMode.MASK)
 
-    assert "****-****-****-4444" in res.sanitized_text
-    assert "***-**-4321" in res.sanitized_text
+    assert "****-****-****-0366" in res.sanitized_text
+    assert "***-**-9876" in res.sanitized_text
     assert "t***@gmail.com" in res.sanitized_text
+    assert res.vault == {} and res.reversible is False
+
+
+def test_candidate_filter_decides_after_the_regex_proposes():
+    text = "card 4532-1234-5678-9012 and card 4532-0151-1283-0366"
+
+    def luhn(entity_type: str, value: str) -> bool:
+        if entity_type != "CREDIT_CARD":
+            return True
+        digits = [int(c) for c in value if c.isdigit()]
+        total = 0
+        for i, d in enumerate(reversed(digits)):
+            if i % 2 == 1:
+                d = d * 2 - 9 if d * 2 > 9 else d * 2
+            total += d
+        return total % 10 == 0
+
+    res = PIIObfuscator(salt="s", candidate_filter=luhn).obfuscate(text)
+    assert "4532-1234-5678-9012" in res.sanitized_text
+    assert "4532-0151-1283-0366" not in res.sanitized_text
+    assert [e.entity_type for e in res.entities] == ["CREDIT_CARD"]
+
+
+def test_deanonymize_is_single_pass(pii_engine: PIIObfuscator):
+    vault = {"[A_1]": "[A_2]", "[A_2]": "second"}
+    assert pii_engine.deanonymize("[A_1] [A_2]", vault) == "[A_2] second"
+
+
+def test_default_salt_is_env_or_random(monkeypatch):
+    monkeypatch.setenv("OLAYA_PII_SALT", "pinned")
+    assert PIIObfuscator().salt == "pinned"
+    monkeypatch.delenv("OLAYA_PII_SALT")
+    assert PIIObfuscator().salt != PIIObfuscator().salt
 
 
 def test_hash_mode(pii_engine: PIIObfuscator):
