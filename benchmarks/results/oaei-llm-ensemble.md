@@ -1,9 +1,9 @@
 # OAEI Conference track (ra1) - ensemble of cached LLM judges
 
-Date: 2026-10-07T05:35:21Z  ·  Commit: `eb03924f4ffb`  ·  Runtime: 148.3 s (candidates 16.9 s; 187572 decodings)
+Date: 2026-10-07T06:50:29Z  ·  Commit: `738817d4f4e6`  ·  Runtime: 184.4 s (candidates 18.2 s; 192948 decodings)
 
-**Category: LLM-based ensemble.**  Judges: `qwen__qwen3.8-max` (qwen3.8-max), `qwen__qwen3.8-flash` (qwen3.8-flash), `qwen__glm-5.2` (glm-5.2); anchor `qwen__qwen3.8-max`.  **All verdicts are cached**
-(no model was called for this run): prompt version `oaei-judge-v1` (cache versions oaei-judge-v1), system prompt sha256 `874534030e78`, files `benchmarks/results/llm-judgments/qwen__qwen3.8-max.jsonl`, `benchmarks/results/llm-judgments/qwen__qwen3.8-flash.jsonl`, `benchmarks/results/llm-judgments/qwen__glm-5.2.jsonl`.  Candidate generator: `candidates[olaya-hybrid[olaya-embedding[intfloat/e5-small-v2,both,csls10],w=0.50,cascade,alpha=0.00],k=3,min=0.15,rich_k=2]` on `intfloat/e5-small-v2` (k = 3, min = 0.15, rich_k = 2), the same set the single-judge runs were judged on.
+**Category: LLM-based ensemble.**  Judges: `qwen__qwen3.8-max` (qwen3.8-max), `qwen__glm-5.2` (glm-5.2), `qwen__deepseek-v4.1-flash` (deepseek-v4.1-flash), `qwen__qwen3.8-flash` (qwen3.8-flash); anchor `qwen__qwen3.8-max`.  **All verdicts are cached**
+(no model was called for this run): prompt version `oaei-judge-v1` (cache versions oaei-judge-v1), system prompt sha256 `874534030e78`, files `benchmarks/results/llm-judgments/qwen__qwen3.8-max.jsonl`, `benchmarks/results/llm-judgments/qwen__glm-5.2.jsonl`, `benchmarks/results/llm-judgments/qwen__deepseek-v4.1-flash.jsonl`, `benchmarks/results/llm-judgments/qwen__qwen3.8-flash.jsonl`.  Candidate generator: `candidates[olaya-hybrid[olaya-embedding[intfloat/e5-small-v2,both,csls10],w=0.50,cascade,alpha=0.00],k=3,min=0.15,rich_k=2]` on `intfloat/e5-small-v2` (k = 3, min = 0.15, rich_k = 2), the same set the single-judge runs were judged on.
 
 ## Design
 
@@ -38,8 +38,9 @@ are scored under that choice.  The a-priori row `combiner=majority,mode=repair,t
 | judge | records in cache | candidates judged | fraction | on the pairs used |
 |---|---|---|---|---|
 | `qwen__qwen3.8-max` | 9560 | 9560 / 9560 | 1.000 | 9560 / 9560 (1.000) |
-| `qwen__qwen3.8-flash` | 9560 | 9560 / 9560 | 1.000 | 9560 / 9560 (1.000) |
 | `qwen__glm-5.2` | 9560 | 9560 / 9560 | 1.000 | 9560 / 9560 (1.000) |
+| `qwen__deepseek-v4.1-flash` | 9560 | 9560 / 9560 | 1.000 | 9560 / 9560 (1.000) |
+| `qwen__qwen3.8-flash` | 9560 | 9560 / 9560 | 1.000 | 9560 / 9560 (1.000) |
 
 All 21 ontology pairs are covered by every judge.
 
@@ -54,51 +55,55 @@ All 21 ontology pairs are covered by every judge.
 | `qwen__qwen3.8-max` a-priori `mode=repair,th=0.50` | 0.75 / 0.85 / **0.80** | 0.47 / 0.70 / **0.56** | 0.70 / 0.83 / **0.76** |
 | `qwen__qwen3.8-max` LOPO-CV over its own grid | 0.79 / 0.82 / **0.80** | 0.48 / 0.59 / **0.53** | 0.73 / 0.79 / **0.76** |
 | `qwen__qwen3.8-max` LOOO-CV over its own grid | 0.78 / 0.83 / **0.81** | 0.50 / 0.62 / **0.55** | 0.73 / 0.80 / **0.77** |
-| `qwen__qwen3.8-flash` own verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.70 / 0.81 / **0.75** | 0.31 / 0.72 / **0.44** | 0.60 / 0.80 / **0.68** |
-| `qwen__qwen3.8-flash` a-priori `mode=repair,th=0.50` | 0.75 / 0.80 / **0.77** | 0.36 / 0.67 / **0.47** | 0.66 / 0.78 / **0.71** |
-| `qwen__qwen3.8-flash` LOPO-CV over its own grid | 0.78 / 0.75 / **0.76** | 0.35 / 0.50 / **0.41** | 0.69 / 0.71 / **0.70** |
-| `qwen__qwen3.8-flash` LOOO-CV over its own grid | 0.79 / 0.76 / **0.77** | 0.36 / 0.57 / **0.44** | 0.69 / 0.73 / **0.71** |
 | `qwen__glm-5.2` own verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.74 / 0.75 / **0.74** | 0.39 / 0.78 / **0.52** | 0.65 / 0.75 / **0.70** |
 | `qwen__glm-5.2` a-priori `mode=repair,th=0.50` | 0.77 / 0.74 / **0.75** | 0.46 / 0.78 / **0.58** | 0.69 / 0.74 / **0.72** |
 | `qwen__glm-5.2` LOPO-CV over its own grid | 0.83 / 0.71 / **0.76** | 0.45 / 0.54 / **0.49** | 0.75 / 0.68 / **0.71** |
 | `qwen__glm-5.2` LOOO-CV over its own grid | 0.82 / 0.72 / **0.77** | 0.40 / 0.51 / **0.45** | 0.73 / 0.69 / **0.71** |
+| `qwen__deepseek-v4.1-flash` own verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.57 / 0.82 / **0.68** | 0.21 / 0.80 / **0.34** | 0.46 / 0.82 / **0.59** |
+| `qwen__deepseek-v4.1-flash` a-priori `mode=repair,th=0.50` | 0.64 / 0.78 / **0.71** | 0.29 / 0.78 / **0.42** | 0.54 / 0.78 / **0.64** |
+| `qwen__deepseek-v4.1-flash` LOPO-CV over its own grid | 0.81 / 0.74 / **0.77** | 0.41 / 0.52 / **0.46** | 0.73 / 0.71 / **0.72** |
+| `qwen__deepseek-v4.1-flash` LOOO-CV over its own grid | 0.81 / 0.72 / **0.77** | 0.39 / 0.51 / **0.44** | 0.73 / 0.69 / **0.71** |
+| `qwen__qwen3.8-flash` own verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.70 / 0.81 / **0.75** | 0.31 / 0.72 / **0.44** | 0.60 / 0.80 / **0.68** |
+| `qwen__qwen3.8-flash` a-priori `mode=repair,th=0.50` | 0.75 / 0.80 / **0.77** | 0.36 / 0.67 / **0.47** | 0.66 / 0.78 / **0.71** |
+| `qwen__qwen3.8-flash` LOPO-CV over its own grid | 0.78 / 0.75 / **0.76** | 0.35 / 0.50 / **0.41** | 0.69 / 0.71 / **0.70** |
+| `qwen__qwen3.8-flash` LOOO-CV over its own grid | 0.79 / 0.76 / **0.77** | 0.36 / 0.57 / **0.44** | 0.69 / 0.73 / **0.71** |
 
 ### Per combiner
 
 | Run | M1 | M2 | M3 |
 |---|---|---|---|
-| `majority` ensemble verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.77 / 0.83 / **0.80** | 0.42 / 0.76 / **0.54** | 0.69 / 0.82 / **0.75** |
-| `majority` a-priori `combiner=majority,mode=repair,th=0.50` | 0.79 / 0.82 / **0.80** | 0.47 / 0.76 / **0.58** | 0.72 / 0.81 / **0.76** |
-| `majority` best grid point on ra1 (optimistic, `combiner=majority,mode=judge,th=0.30`) | 0.79 / 0.82 / **0.80** | 0.47 / 0.76 / **0.58** | 0.72 / 0.81 / **0.76** |
-| `majority` LOPO-CV over its grid | 0.79 / 0.78 / **0.78** | 0.41 / 0.59 / **0.48** | 0.71 / 0.75 / **0.73** |
-| `majority` LOOO-CV over its grid | 0.81 / 0.79 / **0.80** | 0.45 / 0.59 / **0.51** | 0.74 / 0.76 / **0.75** |
-| `unanimous` ensemble verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.80 / 0.71 / **0.75** | 0.53 / 0.61 / **0.57** | 0.75 / 0.70 / **0.72** |
-| `unanimous` a-priori `combiner=unanimous,mode=repair,th=0.50` | 0.81 / 0.70 / **0.75** | 0.54 / 0.61 / **0.57** | 0.76 / 0.69 / **0.72** |
-| `unanimous` best grid point on ra1 (optimistic, `combiner=unanimous,mode=fused,w=0.50,th=0.50`) | 0.85 / 0.70 / **0.77** | 0.59 / 0.57 / **0.58** | 0.80 / 0.68 / **0.74** |
-| `unanimous` LOPO-CV over its grid | 0.83 / 0.69 / **0.76** | 0.58 / 0.57 / **0.57** | 0.79 / 0.67 / **0.73** |
-| `unanimous` LOOO-CV over its grid | 0.85 / 0.69 / **0.76** | 0.49 / 0.53 / **0.51** | 0.78 / 0.67 / **0.72** |
-| `weighted` ensemble verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.77 / 0.83 / **0.80** | 0.42 / 0.76 / **0.54** | 0.69 / 0.82 / **0.75** |
-| `weighted` a-priori `combiner=weighted,mode=repair,th=0.50` | 0.79 / 0.82 / **0.80** | 0.47 / 0.76 / **0.58** | 0.72 / 0.81 / **0.76** |
-| `weighted` best grid point on ra1 (optimistic, `combiner=weighted,mode=judge,th=0.61`) | 0.80 / 0.81 / **0.81** | 0.49 / 0.76 / **0.59** | 0.73 / 0.81 / **0.77** |
-| `weighted` LOPO-CV over its grid | 0.80 / 0.81 / **0.81** | 0.49 / 0.76 / **0.59** | 0.73 / 0.81 / **0.77** |
-| `weighted` LOOO-CV over its grid | 0.80 / 0.81 / **0.80** | 0.47 / 0.74 / **0.58** | 0.73 / 0.80 / **0.76** |
-| `anchor` ensemble verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.78 / 0.83 / **0.80** | 0.46 / 0.67 / **0.55** | 0.72 / 0.80 / **0.76** |
-| `anchor` a-priori `combiner=anchor,mode=repair,th=0.50` | 0.80 / 0.81 / **0.81** | 0.50 / 0.67 / **0.57** | 0.74 / 0.79 / **0.77** |
-| `anchor` best grid point on ra1 (optimistic, `combiner=anchor,mode=fused,w=0.75,th=0.71`) | 0.83 / 0.79 / **0.81** | 0.52 / 0.59 / **0.55** | 0.78 / 0.76 / **0.77** |
-| `anchor` LOPO-CV over its grid | 0.80 / 0.78 / **0.79** | 0.45 / 0.52 / **0.48** | 0.74 / 0.74 / **0.74** |
-| `anchor` LOOO-CV over its grid | 0.81 / 0.79 / **0.80** | 0.50 / 0.57 / **0.53** | 0.76 / 0.76 / **0.76** |
+| `majority` ensemble verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.77 / 0.80 / **0.79** | 0.44 / 0.74 / **0.55** | 0.70 / 0.79 / **0.74** |
+| `majority` a-priori `combiner=majority,mode=repair,th=0.50` | 0.79 / 0.79 / **0.79** | 0.48 / 0.74 / **0.58** | 0.72 / 0.78 / **0.75** |
+| `majority` best grid point on ra1 (optimistic, `combiner=majority,mode=fused,w=0.50,th=0.55`) | 0.85 / 0.76 / **0.80** | 0.51 / 0.50 / **0.51** | 0.79 / 0.72 / **0.76** |
+| `majority` LOPO-CV over its grid | 0.82 / 0.75 / **0.78** | 0.46 / 0.50 / **0.48** | 0.76 / 0.71 / **0.73** |
+| `majority` LOOO-CV over its grid | 0.82 / 0.76 / **0.79** | 0.47 / 0.54 / **0.50** | 0.76 / 0.72 / **0.74** |
+| `unanimous` ensemble verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.81 / 0.71 / **0.75** | 0.51 / 0.57 / **0.54** | 0.75 / 0.69 / **0.72** |
+| `unanimous` a-priori `combiner=unanimous,mode=repair,th=0.50` | 0.81 / 0.70 / **0.75** | 0.52 / 0.57 / **0.54** | 0.76 / 0.68 / **0.72** |
+| `unanimous` best grid point on ra1 (optimistic, `combiner=unanimous,mode=fused,w=0.50,th=0.50`) | 0.85 / 0.70 / **0.77** | 0.57 / 0.52 / **0.55** | 0.81 / 0.67 / **0.73** |
+| `unanimous` LOPO-CV over its grid | 0.85 / 0.70 / **0.77** | 0.57 / 0.52 / **0.55** | 0.81 / 0.67 / **0.73** |
+| `unanimous` LOOO-CV over its grid | 0.84 / 0.69 / **0.76** | 0.44 / 0.50 / **0.47** | 0.76 / 0.66 / **0.71** |
+| `weighted` ensemble verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.74 / 0.85 / **0.79** | 0.37 / 0.78 / **0.50** | 0.65 / 0.84 / **0.73** |
+| `weighted` a-priori `combiner=weighted,mode=repair,th=0.50` | 0.77 / 0.83 / **0.80** | 0.43 / 0.78 / **0.55** | 0.69 / 0.82 / **0.75** |
+| `weighted` best grid point on ra1 (optimistic, `combiner=weighted,mode=judge,th=0.56`) | 0.80 / 0.81 / **0.80** | 0.47 / 0.74 / **0.58** | 0.73 / 0.80 / **0.76** |
+| `weighted` LOPO-CV over its grid | 0.79 / 0.80 / **0.79** | 0.42 / 0.67 / **0.52** | 0.71 / 0.78 / **0.74** |
+| `weighted` LOOO-CV over its grid | 0.79 / 0.80 / **0.79** | 0.45 / 0.74 / **0.56** | 0.71 / 0.79 / **0.75** |
+| `anchor` ensemble verdicts on the candidate set (equivalent, confidence >= 0.5) | 0.76 / 0.85 / **0.80** | 0.44 / 0.70 / **0.54** | 0.69 / 0.82 / **0.75** |
+| `anchor` a-priori `combiner=anchor,mode=repair,th=0.50` | 0.78 / 0.83 / **0.80** | 0.47 / 0.70 / **0.56** | 0.72 / 0.81 / **0.76** |
+| `anchor` best grid point on ra1 (optimistic, `combiner=anchor,mode=fused,w=0.75,th=0.71`) | 0.82 / 0.79 / **0.80** | 0.55 / 0.61 / **0.58** | 0.78 / 0.76 / **0.77** |
+| `anchor` LOPO-CV over its grid | 0.82 / 0.79 / **0.80** | 0.55 / 0.61 / **0.58** | 0.77 / 0.76 / **0.77** |
+| `anchor` LOOO-CV over its grid | 0.80 / 0.80 / **0.80** | 0.53 / 0.60 / **0.56** | 0.76 / 0.77 / **0.76** |
 
 ### Headline
 
 | Run | M1 | M2 | M3 |
 |---|---|---|---|
-| a-priori `combiner=majority,mode=repair,th=0.50` (fixed before the grid) | 0.79 / 0.82 / **0.80** | 0.47 / 0.76 / **0.58** | 0.72 / 0.81 / **0.76** |
-| best grid point on ra1 (optimistic, `combiner=anchor,mode=fused,w=0.75,th=0.71`) | 0.83 / 0.79 / **0.81** | 0.52 / 0.59 / **0.55** | 0.78 / 0.76 / **0.77** |
-| **leave-one-pair-out CV over the union grid (1020 points)** | 0.80 / 0.78 / **0.79** | 0.43 / 0.52 / **0.47** | 0.73 / 0.74 / **0.73** |
-| leave-one-ontology-out CV over the union grid (7 folds) | 0.81 / 0.79 / **0.80** | 0.49 / 0.57 / **0.53** | 0.76 / 0.76 / **0.76** |
+| a-priori `combiner=majority,mode=repair,th=0.50` (fixed before the grid) | 0.79 / 0.79 / **0.79** | 0.48 / 0.74 / **0.58** | 0.72 / 0.78 / **0.75** |
+| best grid point on ra1 (optimistic, `combiner=anchor,mode=fused,w=0.75,th=0.71`) | 0.82 / 0.79 / **0.80** | 0.55 / 0.61 / **0.58** | 0.78 / 0.76 / **0.77** |
+| **leave-one-pair-out CV over the union grid (1020 points)** | 0.81 / 0.78 / **0.80** | 0.50 / 0.61 / **0.55** | 0.75 / 0.76 / **0.75** |
+| leave-one-ontology-out CV over the union grid (7 folds) | 0.80 / 0.79 / **0.80** | 0.51 / 0.59 / **0.55** | 0.75 / 0.76 / **0.76** |
 
-Configs chosen across the 21 LOPO folds: `combiner=anchor,mode=fused,w=0.50,th=0.55`, `combiner=anchor,mode=fused,w=0.75,th=0.66`, `combiner=anchor,mode=fused,w=0.75,th=0.71`, `combiner=anchor,mode=fused,w=0.75,th=0.72`, `combiner=anchor,mode=repair,th=0.78`, `combiner=weighted,mode=judge,th=0.61`.
-Configs chosen across the 7 LOOO folds: `combiner=anchor,mode=fused,w=0.50,th=0.55`, `combiner=anchor,mode=fused,w=0.75,th=0.71`, `combiner=anchor,mode=fused,w=0.75,th=0.72`, `combiner=anchor,mode=repair,th=0.78`, `combiner=weighted,mode=judge,th=0.61`.
+Configs chosen across the 21 LOPO folds: `combiner=anchor,mode=fused,w=0.50,th=0.49`, `combiner=anchor,mode=fused,w=0.75,th=0.71`, `combiner=weighted,mode=repair,th=0.56`.
+Configs chosen across the 7 LOOO folds: `combiner=anchor,mode=fused,w=0.50,th=0.48`, `combiner=anchor,mode=fused,w=0.50,th=0.49`, `combiner=anchor,mode=fused,w=0.75,th=0.71`, `combiner=weighted,mode=judge,th=0.66`.
 
 ## Where we land
 
@@ -107,7 +112,7 @@ Published OAEI 2023 Conference ra1 F1 against this run's LOPO-CV row (ranked by 
 | rank | system | M1 F1 | M3 F1 |
 |---|---|---|---|
 | 1 | GraphMatcher | 0.83 | 0.78 |
-| 2 | **olaya (this run)** | 0.79 | 0.73 |
+| 2 | **olaya (this run)** | 0.80 | 0.75 |
 | 3 | SORBETMtch | 0.76 | 0.70 |
 | 4 | LogMap | 0.72 | 0.68 |
 | 5 | Matcha | 0.72 | 0.67 |
@@ -120,4 +125,4 @@ cross-validation.  The best-on-ra1 row is optimistic (selected on the test pairs
 published numbers are the OAEI 2023 campaign results; our evaluation uses the same ra1 reference and the same
 micro P / R / F1 but the local scorer, so small differences in the evaluation script are possible.
 
-**Ensemble versus the best single judge, same pairs and protocol:** `qwen__qwen3.8-max` alone reaches LOPO-CV M1 0.804 / M3 0.759; the union-grid ensemble reaches M1 0.787 / M3 0.734 (-0.025 M3), and the best single combiner `weighted` reaches M1 0.807 / M3 0.768 (+0.008 M3).  On this evidence the ensemble does not help yet: the agreement step raises the judge-only precision (see the per-combiner table) but a weaker judge also vetoes true pairs, and a larger union grid costs selection noise in cross-validation.
+**Ensemble versus the best single judge, same pairs and protocol:** `qwen__qwen3.8-max` alone reaches LOPO-CV M1 0.804 / M3 0.759; the union-grid ensemble reaches M1 0.796 / M3 0.755 (-0.005 M3), and the best single combiner `anchor` reaches M1 0.802 / M3 0.766 (+0.006 M3).  On this evidence the ensemble is a wash: the agreement step raises the judge-only precision (see the per-combiner table) but a weaker judge also vetoes true pairs, and a larger union grid costs selection noise in cross-validation.
