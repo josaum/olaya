@@ -110,6 +110,7 @@ def make_compat_judge(args: argparse.Namespace, key_env: tuple[str, ...]) -> Ope
         api_key_env=key_env,
         json_mode=args.json_mode == "on",
         thinking=args.thinking,
+        thinking_style=args.thinking_style,
     )
 
 
@@ -155,10 +156,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--provider", default=None, help="openai: short label for the cache file / results (e.g. qwen)")
     ap.add_argument("--json-mode", default="on", choices=("on", "off"), help="openai: response_format json_object")
     ap.add_argument(
+        "--thinking-style",
+        default="auto",
+        choices=("auto", "zai", "qwen"),
+        help="field used to switch thinking: auto picks qwen when provider/model mentions qwen, else zai",
+    )
+    ap.add_argument(
         "--thinking",
         default=None,
         choices=("off", "on"),
-        help="openai: send thinking {type: disabled|enabled} (Z.ai style; unset = not sent; zai preset: off)",
+        help="openai: disable/enable model thinking (Z.ai sends thinking {type}, Qwen sends enable_thinking; unset = not sent; zai preset: off)",
     )
     ap.add_argument("--concurrency", type=int, default=4, help="openai: parallel requests (thread pool)")
     ap.add_argument("--list-models", action="store_true", help="openai: print the server's model ids and exit")

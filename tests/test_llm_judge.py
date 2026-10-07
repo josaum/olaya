@@ -441,8 +441,13 @@ def test_openai_compat_judge_request_and_parsing(cmt_ekaw):
     assert body["messages"][1]["content"] == render_batch(batch)
     verdicts2, _ = judge.judge(batch)  # reasoning_content is ignored
     assert verdicts2 == verdicts
-    assert _judge(transport, thinking="on")._request_body(batch)["thinking"] == {"type": "enabled"}
-    assert _judge(transport, thinking="off")._request_body(batch)["thinking"] == {"type": "disabled"}
+    assert _judge(transport, thinking="on", thinking_style="zai")._request_body(batch)["thinking"] == {
+        "type": "enabled"
+    }
+    assert _judge(transport, thinking="off", thinking_style="zai")._request_body(batch)["thinking"] == {
+        "type": "disabled"
+    }
+    assert _judge(transport, thinking="off")._request_body(batch)["enable_thinking"] is False
     assert "response_format" not in _judge(transport, json_mode=False)._request_body(batch)
     with pytest.raises(ValueError):
         _judge(transport, thinking="maybe")
@@ -458,7 +463,7 @@ def test_openai_compat_judge_falls_back_when_response_format_is_rejected(cmt_eka
             _echo_verdicts,
         ]
     )
-    judge = _judge(transport, thinking="off")
+    judge = _judge(transport, thinking="off", thinking_style="zai")
     verdicts, _ = judge.judge(batch)
     assert len(verdicts) == 2 and len(transport.calls) == 3
     assert "response_format" in json.loads(transport.calls[0]["body"])
@@ -639,3 +644,32 @@ def test_real_judge_one_batch(cmt_ekaw):
     batch = [JudgeRequest(src_cards[c.source], tgt_cards[c.target]) for c in pick]
     verdicts, usage = AnthropicJudge("claude-haiku-4-5").judge(batch)
     assert len(verdicts) == 6 and usage.input_tokens > 0 and all(v.relation in RELATIONS for v in verdicts)
+
+
+def test_qwen_thinking_style_and_relation_aliases():
+    from olaya.benchmarks.llm_judge import OpenAICompatJudge, _canonical_relation
+
+    judge = OpenAICompatJudge(
+        "qwen3.8-flash",
+        provider="qwen",
+        base_url="https://example.invalid/v1",
+        api_key="k",
+        thinking="off",
+        transport=lambda *a, **k: (200, b"{}"),
+    )
+    assert judge.thinking_style == "qwen"
+    body = judge._request_body([])
+    assert body["enable_thinking"] is False and "thinking" not in body
+    zai = OpenAICompatJudge(
+        "glm-5.3-flash",
+        provider="zai",
+        base_url="https://example.invalid/v1",
+        api_key="k",
+        thinking="off",
+        transport=lambda *a, **k: (200, b"{}"),
+    )
+    assert zai._request_body([])["thinking"] == {"type": "disabled"}
+    assert _canonical_relation("disjoint") == "unrelated"
+    assert _canonical_relation("Subsumed-By") == "subsumed_by"
+    assert _canonical_relation("equivalent") == "equivalent"
+    assert _canonical_relation("weird") == "weird"

@@ -76,6 +76,30 @@ MODEL_PRICES_USD_PER_MTOK = {
     "claude-haiku-4-5": (1.0, 5.0),
 }
 RELATIONS = ("equivalent", "subsumes", "subsumed_by", "related", "unrelated")
+_RELATION_ALIASES = {
+    "equal": "equivalent",
+    "same": "equivalent",
+    "sameas": "equivalent",
+    "broader": "subsumes",
+    "narrower": "subsumed_by",
+    "disjoint": "unrelated",
+    "different": "unrelated",
+    "none": "unrelated",
+    "not_equivalent": "unrelated",
+    "overlapping": "related",
+    "similar": "related",
+}
+
+
+def _canonical_relation(rel: Any) -> Any:
+    """Map common free-text relation labels a model may emit onto RELATIONS; unknown values pass through."""
+    if not isinstance(rel, str):
+        return rel
+    key = rel.strip().lower().replace("-", "_").replace(" ", "_")
+    if key in RELATIONS:
+        return key
+    return _RELATION_ALIASES.get(key, rel)
+
 
 #: OpenAI-compatible judge: generic defaults and the Z.ai preset (``--judge zai``).
 OPENAI_DEFAULT_MODEL = "qwen3.8-flash"
@@ -716,7 +740,7 @@ def validate_verdicts(data: Any, n: int) -> list[Judgment]:
             raise ValueError(f"verdict {idx} lacks a numeric id / confidence: {item!r}") from exc
         if not isinstance(item.get("equivalent"), bool):
             raise ValueError(f"verdict {vid}: 'equivalent' must be a boolean")
-        rel = item.get("relation")
+        rel = _canonical_relation(item.get("relation"))
         if rel not in RELATIONS:
             raise ValueError(f"verdict {vid}: relation {rel!r} not in {RELATIONS}")
         if not 0.0 <= conf <= 1.0:
@@ -755,6 +779,7 @@ class OpenAICompatJudge:
         api_key_env: Sequence[str] | str = OPENAI_API_KEY_ENV,
         json_mode: bool = True,
         thinking: str | None = None,
+        thinking_style: str = "auto",
         max_tokens: int = 16000,
         timeout: float = 180.0,
         max_retries: int = 5,
@@ -764,6 +789,11 @@ class OpenAICompatJudge:
     ):
         if thinking not in (None, "off", "on"):
             raise ValueError("thinking must be None, 'off' or 'on'")
+        if thinking_style not in ("auto", "zai", "qwen"):
+            raise ValueError("thinking_style must be 'auto', 'zai' or 'qwen'")
+        if thinking_style == "auto":
+            thinking_style = "qwen" if "qwen" in f"{provider} {model}".lower() else "zai"
+        self.thinking_style = thinking_style
         base_url = base_url or os.environ.get(OPENAI_BASE_URL_ENV) or ""
         if not base_url:
             raise RuntimeError(f"no base URL: pass base_url or set {OPENAI_BASE_URL_ENV}")
@@ -814,7 +844,11 @@ class OpenAICompatJudge:
         if self.json_mode:
             body["response_format"] = {"type": "json_object"}
         if self.thinking is not None:
-            body["thinking"] = {"type": "enabled" if self.thinking == "on" else "disabled"}
+            if self.thinking_style == "qwen":
+                # DashScope / Qwen compatible mode: a boolean switch; Qwen thinks by default.
+                body["enable_thinking"] = self.thinking == "on"
+            else:
+                body["thinking"] = {"type": "enabled" if self.thinking == "on" else "disabled"}
         return body
 
     def _call(self, url: str, body: bytes | None) -> dict[str, Any]:
