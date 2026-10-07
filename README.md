@@ -64,19 +64,27 @@ vendored upstream data in `tests/fixtures/oaei/`).
 | SORBETMtch | 0.78 / 0.75 / 0.76 | 0.78 / 0.64 / 0.70 |
 | LogMap | 0.84 / 0.63 / 0.72 | 0.81 / 0.58 / 0.68 |
 | Matcha | 0.76 / 0.68 / 0.72 | 0.70 / 0.64 / 0.67 |
+| **olaya-hybrid + LLM judge (qwen3.8-max), leave-one-pair-out CV** | 0.79 / 0.82 / **0.80** | 0.73 / 0.79 / **0.76** |
 | **olaya-hybrid (this repo, leave-one-pair-out CV)** | 0.81 / 0.69 / 0.75 | 0.69 / 0.66 / 0.68 |
 | **olaya-hybrid + structure (this repo, leave-one-pair-out CV, union grid)** | 0.81 / 0.69 / 0.75 | 0.69 / 0.66 / 0.68 |
 | **olaya-lexical (this repo, threshold 0.50)** | 0.83 / 0.64 / 0.73 | 0.73 / 0.60 / 0.66 |
 | edna (baseline) | 0.88 / 0.54 / 0.67 | 0.79 / 0.47 / 0.59 |
 | StringEquiv (baseline) | 0.88 / 0.50 / 0.64 | 0.80 / 0.43 / 0.56 |
 
-Where we land: the hybrid's headline is cross-validated (threshold and fusion
-weight chosen on the other 20 pairs for each held-out pair), which makes it the
-honest number; the best configuration picked on the full set scores 0.76 / 0.69.
-It ranks third on both tables: below GraphMatcher by 0.08 (M1) and 0.10 (M3),
-below SORBETMtch by 0.01 and 0.02, tied with LogMap on M3 and above LogMap and
-Matcha on M1. The lexical matcher alone is 0.02 behind the hybrid on both. It is
-not state of the art. Structural propagation did not help: seeded by the hybrid, the
+Where we land: the best system is the hybrid followed by an LLM judge
+(`qwen3.8-max` asked, with ontology context, whether each candidate pair is
+equivalent; verdicts cached in `benchmarks/results/llm-judgments/` so the result
+replays offline). Its headline is cross-validated (decoding mode and threshold
+chosen on the other 20 pairs for each held-out pair) and lands **second** on both
+tables: below GraphMatcher by 0.03 (M1) and 0.02 (M3), above SORBETMtch by 0.04
+and 0.06. The judge adds recall (classes 0.69 to 0.82) at some precision. It is an
+LLM-based matcher and is reported as such; it is not state of the art. Three more
+judges (`qwen3.8-flash`, `glm-5.2`, `deepseek-v4.1-flash`, each 0.76 to 0.77 M1
+alone) and majority / weighted / anchor ensembles over all four do not move the
+headline (best combiner +0.006 M3). Without the judge, the hybrid ranks third
+(0.75 / 0.68) and the lexical matcher alone is 0.02 behind it. See
+[`benchmarks/results/oaei-llm-qwen3.8-max.md`](benchmarks/results/oaei-llm-qwen3.8-max.md)
+and [`oaei-llm-ensemble.md`](benchmarks/results/oaei-llm-ensemble.md). Structural propagation did not help: seeded by the hybrid, the
 best structural grid point scores 0.75 / 0.69 on ra1 (optimistic), but when the
 hybrid and structural grids are cross-validated together the selection never picks
 a structural config once the hybrid grid contains the path text, so the headline
@@ -100,13 +108,13 @@ part of the headline number. Full per-pair numbers, the threshold sweep, dataset
 hashes and the published sources are in
 [`benchmarks/results/oaei-conference-ra1.md`](benchmarks/results/oaei-conference-ra1.md)
 and [`oaei-conference-ra1.json`](benchmarks/results/oaei-conference-ra1.json).
-An LLM-judge stage (candidates from the hybrid, a language model asked with
-ontology context whether each pair is equivalent; `scripts/benchmark_oaei_llm.py`,
-category LLM-based) is built and validated offline with a reference-backed stub in
-[`benchmarks/results/oaei-llm.md`](benchmarks/results/oaei-llm.md); its real-judge
-numbers are pending an API key (`--judge anthropic` with `ANTHROPIC_API_KEY`, or
-`--judge openai --base-url <OpenAI-compatible server> --provider <label> --model <id>`
-with `LLM_JUDGE_API_KEY`; `--judge zai` presets Z.ai) and are not part of the table above.
+The LLM-judge stage (`scripts/benchmark_oaei_llm.py`, category LLM-based) runs
+against any OpenAI-compatible server (`--judge openai --base-url ... --provider
+<label> --model <id>` with `LLM_JUDGE_API_KEY`), the Anthropic API (`--judge
+anthropic`) or Z.ai (`--judge zai`); the candidate ceiling is M1 0.965 / M3 0.961
+and a reference-backed stub reproduces ra1 at F1 0.98, which bounds what any judge
+can reach. Replaying the committed verdicts needs no key:
+`scripts/benchmark_oaei_llm_ensemble.py --judgments qwen__qwen3.8-max`.
 Earlier versions of this README reported hits@k with the gold target guaranteed to be
 in the candidate set and a "100% violation elimination" figure computed on synthetic
 distributions; both were retracted because they were not benchmark results.
