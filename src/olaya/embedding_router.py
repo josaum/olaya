@@ -348,9 +348,28 @@ def sibling_curies(ontology: Ontology, curie: str) -> list[str]:
     return sorted(out)
 
 
+def mined_hard_negatives(
+    query_emb: np.ndarray, class_emb: np.ndarray, class_curies: Sequence[str], golds: Sequence[str], per_query: int
+) -> list[list[str]]:
+    """For each query, the ``per_query`` highest-scoring classes that are not its gold class.
+
+    Pure ranking over the given (normalised) embeddings, so the result is deterministic and the
+    function can be tested without a model.
+    """
+    if per_query <= 0:
+        return [[] for _ in golds]
+    sims = query_emb @ class_emb.T
+    out: list[list[str]] = []
+    for i, gold in enumerate(golds):
+        order = np.argsort(-sims[i], kind="stable")
+        picked = [class_curies[j] for j in order if class_curies[j] != gold][:per_query]
+        out.append(picked)
+    return out
+
+
 def finetune_bi_encoder(
     encoder: Any,
-    ontology: Ontology,
+    ontology: Ontology | None,
     train_pairs: Sequence[tuple[str, str]],
     *,
     checkpoint: Path,
@@ -362,6 +381,8 @@ def finetune_bi_encoder(
     temperature: float = 0.05,
     seed: int = 42,
     class_texts: Mapping[str, str] | None = None,
+    hard_negatives: Callable[[str], Sequence[str]] | None = None,
+    mine_hard_negatives: int = 0,
     progress: Callable[[str], None] | None = None,
 ) -> FineTuneResult:
     """Contrastive fine-tuning of a :class:`~olaya.embeddings.TransformerEncoder` in place.
@@ -372,6 +393,13 @@ def finetune_bi_encoder(
     the other queries' gold classes). ``validate(encoder) -> float`` is called after every epoch and
     the best epoch's weights are saved to ``checkpoint`` (the final weights of the encoder are the
     best ones). Stops at ``budget_s`` wall-clock seconds.
+
+    ``hard_negatives(gold_curie)`` names the structural hard negatives to sample one from (default:
+    the gold class's siblings in ``ontology``; required when ``ontology`` is None, e.g. for a joint
+    run over several ontologies whose ``class_texts`` are passed as one mapping). With
+    ``mine_hard_negatives = m > 0``, the encoder's own top-``m`` non-gold classes for every training
+    query are recomputed at the start of each epoch (model in eval mode) and added as negatives, so
+    the loss concentrates on the confusions the current model actually makes.
     """
     import torch
 
@@ -381,10 +409,23 @@ def finetune_bi_encoder(
     tokenizer = encoder.tokenizer
     prefix = getattr(encoder, "prefix", "")
     max_length = getattr(encoder, "max_length", 128)
-    texts = dict(class_texts) if class_texts is not None else build_class_texts(ontology)
+    if class_texts is None:
+        if ontology is None:
+            raise ValueError("class_texts is required when ontology is None")
+        class_texts = build_class_texts(ontology)
+    texts = dict(class_texts)
+    if hard_negatives is None:
+        if ontology is None:
+            raise ValueError("hard_negatives is required when ontology is None")
+        onto = ontology
+
+        def hard_negatives(gold: str) -> Sequence[str]:
+            return sibling_curies(onto, gold)
+
     pairs = [(q, c) for q, c in train_pairs if c in texts]
     if not pairs:
         raise ValueError("no training pairs with a known class")
+    class_order = sorted(texts)
     device = next(model.parameters()).device
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
 
@@ -423,6 +464,19 @@ def finetune_bi_encoder(
     epochs_run = 0
     stop = False
     for epoch in range(1, max_epochs + 1):
+        mined: list[list[str]] = [[] for _ in pairs]
+        if mine_hard_negatives > 0:
+            model.eval()
+            with torch.no_grad():
+                c_emb = torch.cat(
+                    [embed([texts[c] for c in class_order[i : i + 64]]) for i in range(0, len(class_order), 64)]
+                )
+                q_emb = torch.cat(
+                    [embed([pairs[i][0] for i in range(j, min(j + 64, len(pairs)))]) for j in range(0, len(pairs), 64)]
+                )
+            mined = mined_hard_negatives(
+                q_emb.cpu().numpy(), c_emb.cpu().numpy(), class_order, [c for _, c in pairs], mine_hard_negatives
+            )
         model.train()
         order = list(range(len(pairs)))
         rng.shuffle(order)
@@ -436,9 +490,13 @@ def finetune_bi_encoder(
             columns: list[str] = list(dict.fromkeys(golds))
             hard: list[str] = []
             for g in golds:
-                sibs = [s for s in sibling_curies(ontology, g) if s in texts and s not in columns and s not in hard]
+                sibs = [s for s in hard_negatives(g) if s in texts and s not in columns and s not in hard]
                 if sibs:
                     hard.append(rng.choice(sibs))
+            for i in idx:
+                for m in mined[i]:
+                    if m in texts and m not in columns and m not in hard:
+                        hard.append(m)
             columns += hard
             targets = torch.tensor([columns.index(g) for g in golds], dtype=torch.long, device=device)
             q = embed(queries)

@@ -248,3 +248,51 @@ def test_engine_rejects_bad_router_or_scorer(onto, router, tokenizer):
 def test_sibling_curies(onto):
     assert sibling_curies(onto, "T:CAT") == ["T:DOG"]
     assert sibling_curies(onto, "T:ROOT") == []
+
+
+def test_engine_routed_candidate_policy_scores_non_leaf_routed_concepts(onto, router, tokenizer):
+    scorer = EmbeddingScorer(router, temperature=0.05)
+    leaves = OLaya(ontology=onto, tokenizer=tokenizer, device="cpu", weights_path=False, router=router, scorer=scorer)
+    routed = OLaya(
+        ontology=onto,
+        tokenizer=tokenizer,
+        device="cpu",
+        weights_path=False,
+        router=router,
+        scorer=scorer,
+        candidate_policy="routed",
+    )
+    assert routed.model_id.endswith("+candidates:routed")
+    q = {"q": {"type": "concept", "root": "T:ROOT"}}
+    a_leaves = leaves.system_one("the kitty purrs on the sofa", q).answers["q"]
+    a_routed = routed.system_one("the kitty purrs on the sofa", q).answers["q"]
+    routed_curies = [
+        c.curie for c, _ in router.route_candidates("the kitty purrs on the sofa", root_curie="T:ROOT", top_k=10)
+    ]
+    # Every routed concept competes, including ones that have a routed descendant.
+    assert set(a_routed.candidate_probabilities) == set(routed_curies)
+    # The leaf policy's candidates are the subset of routed concepts without routed children.
+    assert set(a_leaves.candidate_probabilities) < set(a_routed.candidate_probabilities)
+    assert any(onto.concepts[c].children for c in a_routed.candidate_probabilities)
+    assert abs(sum(a_routed.candidate_probabilities.values()) - 1.0) < 1e-6
+    # Marginals stay monotone under subsumption.
+    for c, p in a_routed.probabilities.items():
+        for parent in onto.concepts[c].parents:
+            if parent in a_routed.probabilities:
+                assert a_routed.probabilities[parent] >= p - 1e-9
+    assert a_routed.axioms_verified
+    with pytest.raises(ValueError):
+        OLaya(ontology=onto, tokenizer=tokenizer, device="cpu", weights_path=False, candidate_policy="all")
+
+
+def test_mined_hard_negatives_rank_non_gold_classes_deterministically():
+    from olaya.embedding_router import mined_hard_negatives
+
+    classes = ["A", "B", "C", "D"]
+    c = np.eye(4, dtype=np.float32)
+    q = np.array([[0.9, 0.8, 0.1, 0.0], [0.0, 0.2, 0.3, 0.9]], dtype=np.float32)
+    mined = mined_hard_negatives(q, c, classes, ["A", "D"], per_query=2)
+    assert mined == [["B", "C"], ["C", "B"]]
+    assert mined_hard_negatives(q, c, classes, ["A", "D"], per_query=0) == [[], []]
+    # A gold class is never its own negative even when it scores highest.
+    assert "A" not in mined[0] and "D" not in mined[1]
