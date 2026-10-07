@@ -131,6 +131,9 @@ class SystemOneResult:
     act_probabilities: dict[str, float] = field(default_factory=dict)
 
 
+CANDIDATE_POLICIES = frozenset({"leaves", "routed"})
+
+
 class OLaya:
     """Ontology-Grounded Decision Model Engine."""
 
@@ -143,8 +146,18 @@ class OLaya:
         weights_path: str | Path | bool | None = None,
         router: Any | None = None,
         scorer: Any | None = None,
+        candidate_policy: str = "leaves",
     ):
         self.ontology = ontology or create_incident_ontology()
+        # ``candidate_policy`` decides which routed concepts compete in a ``concept`` question.
+        # ``"leaves"`` (default, shared with the Rust / Node runtimes and the golden vectors) scores
+        # only the most specific concepts of the routed subgraph; ``"routed"`` scores the routed
+        # concepts themselves, so a class the router ranked but that has a routed descendant still
+        # competes instead of surviving only as ancestor context. Marginals stay monotone either way
+        # (a concept's marginal is the mass at or below it).
+        if candidate_policy not in CANDIDATE_POLICIES:
+            raise ValueError(f"candidate_policy must be one of {sorted(CANDIDATE_POLICIES)}, got {candidate_policy!r}")
+        self.candidate_policy = candidate_policy
         # ``router`` is any object with ``extract_decision_subgraph(state_text, root_curie, max_candidates)``
         # over this ontology (``olaya.embedding_router`` provides embedding and hybrid routers); the
         # default stays the lexical router. ``scorer`` replaces the decision head's candidate logits
@@ -209,6 +222,8 @@ class OLaya:
 
         if self.scorer is not None:
             self.model_id = f"{self.model_id}+scorer:{getattr(self.scorer, 'name', type(self.scorer).__name__)}"
+        if self.candidate_policy != "leaves":
+            self.model_id = f"{self.model_id}+candidates:{self.candidate_policy}"
 
         self.model.to(self.device)
         self.model.eval()
@@ -285,14 +300,25 @@ class OLaya:
                 root_curie = q.get("root")
                 if root_curie is not None and root_curie not in self.ontology.concepts:
                     raise ValueError(f"Question {qid!r}: unknown root concept {root_curie!r}.")
-                subgraph = self.router.extract_decision_subgraph(
-                    state_text=state_text, root_curie=root_curie, max_candidates=10
-                )
+                routed_curies: list[str] | None = None
+                if self.candidate_policy == "routed" and callable(getattr(self.router, "route_candidates", None)):
+                    routed = self.router.route_candidates(state_text, root_curie=root_curie, top_k=10)
+                    routed_curies = [c.curie for c, _ in routed if c.curie in self.ontology.concepts]
+                    subgraph = self.ontology.extract_subgraph(routed_curies, include_parents=True)
+                else:
+                    subgraph = self.router.extract_decision_subgraph(
+                        state_text=state_text, root_curie=root_curie, max_candidates=10
+                    )
                 if not subgraph.concepts:
                     raise ValueError(f"Question {qid!r}: no candidate concepts (is the ontology empty?).")
-                # Only the most specific routed concepts compete; their ancestors appear as
-                # subClassOf context in the option text and receive mass through marginals.
-                active_concepts = [c for c in subgraph.concepts.values() if not c.children]
+                if routed_curies:
+                    # Every routed concept competes, whatever its depth; ancestors that were only
+                    # pulled in as lineage context stay context.
+                    active_concepts = [subgraph.concepts[c] for c in routed_curies]
+                else:
+                    # Only the most specific routed concepts compete; their ancestors appear as
+                    # subClassOf context in the option text and receive mass through marginals.
+                    active_concepts = [c for c in subgraph.concepts.values() if not c.children]
                 morphism_ontology = self.ontology
 
             elif qtype == "subsumes":

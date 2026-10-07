@@ -590,9 +590,29 @@ def split_corpus(rows: Sequence[CorpusRow], seed: int = 42) -> dict[str, list[Co
     return {name: [by_id[o.source_id] for o in part] for name, part in splits.items()}
 
 
-def split_report(splits: Mapping[str, Sequence[CorpusRow]]) -> dict[str, Any]:
+def split_corpus_by_class(rows: Sequence[CorpusRow], seed: int = 42) -> dict[str, list[CorpusRow]]:
+    """Class-disjoint 60/15/10/15 split: every row of a class lands in the same part.
+
+    The group is the target class, so no test class was seen in training. This measures transfer of
+    a trained encoder to classes it never saw, the question the batch-disjoint split cannot answer.
+    Requires at least four classes.
+    """
+    by_id = {row.row_id: row for row in rows}
+    observations = [
+        SourceObservation(row.row_id, f"class:{row.target_curie}", row.target_curie, row.text, SOURCE_KIND)
+        for row in rows
+    ]
+    splits = split_observations(observations, seed=seed)
+    return {name: [by_id[o.source_id] for o in part] for name, part in splits.items()}
+
+
+def split_report(splits: Mapping[str, Sequence[CorpusRow]], unit: str = "batch") -> dict[str, Any]:
     train_classes = {r.target_curie for r in splits.get("train", ())}
-    report: dict[str, Any] = {"unit": "generation batch (one LLM generation call); classes are NOT held out"}
+    units = {
+        "batch": "generation batch (one LLM generation call); classes are NOT held out",
+        "class": "target class; every test class is unseen in training",
+    }
+    report: dict[str, Any] = {"unit": units.get(unit, unit)}
     for name, part in splits.items():
         classes = {r.target_curie for r in part}
         report[name] = {

@@ -183,3 +183,21 @@ def test_client_backs_off_on_429_and_counts_usage():
     assert client.chat([{"role": "user", "content": "x"}], "m") == "{}"
     assert client.rate_limit_hits == 1 and len(slept) == 1 and client.prompt_tokens == 3
     assert "k" not in repr(client)
+
+
+def test_class_disjoint_split_holds_out_every_test_class(ontology):
+    from olaya.corpus import split_corpus_by_class
+
+    rows = _rows(ontology)
+    parts = split_corpus_by_class(rows, seed=3)
+    assert sum(len(v) for v in parts.values()) == len(rows)
+    classes = {k: {r.target_curie for r in v} for k, v in parts.items()}
+    names = list(classes)
+    for i, x in enumerate(names):
+        for y in names[i + 1 :]:
+            assert not classes[x] & classes[y]
+    report = split_report(parts, unit="class")
+    assert report["unit"].startswith("target class")
+    assert len(report["test"]["classes_unseen_in_train"]) == report["test"]["classes"]
+    same = split_corpus_by_class(list(reversed(rows)), seed=3)
+    assert {k: [r.row_id for r in v] for k, v in parts.items()} == {k: [r.row_id for r in v] for k, v in same.items()}

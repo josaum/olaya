@@ -59,13 +59,13 @@
   "embedding_checkpoints": {
     "incident": {
       "file": "olaya_embed_incident.pt",
-      "sha256": "93b5027405178091ff9976eb399ba8f8595cdee40da7bc6321915c4f7ae422f7",
+      "sha256": "361250ba520f83b588fd3a3ee458324138eb38b00f25c8f7be4e7d47984afe49",
       "size_bytes": 133506458,
       "base_model": "BAAI/bge-small-en-v1.5",
       "format": "olaya-bi-encoder-v1 (state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
       "corpus_sha256": "289385a90d5bca1243b226ae4da99b93f81d365e9ff265168dcb78d2f9f594dd",
       "ontology_file_sha256": "c2fc17f23d2d4e10c3acbe2c6801fa2036a0111e0147e3122b9f0123ce776e93",
-      "commit": "ed07ef4400a2f91dca48f46ed14b16d8da26c978",
+      "commit": "5244e2d489339cdb8960ed55fdf88cedf3f4f1a4",
       "temperature": 0.0005,
       "metrics": {
         "validation_top1": 1.0,
@@ -82,13 +82,13 @@
     },
     "gs1": {
       "file": "olaya_embed_gs1.pt",
-      "sha256": "43aa1ceda29fbf5f6b3947abc216d43557015ab12e6638b6c98d36ebdc739e0e",
+      "sha256": "23fee723924114bc63427f586a4fcefd903a9258799d76f3b2a158beed6997ee",
       "size_bytes": 90887001,
       "base_model": "sentence-transformers/all-MiniLM-L6-v2",
       "format": "olaya-bi-encoder-v1 (state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
       "corpus_sha256": "c442463da3977bc0c905e9b248a8b89d1634bdc40fa077f6c1a05f487a2b9583",
       "ontology_file_sha256": "de76db39ebb2332465d5440887b5f9167dac43b7fbb9ddba3f0f5046d2b243f8",
-      "commit": "ed07ef4400a2f91dca48f46ed14b16d8da26c978",
+      "commit": "2e54b06e5343ae5ad819346bf17e55a56b92fbd6",
       "temperature": 0.05296268625886444,
       "metrics": {
         "validation_top1": 0.711864406779661,
@@ -98,33 +98,88 @@
         "test_recall_at_5": 0.921875,
         "test_ceiling_at_8": 0.9375,
         "test_concept_task_top1": 0.8888888888888888,
-        "test_concept_task_ece": 0.06483252890526299,
+        "test_concept_task_ece": 0.06483257904885305,
         "lexical_test_top1": 0.28125
       },
       "report": "benchmarks/results/router-eval-gs1.json"
     },
     "schemaorg": {
       "file": "olaya_embed_schemaorg.pt",
-      "sha256": "194dad4f3aebb5a4101c447ae31e4701ce18940470875235e146c60197fbd4b9",
+      "sha256": "a804f232a05d4d9190e1f692beeb5cc2f39789cad5ca294a2291f59fe31d13fd",
       "size_bytes": 133506663,
       "base_model": "BAAI/bge-small-en-v1.5",
       "format": "olaya-bi-encoder-v1 (state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
       "corpus_sha256": "3253d80a8d766154ec5a8008443df2ad72730ff8c3082f3239beb73be07d0bc7",
       "ontology_file_sha256": "abc5112d312b7ed8362345789b711c0af876a7a0404c4c84ab3b492060a52f14",
-      "commit": "ed07ef4400a2f91dca48f46ed14b16d8da26c978",
-      "temperature": 0.03341719587843075,
+      "commit": "60c046659c8345058fd335532cff1e7ccc27b43b",
+      "temperature": 0.0353972892192069,
       "metrics": {
-        "validation_top1": 0.6439393939393939,
+        "validation_top1": 0.6515151515151515,
         "validation_top1_zero_shot_base": 0.32575757575757575,
         "validation_top1_lexical": 0.09848484848484848,
-        "test_top1": 0.5166666666666667,
-        "test_recall_at_5": 0.825,
+        "test_top1": 0.5583333333333333,
+        "test_recall_at_5": 0.8333333333333334,
         "test_ceiling_at_8": 0.8666666666666667,
         "test_concept_task_top1": 0.9487179487179487,
-        "test_concept_task_ece": 0.027073444973709237,
+        "test_concept_task_ece": 0.04945533805423312,
         "lexical_test_top1": 0.1
       },
       "report": "benchmarks/results/router-eval-schemaorg.json"
+    },
+    "joint": {
+      "file": "olaya_embed_joint.pt",
+      "sha256": "d4a768634a042dab2af047e152a64a6dfb039f9b1203dd50b1106493d8678bc5",
+      "size_bytes": 133505843,
+      "base_model": "BAAI/bge-small-en-v1.5",
+      "format": "olaya-bi-encoder-v1 (state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
+      "domains": [
+        "gs1",
+        "incident",
+        "schemaorg"
+      ],
+      "train_pairs": 849,
+      "classes": 736,
+      "commit": "d905977f3f00777f4777e798479dc9794bb35675",
+      "loss": "InfoNCE (temperature 0.05) over in-batch gold class texts + one sibling hard negative per query + 2 mined hard negatives per query re-mined each epoch",
+      "metrics": {
+        "mean_validation_top1": 0.7179370977975165,
+        "mean_validation_top1_zero_shot_base": 0.5243386003605345,
+        "gs1_test_top1": 0.65625,
+        "incident_test_top1": 0.75,
+        "schemaorg_test_top1": 0.6333333333333333,
+        "gs1_test_recall_at_5": 0.84375,
+        "incident_test_recall_at_5": 0.9375,
+        "schemaorg_test_recall_at_5": 0.8333333333333334
+      },
+      "report": "benchmarks/results/router-eval-joint.json"
+    },
+    "joint60": {
+      "file": "olaya_embed_joint60.pt",
+      "sha256": "7824ad7266535489053e7e266b5a7b14e44946b22c788aa43b06a9c807047abd",
+      "size_bytes": 133506253,
+      "base_model": "BAAI/bge-small-en-v1.5",
+      "format": "olaya-bi-encoder-v1 (state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
+      "domains": [
+        "gs1",
+        "incident",
+        "schemaorg"
+      ],
+      "train_pairs": 849,
+      "classes": 736,
+      "commit": "3ec52f19450802dc604913f4a17b5dc56988f335",
+      "budget_minutes": 60.0,
+      "loss": "InfoNCE (temperature 0.05) over in-batch gold class texts + one sibling hard negative per query + 2 mined hard negatives per query re-mined each epoch",
+      "metrics": {
+        "mean_validation_top1": 0.7348862503398893,
+        "mean_validation_top1_zero_shot_base": 0.5243386003605345,
+        "gs1_test_top1": 0.65625,
+        "incident_test_top1": 0.8125,
+        "schemaorg_test_top1": 0.6416666666666667,
+        "gs1_test_recall_at_5": 0.828125,
+        "incident_test_recall_at_5": 0.9375,
+        "schemaorg_test_recall_at_5": 0.8166666666666667
+      },
+      "report": "benchmarks/results/router-eval-joint60.json"
     }
   }
 }

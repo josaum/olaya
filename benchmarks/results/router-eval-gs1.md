@@ -1,13 +1,12 @@
 # Candidate routers on the LLM-distilled gs1 corpus
 
-Labels are LLM-distilled and filtered, **not human**. Same corpus, same batch-disjoint split and same test
-rows as `decision-head-gs1.md`; every choice of encoder / variant is made on the validation split and test
+Labels are LLM-distilled and filtered, **not human**. Same corpus, same batch-disjoint split and same test rows as `decision-head-gs1.md`; every choice of encoder / variant is made on the validation split and test
 is evaluated once per configuration. The state given to every router is the raw observation text.
 
 - Corpus `data/corpora/gs1.jsonl`: 422 rows, 63 classes used of 63 ontology concepts; split rows {'train': 258, 'validation': 59, 'calibration': 41, 'test': 64}
 - Test classes unseen in training: 4
 - Concept tasks (gold + 5 hard negatives): calibration 41, test 63
-- Commit `ed07ef4400a2`, runtime 524.7 s
+- Commit `2e54b06e5343`, runtime 777.1 s
 
 ## Candidate ceiling on the test split (gold in top-k over the full ontology)
 
@@ -75,41 +74,81 @@ Validation-split top-1 (cosine) per encoder, the selection signal: e5-small 0.42
 | csls router + e5-small scorer | 0.266 | 0.453 | 0.453 | 0.688 | 1.000 | 0.14 / 0.333 |
 | hybrid-union router + e5-small scorer | 0.266 | 0.641 | 0.656 | 0.766 | 1.000 | 0.19 / 0.333 |
 | hybrid-rrf router + e5-small scorer | 0.250 | 0.562 | 0.594 | 0.656 | 1.000 | 0.22 / 0.429 |
+| lexical [routed] router + e5-small scorer | 0.312 | 0.547 | 0.547 | 0.562 | 1.000 | 0.33 / 0.333 |
+| cosine [routed] router + e5-small scorer | 0.266 | 0.531 | 0.594 | 0.719 | 1.000 | 0.09 / 0.167 |
+| csls [routed] router + e5-small scorer | 0.266 | 0.453 | 0.453 | 0.688 | 1.000 | 0.14 / 0.333 |
+| hybrid-union [routed] router + e5-small scorer | 0.266 | 0.656 | 0.672 | 0.766 | 1.000 | 0.16 / 0.400 |
+| hybrid-rrf [routed] router + e5-small scorer | 0.234 | 0.562 | 0.625 | 0.656 | 1.000 | 0.20 / 0.462 |
 | lexical router + bge-small scorer | 0.453 | 0.547 | 0.547 | 0.562 | 1.000 | 0.38 / 0.458 |
 | cosine router + bge-small scorer | 0.375 | 0.688 | 0.719 | 0.859 | 1.000 | 0.12 / 0.625 |
 | csls router + bge-small scorer | 0.359 | 0.672 | 0.672 | 0.859 | 1.000 | 0.14 / 0.556 |
 | hybrid-union router + bge-small scorer | 0.375 | 0.734 | 0.734 | 0.844 | 1.000 | 0.17 / 0.455 |
 | hybrid-rrf router + bge-small scorer | 0.406 | 0.625 | 0.625 | 0.719 | 1.000 | 0.19 / 0.583 |
+| lexical [routed] router + bge-small scorer | 0.453 | 0.547 | 0.547 | 0.562 | 1.000 | 0.33 / 0.524 |
+| cosine [routed] router + bge-small scorer | 0.375 | 0.688 | 0.719 | 0.859 | 1.000 | 0.12 / 0.625 |
+| csls [routed] router + bge-small scorer | 0.359 | 0.672 | 0.672 | 0.859 | 1.000 | 0.14 / 0.556 |
+| hybrid-union [routed] router + bge-small scorer | 0.375 | 0.750 | 0.766 | 0.844 | 1.000 | 0.19 / 0.500 |
+| hybrid-rrf [routed] router + bge-small scorer | 0.406 | 0.641 | 0.656 | 0.719 | 1.000 | 0.19 / 0.583 |
 | lexical router + minilm scorer | 0.391 | 0.547 | 0.547 | 0.562 | 1.000 | 0.52 / 0.485 |
 | cosine router + minilm scorer | 0.297 | 0.641 | 0.703 | 0.828 | 1.000 | 0.14 / 0.667 |
 | csls router + minilm scorer | 0.297 | 0.641 | 0.703 | 0.781 | 1.000 | 0.14 / 0.667 |
 | hybrid-union router + minilm scorer | 0.297 | 0.609 | 0.656 | 0.797 | 1.000 | 0.14 / 0.667 |
 | hybrid-rrf router + minilm scorer | 0.281 | 0.531 | 0.578 | 0.688 | 1.000 | 0.19 / 0.750 |
+| lexical [routed] router + minilm scorer | 0.391 | 0.547 | 0.547 | 0.562 | 1.000 | 0.50 / 0.469 |
+| cosine [routed] router + minilm scorer | 0.297 | 0.641 | 0.719 | 0.828 | 1.000 | 0.14 / 0.667 |
+| csls [routed] router + minilm scorer | 0.297 | 0.656 | 0.719 | 0.781 | 1.000 | 0.14 / 0.667 |
+| hybrid-union [routed] router + minilm scorer | 0.297 | 0.625 | 0.688 | 0.797 | 1.000 | 0.14 / 0.667 |
+| hybrid-rrf [routed] router + minilm scorer | 0.281 | 0.547 | 0.609 | 0.688 | 1.000 | 0.20 / 0.692 |
 | lexical router + mpnet scorer | 0.406 | 0.547 | 0.547 | 0.562 | 1.000 | 0.28 / 0.611 |
 | cosine router + mpnet scorer | 0.328 | 0.750 | 0.859 | 0.906 | 1.000 | 0.05 / 0.667 |
 | csls router + mpnet scorer | 0.328 | 0.750 | 0.859 | 0.938 | 1.000 | 0.05 / 0.667 |
 | hybrid-union router + mpnet scorer | 0.328 | 0.719 | 0.750 | 0.906 | 1.000 | 0.08 / 0.600 |
 | hybrid-rrf router + mpnet scorer | 0.312 | 0.578 | 0.594 | 0.734 | 1.000 | 0.11 / 0.571 |
+| lexical [routed] router + mpnet scorer | 0.406 | 0.547 | 0.547 | 0.562 | 1.000 | 0.28 / 0.611 |
+| cosine [routed] router + mpnet scorer | 0.344 | 0.766 | 0.859 | 0.906 | 1.000 | 0.03 / 1.000 |
+| csls [routed] router + mpnet scorer | 0.344 | 0.766 | 0.859 | 0.938 | 1.000 | 0.03 / 1.000 |
+| hybrid-union [routed] router + mpnet scorer | 0.344 | 0.719 | 0.781 | 0.906 | 1.000 | 0.06 / 0.500 |
+| hybrid-rrf [routed] router + mpnet scorer | 0.328 | 0.594 | 0.625 | 0.734 | 1.000 | 0.11 / 0.571 |
 | lexical router + bge-base scorer | 0.359 | 0.547 | 0.547 | 0.562 | 1.000 | 0.28 / 0.389 |
 | cosine router + bge-base scorer | 0.406 | 0.703 | 0.719 | 0.859 | 1.000 | 0.03 / 0.500 |
 | csls router + bge-base scorer | 0.406 | 0.703 | 0.734 | 0.859 | 1.000 | 0.11 / 0.571 |
 | hybrid-union router + bge-base scorer | 0.406 | 0.734 | 0.750 | 0.875 | 1.000 | 0.11 / 0.429 |
 | hybrid-rrf router + bge-base scorer | 0.359 | 0.562 | 0.625 | 0.750 | 1.000 | 0.12 / 0.500 |
+| lexical [routed] router + bge-base scorer | 0.359 | 0.547 | 0.547 | 0.562 | 1.000 | 0.31 / 0.400 |
+| cosine [routed] router + bge-base scorer | 0.406 | 0.703 | 0.719 | 0.859 | 1.000 | 0.03 / 0.500 |
+| csls [routed] router + bge-base scorer | 0.406 | 0.703 | 0.734 | 0.859 | 1.000 | 0.11 / 0.571 |
+| hybrid-union [routed] router + bge-base scorer | 0.406 | 0.766 | 0.781 | 0.875 | 1.000 | 0.14 / 0.556 |
+| hybrid-rrf [routed] router + bge-base scorer | 0.359 | 0.578 | 0.656 | 0.750 | 1.000 | 0.12 / 0.500 |
 | lexical router + e5-large scorer | 0.375 | 0.547 | 0.547 | 0.562 | 1.000 | 0.28 / 0.500 |
 | cosine router + e5-large scorer | 0.469 | 0.766 | 0.781 | 0.922 | 1.000 | 0.09 / 0.500 |
 | csls router + e5-large scorer | 0.469 | 0.719 | 0.750 | 0.875 | 1.000 | 0.11 / 0.571 |
 | hybrid-union router + e5-large scorer | 0.469 | 0.797 | 0.797 | 0.891 | 1.000 | 0.11 / 0.571 |
 | hybrid-rrf router + e5-large scorer | 0.453 | 0.594 | 0.594 | 0.734 | 1.000 | 0.14 / 0.444 |
+| lexical [routed] router + e5-large scorer | 0.375 | 0.547 | 0.547 | 0.562 | 1.000 | 0.28 / 0.500 |
+| cosine [routed] router + e5-large scorer | 0.453 | 0.766 | 0.781 | 0.922 | 1.000 | 0.09 / 0.500 |
+| csls [routed] router + e5-large scorer | 0.453 | 0.734 | 0.766 | 0.875 | 1.000 | 0.09 / 0.500 |
+| hybrid-union [routed] router + e5-large scorer | 0.453 | 0.797 | 0.812 | 0.891 | 1.000 | 0.09 / 0.500 |
+| hybrid-rrf [routed] router + e5-large scorer | 0.438 | 0.609 | 0.625 | 0.734 | 1.000 | 0.11 / 0.429 |
 | lexical router + bge-large scorer | 0.375 | 0.547 | 0.547 | 0.562 | 1.000 | 0.50 / 0.531 |
 | cosine router + bge-large scorer | 0.344 | 0.703 | 0.781 | 0.906 | 1.000 | 0.16 / 0.600 |
 | csls router + bge-large scorer | 0.344 | 0.688 | 0.703 | 0.812 | 1.000 | 0.20 / 0.615 |
 | hybrid-union router + bge-large scorer | 0.344 | 0.719 | 0.750 | 0.828 | 1.000 | 0.22 / 0.571 |
 | hybrid-rrf router + bge-large scorer | 0.375 | 0.609 | 0.625 | 0.719 | 1.000 | 0.30 / 0.474 |
+| lexical [routed] router + bge-large scorer | 0.375 | 0.547 | 0.547 | 0.562 | 1.000 | 0.52 / 0.545 |
+| cosine [routed] router + bge-large scorer | 0.344 | 0.703 | 0.781 | 0.906 | 1.000 | 0.16 / 0.600 |
+| csls [routed] router + bge-large scorer | 0.344 | 0.703 | 0.719 | 0.812 | 1.000 | 0.20 / 0.615 |
+| hybrid-union [routed] router + bge-large scorer | 0.344 | 0.719 | 0.781 | 0.828 | 1.000 | 0.22 / 0.571 |
+| hybrid-rrf [routed] router + bge-large scorer | 0.375 | 0.609 | 0.656 | 0.719 | 1.000 | 0.30 / 0.474 |
 | lexical router + fine-tuned minilm scorer | 0.516 | 0.547 | 0.547 | 0.562 | 1.000 | 0.62 / 0.750 |
 | cosine router + fine-tuned minilm scorer | 0.625 | 0.891 | 0.891 | 0.984 | 1.000 | 0.47 / 0.800 |
 | csls router + fine-tuned minilm scorer | 0.625 | 0.891 | 0.891 | 1.000 | 1.000 | 0.47 / 0.800 |
 | hybrid-union router + fine-tuned minilm scorer | 0.625 | 0.875 | 0.875 | 0.969 | 1.000 | 0.55 / 0.743 |
 | hybrid-rrf router + fine-tuned minilm scorer | 0.500 | 0.641 | 0.641 | 0.734 | 1.000 | 0.45 / 0.759 |
+| lexical [routed] router + fine-tuned minilm scorer | 0.516 | 0.547 | 0.547 | 0.562 | 1.000 | 0.62 / 0.750 |
+| cosine [routed] router + fine-tuned minilm scorer | 0.609 | 0.922 | 0.922 | 0.984 | 1.000 | 0.42 / 0.815 |
+| csls [routed] router + fine-tuned minilm scorer | 0.609 | 0.922 | 0.922 | 1.000 | 1.000 | 0.42 / 0.815 |
+| hybrid-union [routed] router + fine-tuned minilm scorer | 0.609 | 0.891 | 0.906 | 0.969 | 1.000 | 0.52 / 0.758 |
+| hybrid-rrf [routed] router + fine-tuned minilm scorer | 0.500 | 0.656 | 0.672 | 0.734 | 1.000 | 0.44 / 0.786 |
 
 ## Selection (validation split only)
 
@@ -119,9 +158,9 @@ Validation-split top-1 (cosine) per encoder, the selection signal: e5-small 0.42
 
 ## Fine-tuned bi-encoder
 
-- Base `sentence-transformers/all-MiniLM-L6-v2`, 258 train pairs, 20 epochs in 460.5 s (budget 15.0 min), best epoch 12
+- Base `sentence-transformers/all-MiniLM-L6-v2`, 258 train pairs, 20 epochs in 553.2 s (budget 15.0 min), best epoch 12
 - InfoNCE (temperature 0.05) over in-batch gold class texts + one sibling hard negative per query
-- Checkpoint `models/checkpoints/olaya_embed_gs1.pt` sha256 `43aa1ceda29fbf5f` (90887001 bytes)
+- Checkpoint `models/checkpoints/olaya_embed_gs1.pt` sha256 `23fee723924114bc` (90887001 bytes)
 - Validation top-1: fine-tuned 0.712 vs zero-shot base 0.475 vs lexical 0.169 -> recorded in MANIFEST.json
 - History: epoch 1 loss 0.945 val 0.542; epoch 2 loss 0.479 val 0.576; epoch 3 loss 0.245 val 0.593; epoch 4 loss 0.165 val 0.593; epoch 5 loss 0.102 val 0.627; epoch 6 loss 0.076 val 0.644; epoch 7 loss 0.041 val 0.678; epoch 8 loss 0.040 val 0.695; epoch 9 loss 0.042 val 0.661; epoch 10 loss 0.033 val 0.695; epoch 11 loss 0.012 val 0.678; epoch 12 loss 0.009 val 0.712; epoch 13 loss 0.007 val 0.678; epoch 14 loss 0.008 val 0.695; epoch 15 loss 0.005 val 0.712; epoch 16 loss 0.004 val 0.695; epoch 17 loss 0.004 val 0.712; epoch 18 loss 0.003 val 0.678; epoch 19 loss 0.003 val 0.712; epoch 20 loss 0.002 val 0.695
 
