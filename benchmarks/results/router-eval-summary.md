@@ -15,14 +15,14 @@ negatives) after a temperature fitted on the calibration split.
 | gs1 | zero-shot bge-small cosine (a-priori default) | 0.766 | 0.797 | 0.375 | 0.688 | 0.698 | 0.112 |
 | gs1 | best zero-shot by validation: bge-base cosine | 0.734 | 0.797 | 0.406 | 0.703 | 0.746 | 0.122 |
 | gs1 | best hybrid by validation: bge-base hybrid-union | 0.812 | 0.812 | 0.281 | 0.719 | 0.746 | 0.122 |
-| gs1 | fine-tuned minilm cosine (`43aa1ceda29f`) | 0.938 | 0.922 | 0.609 | 0.922 | 0.889 | 0.065 |
+| gs1 | fine-tuned minilm cosine (`23fee7239241`) | 0.938 | 0.922 | 0.609 | 0.922 | 0.889 | 0.065 |
 | incident | lexical | 0.875 | 0.750 | 0.562 | 0.875 | 0.688 | 0.316 |
 | incident | lexical router + trained head (committed) | - | - | 0.188 | 0.688 | 0.438 | 0.261 |
 | incident | zero-shot e5-small cosine | 0.938 | 0.812 | 0.438 | 0.875 | 0.688 | 0.245 |
 | incident | zero-shot bge-small cosine (a-priori default) | 0.938 | 0.812 | 0.562 | 0.938 | 0.875 | 0.125 |
 | incident | best zero-shot by validation: bge-base cosine | 0.938 | 0.812 | 0.625 | 0.938 | 1.000 | 0.000 |
 | incident | best hybrid by validation: bge-base hybrid-rrf | 0.938 | 0.812 | 0.688 | 0.938 | 1.000 | 0.000 |
-| incident | fine-tuned bge-small cosine (`93b502740517`) | 1.000 | 0.812 | 0.688 | 1.000 | 0.875 | 0.125 |
+| incident | fine-tuned bge-small cosine (`361250ba520f`) | 1.000 | 0.812 | 0.688 | 1.000 | 0.875 | 0.125 |
 | schemaorg | lexical | 0.208 | 0.225 | 0.100 | 0.175 | 0.419 | 0.109 |
 | schemaorg | lexical router + trained head (committed) | - | - | 0.075 | 0.142 | 0.179 | 0.111 |
 | schemaorg | zero-shot e5-small cosine | 0.617 | 0.600 | 0.275 | 0.483 | 0.803 | 0.046 |
@@ -42,16 +42,31 @@ negatives) after a temperature fitted on the calibration split.
 | gs1 | csls | bge-small cosine | 0.359 | 0.672 | 0.672 |
 | gs1 | hybrid-union | bge-small cosine | 0.375 | 0.734 | 0.734 |
 | gs1 | hybrid-rrf | bge-small cosine | 0.406 | 0.625 | 0.625 |
+| gs1 | lexical [routed] | bge-small cosine | 0.453 | 0.547 | 0.547 |
+| gs1 | cosine [routed] | bge-small cosine | 0.375 | 0.688 | 0.719 |
+| gs1 | csls [routed] | bge-small cosine | 0.359 | 0.672 | 0.672 |
+| gs1 | hybrid-union [routed] | bge-small cosine | 0.375 | 0.750 | 0.766 |
+| gs1 | hybrid-rrf [routed] | bge-small cosine | 0.406 | 0.641 | 0.656 |
 | gs1 | lexical | bge-base cosine | 0.359 | 0.547 | 0.547 |
 | gs1 | cosine | bge-base cosine | 0.406 | 0.703 | 0.719 |
 | gs1 | csls | bge-base cosine | 0.406 | 0.703 | 0.734 |
 | gs1 | hybrid-union | bge-base cosine | 0.406 | 0.734 | 0.750 |
 | gs1 | hybrid-rrf | bge-base cosine | 0.359 | 0.562 | 0.625 |
+| gs1 | lexical [routed] | bge-base cosine | 0.359 | 0.547 | 0.547 |
+| gs1 | cosine [routed] | bge-base cosine | 0.406 | 0.703 | 0.719 |
+| gs1 | csls [routed] | bge-base cosine | 0.406 | 0.703 | 0.734 |
+| gs1 | hybrid-union [routed] | bge-base cosine | 0.406 | 0.766 | 0.781 |
+| gs1 | hybrid-rrf [routed] | bge-base cosine | 0.359 | 0.578 | 0.656 |
 | gs1 | lexical | fine-tuned minilm | 0.516 | 0.547 | 0.547 |
 | gs1 | cosine | fine-tuned minilm | 0.625 | 0.891 | 0.891 |
 | gs1 | csls | fine-tuned minilm | 0.625 | 0.891 | 0.891 |
 | gs1 | hybrid-union | fine-tuned minilm | 0.625 | 0.875 | 0.875 |
 | gs1 | hybrid-rrf | fine-tuned minilm | 0.500 | 0.641 | 0.641 |
+| gs1 | lexical [routed] | fine-tuned minilm | 0.516 | 0.547 | 0.547 |
+| gs1 | cosine [routed] | fine-tuned minilm | 0.609 | 0.922 | 0.922 |
+| gs1 | csls [routed] | fine-tuned minilm | 0.609 | 0.922 | 0.922 |
+| gs1 | hybrid-union [routed] | fine-tuned minilm | 0.609 | 0.891 | 0.906 |
+| gs1 | hybrid-rrf [routed] | fine-tuned minilm | 0.500 | 0.656 | 0.672 |
 | incident | lexical | lexical top-1 | 0.562 | 0.875 | 0.750 |
 | incident | lexical | trained head (committed) | 0.188 | 0.688 | - |
 | incident | lexical | bge-small cosine | 0.625 | 0.750 | 0.750 |
@@ -59,16 +74,31 @@ negatives) after a temperature fitted on the calibration split.
 | incident | csls | bge-small cosine | 0.562 | 0.812 | 0.812 |
 | incident | hybrid-union | bge-small cosine | 0.562 | 0.750 | 0.812 |
 | incident | hybrid-rrf | bge-small cosine | 0.562 | 0.750 | 0.812 |
+| incident | lexical [routed] | bge-small cosine | 0.688 | 0.875 | 0.875 |
+| incident | cosine [routed] | bge-small cosine | 0.562 | 0.875 | 0.938 |
+| incident | csls [routed] | bge-small cosine | 0.562 | 0.875 | 0.875 |
+| incident | hybrid-union [routed] | bge-small cosine | 0.562 | 0.812 | 0.938 |
+| incident | hybrid-rrf [routed] | bge-small cosine | 0.562 | 0.812 | 0.938 |
 | incident | lexical | bge-base cosine | 0.688 | 0.750 | 0.750 |
 | incident | cosine | bge-base cosine | 0.625 | 0.750 | 0.812 |
 | incident | csls | bge-base cosine | 0.625 | 0.750 | 0.812 |
 | incident | hybrid-union | bge-base cosine | 0.625 | 0.750 | 0.812 |
 | incident | hybrid-rrf | bge-base cosine | 0.625 | 0.750 | 0.812 |
+| incident | lexical [routed] | bge-base cosine | 0.750 | 0.875 | 0.875 |
+| incident | cosine [routed] | bge-base cosine | 0.625 | 0.875 | 0.938 |
+| incident | csls [routed] | bge-base cosine | 0.625 | 0.875 | 0.938 |
+| incident | hybrid-union [routed] | bge-base cosine | 0.625 | 0.875 | 0.938 |
+| incident | hybrid-rrf [routed] | bge-base cosine | 0.688 | 0.875 | 0.938 |
 | incident | lexical | fine-tuned bge-small | 0.688 | 0.750 | 0.750 |
 | incident | cosine | fine-tuned bge-small | 0.688 | 0.812 | 0.812 |
 | incident | csls | fine-tuned bge-small | 0.688 | 0.812 | 0.812 |
 | incident | hybrid-union | fine-tuned bge-small | 0.688 | 0.812 | 0.812 |
 | incident | hybrid-rrf | fine-tuned bge-small | 0.688 | 0.812 | 0.812 |
+| incident | lexical [routed] | fine-tuned bge-small | 0.750 | 0.875 | 0.875 |
+| incident | cosine [routed] | fine-tuned bge-small | 0.688 | 0.938 | 1.000 |
+| incident | csls [routed] | fine-tuned bge-small | 0.688 | 0.938 | 1.000 |
+| incident | hybrid-union [routed] | fine-tuned bge-small | 0.688 | 0.938 | 1.000 |
+| incident | hybrid-rrf [routed] | fine-tuned bge-small | 0.750 | 0.938 | 1.000 |
 | schemaorg | lexical | lexical top-1 | 0.100 | 0.175 | 0.225 |
 | schemaorg | lexical | trained head (committed) | 0.075 | 0.142 | - |
 | schemaorg | lexical | bge-small cosine | 0.133 | 0.158 | 0.158 |
@@ -93,6 +123,23 @@ negatives) after a temperature fitted on the calibration split.
 - gs1: default_small = {"encoder": "minilm", "variant": "cosine", "validation_top1": 0.4745762711864407}; best_zero_shot = {"encoder": "bge-base", "variant": "cosine", "validation_top1": 0.5084745762711864}; best_hybrid = {"encoder": "bge-base", "variant": "hybrid-union", "validation_ceiling_at_8": 0.7966101694915254}
 - incident: default_small = {"encoder": "bge-small", "variant": "cosine", "validation_top1": 0.8235294117647058}; best_zero_shot = {"encoder": "bge-base", "variant": "cosine", "validation_top1": 0.9411764705882353}; best_hybrid = {"encoder": "bge-base", "variant": "hybrid-rrf", "validation_ceiling_at_8": 1.0}
 - schemaorg: default_small = {"encoder": "bge-small", "variant": "cosine", "validation_top1": 0.32575757575757575}; best_zero_shot = {"encoder": "bge-large", "variant": "cosine", "validation_top1": 0.4090909090909091}; best_hybrid = {"encoder": "e5-large", "variant": "hybrid-union", "validation_ceiling_at_8": 0.7803030303030303}
+
+## Class-disjoint split (transfer to classes never seen in training)
+
+Same corpora, split 60/15/10/15 over *classes* (seeded), so no test class has a training row. The fine-tuned
+encoder here is trained on the class-disjoint train split; the committed checkpoints are not reused.
+
+| domain | test rows (classes) | system | ceiling@8 | top-1 | recall@5 | engine top-1 (leaves) | engine top-1 [routed] |
+|---|---|---|---|---|---|---|---|
+| gs1 | 61 (9) | lexical | 0.443 | 0.131 | 0.426 | - | - |
+| gs1 | 61 (9) | bge-small cosine | 0.721 | 0.344 | 0.607 | 0.344 | 0.344 |
+| gs1 | 61 (9) | fine-tuned bge-small (class-disjoint train) cosine | 0.885 | 0.459 | 0.803 | 0.475 | 0.459 |
+| incident | 23 (2) | lexical | 0.870 | 0.478 | 0.826 | - | - |
+| incident | 23 (2) | bge-small cosine | 1.000 | 0.609 | 1.000 | 0.609 | 0.609 |
+| incident | 23 (2) | fine-tuned bge-small (class-disjoint train) cosine | 1.000 | 0.696 | 1.000 | 0.913 | 0.696 |
+| schemaorg | 127 (18) | lexical | 0.394 | 0.205 | 0.386 | - | - |
+| schemaorg | 127 (18) | bge-small cosine | 0.535 | 0.291 | 0.457 | 0.283 | 0.291 |
+| schemaorg | 127 (18) | fine-tuned bge-small (class-disjoint train) cosine | 0.780 | 0.417 | 0.732 | 0.417 | 0.417 |
 
 ## What is and is not established
 
