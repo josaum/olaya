@@ -590,10 +590,44 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--lr", type=float, default=2e-4)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--scorer",
+        choices=("head", "embedding"),
+        default="head",
+        help="'head' trains the decision head (default); 'embedding' fine-tunes the bi-encoder scorer instead "
+        "(contrastive, scripts/evaluate_routers.py) under --budget-minutes and writes router-eval-<domain>.*",
+    )
+    parser.add_argument("--encoders", nargs="*", default=None, help="--scorer embedding: zero-shot encoders to compare")
     args = parser.parse_args()
     args.results_dir.mkdir(parents=True, exist_ok=True)
+    if args.scorer == "embedding":
+        train_embedding_scorer(args)
+        return
     train_domain(args)
     write_summary(args.results_dir)
+
+
+def train_embedding_scorer(args: argparse.Namespace) -> None:
+    """``--scorer embedding``: fine-tune and evaluate the bi-encoder scorer with ``scripts/evaluate_routers.py``."""
+    from scripts.evaluate_routers import ENCODERS, evaluate_domain
+    from scripts.evaluate_routers import write_summary as write_router_summary
+
+    router_args = argparse.Namespace(
+        domain=[args.domain],
+        encoders=args.encoders or list(ENCODERS),
+        corpus_dir=args.corpus_dir,
+        results_dir=args.results_dir,
+        output_dir=args.output_dir,
+        seed=args.seed,
+        finetune_minutes=args.budget_minutes,
+        finetune_base=None,
+        finetune_epochs=args.max_epochs,
+        finetune_batch_size=args.batch_size,
+        finetune_lr=2e-5,
+        summary=False,
+    )
+    evaluate_domain(router_args, args.domain)
+    write_router_summary(args.results_dir)
 
 
 if __name__ == "__main__":
