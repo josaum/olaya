@@ -756,6 +756,13 @@ def validate_verdicts(data: Any, n: int, *, allow_partial: bool = False) -> list
             }  # {"verdict": {...}} wrapper
         if not isinstance(item, dict):
             raise ValueError(f"verdict {idx} is not an object")
+        if "relation" not in item:
+            for alias in ("verdict", "label", "decision"):  # {"id": 1, "verdict": "equivalent"}
+                if isinstance(item.get(alias), str):
+                    item = {**item, "relation": item[alias]}
+                    break
+        if "confidence" not in item:
+            item = {**item, "confidence": 0.5}  # no confidence reported: neutral
         try:
             vid = int(item.get("id", idx))
             conf = float(item["confidence"])
