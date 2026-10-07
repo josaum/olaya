@@ -30,7 +30,8 @@ Pipeline (every step deterministic and cacheable):
    knobs are chosen by leave-one-pair-out cross-validation like the other benchmarks.
 
 Judges: :class:`AnthropicJudge` (the real model, official SDK, key from the
-environment), :class:`StubJudge` (answers from the reference alignment with optional
+environment), :class:`OpenAICompatJudge` (any OpenAI-compatible ``chat/completions`` server -
+Qwen Cloud, Z.ai / Zhipu GLM, ... - standard-library HTTP, key from the environment), :class:`StubJudge` (answers from the reference alignment with optional
 noise; tests and the offline sanity run) and :class:`NullJudge` (always unrelated).
 """
 
@@ -40,8 +41,13 @@ import hashlib
 import json
 import os
 import random
+import re
+import threading
 import time
-from collections.abc import Iterable, Mapping, Sequence
+import urllib.error
+import urllib.request
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
@@ -70,6 +76,35 @@ MODEL_PRICES_USD_PER_MTOK = {
     "claude-haiku-4-5": (1.0, 5.0),
 }
 RELATIONS = ("equivalent", "subsumes", "subsumed_by", "related", "unrelated")
+
+#: OpenAI-compatible judge: generic defaults and the Z.ai preset (``--judge zai``).
+OPENAI_DEFAULT_MODEL = "qwen3.8-flash"
+OPENAI_API_KEY_ENV = "LLM_JUDGE_API_KEY"
+OPENAI_BASE_URL_ENV = "LLM_JUDGE_BASE_URL"
+ZAI_DEFAULT_MODEL = "glm-5.3-flash"
+ZAI_DEFAULT_BASE_URL = "https://api.z.ai/api/paas/v4"
+ZAI_PRICING_URL = "https://docs.z.ai/guides/overview/pricing"
+ZAI_API_KEY_ENV = ("ZAI_API_KEY", "Z_AI_API_KEY")
+#: USD per million tokens (input, output) per provider label.  Z.ai read from ZAI_PRICING_URL on
+#: 2026-10-07 (no cache discount modelled).  Providers / models not listed here cost 0: pricing not pinned,
+#: fill from the provider's pricing page (Qwen Cloud: https://maas.qwencloudapi.com).
+PROVIDER_MODEL_PRICES_USD_PER_MTOK: dict[str, dict[str, tuple[float, float]]] = {
+    "anthropic": MODEL_PRICES_USD_PER_MTOK,
+    "zai": {
+        "glm-5.3-flash": (0.15, 0.50),
+        "glm-5.3-flashx": (0.37, 1.25),
+        "glm-5.3": (1.4, 4.4),
+        "glm-4.7-flash": (0.0, 0.0),
+        "glm-4.7-flashx": (0.07, 0.40),
+        "glm-4.5-flash": (0.0, 0.0),
+    },
+}
+
+
+def price_for(provider: str, model: str) -> tuple[float, float]:
+    """(input, output) USD per million tokens, ``(0, 0)`` when not pinned."""
+    return PROVIDER_MODEL_PRICES_USD_PER_MTOK.get(provider, {}).get(model, (0.0, 0.0))
+
 
 _MAX_LISTED = 10
 
@@ -397,9 +432,10 @@ class Usage:
     cache_creation_input_tokens: int = 0
     elapsed_s: float = 0.0
     request_id: str = ""
+    provider: str = "anthropic"
 
     def cost_usd(self) -> float:
-        inp, out = MODEL_PRICES_USD_PER_MTOK.get(self.model, (0.0, 0.0))
+        inp, out = price_for(self.provider, self.model)
         cached = self.cache_read_input_tokens * inp * 0.1
         return (
             self.input_tokens * inp + self.cache_creation_input_tokens * inp * 1.25 + cached + self.output_tokens * out
@@ -596,6 +632,270 @@ class AnthropicJudge:
         return verdicts, usage
 
 
+# ---------------------------------------------------------------------------
+# OpenAI-compatible judge (Qwen Cloud, Z.ai / GLM, ...) over the standard library
+# ---------------------------------------------------------------------------
+
+#: ``transport(url, headers, body, timeout) -> (status, body_bytes)``; raises :class:`TransportError`
+#: on connection errors / timeouts.  Tests inject a fake; the default is :func:`urllib_transport`.
+Transport = Callable[[str, Mapping[str, str], bytes | None, float], tuple[int, bytes]]
+
+
+class TransportError(RuntimeError):
+    """Connection failure or timeout (retried)."""
+
+
+class HTTPStatusError(RuntimeError):
+    def __init__(self, status: int, body: str):
+        super().__init__(f"HTTP {status}: {body[:500]}")
+        self.status = status
+        self.body = body
+
+
+def urllib_transport(url: str, headers: Mapping[str, str], body: bytes | None, timeout: float) -> tuple[int, bytes]:
+    req = urllib.request.Request(url, data=body, headers=dict(headers), method="POST" if body is not None else "GET")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310 - https URL from config
+            return int(resp.status), resp.read()
+    except urllib.error.HTTPError as exc:
+        return int(exc.code), exc.read()
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        raise TransportError(str(exc)) from exc
+
+
+def resolve_api_key(names: Sequence[str] | str = OPENAI_API_KEY_ENV, env: Mapping[str, str] | None = None) -> str:
+    """The first non-empty environment variable among ``names`` (never hardcoded)."""
+    env = os.environ if env is None else env
+    names = (names,) if isinstance(names, str) else tuple(names)
+    for name in names:
+        value = (env.get(name) or "").strip()
+        if value:
+            return value
+    raise RuntimeError(f"no API key: set {' or '.join(names)} in the environment")
+
+
+def has_api_key_in(names: Sequence[str] | str) -> bool:
+    names = (names,) if isinstance(names, str) else names
+    return any(os.environ.get(n) for n in names)
+
+
+_FENCE_RE = re.compile(r"```[a-zA-Z0-9_-]*\s*\n?(.*?)```", re.DOTALL)
+
+
+def extract_json(text: str) -> Any:
+    """The first JSON object or array in ``text`` (code fences and leading / trailing prose ignored)."""
+    candidates = [m.strip() for m in _FENCE_RE.findall(text)] + [text]
+    decoder = json.JSONDecoder()
+    for chunk in candidates:
+        for i, ch in enumerate(chunk):
+            if ch not in "{[":
+                continue
+            try:
+                value, _ = decoder.raw_decode(chunk, i)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(value, dict | list):
+                return value
+    raise ValueError(f"no JSON object or array in judge response: {text[:200]!r}")
+
+
+def validate_verdicts(data: Any, n: int) -> list[Judgment]:
+    """``OUTPUT_SCHEMA`` semantics applied to a parsed response: one verdict per pair id ``1..n``."""
+    if isinstance(data, list):
+        data = {"verdicts": data}
+    if not isinstance(data, dict) or not isinstance(data.get("verdicts"), list):
+        raise ValueError("judge response has no 'verdicts' array")
+    by_id: dict[int, Judgment] = {}
+    for idx, item in enumerate(data["verdicts"], 1):
+        if not isinstance(item, dict):
+            raise ValueError(f"verdict {idx} is not an object")
+        try:
+            vid = int(item.get("id", idx))
+            conf = float(item["confidence"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError(f"verdict {idx} lacks a numeric id / confidence: {item!r}") from exc
+        if not isinstance(item.get("equivalent"), bool):
+            raise ValueError(f"verdict {vid}: 'equivalent' must be a boolean")
+        rel = item.get("relation")
+        if rel not in RELATIONS:
+            raise ValueError(f"verdict {vid}: relation {rel!r} not in {RELATIONS}")
+        if not 0.0 <= conf <= 1.0:
+            raise ValueError(f"verdict {vid}: confidence {conf} outside [0, 1]")
+        if vid in by_id:
+            raise ValueError(f"verdict id {vid} repeated")
+        by_id[vid] = Judgment(item["equivalent"], conf, rel, str(item.get("rationale", "")))
+    missing = [i for i in range(1, n + 1) if i not in by_id]
+    if missing:
+        raise ValueError(f"judge response is missing pair(s) {missing}")
+    return [by_id[i] for i in range(1, n + 1)]
+
+
+class OpenAICompatJudge:
+    """Judge over any OpenAI-compatible ``POST {base_url}/chat/completions`` server.
+
+    ``provider`` is a short label (``qwen``, ``zai``) used for the cache filename, the results and
+    the price table.  ``base_url`` falls back to ``LLM_JUDGE_BASE_URL``; the key is read from the
+    environment variable(s) in ``api_key_env`` (default ``LLM_JUDGE_API_KEY``) unless ``api_key``
+    is given.  Requests use ``temperature 0`` and, with ``json_mode``, ``response_format
+    json_object`` (dropped automatically after a 400 that mentions ``response_format``);
+    ``thinking`` adds the Z.ai-style ``{"type": "enabled" | "disabled"}`` field (``None`` = not
+    sent; dropped automatically after a 400 that mentions it).  The answer is parsed with
+    :func:`extract_json` (fences / prose tolerated; any ``reasoning_content`` ignored) and checked
+    with :func:`validate_verdicts`.  429 / 5xx / transport errors are retried with exponential
+    backoff (``max_retries``).  Instances are thread-safe.
+    """
+
+    def __init__(
+        self,
+        model: str = OPENAI_DEFAULT_MODEL,
+        *,
+        provider: str = "openai",
+        base_url: str | None = None,
+        api_key: str | None = None,
+        api_key_env: Sequence[str] | str = OPENAI_API_KEY_ENV,
+        json_mode: bool = True,
+        thinking: str | None = None,
+        max_tokens: int = 16000,
+        timeout: float = 180.0,
+        max_retries: int = 5,
+        backoff_s: float = 1.0,
+        transport: Transport | None = None,
+        sleep: Callable[[float], None] = time.sleep,
+    ):
+        if thinking not in (None, "off", "on"):
+            raise ValueError("thinking must be None, 'off' or 'on'")
+        base_url = base_url or os.environ.get(OPENAI_BASE_URL_ENV) or ""
+        if not base_url:
+            raise RuntimeError(f"no base URL: pass base_url or set {OPENAI_BASE_URL_ENV}")
+        self.model = model
+        self.provider = provider
+        self.base_url = base_url.rstrip("/")
+        self.api_key = api_key if api_key is not None else resolve_api_key(api_key_env)
+        self.json_mode = json_mode
+        self.thinking = thinking
+        self.max_tokens = max_tokens
+        self.timeout = timeout
+        self.max_retries = max_retries
+        self.backoff_s = backoff_s
+        self.transport: Transport = transport if transport is not None else urllib_transport
+        self.sleep = sleep
+        self._lock = threading.Lock()
+        self.name = (
+            f"{provider}[{model},json={'on' if json_mode else 'off'},thinking={thinking or 'unset'},{PROMPT_VERSION}]"
+        )
+
+    @classmethod
+    def zai(cls, model: str = ZAI_DEFAULT_MODEL, **kwargs: Any) -> OpenAICompatJudge:
+        """The Z.ai / Zhipu GLM preset: base URL from ``ZAI_BASE_URL``, key from ``ZAI_API_KEY`` / ``Z_AI_API_KEY``."""
+        kwargs.setdefault("provider", "zai")
+        kwargs.setdefault("base_url", os.environ.get("ZAI_BASE_URL") or ZAI_DEFAULT_BASE_URL)
+        kwargs.setdefault("api_key_env", (*ZAI_API_KEY_ENV, OPENAI_API_KEY_ENV))
+        kwargs.setdefault("thinking", "off")
+        return cls(model, **kwargs)
+
+    def _headers(self) -> dict[str, str]:
+        return {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+
+    def _request_body(self, batch: Sequence[JudgeRequest]) -> dict[str, Any]:
+        body: dict[str, Any] = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": render_batch(batch)},
+            ],
+            "temperature": 0,
+            "max_tokens": self.max_tokens,
+            "stream": False,
+        }
+        if self.json_mode:
+            body["response_format"] = {"type": "json_object"}
+        if self.thinking is not None:
+            body["thinking"] = {"type": "enabled" if self.thinking == "on" else "disabled"}
+        return body
+
+    def _call(self, url: str, body: bytes | None) -> dict[str, Any]:
+        """One request with retries on 429 / 5xx / transport errors; returns the decoded JSON body."""
+        last: Exception | None = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                status, raw = self.transport(url, self._headers(), body, self.timeout)
+            except TransportError as exc:
+                last = exc
+            else:
+                text = raw.decode("utf-8", errors="replace")
+                if status == 200:
+                    try:
+                        return json.loads(text)
+                    except json.JSONDecodeError as exc:
+                        raise HTTPStatusError(status, f"non-JSON body: {text}") from exc
+                last = HTTPStatusError(status, text)
+                if not (status == 429 or status >= 500):
+                    raise last
+            if attempt < self.max_retries:
+                self.sleep(self.backoff_s * (2**attempt) + random.random() * 0.1)
+        assert last is not None
+        raise RuntimeError(f"{self.provider} request failed after {self.max_retries + 1} attempts: {last}") from last
+
+    def _chat(self, batch: Sequence[JudgeRequest]) -> dict[str, Any]:
+        """``_call`` with the one-time fallbacks: drop ``response_format`` / ``thinking`` on a 400 naming them."""
+        url = f"{self.base_url}/chat/completions"
+        for _ in range(3):
+            body = json.dumps(self._request_body(batch)).encode("utf-8")
+            try:
+                return self._call(url, body)
+            except HTTPStatusError as exc:
+                if exc.status != 400:
+                    raise
+                with self._lock:
+                    if self.json_mode and "response_format" in exc.body:
+                        self.json_mode = False
+                        continue
+                    if self.thinking is not None and "thinking" in exc.body:
+                        self.thinking = None
+                        continue
+                raise
+        raise AssertionError("unreachable")
+
+    def list_models(self) -> list[str]:
+        """Model ids from ``GET {base_url}/models`` (OpenAI listing shape; some providers do not serve it)."""
+        data = self._call(f"{self.base_url}/models", None)
+        items = data.get("data", data) if isinstance(data, dict) else data
+        if not isinstance(items, list):
+            raise RuntimeError(f"unexpected models listing: {str(data)[:300]}")
+        return sorted(str(m.get("id", m)) if isinstance(m, dict) else str(m) for m in items)
+
+    def judge(self, batch: Sequence[JudgeRequest]) -> tuple[list[Judgment], Usage]:
+        t0 = time.perf_counter()
+        data = self._chat(batch)
+        try:
+            choice = data["choices"][0]
+        except (KeyError, IndexError, TypeError) as exc:
+            raise RuntimeError(f"{self.provider} response has no choices: {str(data)[:300]}") from exc
+        if choice.get("finish_reason") == "length":
+            raise RuntimeError("judge response truncated (max_tokens); lower the batch size")
+        content = (choice.get("message") or {}).get("content") or ""
+        if not isinstance(content, str):  # some providers return content parts
+            content = "".join(p.get("text", "") for p in content if isinstance(p, dict))
+        verdicts = validate_verdicts(extract_json(content), len(batch))
+        u = data.get("usage") or {}
+        details = u.get("prompt_tokens_details") or {}
+        usage = Usage(
+            model=self.model,
+            n_pairs=len(batch),
+            input_tokens=int(u.get("prompt_tokens", 0) or 0),
+            output_tokens=int(u.get("completion_tokens", 0) or 0),
+            cache_read_input_tokens=int(details.get("cached_tokens", 0) or 0),
+            elapsed_s=round(time.perf_counter() - t0, 3),
+            request_id=str(data.get("id", "") or ""),
+            provider=self.provider,
+        )
+        return verdicts, usage
+
+
 def make_judge(kind: str, **kwargs: Any) -> Judge:
     if kind == "null":
         return NullJudge()
@@ -603,6 +903,10 @@ def make_judge(kind: str, **kwargs: Any) -> Judge:
         return StubJudge(kwargs.pop("reference"), **kwargs)
     if kind == "anthropic":
         return AnthropicJudge(**kwargs)
+    if kind == "openai":
+        return OpenAICompatJudge(**kwargs)
+    if kind == "zai":
+        return OpenAICompatJudge.zai(**kwargs)
     raise ValueError(f"unknown judge {kind!r}")
 
 
@@ -617,6 +921,7 @@ class JudgmentCache:
     def __init__(self, path: Path):
         self.path = Path(path)
         self._records: dict[str, dict[str, Any]] = {}
+        self._lock = threading.Lock()
         if self.path.exists():
             for line in self.path.read_text(encoding="utf-8").splitlines():
                 if line.strip():
@@ -642,11 +947,14 @@ class JudgmentCache:
             "kind": req.source.kind,
             "verdict": asdict(verdict),
         }
-        self._records[key] = rec
-        if flush:
-            self.path.parent.mkdir(parents=True, exist_ok=True)
-            with self.path.open("a", encoding="utf-8") as fh:
-                fh.write(json.dumps(rec, sort_keys=True) + "\n")
+        with self._lock:
+            if self._records.get(key) == rec:
+                return  # idempotent: a verdict already stored is not appended twice
+            self._records[key] = rec
+            if flush:
+                self.path.parent.mkdir(parents=True, exist_ok=True)
+                with self.path.open("a", encoding="utf-8") as fh:
+                    fh.write(json.dumps(rec, sort_keys=True) + "\n")
 
     def rewrite(self) -> None:
         """Rewrite the file sorted by key (canonical form for committing)."""
@@ -670,8 +978,13 @@ def judge_candidates(
     *,
     batch_size: int = 15,
     ledger: list[Usage] | None = None,
+    concurrency: int = 1,
 ) -> dict[tuple[str, str], Judgment]:
-    """Verdict for every candidate; only pairs missing from ``cache`` are sent to ``judge``."""
+    """Verdict for every candidate; only pairs missing from ``cache`` are sent to ``judge``.
+
+    With ``concurrency > 1`` the batches are sent from a thread pool (the judge must be
+    thread-safe; :class:`OpenAICompatJudge` is); results, ledger and cache writes keep the batch order.
+    """
     requests = [JudgeRequest(source_cards[c.source], target_cards[c.target]) for c in cands.candidates]
     out: dict[tuple[str, str], Judgment] = {}
     pending: list[tuple[str, JudgeRequest]] = []
@@ -684,8 +997,13 @@ def judge_candidates(
             pending.append((key, req))
     # Deterministic order: by kind, then names (the candidates are already sorted by name).
     pending.sort(key=lambda kr: (kr[1].source.kind, kr[1].pair))
-    for batch in batched([r for _, r in pending], batch_size):
-        verdicts, usage = judge.judge(batch)
+    batches = batched([r for _, r in pending], batch_size)
+    if concurrency > 1 and len(batches) > 1:
+        with ThreadPoolExecutor(max_workers=concurrency) as pool:
+            results = list(pool.map(judge.judge, batches))
+    else:
+        results = [judge.judge(b) for b in batches]
+    for batch, (verdicts, usage) in zip(batches, results, strict=True):
         if ledger is not None:
             ledger.append(usage)
         for req, verdict in zip(batch, verdicts, strict=True):
@@ -778,8 +1096,12 @@ def cost_estimate(
     *,
     output_tokens_per_pair: int = 60,
     counted_input: Sequence[int] | None = None,
+    prices: Mapping[str, tuple[float, float]] | None = None,
 ) -> dict[str, dict[str, Any]]:
-    """Per-model cost estimate of judging ``batches`` (input from chars / 4 or ``counted_input``)."""
+    """Per-model cost estimate of judging ``batches`` (input from chars / 4 or ``counted_input``).
+
+    ``prices`` defaults to the Anthropic table; pass ``PROVIDER_MODEL_PRICES_USD_PER_MTOK[provider]``.
+    """
     sys_tokens = estimate_tokens(SYSTEM_PROMPT)
     inputs = (
         list(counted_input)
@@ -790,7 +1112,7 @@ def cost_estimate(
     total_in = sum(inputs)
     total_out = n_pairs * output_tokens_per_pair
     out = {}
-    for model, (pin, pout) in MODEL_PRICES_USD_PER_MTOK.items():
+    for model, (pin, pout) in (MODEL_PRICES_USD_PER_MTOK if prices is None else prices).items():
         out[model] = {
             "requests": len(batches),
             "pairs": n_pairs,
@@ -821,24 +1143,36 @@ __all__ = [
     "DECODE_MODES",
     "DEFAULT_MODEL",
     "MODEL_PRICES_USD_PER_MTOK",
+    "OPENAI_API_KEY_ENV",
+    "OPENAI_BASE_URL_ENV",
+    "OPENAI_DEFAULT_MODEL",
     "OUTPUT_SCHEMA",
+    "PROVIDER_MODEL_PRICES_USD_PER_MTOK",
     "PROMPT_VERSION",
     "RELATIONS",
     "SUPPORTED_MODELS",
     "SYSTEM_PROMPT",
+    "ZAI_API_KEY_ENV",
+    "ZAI_DEFAULT_BASE_URL",
+    "ZAI_DEFAULT_MODEL",
+    "ZAI_PRICING_URL",
     "AnthropicJudge",
     "Candidate",
     "CandidateConfig",
     "CandidateGenerator",
     "CandidateSet",
     "EntityCard",
+    "HTTPStatusError",
     "Judge",
     "JudgeRequest",
     "Judgment",
     "JudgmentCache",
     "NullJudge",
+    "OpenAICompatJudge",
     "PairJudgeResult",
     "StubJudge",
+    "Transport",
+    "TransportError",
     "Usage",
     "batched",
     "config_label",
@@ -846,10 +1180,16 @@ __all__ = [
     "decode",
     "entity_cards",
     "estimate_tokens",
+    "extract_json",
     "has_api_key",
+    "has_api_key_in",
     "judge_candidates",
     "judge_quality",
     "make_judge",
+    "price_for",
     "render_batch",
+    "resolve_api_key",
     "topk_pairs",
+    "urllib_transport",
+    "validate_verdicts",
 ]

@@ -5,6 +5,17 @@ Usage::
     .venv/bin/python scripts/benchmark_oaei_llm.py --judge stub            # offline sanity run
     .venv/bin/python scripts/benchmark_oaei_llm.py --judge anthropic       # needs ANTHROPIC_API_KEY
     .venv/bin/python scripts/benchmark_oaei_llm.py --judge anthropic --model claude-sonnet-5-5
+    LLM_JUDGE_API_KEY=... .venv/bin/python scripts/benchmark_oaei_llm.py --judge openai \
+        --base-url https://maas.qwencloudapi.com/compatible-mode/v1 --provider qwen --model qwen3.8-flash
+    .venv/bin/python scripts/benchmark_oaei_llm.py --judge openai --base-url ... --list-models   # GET <base-url>/models
+    ZAI_API_KEY=... .venv/bin/python scripts/benchmark_oaei_llm.py --judge zai    # preset: api.z.ai, glm-5.3-flash
+
+``--judge openai`` is any OpenAI-compatible ``chat/completions`` server: ``--base-url`` (env
+``LLM_JUDGE_BASE_URL``), ``--api-key-env`` (name of the variable holding the key, default
+``LLM_JUDGE_API_KEY``), ``--provider`` (short label for the cache file and the results),
+``--json-mode``, ``--thinking``, ``--concurrency``.  ``--judge zai`` is the same judge preset for
+Z.ai (``ZAI_BASE_URL``, ``ZAI_API_KEY`` / ``Z_AI_API_KEY``, provider ``zai``, thinking off).
+Judgments of these go to ``benchmarks/results/llm-judgments/<provider>__<model>.jsonl``.
 
 Writes ``benchmarks/results/oaei-llm.json`` / ``.md`` and the judgment cache
 ``benchmarks/results/llm-judgments/<model>.jsonl`` (committed; a rerun only sends the
@@ -21,6 +32,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import os
 import subprocess
 import sys
 import time
@@ -33,15 +45,22 @@ sys.path.insert(0, str(REPO / "src"))
 from olaya.benchmarks.llm_judge import (  # noqa: E402
     DECODE_MODES,
     DEFAULT_MODEL,
+    OPENAI_API_KEY_ENV,
+    OPENAI_BASE_URL_ENV,
+    OPENAI_DEFAULT_MODEL,
     PROMPT_VERSION,
     SUPPORTED_MODELS,
     SYSTEM_PROMPT,
+    ZAI_API_KEY_ENV,
+    ZAI_DEFAULT_MODEL,
+    ZAI_PRICING_URL,
     AnthropicJudge,
     CandidateConfig,
     CandidateGenerator,
     JudgeRequest,
     JudgmentCache,
     NullJudge,
+    OpenAICompatJudge,
     StubJudge,
     Usage,
     batched,
@@ -50,8 +69,10 @@ from olaya.benchmarks.llm_judge import (  # noqa: E402
     decode,
     entity_cards,
     has_api_key,
+    has_api_key_in,
     judge_candidates,
     judge_quality,
+    price_for,
 )
 from olaya.benchmarks.oaei import (  # noqa: E402
     CONFERENCE_PAIRS,
@@ -81,6 +102,17 @@ GRID_WEIGHTS = [0.25, 0.5, 0.75]
 PUBLISHED = {"GraphMatcher": {"M1": 0.83, "M3": 0.78}, "SORBETMtch": {"M1": 0.76, "M3": 0.70}}
 
 
+def make_compat_judge(args: argparse.Namespace, key_env: tuple[str, ...]) -> OpenAICompatJudge:
+    return OpenAICompatJudge(
+        args.model,
+        provider=args.provider,
+        base_url=args.base_url,
+        api_key_env=key_env,
+        json_mode=args.json_mode == "on",
+        thinking=args.thinking,
+    )
+
+
 def git_commit() -> str:
     try:
         return subprocess.check_output(["git", "rev-parse", "--short=12", "HEAD"], cwd=REPO, text=True).strip()
@@ -102,11 +134,34 @@ def micro(grid: dict[str, dict[str, dict[str, PRF]]], label: str, pairs: list[st
     return out
 
 
-def main() -> int:
+REAL_JUDGES = ("anthropic", "openai", "zai")
+
+
+def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--judge", choices=("stub", "anthropic", "null"), default="stub")
-    ap.add_argument("--model", default=DEFAULT_MODEL, help=f"judge model id, one of {', '.join(SUPPORTED_MODELS)}")
+    ap.add_argument("--judge", choices=("stub", "anthropic", "openai", "zai", "null"), default="stub")
+    ap.add_argument(
+        "--model",
+        default=None,
+        help=f"judge model id: anthropic one of {', '.join(SUPPORTED_MODELS)} (default {DEFAULT_MODEL}); "
+        f"openai any id the server offers (default {OPENAI_DEFAULT_MODEL}; see --list-models); "
+        f"zai default {ZAI_DEFAULT_MODEL}",
+    )
     ap.add_argument("--effort", default="medium", choices=("low", "medium", "high", "xhigh", "max"))
+    ap.add_argument("--base-url", default=None, help=f"openai: chat-completions base URL (env {OPENAI_BASE_URL_ENV})")
+    ap.add_argument(
+        "--api-key-env", default=None, help=f"openai: env var holding the key (default {OPENAI_API_KEY_ENV})"
+    )
+    ap.add_argument("--provider", default=None, help="openai: short label for the cache file / results (e.g. qwen)")
+    ap.add_argument("--json-mode", default="on", choices=("on", "off"), help="openai: response_format json_object")
+    ap.add_argument(
+        "--thinking",
+        default=None,
+        choices=("off", "on"),
+        help="openai: send thinking {type: disabled|enabled} (Z.ai style; unset = not sent; zai preset: off)",
+    )
+    ap.add_argument("--concurrency", type=int, default=4, help="openai: parallel requests (thread pool)")
+    ap.add_argument("--list-models", action="store_true", help="openai: print the server's model ids and exit")
     ap.add_argument("--encoder", default=ENCODER, help="sentence encoder for the candidates ('hash' = offline stub)")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--k", type=int, default=3)
@@ -124,13 +179,49 @@ def main() -> int:
         help="also write the stub / null judge's verdicts to the judgment cache (off by default: they are derived from ra1)",
     )
     ap.add_argument("--dry-run", action="store_true", help="candidates and cost estimate only, no judging")
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
+    compat = args.judge in ("openai", "zai")
+    if args.model is None:
+        args.model = {"zai": ZAI_DEFAULT_MODEL, "openai": OPENAI_DEFAULT_MODEL}.get(args.judge, DEFAULT_MODEL)
+    if args.judge == "zai":
+        args.provider = args.provider or "zai"
+        args.base_url = args.base_url or os.environ.get("ZAI_BASE_URL") or "https://api.z.ai/api/paas/v4"
+        key_env: tuple[str, ...] = (args.api_key_env,) if args.api_key_env else (*ZAI_API_KEY_ENV, OPENAI_API_KEY_ENV)
+        args.thinking = args.thinking or "off"
+    elif args.judge == "openai":
+        args.provider = args.provider or "openai"
+        args.base_url = args.base_url or os.environ.get(OPENAI_BASE_URL_ENV)
+        key_env = (args.api_key_env or OPENAI_API_KEY_ENV,)
+    real = args.judge in REAL_JUDGES
 
     if args.judge == "anthropic" and args.model not in SUPPORTED_MODELS:
         print(f"warning: {args.model} is not in {SUPPORTED_MODELS}; prices will be reported as 0", file=sys.stderr)
     if args.judge == "anthropic" and not has_api_key():
         print("ANTHROPIC_API_KEY is not set; use --judge stub for the offline run", file=sys.stderr)
         return 2
+    if compat and not args.base_url:
+        print(f"--base-url (or {OPENAI_BASE_URL_ENV}) is required for --judge openai", file=sys.stderr)
+        return 2
+    if compat and not has_api_key_in(key_env):
+        print(f"{' / '.join(key_env)} is not set; use --judge stub for the offline run", file=sys.stderr)
+        return 2
+    if args.list_models:
+        if not compat:
+            print("--list-models needs --judge openai (or zai)", file=sys.stderr)
+            return 2
+        try:
+            for mid in make_compat_judge(args, key_env).list_models():
+                print(mid)
+        except Exception as exc:  # noqa: BLE001
+            print(f"models listing failed ({exc}); check the model ids in the provider's docs", file=sys.stderr)
+            return 1
+        return 0
+    if compat and price_for(args.provider, args.model) == (0.0, 0.0):
+        print(
+            f"note: no pinned price for {args.provider}/{args.model}; cost reported as 0 "
+            f"(fill PROVIDER_MODEL_PRICES_USD_PER_MTOK from the provider's pricing page{', ' + ZAI_PRICING_URL if args.judge == 'zai' else ''})",
+            file=sys.stderr,
+        )
 
     t_start = time.perf_counter()
     bench = OAEIConferenceBenchmark(FIXTURES / "ontologies", FIXTURES / "reference_alignments")
@@ -190,7 +281,11 @@ def main() -> int:
             counted = [probe.count_tokens(b) for b in batches]
         except Exception as exc:  # noqa: BLE001
             print(f"count_tokens failed ({exc}); falling back to the chars/4 estimate", file=sys.stderr)
-    cost = cost_estimate(batches, counted_input=counted)
+    cost = cost_estimate(
+        batches,
+        counted_input=counted,
+        prices={args.model: price_for(args.provider, args.model)} if compat else None,
+    )
     print("cost estimate:", {m: v["usd"] for m, v in cost.items()})
 
     result: dict[str, Any] = {
@@ -199,8 +294,13 @@ def main() -> int:
         "date_utc": dt.datetime.now(dt.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "commit": git_commit(),
         "judge": args.judge,
-        "model": args.model if args.judge == "anthropic" else args.judge,
+        "model": args.model if real else args.judge,
+        "provider": args.provider if compat else "anthropic",  # stub / null are priced on the Anthropic table
+        "base_url": args.base_url if compat else None,
         "effort": args.effort if args.judge == "anthropic" else None,
+        "json_mode": args.json_mode if compat else None,
+        "thinking": args.thinking if compat else None,
+        "concurrency": args.concurrency if compat else 1,
         "prompt_version": PROMPT_VERSION,
         "system_prompt_sha256": __import__("hashlib").sha256(SYSTEM_PROMPT.encode()).hexdigest(),
         "encoder": getattr(encoder, "name", args.encoder),
@@ -234,10 +334,12 @@ def main() -> int:
         judge: Any = StubJudge(reference, noise=args.stub_noise)
     elif args.judge == "null":
         judge = NullJudge()
+    elif compat:
+        judge = make_compat_judge(args, key_env)
     else:
         judge = AnthropicJudge(args.model, effort=args.effort)
-    cache_name = judge.model if args.judge == "anthropic" else args.judge
-    use_cache = not args.no_cache and (args.judge == "anthropic" or args.cache_stub)
+    cache_name = f"{args.provider}__{args.model}" if compat else (judge.model if real else args.judge)
+    use_cache = not args.no_cache and (real or args.cache_stub)
     cache = JudgmentCache(args.judgments_dir / f"{cache_name}.jsonl") if use_cache else None
     cached_before = len(cache) if cache is not None else 0
     ledger: list[Usage] = []
@@ -245,7 +347,14 @@ def main() -> int:
     t0 = time.perf_counter()
     for s, t in pairs:
         verdicts[(s, t)] = judge_candidates(
-            cand_sets[(s, t)], cards[s], cards[t], judge, cache, batch_size=args.batch_size, ledger=ledger
+            cand_sets[(s, t)],
+            cards[s],
+            cards[t],
+            judge,
+            cache,
+            batch_size=args.batch_size,
+            ledger=ledger,
+            concurrency=args.concurrency if compat else 1,
         )
     t_judge = time.perf_counter() - t0
     if cache is not None and ledger:
@@ -359,7 +468,7 @@ def main() -> int:
 
 def write_markdown(res: dict[str, Any], path: Path) -> None:
     c = res["candidates"]
-    real = res["judge"] == "anthropic"
+    real = res["judge"] in REAL_JUDGES
     cv = res["lopo_cv"]
     lines = [
         "# OAEI Conference track (ra1) - LLM judge stage",
@@ -378,7 +487,8 @@ def write_markdown(res: dict[str, Any], path: Path) -> None:
             + res["judge_name"]
             + "` stand-in, which answers from the reference alignment; the numbers below validate the"
             " candidate ceiling, the cache and the decoding, not a matcher.  Real-judge numbers are pending"
-            " an `ANTHROPIC_API_KEY` (`scripts/benchmark_oaei_llm.py --judge anthropic`).",
+            " an `ANTHROPIC_API_KEY` (`scripts/benchmark_oaei_llm.py --judge anthropic`) or an OpenAI-compatible"
+            " server (`--judge openai --base-url ...`, or `--judge zai`; see the backend note under Design).",
             "",
         ]
     lines += [
@@ -406,6 +516,13 @@ def write_markdown(res: dict[str, Any], path: Path) -> None:
         "   `claude-opus-5-5` by default (`--model claude-sonnet-5-5` / `claude-haiku-4-5`), adaptive thinking,",
         "   `output_config.effort` = `--effort` (default medium), `max_retries=5`, 300 s timeout, key from the",
         "   environment only.",
+        "   **OpenAI-compatible backend** (`--judge openai`, alias `--judge zai` for Z.ai): the same prompt through",
+        "   `POST <base-url>/chat/completions` (`--base-url` / `LLM_JUDGE_BASE_URL`; key in the variable named by",
+        "   `--api-key-env`, default `LLM_JUDGE_API_KEY`; `--provider` label; `--model`; `--list-models`), `temperature 0`,",
+        "   `response_format json_object` (`--json-mode`, dropped automatically on a 400 naming it), `thinking` field",
+        "   (`--thinking`, Z.ai style; unset unless given), fence / prose-tolerant JSON parser validated against the",
+        "   same schema, 180 s timeout, 5 retries with backoff on 429 / 5xx, `--concurrency` (default 4) parallel",
+        "   requests; judgments in `llm-judgments/<provider>__<model>.jsonl`.",
         "3. **Cache**: one JSON line per verdict keyed by `sha256(model, prompt version, rendered pair)` under",
         "   `benchmarks/results/llm-judgments/<model>.jsonl`; a rerun sends only unjudged pairs; the per-request",
         "   token usage is kept in the results JSON (`usage_ledger`).",
@@ -444,15 +561,19 @@ def write_markdown(res: dict[str, Any], path: Path) -> None:
         "",
         f"{first['requests']} requests of {res['batch_size']} pairs; input tokens {first['input_tokens']:,} "
         f"({first['method']}), output assumed {first['output_tokens_assumed']:,} (60 tokens per verdict).  "
-        "Prices: Anthropic first-party rates per million tokens, no prompt-cache discount applied.",
+        + (
+            f"Prices: Z.ai list rates per million tokens ({ZAI_PRICING_URL}), no cache discount applied."
+            if res["judge"] == "zai"
+            else f"Prices: `{res['provider']}` rates per million tokens; 0 = not pinned, fill from the provider's pricing page."
+            if res["judge"] == "openai"
+            else "Prices: Anthropic first-party rates per million tokens, no prompt-cache discount applied."
+        ),
         "",
         "| model | input $/M | output $/M | estimated USD |",
         "|---|---|---|---|",
     ]
-    from olaya.benchmarks.llm_judge import MODEL_PRICES_USD_PER_MTOK
-
     for model, v in ce.items():
-        pin, pout = MODEL_PRICES_USD_PER_MTOK[model]
+        pin, pout = price_for(res["provider"], model)
         lines.append(f"| `{model}` | {pin:.2f} | {pout:.2f} | {v['usd']:.2f} |")
     ut = res["usage_total"]
     lines += [

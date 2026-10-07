@@ -101,7 +101,9 @@ An LLM-judge stage (candidates from the hybrid, a language model asked with
 ontology context whether each pair is equivalent; `scripts/benchmark_oaei_llm.py`,
 category LLM-based) is built and validated offline with a reference-backed stub in
 [`benchmarks/results/oaei-llm.md`](benchmarks/results/oaei-llm.md); its real-judge
-numbers are pending an API key and are not part of the table above.
+numbers are pending an API key (`--judge anthropic` with `ANTHROPIC_API_KEY`, or
+`--judge openai --base-url <OpenAI-compatible server> --provider <label> --model <id>`
+with `LLM_JUDGE_API_KEY`; `--judge zai` presets Z.ai) and are not part of the table above.
 Earlier versions of this README reported hits@k with the gold target guaranteed to be
 in the candidate set and a "100% violation elimination" figure computed on synthetic
 distributions; both were retracted because they were not benchmark results.
