@@ -144,9 +144,9 @@ class EmbeddingRouter:
         self.curies: list[str] = sorted(ontology.concepts)
         self.class_texts: dict[str, str] = {c: texts.get(c) or class_context_text(ontology, c) for c in self.curies}
         self.index: dict[str, int] = {c: i for i, c in enumerate(self.curies)}
-        self.matrix: np.ndarray = np.asarray(
-            encoder.encode([self.class_texts[c] for c in self.curies]), dtype=np.float32
-        )
+        # Prompted encoders embed class texts on the document side and states on the query side.
+        encode_docs = getattr(encoder, "encode_documents", None) or encoder.encode
+        self.matrix: np.ndarray = np.asarray(encode_docs([self.class_texts[c] for c in self.curies]), dtype=np.float32)
         self.class_background: np.ndarray | None = None
         if csls_k is not None:
             if csls_k < 1:
@@ -406,7 +406,8 @@ def finetune_bi_encoder(
     torch.manual_seed(seed)
     rng = random.Random(seed)
     model = encoder.model
-    tokenizer = encoder.tokenizer
+    prompted = callable(getattr(encoder, "embed_batch", None))  # SentenceTransformerEncoder
+    tokenizer = None if prompted else encoder.tokenizer
     prefix = getattr(encoder, "prefix", "")
     max_length = getattr(encoder, "max_length", 128)
     if class_texts is None:
@@ -429,7 +430,9 @@ def finetune_bi_encoder(
     device = next(model.parameters()).device
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
 
-    def embed(batch_texts: list[str]) -> torch.Tensor:
+    def embed(batch_texts: list[str], documents: bool = False) -> torch.Tensor:
+        if prompted:
+            return encoder.embed_batch(batch_texts, documents=documents)
         enc = tokenizer(
             [prefix + t for t in batch_texts], padding=True, truncation=True, max_length=max_length, return_tensors="pt"
         ).to(device)
@@ -444,16 +447,24 @@ def finetune_bi_encoder(
 
     def save() -> None:
         checkpoint.parent.mkdir(parents=True, exist_ok=True)
-        torch.save(
-            {
-                "model_state_dict": {k: v.detach().cpu() for k, v in model.state_dict().items()},
-                "base_model": encoder.name,
-                "max_length": max_length,
-                "prefix": prefix,
-                "format": "olaya-bi-encoder-v1",
-            },
-            checkpoint,
-        )
+        payload: dict[str, Any] = {
+            "model_state_dict": {k: v.detach().cpu() for k, v in model.state_dict().items()},
+            "base_model": encoder.name,
+            "max_length": max_length,
+            "prefix": prefix,
+            "format": "olaya-bi-encoder-v1",
+        }
+        if prompted:
+            payload.update(
+                {
+                    "format": "olaya-st-encoder-v1",
+                    "query_prefix": encoder.query_prefix,
+                    "document_prefix": encoder.document_prefix,
+                    "text_only": getattr(encoder, "text_only", True),
+                    "truncate_dim": getattr(encoder, "truncate_dim", None),
+                }
+            )
+        torch.save(payload, checkpoint)
 
     if hasattr(encoder, "cache"):
         encoder.cache = None  # weights change: the on-disk cache keyed by the base model is no longer valid
@@ -469,7 +480,7 @@ def finetune_bi_encoder(
             model.eval()
             with torch.no_grad():
                 c_emb = torch.cat(
-                    [embed([texts[c] for c in class_order[i : i + 64]]) for i in range(0, len(class_order), 64)]
+                    [embed([texts[c] for c in class_order[i : i + 64]], True) for i in range(0, len(class_order), 64)]
                 )
                 q_emb = torch.cat(
                     [embed([pairs[i][0] for i in range(j, min(j + 64, len(pairs)))]) for j in range(0, len(pairs), 64)]
@@ -500,7 +511,7 @@ def finetune_bi_encoder(
             columns += hard
             targets = torch.tensor([columns.index(g) for g in golds], dtype=torch.long, device=device)
             q = embed(queries)
-            d = embed([texts[c] for c in columns])
+            d = embed([texts[c] for c in columns], True)
             logits = (q @ d.T) / temperature
             loss = torch.nn.functional.cross_entropy(logits, targets)
             optimizer.zero_grad()
@@ -555,11 +566,27 @@ def load_finetuned_encoder(checkpoint: Path, **encoder_kwargs: Any) -> Any:
     from olaya.embeddings import TransformerEncoder
 
     data = torch.load(checkpoint, map_location="cpu", weights_only=True)
-    if not isinstance(data, dict) or data.get("format") != "olaya-bi-encoder-v1":
+    fmt = data.get("format") if isinstance(data, dict) else None
+    if fmt == "olaya-st-encoder-v1":
+        from olaya.embeddings import SentenceTransformerEncoder
+
+        kwargs = {
+            "max_length": data.get("max_length", 128),
+            "text_only": data.get("text_only", True),
+            "truncate_dim": data.get("truncate_dim"),
+            **{k: v for k, v in encoder_kwargs.items() if k not in ("use_cache", "prefix")},
+        }
+        enc: Any = SentenceTransformerEncoder(data["base_model"], **kwargs)
+        # The prompts were saved as literal prefixes, not prompt names.
+        enc.query_prefix = data.get("query_prefix", "")
+        enc.document_prefix = data.get("document_prefix", "")
+        enc.prefix = enc.query_prefix
+    elif fmt == "olaya-bi-encoder-v1":
+        kwargs = {"max_length": data.get("max_length", 128), "prefix": data.get("prefix", ""), **encoder_kwargs}
+        kwargs["use_cache"] = False
+        enc = TransformerEncoder(data["base_model"], **kwargs)
+    else:
         raise ValueError(f"{checkpoint} is not an olaya bi-encoder checkpoint")
-    kwargs = {"max_length": data.get("max_length", 128), "prefix": data.get("prefix", ""), **encoder_kwargs}
-    kwargs["use_cache"] = False
-    enc = TransformerEncoder(data["base_model"], **kwargs)
     enc.model.load_state_dict(data["model_state_dict"], strict=True)
     enc.model.eval()
     digest = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
