@@ -180,6 +180,74 @@
         "schemaorg_test_recall_at_5": 0.8166666666666667
       },
       "report": "benchmarks/results/router-eval-joint60.json"
+    },
+    "joint-base": {
+      "file": "olaya_embed_joint-base.pt",
+      "sha256": "1b5e293a6afd2d5191d6cb431fddc1172620d7e04d600f8b4aa77a898abd8376",
+      "size_bytes": 437995892,
+      "base_model": "BAAI/bge-base-en-v1.5",
+      "format": "olaya-bi-encoder-v1 (state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
+      "domains": [
+        "gs1",
+        "incident",
+        "schemaorg"
+      ],
+      "split_unit": "batch",
+      "train_pairs": 849,
+      "classes": 736,
+      "commit": "bcbbbc2ae2843e9a332c59d38678b7b0fd2f4148",
+      "device": "mps (Mac Studio)",
+      "budget_minutes": 60.0,
+      "best_epoch": 3,
+      "loss": "InfoNCE (temperature 0.05) over in-batch gold class texts + one sibling hard negative per query + 3 mined hard negatives per query re-mined each epoch",
+      "metrics": {
+        "mean_validation_top1": 0.7627974661872967,
+        "mean_validation_top1_zero_shot_base": 0.5867523691551607,
+        "gs1_test_top1": 0.671875,
+        "incident_test_top1": 0.75,
+        "schemaorg_test_top1": 0.6583333333333333,
+        "gs1_test_recall_at_5": 0.953125,
+        "incident_test_recall_at_5": 0.9375,
+        "schemaorg_test_recall_at_5": 0.8583333333333333,
+        "gs1_engine_top1": 0.6875,
+        "incident_engine_top1": 0.75,
+        "schemaorg_engine_top1": 0.625
+      },
+      "report": "benchmarks/results/router-eval-joint-base.json"
+    },
+    "joint-base-classdisjoint": {
+      "file": "olaya_embed_joint-base-classdisjoint.pt",
+      "sha256": "ee3418ced65dda83868809a7add884ed7dc04caf30ee9a86aaa89aca8b0face0",
+      "size_bytes": 437998762,
+      "base_model": "BAAI/bge-base-en-v1.5",
+      "format": "olaya-bi-encoder-v1 (state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
+      "domains": [
+        "gs1",
+        "incident",
+        "schemaorg"
+      ],
+      "split_unit": "class",
+      "train_pairs": 819,
+      "classes": 736,
+      "commit": "bcbbbc2ae2843e9a332c59d38678b7b0fd2f4148",
+      "device": "mps (Mac Studio)",
+      "budget_minutes": 60.0,
+      "best_epoch": 1,
+      "loss": "InfoNCE (temperature 0.05) over in-batch gold class texts + one sibling hard negative per query + 3 mined hard negatives per query re-mined each epoch",
+      "metrics": {
+        "mean_validation_top1": 0.6308050322134829,
+        "mean_validation_top1_zero_shot_base": 0.4780958478141577,
+        "gs1_test_top1": 0.5737704918032787,
+        "incident_test_top1": 0.6521739130434783,
+        "schemaorg_test_top1": 0.36220472440944884,
+        "gs1_test_recall_at_5": 0.8688524590163934,
+        "incident_test_recall_at_5": 1.0,
+        "schemaorg_test_recall_at_5": 0.7322834645669292,
+        "gs1_engine_top1": 0.5737704918032787,
+        "incident_engine_top1": 0.9130434782608695,
+        "schemaorg_engine_top1": 0.3543307086614173
+      },
+      "report": "benchmarks/results/router-eval-joint-base-classdisjoint.json"
     }
   }
 }
