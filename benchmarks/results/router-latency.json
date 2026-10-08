@@ -1,0 +1,124 @@
+{
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Linux-6.18.44-fc-v80-x86_64-with-glibc2.39",
+    "torch": "2.14.1+cu130",
+    "torch_threads": 4,
+    "cpu_count": 4,
+    "device": "cpu"
+  },
+  "runs": 60,
+  "domains": {
+    "gs1": {
+      "concepts": 63,
+      "texts": 200,
+      "configs": {
+        "lexical": {
+          "weights": "none (lexical router, untrained head)",
+          "runs": 60,
+          "median_ms": 9.335726999992744,
+          "mean_ms": 9.577155816667945,
+          "p95_ms": 12.75016799999662,
+          "min_ms": 4.658694999989166,
+          "decisions_per_s": 107.11538587201375
+        },
+        "bge-small": {
+          "weights": "fine-tuned",
+          "encoder": "BAAI/bge-small-en-v1.5+ft:7824ad726653",
+          "index_s": 0.6619322980000106,
+          "runs": 60,
+          "median_ms": 32.02771249999614,
+          "mean_ms": 41.19591933333121,
+          "p95_ms": 100.13958899997988,
+          "min_ms": 19.96810500000379,
+          "decisions_per_s": 31.222960428414
+        },
+        "embeddinggemma-2": {
+          "weights": "zero-shot",
+          "encoder": "google/embeddinggemma-2",
+          "index_s": 26.366702325000006,
+          "runs": 60,
+          "median_ms": 182.06885700001862,
+          "mean_ms": 230.39736248333278,
+          "p95_ms": 580.1175619999981,
+          "min_ms": 64.02034699999604,
+          "decisions_per_s": 5.492427516035308
+        }
+      }
+    },
+    "incident": {
+      "concepts": 13,
+      "texts": 109,
+      "configs": {
+        "lexical": {
+          "weights": "none (lexical router, untrained head)",
+          "runs": 60,
+          "median_ms": 7.678804000008199,
+          "mean_ms": 8.102547916667882,
+          "p95_ms": 10.520270000000664,
+          "min_ms": 4.363500000010845,
+          "decisions_per_s": 130.22861372668612
+        },
+        "bge-small": {
+          "weights": "fine-tuned",
+          "encoder": "BAAI/bge-small-en-v1.5+ft:7824ad726653",
+          "index_s": 0.12749746100001857,
+          "runs": 60,
+          "median_ms": 28.197992499997326,
+          "mean_ms": 28.982100033330955,
+          "p95_ms": 39.303453000002264,
+          "min_ms": 20.672945000001164,
+          "decisions_per_s": 35.46351748267522
+        },
+        "embeddinggemma-2": {
+          "weights": "zero-shot",
+          "encoder": "google/embeddinggemma-2",
+          "index_s": 1.5799267959999952,
+          "runs": 60,
+          "median_ms": 111.98428900000579,
+          "mean_ms": 144.79518985000368,
+          "p95_ms": 295.99909600000274,
+          "min_ms": 83.99846200001093,
+          "decisions_per_s": 8.929824075589284
+        }
+      }
+    },
+    "schemaorg": {
+      "concepts": 660,
+      "texts": 200,
+      "configs": {
+        "lexical": {
+          "weights": "none (lexical router, untrained head)",
+          "runs": 60,
+          "median_ms": 15.829264999993597,
+          "mean_ms": 16.143195716663666,
+          "p95_ms": 20.245221999999785,
+          "min_ms": 10.582347999985586,
+          "decisions_per_s": 63.174127162594374
+        },
+        "bge-small": {
+          "weights": "fine-tuned",
+          "encoder": "BAAI/bge-small-en-v1.5+ft:7824ad726653",
+          "index_s": 10.272237448000027,
+          "runs": 60,
+          "median_ms": 35.90546200001654,
+          "mean_ms": 43.8630802666656,
+          "p95_ms": 144.0410790000044,
+          "min_ms": 27.916274999995494,
+          "decisions_per_s": 27.850915830007683
+        },
+        "embeddinggemma-2": {
+          "weights": "zero-shot",
+          "encoder": "google/embeddinggemma-2",
+          "index_s": 22.51345283399999,
+          "runs": 60,
+          "median_ms": 102.23104150000495,
+          "mean_ms": 120.79679669999781,
+          "p95_ms": 225.00802499999395,
+          "min_ms": 72.02001999999652,
+          "decisions_per_s": 9.781764768580114
+        }
+      }
+    }
+  }
+}
