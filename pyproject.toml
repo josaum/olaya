@@ -30,7 +30,7 @@ llm = [
 ]
 gemma = [
     # google/embeddinggemma-2 through olaya.embeddings.SentenceTransformerEncoder
-    "sentence-transformers[image,audio,video]>=6.1",
+    "sentence-transformers[image]>=6.1",
     "transformers>=5.19",
 ]
 
