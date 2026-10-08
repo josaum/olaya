@@ -87,7 +87,7 @@ Each command writes its report under `benchmarks/results/` and its checkpoint un
 `gemma` extra and a newer `transformers`:
 
 ```bash
-uv pip install -e '.[dev,gemma]'      # sentence-transformers[image,audio,video] >= 6.1, transformers >= 5.19
+uv pip install -e '.[dev,gemma]'      # sentence-transformers[image] >= 6.1, transformers >= 5.19 (the audio extra pulls kenlm, which does not build on Python 3.14)
 ```
 
 `olaya.embeddings.SentenceTransformerEncoder` loads it text-only (vision and audio encoders dropped,
@@ -100,10 +100,13 @@ both scripts:
 .venv/bin/python scripts/finetune_joint_encoder.py --base embeddinggemma-2 --minutes 60 --epochs 8 --mine 3 --tag joint-gemma --split class
 ```
 
-On the incident corpus on CPU it is the strongest zero-shot encoder tried (full-ontology top-1 0.69
-vs 0.56 for bge-small) and after two fine-tune epochs reaches 0.75 top-1 / 1.00 recall@5 on the 16
-test rows. Checkpoints are about 540 MB and stay gitignored. Validation peaks early for every base
-tried so far (epoch 3 to 5), so `--epochs 8` is enough; the best epoch is what gets saved.
+Mac Studio results (8 epochs, 27 minutes each, `router-eval-joint-gemma*.md`): batch split
+full-ontology top-1 **0.81 / 0.80 / 0.78** (incident / GS1 / Schema.org, best epoch 5), class-disjoint
+**0.65 / 0.61 / 0.59** (best epoch 1, then overfits: validation fell below zero-shot by epoch 3, so
+use `--epochs 3` or a lower `--lr` for held-out-class training). On MPS the fine-tune enables
+gradient checkpointing automatically: a step of 16 queries plus about 100 class texts through the
+24-layer encoder needs about 35 GB otherwise and 11 GB with it, at 3.7 s per step. Checkpoints are
+about 540 MB and stay gitignored.
 
 ## What to expect
 
