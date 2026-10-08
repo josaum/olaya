@@ -33,3 +33,7 @@ docs/public/.vercel/
 !/data/
 /data/*
 !/data/corpora/
+
+# Example page: installs the local package; keep its lockfile and logs out of the tree
+examples/node-page/package-lock.json
+examples/node-page/server.log

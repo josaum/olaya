@@ -424,16 +424,11 @@ def build_central_ma_ontology():
         "concepts": concepts,
     }
 
-    # Save to all target locations
+    # Save to every location this repository serves it from.
+    repo = Path(__file__).resolve().parents[1]
     paths = [
-        Path("/Users/josaum/projects/decision-model/data/central_ma_ontology.json"),
-        Path("/Users/josaum/projects/decision-model/docs/public/ontologies/central_ma_ontology.json"),
-        Path(
-            "/Users/josaum/projects/atlas/cartridges/theres-still-room-for-further-consolidation/src/atlas_ma/assets/central_ma_ontology.json"
-        ),
-        Path(
-            "/Users/josaum/projects/atlas/cartridges/theres-still-room-for-further-consolidation/enterprise-connector/assets/central_ma_ontology.json"
-        ),
+        repo / "docs/public/ontologies/central_ma_ontology.json",
+        repo / "src/olaya/data/central_ma_ontology.json",
     ]
 
     for p in paths:

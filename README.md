@@ -295,6 +295,11 @@ decision.selectedConcept.label; // "Billing Incident"
 decision.axiomsVerified;        // true
 ```
 
+The package also bundles ontologies under `ONTOLOGY_CATALOG` (`incident`, `gs1`, `bfo`, `doid`,
+`schemaorg`, `skos`). [examples/node-page](examples/node-page) is a one-file server that classifies
+observations with it and renders the lineage, candidates and abstention; set `OLAYA_EXTRA_ONTOLOGY`
+to a private ontology JSON to add it as a domain.
+
 ### MCP servers
 
 Both the Python and Node packages expose a Model Context Protocol server over
@@ -388,6 +393,10 @@ olaya/
 │   └── mycelia-ort-utils/      # ONNX Runtime session helpers
 ├── src/olaya/                  # Python engine, model, training, calibration, workflows, MCP
 ├── packages/olaya-node/        # leio
+├── examples/
+│   ├── workflows/              # TBox-bound workflow documents
+│   └── node-page/              # Demo page on the Node package (leio-decision)
+├── scripts/                    # Ontology builders, release checks
 ├── benchmarks/                 # OAEI runner, latency scripts, results/
 ├── tests/fixtures/oaei/        # Vendored OAEI Conference ontologies + reference alignments
 ├── models/*.arrow              # Compiled ontology fixtures (no model weights)

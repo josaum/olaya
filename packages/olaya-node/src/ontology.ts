@@ -136,12 +136,28 @@ export class OntologyDAG {
     const rawConcepts = Array.isArray(jsonData) ? jsonData : (jsonData.concepts || []);
     const curieToId = new Map<string, number>();
 
+    // Local names are a convenience for single-prefix files. In a merged
+    // ontology two prefixes can share a local name, so a stripped name is
+    // only registered when exactly one concept carries it and it does not
+    // collide with a full curie.
+    const localCounts = new Map<string, number>();
     rawConcepts.forEach((c: any, idx: number) => {
       const curie = c.curie || c.id || `concept_${idx}`;
       curieToId.set(curie, idx);
-      // Also map prefix-stripped curie
-      if (curie.includes(":")) {
-        curieToId.set(curie.split(":")[1], idx);
+      const colon = curie.indexOf(":");
+      if (colon > 0) {
+        const local = curie.slice(colon + 1);
+        localCounts.set(local, (localCounts.get(local) ?? 0) + 1);
+      }
+    });
+    rawConcepts.forEach((c: any, idx: number) => {
+      const curie = c.curie || c.id || `concept_${idx}`;
+      const colon = curie.indexOf(":");
+      if (colon > 0) {
+        const local = curie.slice(colon + 1);
+        if (localCounts.get(local) === 1 && !curieToId.has(local)) {
+          curieToId.set(local, idx);
+        }
       }
     });
 

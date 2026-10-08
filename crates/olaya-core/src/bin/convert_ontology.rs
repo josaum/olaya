@@ -11,6 +11,10 @@ use std::path::Path;
 #[derive(Debug, Serialize, Deserialize)]
 struct JsonConcept {
     curie: String,
+    /// Full IRI of the source entity, so consumers can recover the namespace
+    /// that `extract_curie` drops. Empty for concepts loaded from JSON.
+    #[serde(default)]
+    uri: String,
     label: String,
     #[serde(default)]
     description: String,
@@ -156,6 +160,7 @@ fn process_ontology<P: AsRef<Path>>(
             .entry(curie.clone())
             .or_insert_with(|| JsonConcept {
                 curie: curie.clone(),
+                uri: e.uri.clone(),
                 label: if e.label.is_empty() {
                     curie.clone()
                 } else {
