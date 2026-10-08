@@ -7,6 +7,10 @@ Protocol (same as ``scripts/evaluate_routers.py``, which this script imports):
   ontologies' path-context texts (CURIE namespaces are checked to be disjoint);
 * loss = InfoNCE over in-batch gold classes + one sibling hard negative per query + the encoder's
   own top-``m`` non-gold classes for that query, re-mined at the start of every epoch;
+* recipe (``olaya.embedding_router.finetune_bi_encoder``): LoRA rank 16 on the attention and MLP
+  projections (merged into the saved weights), float32, AdamW 3e-5 with linear warmup then linear
+  decay, early stopping on the validation metric, the zero-shot weights as the baseline to beat;
+  default base ``embeddinggemma-2`` (``pip install -e '.[dev,gemma]'``), device ``auto``;
 * model selection = the *mean* over domains of the validation-split full-ontology top-1 of the
   cosine router; the best epoch is kept;
 * reporting = ``DomainContext.evaluate_encoder`` per domain on the test split, once, written to
@@ -33,6 +37,7 @@ sys.path.insert(0, str(ROOT))
 
 # Offline mode is opt-in (HF_HUB_OFFLINE=1): a fresh machine must be able to download the encoders once.
 os.environ.setdefault("OLAYA_TORCH_THREADS", "4")
+os.environ.setdefault("OLAYA_ENCODER_DEVICE", "auto")
 
 import torch
 from scripts.evaluate_routers import (
@@ -87,18 +92,33 @@ def joint_validate(contexts: dict[str, DomainContext]):
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--base", choices=ENCODER_KEYS, default="bge-small")
+    parser.add_argument("--base", choices=ENCODER_KEYS, default="embeddinggemma-2")
     parser.add_argument("--corpus-dir", type=Path, default=ROOT / "data" / "corpora")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "benchmarks" / "results")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "models" / "checkpoints")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--split", choices=("batch", "class"), default="batch")
     parser.add_argument("--candidate-policy", nargs="+", choices=("leaves", "routed"), default=["leaves", "routed"])
-    parser.add_argument("--minutes", type=float, default=30.0)
-    parser.add_argument("--epochs", type=int, default=20)
+    parser.add_argument("--minutes", type=float, default=60.0)
+    parser.add_argument("--epochs", type=int, default=8)
     parser.add_argument("--batch-size", type=int, default=16)
-    parser.add_argument("--lr", type=float, default=2e-5)
-    parser.add_argument("--mine", type=int, default=2, help="mined hard negatives per query per epoch (0 disables)")
+    parser.add_argument(
+        "--lr", type=float, default=3e-5, help="peak learning rate (3e-5 suits LoRA; ~2e-6 for full weights)"
+    )
+    parser.add_argument("--mine", type=int, default=3, help="mined hard negatives per query per epoch (0 disables)")
+    parser.add_argument(
+        "--patience", type=int, default=3, help="stop after N epochs without validation gain (0 disables)"
+    )
+    parser.add_argument("--warmup", type=float, default=0.1, help="fraction of planned steps for linear LR warmup")
+    parser.add_argument(
+        "--lora-rank", type=int, default=16, help="train LoRA adapters of this rank instead of full weights (0 = full)"
+    )
+    parser.add_argument(
+        "--freeze-embeddings",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="keep the token embedding matrix fixed (half of EmbeddingGemma 2's parameters)",
+    )
     parser.add_argument("--tag", default="joint", help="checkpoint / report name suffix")
     args = parser.parse_args()
     torch.set_num_threads(THREADS)
@@ -138,6 +158,11 @@ def main() -> None:
         class_texts=texts,
         hard_negatives=hard_negatives,
         mine_hard_negatives=args.mine,
+        patience=args.patience or None,
+        warmup_fraction=args.warmup,
+        freeze_embeddings=args.freeze_embeddings,
+        lora_rank=args.lora_rank,
+        baseline_validation=zero_shot,
         progress=say,
     )
     tuned = load_finetuned_encoder(checkpoint, threads=THREADS, batch_size=32)
@@ -164,6 +189,12 @@ def main() -> None:
             "batch_size": args.batch_size,
             "lr": args.lr,
             "mined_hard_negatives_per_query": args.mine,
+            "patience": args.patience,
+            "warmup_fraction": args.warmup,
+            "freeze_embeddings": args.freeze_embeddings,
+            "lora_rank": args.lora_rank,
+            "dtype": "float32",
+            "stop_reason": result.stop_reason,
             "runtime_s": round(result.runtime_s, 1),
             "history": result.history,
             "loss": "InfoNCE (temperature 0.05) over in-batch gold class texts + one sibling hard negative per query"
@@ -229,6 +260,9 @@ def render(r: dict[str, Any]) -> str:
         "",
         f"- Base `{ft['base_model']}`, {ft['train_pairs']} train pairs over {ft['classes']} classes, {ft['epochs_run']} epochs in {ft['runtime_s']} s (budget {ft['budget_minutes']} min), best epoch {ft['best_epoch']}",
         f"- {ft['loss']}",
+        f"- Recipe: float32 weights, AdamW lr {ft['lr']} with linear warmup over {ft.get('warmup_fraction', 0):.0%} of the planned steps then linear decay, "
+        f"batch {ft['batch_size']}, early stop patience {ft.get('patience', '-')}, token embeddings {'frozen' if ft.get('freeze_embeddings') else 'trainable'}, "
+        f"{'LoRA rank ' + str(ft['lora_rank']) + ' merged into the weights' if ft.get('lora_rank') else 'full weights'}; stopped on {ft.get('stop_reason', '-')}",
         f"- Mean validation top-1: fine-tuned {ft['best_mean_validation_top1']:.3f} vs zero-shot base {ft['zero_shot_mean_validation_top1']:.3f}",
         f"- Checkpoint `{ft['checkpoint']}` sha256 `{ft['sha256'][:16]}` ({ft['size_bytes']} bytes; gitignored)",
         f"- Commit `{r['commit'][:12]}`, runtime {r['runtime_s']} s",

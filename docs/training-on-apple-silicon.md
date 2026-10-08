@@ -10,7 +10,7 @@ CUDA-only and targets decoder LLMs, not BERT-style encoders.
 
 ```bash
 git clone https://github.com/josaum/olaya && cd olaya
-uv venv && uv pip install -e '.[dev]'          # torch wheels on macOS ship with MPS
+uv venv && uv pip install -e '.[dev,gemma]'    # torch wheels on macOS ship with MPS; gemma = the default fine-tune base
 .venv/bin/python -c "import torch; print(torch.backends.mps.is_available())"   # must print True
 ```
 
@@ -81,32 +81,73 @@ Each command writes its report under `benchmarks/results/` and its checkpoint un
    git commit -m "results(router): joint bge-base on Apple Silicon (MPS)"
    ```
 
-## EmbeddingGemma 2 (Google, 270M text backbone)
+## EmbeddingGemma 2 (Google, 270M text backbone) is the default fine-tune
 
 `google/embeddinggemma-2` is a prompted model served through `sentence-transformers`, so it needs the
 `gemma` extra and a newer `transformers`:
 
 ```bash
-uv pip install -e '.[dev,gemma]'      # sentence-transformers[image] >= 6.1, transformers >= 5.19 (the audio extra pulls kenlm, which does not build on Python 3.14)
+uv pip install -e '.[dev,gemma]'      # sentence-transformers[image] >= 6.1, transformers >= 5.19, peft >= 0.21 (the audio extra pulls kenlm, which does not build on Python 3.14)
 ```
 
 `olaya.embeddings.SentenceTransformerEncoder` loads it text-only (vision and audio encoders dropped,
 271M parameters), applies the `query` prompt to states and the `document` prompt to class texts, and
-exposes the differentiable forward the fine-tune uses. It is registered as `embeddinggemma-2` in
-both scripts:
+exposes the differentiable forward the fine-tune uses. It is the default `--base` of
+`scripts/finetune_joint_encoder.py` and the default `--finetune-base` of `scripts/evaluate_routers.py`,
+and the joint script picks the device automatically (CUDA, then MPS, then CPU), so the two protocol
+runs need no flags:
 
 ```bash
-.venv/bin/python scripts/finetune_joint_encoder.py --base embeddinggemma-2 --minutes 60 --epochs 8 --mine 3 --tag joint-gemma
-.venv/bin/python scripts/finetune_joint_encoder.py --base embeddinggemma-2 --minutes 60 --epochs 8 --mine 3 --tag joint-gemma --split class
+.venv/bin/python scripts/finetune_joint_encoder.py --tag joint-gemma
+.venv/bin/python scripts/finetune_joint_encoder.py --tag joint-gemma --split class
 ```
 
-Mac Studio results (8 epochs, 27 minutes each, `router-eval-joint-gemma*.md`): batch split
-full-ontology top-1 **0.81 / 0.80 / 0.78** (incident / GS1 / Schema.org, best epoch 5), class-disjoint
-**0.65 / 0.61 / 0.59** (best epoch 1, then overfits: validation fell below zero-shot by epoch 3, so
-use `--epochs 3` or a lower `--lr` for held-out-class training). On MPS the fine-tune enables
-gradient checkpointing automatically: a step of 16 queries plus about 100 class texts through the
-24-layer encoder needs about 35 GB otherwise and 11 GB with it, at 3.7 s per step. Checkpoints are
-about 540 MB and stay gitignored.
+### The recipe (`olaya.embedding_router.finetune_bi_encoder`)
+
+- **LoRA rank 16** on the attention and MLP projections (5M trainable parameters of 271M), merged
+  into the weights before saving, so the checkpoint keeps the plain `olaya-st-encoder-v1` format.
+  `--lora-rank 0` trains the full weights instead.
+- **float32 weights.** The Hub checkpoint is bf16; AdamW steps at these learning rates are smaller
+  than bf16 can represent, so most of them would round away. The dtype is stored in the checkpoint
+  and restored on reload, otherwise the fine-tuned deltas would be rounded away a second time.
+- **AdamW 3e-5**, weight decay 0.01 on matrices only, linear warmup over 10% of the planned steps,
+  linear decay to zero at `--epochs` (default 8).
+- **Early stopping** after `--patience 3` epochs without a validation gain, and the zero-shot weights
+  are the candidate every epoch has to beat: a run that only hurts returns the base model
+  (`best epoch 0`).
+- **Gradient checkpointing on MPS.** One step is 16 queries plus up to ~96 class texts through 24
+  layers; without recomputation it needs ~35 GB on MPS and swaps instead of training. With it a
+  step takes ~11 GB and 3.8 s, about 3.5 minutes per epoch.
+
+### How the recipe was chosen
+
+Class-disjoint validation (mean full-ontology top-1 over the three domains, 819 train pairs, zero-shot
+0.564), one run per row, selected on validation only:
+
+| recipe | epoch 1 | epoch 2 | epoch 3 | best |
+|---|---|---|---|---|
+| full weights, 2e-5 | 0.480 | 0.397 | 0.472 | base kept |
+| full weights, 2e-5, token embeddings frozen | 0.485 | 0.375 | 0.451 | base kept |
+| full weights, 5e-6 | 0.657 | 0.482 | 0.461 | 0.657 |
+| full weights, 5e-6, token embeddings frozen | 0.659 | 0.504 | 0.434 | 0.659 |
+| full weights, 2e-6 | 0.674 | 0.636 | 0.617 | 0.674 |
+| LoRA 16, 3e-4 | 0.672 | 0.557 | 0.527 | 0.672 |
+| LoRA 16, 1e-4 | **0.724** | 0.642 | 0.539 | 0.724 |
+| LoRA 16, 3e-5 (default) | 0.670 | **0.722** | 0.714 | 0.722 (0.700 and 0.673 at epochs 4 and 5) |
+
+Full fine-tuning memorises the 819 pairs within two epochs at any rate that moves the model: the peak
+is always epoch 1 and a lower rate only raises it and slows the decline. Freezing the 134M-parameter
+token embedding matrix changes nothing. LoRA raises the ceiling, and at 3e-5 it reaches it on a
+plateau rather than a one-epoch spike, which is why it is the default even though 1e-4 ties its peak.
+The earlier bf16 full fine-tune that reported 0.676 at epoch 1 was this effect by accident: most of
+its updates rounded to zero.
+
+### Results with the default recipe
+
+- Batch-disjoint (`router-eval-joint-gemma.md`): best epoch 8 of 8, mean validation top-1 0.780 (zero-shot 0.593); test top-1 gs1 0.797, incident 0.812, schemaorg 0.750. The bf16 full fine-tune this replaces scored 0.797 / 0.812 / 0.783, so seen-class accuracy is unchanged within noise and the curve is now monotone instead of a spike at epoch 5.
+- Class-disjoint (`router-eval-joint-gemma-classdisjoint.md`): best epoch 2, stopped on patience after 5, mean validation top-1 0.722 (zero-shot 0.564); test top-1 gs1 0.656, incident 0.826, schemaorg 0.606, against 0.607 / 0.652 / 0.591 for the bf16 full fine-tune and 0.410 / 0.696 / 0.402 for the joint bge-small encoder.
+
+Checkpoints are 1.08 GB in float32 and stay gitignored.
 
 ## What to expect
 

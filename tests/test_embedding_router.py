@@ -389,3 +389,110 @@ def test_finetune_uses_prompted_embed_batch_and_saves_st_format(onto, tmp_path):
     # Document-side embeddings were requested for the class texts during training as well.
     assert sum(1 for _, d in enc.calls if d) >= 2
     assert router.rank("the kitty purrs", "T:ROOT")[0][0] in onto.concepts
+
+
+def test_finetune_stops_on_patience_and_records_reason(onto, tmp_path):
+    enc = _PromptedFake()
+    pairs = [("the kitty purrs", "T:CAT"), ("a dog barks loudly", "T:DOG"), ("heavy truck hauls cargo", "T:TRUCK")]
+    scores = iter([0.5, 0.4, 0.4, 0.9, 0.9])  # improvement only at epoch 1, then two flat epochs
+
+    result = finetune_bi_encoder(
+        enc,
+        onto,
+        pairs,
+        checkpoint=tmp_path / "p.pt",
+        max_epochs=10,
+        batch_size=2,
+        patience=2,
+        validate=lambda e: next(scores),
+    )
+    assert result.epochs_run == 3 and result.best_epoch == 1 and result.stop_reason == "patience"
+    no_patience = finetune_bi_encoder(
+        enc,
+        onto,
+        pairs,
+        checkpoint=tmp_path / "n.pt",
+        max_epochs=2,
+        batch_size=2,
+        patience=None,
+        validate=lambda e: 0.0,
+    )
+    assert no_patience.epochs_run == 2 and no_patience.stop_reason == "epochs"
+
+
+def _hf_like(dim: int):
+    """A transformer stand-in with the two hooks the recipe uses: input embeddings and a matrix head."""
+    import torch
+
+    class HFLike(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.emb = torch.nn.EmbeddingBag(512, dim, mode="mean")
+            self.head = torch.nn.Linear(dim, dim)
+
+        def get_input_embeddings(self):
+            return self.emb
+
+        def forward(self, ids, offsets):
+            return self.head(self.emb(ids, offsets))
+
+    return HFLike()
+
+
+class _StackedFake(_PromptedFake):
+    """Prompted fake whose ``model`` is a sentence-transformers-like stack: ``model[0].auto_model``."""
+
+    def __init__(self, dim: int = 16):
+        import torch
+
+        super().__init__(dim)
+        torch.manual_seed(0)
+        first = torch.nn.Module()
+        first.auto_model = _hf_like(dim)
+        self.model = torch.nn.Sequential(first)
+
+    def embed_batch(self, texts, *, documents=False):
+        import torch
+
+        self.calls.append((len(texts), documents))
+        prefix = self.document_prefix if documents else self.query_prefix
+        ids, offsets = self._ids([prefix + t for t in texts])
+        return torch.nn.functional.normalize(self.model[0].auto_model(ids, offsets), p=2, dim=1)
+
+
+def test_finetune_freeze_embeddings_keeps_the_table_and_saves_dtype(onto, tmp_path):
+    import torch
+
+    enc = _StackedFake()
+    hf = enc.model[0].auto_model
+    before_emb, before_head = hf.emb.weight.detach().clone(), hf.head.weight.detach().clone()
+    pairs = [("the kitty purrs", "T:CAT"), ("a dog barks loudly", "T:DOG"), ("heavy truck hauls cargo", "T:TRUCK")]
+    ckpt = tmp_path / "frozen.pt"
+    finetune_bi_encoder(enc, onto, pairs, checkpoint=ckpt, max_epochs=2, batch_size=2, lr=1e-2, freeze_embeddings=True)
+    assert torch.equal(hf.emb.weight, before_emb)
+    assert not torch.equal(hf.head.weight, before_head)
+    data = torch.load(ckpt, map_location="cpu", weights_only=True)
+    assert data["format"] == "olaya-st-encoder-v1" and data["dtype"] == "float32"
+
+
+def test_finetune_keeps_base_weights_when_no_epoch_beats_the_baseline(onto, tmp_path):
+    import torch
+
+    enc = _PromptedFake()
+    before = enc.model.weight.detach().clone()
+    pairs = [("the kitty purrs", "T:CAT"), ("a dog barks loudly", "T:DOG")]
+    result = finetune_bi_encoder(
+        enc,
+        onto,
+        pairs,
+        checkpoint=tmp_path / "b.pt",
+        max_epochs=5,
+        batch_size=2,
+        lr=1e-2,
+        patience=2,
+        validate=lambda e: 0.1,
+        baseline_validation=0.5,
+    )
+    assert result.best_epoch == 0 and result.best_validation == 0.5 and result.epochs_run == 2
+    assert result.stop_reason == "patience"
+    assert torch.equal(enc.model.weight, before)

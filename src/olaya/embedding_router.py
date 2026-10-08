@@ -336,6 +336,7 @@ class FineTuneResult:
     history: list[dict[str, Any]] = field(default_factory=list)
     best_validation: float = -1.0
     best_epoch: int = 0
+    stop_reason: str = ""
 
 
 def sibling_curies(ontology: Ontology, curie: str) -> list[str]:
@@ -367,6 +368,44 @@ def mined_hard_negatives(
     return out
 
 
+#: Linear projections LoRA attaches to when present (attention and MLP of Gemma / BERT style blocks).
+_LORA_TARGETS = (
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj",
+    "query",
+    "key",
+    "value",
+    "dense",
+)
+
+
+def _set_transformer_module(encoder: Any, model: Any, prompted: bool, new: Any) -> None:
+    if not prompted:
+        encoder.model = new
+        return
+    wrapper = model[0]
+    current = wrapper.auto_model
+    # sentence-transformers registers the transformer under "model" and exposes "auto_model" as an
+    # alias; assign the registered name or the stack ends up with two copies in its state_dict.
+    name = next((n for n, m in wrapper._modules.items() if m is current), "auto_model")
+    setattr(wrapper, name, new)
+
+
+def _transformer_module(model: Any, prompted: bool) -> Any:
+    """The Hugging Face transformer inside ``model`` (``None`` when the stack is not one)."""
+    if not prompted:
+        return model
+    try:
+        return model[0].auto_model
+    except (TypeError, IndexError, AttributeError):
+        return None
+
+
 def finetune_bi_encoder(
     encoder: Any,
     ontology: Ontology | None,
@@ -383,6 +422,11 @@ def finetune_bi_encoder(
     class_texts: Mapping[str, str] | None = None,
     hard_negatives: Callable[[str], Sequence[str]] | None = None,
     mine_hard_negatives: int = 0,
+    patience: int | None = 3,
+    warmup_fraction: float = 0.1,
+    freeze_embeddings: bool = False,
+    lora_rank: int = 0,
+    baseline_validation: float | None = None,
     progress: Callable[[str], None] | None = None,
 ) -> FineTuneResult:
     """Contrastive fine-tuning of a :class:`~olaya.embeddings.TransformerEncoder` in place.
@@ -400,6 +444,19 @@ def finetune_bi_encoder(
     ``mine_hard_negatives = m > 0``, the encoder's own top-``m`` non-gold classes for every training
     query are recomputed at the start of each epoch (model in eval mode) and added as negatives, so
     the loss concentrates on the confusions the current model actually makes.
+
+    Recipe: weights are upcast to float32 before training (bf16 checkpoints such as EmbeddingGemma 2
+    would otherwise round away most AdamW updates at these learning rates; the saved dtype is
+    restored by :func:`load_finetuned_encoder`); AdamW with weight decay 0.01 on matrices only; the
+    learning rate warms up linearly over ``warmup_fraction`` of the planned steps and decays
+    linearly to zero at ``max_epochs``; training stops after ``patience`` epochs without a
+    validation improvement (``None`` disables); ``freeze_embeddings`` keeps the token embedding
+    matrix fixed, which for large-vocabulary models holds half the parameters. ``lora_rank > 0``
+    trains low-rank adapters (``peft``) on the attention and MLP projections instead of the full
+    weights and merges them back before saving, so the checkpoint format does not change. With
+    ``baseline_validation`` (the zero-shot score of ``encoder``), the untouched weights are the
+    candidate every epoch has to beat, so a run that only hurts returns the base model
+    (``best_epoch == 0``).
     """
     import torch
 
@@ -428,13 +485,49 @@ def finetune_bi_encoder(
         raise ValueError("no training pairs with a known class")
     class_order = sorted(texts)
     device = next(model.parameters()).device
-    if device.type == "mps":
+    hf = _transformer_module(model, prompted)
+    if device.type == "mps" and hasattr(hf, "gradient_checkpointing_enable"):
         # Unified memory: recompute activations in the backward pass. Without it a step of ~100
         # sequences through a 24-layer encoder needs ~35 GB on MPS and swaps instead of training.
-        hf = getattr(model[0], "auto_model", None) if prompted else model
-        if hasattr(hf, "gradient_checkpointing_enable"):
-            hf.gradient_checkpointing_enable()
-    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
+        hf.gradient_checkpointing_enable()
+    if any(p.dtype != torch.float32 for p in model.parameters()):
+        model.float()
+    if freeze_embeddings and hasattr(hf, "get_input_embeddings"):
+        hf.get_input_embeddings().weight.requires_grad_(False)
+    if lora_rank > 0:
+        if hf is None or not hasattr(hf, "named_modules"):
+            raise ValueError("lora_rank needs a Hugging Face transformer")
+        try:
+            from peft import LoraConfig, get_peft_model
+        except ImportError as exc:  # pragma: no cover
+            raise ImportError("lora_rank requires peft (pip install -e '.[gemma]')") from exc
+        targets = sorted({n.rsplit(".", 1)[-1] for n, m in hf.named_modules() if isinstance(m, torch.nn.Linear)})
+        targets = [t for t in targets if t in _LORA_TARGETS] or targets
+        hf = get_peft_model(
+            hf, LoraConfig(r=lora_rank, lora_alpha=2 * lora_rank, lora_dropout=0.0, target_modules=targets)
+        )
+        if device.type == "mps" and hasattr(hf, "enable_input_require_grads"):
+            hf.enable_input_require_grads()  # checkpointed layers need a grad-requiring input
+        _set_transformer_module(encoder, model, prompted, hf)
+        if not prompted:
+            model = hf
+    decay = [p for p in model.parameters() if p.requires_grad and p.ndim >= 2]
+    no_decay = [p for p in model.parameters() if p.requires_grad and p.ndim < 2]
+    if not decay and not no_decay:
+        raise ValueError("no trainable parameters")
+    optimizer = torch.optim.AdamW(
+        [{"params": decay, "weight_decay": 0.01}, {"params": no_decay, "weight_decay": 0.0}], lr=lr
+    )
+    steps_per_epoch = -(-len(pairs) // batch_size)
+    total_steps = max(1, max_epochs * steps_per_epoch)
+    warmup_steps = int(round(warmup_fraction * total_steps))
+
+    def lr_factor(step: int) -> float:
+        if step < warmup_steps:
+            return (step + 1) / warmup_steps
+        return max(0.0, (total_steps - step) / max(1, total_steps - warmup_steps))
+
+    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_factor)
 
     def embed(batch_texts: list[str], documents: bool = False) -> torch.Tensor:
         if prompted:
@@ -454,7 +547,7 @@ def finetune_bi_encoder(
     def save() -> None:
         checkpoint.parent.mkdir(parents=True, exist_ok=True)
         payload: dict[str, Any] = {
-            "model_state_dict": {k: v.detach().cpu() for k, v in model.state_dict().items()},
+            "model_state_dict": {k: v.detach().cpu() for k, v in encoder.model.state_dict().items()},
             "base_model": encoder.name,
             "max_length": max_length,
             "prefix": prefix,
@@ -464,6 +557,7 @@ def finetune_bi_encoder(
             payload.update(
                 {
                     "format": "olaya-st-encoder-v1",
+                    "dtype": "float32",
                     "query_prefix": encoder.query_prefix,
                     "document_prefix": encoder.document_prefix,
                     "text_only": getattr(encoder, "text_only", True),
@@ -478,8 +572,13 @@ def finetune_bi_encoder(
     history: list[dict[str, Any]] = []
     best_val, best_epoch = -1.0, 0
     best_state: dict[str, torch.Tensor] | None = None
+    if baseline_validation is not None:
+        best_val = float(baseline_validation)
+        best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
     epochs_run = 0
     stop = False
+    stop_reason = "epochs"
+    epochs_since_best = 0
     for epoch in range(1, max_epochs + 1):
         mined: list[list[str]] = [[] for _ in pairs]
         if mine_hard_negatives > 0:
@@ -524,6 +623,7 @@ def finetune_bi_encoder(
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
+            scheduler.step()
             tot_loss += float(loss.detach())
             steps += 1
             if time.perf_counter() - t0 > budget_s:
@@ -542,10 +642,20 @@ def finetune_bi_encoder(
         if val > best_val:
             best_val, best_epoch = val, epoch
             best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+            epochs_since_best = 0
+        else:
+            epochs_since_best += 1
         if stop or elapsed > budget_s:
+            stop_reason = "budget"
+            break
+        if patience is not None and epochs_since_best >= patience:
+            stop_reason = "patience"
             break
     if best_state is not None:
         model.load_state_dict(best_state)
+    if lora_rank > 0:
+        _set_transformer_module(encoder, model, prompted, hf.merge_and_unload())
+        model = encoder.model
     model.eval()
     save()
     digest = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
@@ -558,6 +668,7 @@ def finetune_bi_encoder(
         history=history,
         best_validation=best_val,
         best_epoch=best_epoch,
+        stop_reason=stop_reason,
     )
 
 
@@ -580,6 +691,7 @@ def load_finetuned_encoder(checkpoint: Path, **encoder_kwargs: Any) -> Any:
             "max_length": data.get("max_length", 128),
             "text_only": data.get("text_only", True),
             "truncate_dim": data.get("truncate_dim"),
+            "dtype": data.get("dtype"),
             **{k: v for k, v in encoder_kwargs.items() if k not in ("use_cache", "prefix")},
         }
         enc: Any = SentenceTransformerEncoder(data["base_model"], **kwargs)
