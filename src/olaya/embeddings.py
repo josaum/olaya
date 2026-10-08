@@ -267,6 +267,132 @@ class TransformerEncoder:
         return result
 
 
+class SentenceTransformerEncoder:
+    """Encoder backed by ``sentence-transformers`` for checkpoints whose module stack is more than
+    "transformer + mean pooling" (prompted models such as ``google/embeddinggemma-2``).
+
+    Queries and documents can carry different instruction prefixes: :meth:`encode` applies the
+    model's ``query_prompt`` (the :class:`Encoder` protocol, used for states), :meth:`encode_documents`
+    the ``document_prompt`` (class texts; :class:`~olaya.embedding_router.EmbeddingRouter` uses it
+    when present). ``text_only`` drops the vision and audio encoders of multimodal checkpoints
+    (EmbeddingGemma 2: 744M -> 271M parameters). ``embed_batch`` is the differentiable forward used
+    by :func:`~olaya.embedding_router.finetune_bi_encoder`. Requires ``pip install -e '.[gemma]'``.
+    """
+
+    def __init__(
+        self,
+        model: str,
+        *,
+        query_prompt: str | None = "query",
+        document_prompt: str | None = "document",
+        text_only: bool = True,
+        max_length: int = 128,
+        batch_size: int = 32,
+        threads: int | None = None,
+        device: str | None = None,
+        truncate_dim: int | None = None,
+        dtype: str | None = None,
+    ):
+        try:
+            import torch
+            from sentence_transformers import SentenceTransformer
+        except Exception as exc:  # noqa: BLE001
+            raise EncoderUnavailable(
+                f"sentence-transformers not importable ({exc}); install with pip install -e '.[gemma]'"
+            ) from exc
+        self._torch = torch
+        torch.manual_seed(0)
+        if threads:
+            torch.set_num_threads(threads)
+        self.device = resolve_device(device, torch)
+        config_kwargs = {"vision_config": None, "audio_config": None} if text_only else None
+        model_kwargs = {"torch_dtype": getattr(torch, dtype)} if dtype else None
+        try:
+            self.st = SentenceTransformer(
+                model, device=self.device, config_kwargs=config_kwargs, model_kwargs=model_kwargs
+            )
+        except TypeError:
+            # Older sentence-transformers without config_kwargs / model_kwargs.
+            self.st = SentenceTransformer(model, device=self.device)
+        except Exception as exc:  # noqa: BLE001
+            raise EncoderUnavailable(f"cannot load {model}: {exc}") from exc
+        self.st.max_seq_length = max_length
+        self.st.eval()
+        prompts = dict(getattr(self.st, "prompts", {}) or {})
+        self.query_prefix = prompts.get(query_prompt, query_prompt or "") if query_prompt else ""
+        self.document_prefix = prompts.get(document_prompt, document_prompt or "") if document_prompt else ""
+        self.name = model
+        self.revision = "main"
+        self.max_length = max_length
+        self.batch_size = batch_size
+        self.text_only = text_only
+        self.truncate_dim = truncate_dim
+        self.prefix = self.query_prefix
+        self.commit_sha = _resolve_commit(model, "main")
+        get_dim = getattr(self.st, "get_embedding_dimension", None) or self.st.get_sentence_embedding_dimension
+        self.dim = int(truncate_dim or get_dim())
+        self.cache = None
+        self.calls = 0
+
+    @property
+    def model(self) -> Any:
+        """The trainable module stack (``torch.nn.Module``)."""
+        return self.st
+
+    @property
+    def info(self) -> EncoderInfo:
+        return EncoderInfo(
+            model=self.name,
+            revision=self.revision,
+            commit_sha=self.commit_sha,
+            dim=self.dim,
+            max_length=self.max_length,
+            prefix=self.query_prefix,
+            extra={
+                "backend": "sentence-transformers",
+                "document_prefix": self.document_prefix,
+                "text_only": self.text_only,
+                "truncate_dim": self.truncate_dim,
+                "batch_size": self.batch_size,
+            },
+        )
+
+    def _encode(self, texts: Sequence[str], prefix: str) -> np.ndarray:
+        texts = [t if t else " " for t in texts]
+        if not texts:
+            return np.zeros((0, self.dim), dtype=np.float32)
+        with self._torch.no_grad():
+            out = self.st.encode(
+                [prefix + t for t in texts],
+                batch_size=self.batch_size,
+                normalize_embeddings=True,
+                convert_to_numpy=True,
+                truncate_dim=self.truncate_dim,
+                show_progress_bar=False,
+            )
+        self.calls += len(texts)
+        return np.asarray(out, dtype=np.float32)
+
+    def encode(self, texts: Sequence[str]) -> np.ndarray:
+        """Query-side embeddings (states)."""
+        return self._encode(texts, self.query_prefix)
+
+    def encode_documents(self, texts: Sequence[str]) -> np.ndarray:
+        """Document-side embeddings (ontology class texts)."""
+        return self._encode(texts, self.document_prefix)
+
+    def embed_batch(self, texts: Sequence[str], *, documents: bool = False) -> Any:
+        """Differentiable, L2-normalised float32 embeddings on the model's device (for training)."""
+        torch = self._torch
+        prefix = self.document_prefix if documents else self.query_prefix
+        features = self.st.preprocess([prefix + (t if t else " ") for t in texts])
+        features = {k: (v.to(self.device) if hasattr(v, "to") else v) for k, v in features.items()}
+        out = self.st(features)["sentence_embedding"].float()
+        if self.truncate_dim:
+            out = out[:, : self.truncate_dim]
+        return torch.nn.functional.normalize(out, p=2, dim=1)
+
+
 def resolve_device(device: str | None, torch: Any) -> str:
     """Pick the torch device for an encoder: explicit > ``OLAYA_ENCODER_DEVICE`` > ``cpu``.
 
@@ -346,6 +472,7 @@ __all__ = [
     "EmbeddingCache",
     "Encoder",
     "EncoderInfo",
+    "SentenceTransformerEncoder",
     "resolve_device",
     "EncoderUnavailable",
     "HashEncoder",
