@@ -251,8 +251,8 @@
     },
     "joint-gemma": {
       "file": "olaya_embed_joint-gemma.pt",
-      "sha256": "019bd5f922e1b7ce1d26ca10d180b84de17073e70373ec3f61fd7ea661dcb47b",
-      "size_bytes": 542151733,
+      "sha256": "902eea4a52d752c128835b664ae29477a922154812eba983c3dcbf78ae2860a0",
+      "size_bytes": 1084157045,
       "base_model": "google/embeddinggemma-2",
       "format": "olaya-st-encoder-v1 (sentence-transformers state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
       "domains": [
@@ -263,33 +263,34 @@
       "split_unit": "batch",
       "train_pairs": 849,
       "classes": 736,
-      "commit": "0c8a4e38c59d1e0b2c4db65be1982ba5e42b4152",
+      "commit": "4c9240438e0fdf6ef46092b5d2ae772987132819",
       "device": "mps (Mac Studio, gradient checkpointing)",
       "budget_minutes": 60.0,
-      "best_epoch": 5,
+      "best_epoch": 8,
       "loss": "InfoNCE (temperature 0.05) over in-batch gold class texts + one sibling hard negative per query + 3 mined hard negatives per query re-mined each epoch",
       "metrics": {
-        "mean_validation_top1": 0.795497346344804,
+        "mean_validation_top1": 0.7802123931236594,
         "mean_validation_top1_zero_shot_base": 0.5925254539412067,
         "gs1_test_top1": 0.796875,
         "incident_test_top1": 0.8125,
-        "schemaorg_test_top1": 0.7833333333333333,
+        "schemaorg_test_top1": 0.75,
         "gs1_test_recall_at_5": 0.953125,
         "incident_test_recall_at_5": 0.9375,
-        "schemaorg_test_recall_at_5": 0.9166666666666666,
-        "gs1_engine_top1": 0.78125,
-        "incident_engine_top1": 0.8125,
-        "schemaorg_engine_top1": 0.7083333333333334,
+        "schemaorg_test_recall_at_5": 0.9,
+        "gs1_engine_top1": 0.796875,
+        "incident_engine_top1": 0.75,
+        "schemaorg_engine_top1": 0.7,
         "gs1_engine_top1_routed": 0.796875,
         "incident_engine_top1_routed": 0.8125,
-        "schemaorg_engine_top1_routed": 0.7833333333333333
+        "schemaorg_engine_top1_routed": 0.75
       },
-      "report": "benchmarks/results/router-eval-joint-gemma.json"
+      "report": "benchmarks/results/router-eval-joint-gemma.json",
+      "recipe": "LoRA rank 16 on attention and MLP projections merged into the weights, float32, AdamW 3e-05 with linear warmup over 10% of the planned steps then linear decay, batch 16, early stop patience 3, zero-shot weights as the selection baseline; stopped on epochs after 8 epochs"
     },
     "joint-gemma-classdisjoint": {
       "file": "olaya_embed_joint-gemma-classdisjoint.pt",
-      "sha256": "be9705e9d677515845c11019c544736dcc27931833ef7952be88307601122584",
-      "size_bytes": 542157663,
+      "sha256": "e3af553e716bdd668fa3ec8c72906b1ec40855465be14dac33f2cc5157444051",
+      "size_bytes": 1084162911,
       "base_model": "google/embeddinggemma-2",
       "format": "olaya-st-encoder-v1 (sentence-transformers state dict on top of the base checkpoint; load with olaya.embedding_router.load_finetuned_encoder)",
       "domains": [
@@ -300,28 +301,29 @@
       "split_unit": "class",
       "train_pairs": 819,
       "classes": 736,
-      "commit": "0c8a4e38c59d1e0b2c4db65be1982ba5e42b4152",
+      "commit": "4c9240438e0fdf6ef46092b5d2ae772987132819",
       "device": "mps (Mac Studio, gradient checkpointing)",
       "budget_minutes": 60.0,
-      "best_epoch": 1,
+      "best_epoch": 2,
       "loss": "InfoNCE (temperature 0.05) over in-batch gold class texts + one sibling hard negative per query + 3 mined hard negatives per query re-mined each epoch",
       "metrics": {
-        "mean_validation_top1": 0.6761986057760705,
+        "mean_validation_top1": 0.7224356238440746,
         "mean_validation_top1_zero_shot_base": 0.5636902221409263,
-        "gs1_test_top1": 0.6065573770491803,
-        "incident_test_top1": 0.6521739130434783,
-        "schemaorg_test_top1": 0.5905511811023622,
+        "gs1_test_top1": 0.6557377049180327,
+        "incident_test_top1": 0.8260869565217391,
+        "schemaorg_test_top1": 0.6062992125984252,
         "gs1_test_recall_at_5": 0.819672131147541,
         "incident_test_recall_at_5": 1.0,
-        "schemaorg_test_recall_at_5": 0.84251968503937,
-        "gs1_engine_top1": 0.6229508196721312,
+        "schemaorg_test_recall_at_5": 0.8267716535433071,
+        "gs1_engine_top1": 0.6721311475409836,
         "incident_engine_top1": 1.0,
-        "schemaorg_engine_top1": 0.5984251968503937,
-        "gs1_engine_top1_routed": 0.6065573770491803,
-        "incident_engine_top1_routed": 0.6521739130434783,
-        "schemaorg_engine_top1_routed": 0.5905511811023622
+        "schemaorg_engine_top1": 0.6220472440944882,
+        "gs1_engine_top1_routed": 0.6557377049180327,
+        "incident_engine_top1_routed": 0.8260869565217391,
+        "schemaorg_engine_top1_routed": 0.6062992125984252
       },
-      "report": "benchmarks/results/router-eval-joint-gemma-classdisjoint.json"
+      "report": "benchmarks/results/router-eval-joint-gemma-classdisjoint.json",
+      "recipe": "LoRA rank 16 on attention and MLP projections merged into the weights, float32, AdamW 3e-05 with linear warmup over 10% of the planned steps then linear decay, batch 16, early stop patience 3, zero-shot weights as the selection baseline; stopped on patience after 5 epochs"
     }
   }
 }
