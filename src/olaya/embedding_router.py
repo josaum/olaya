@@ -428,6 +428,12 @@ def finetune_bi_encoder(
         raise ValueError("no training pairs with a known class")
     class_order = sorted(texts)
     device = next(model.parameters()).device
+    if device.type == "mps":
+        # Unified memory: recompute activations in the backward pass. Without it a step of ~100
+        # sequences through a 24-layer encoder needs ~35 GB on MPS and swaps instead of training.
+        hf = getattr(model[0], "auto_model", None) if prompted else model
+        if hasattr(hf, "gradient_checkpointing_enable"):
+            hf.gradient_checkpointing_enable()
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
 
     def embed(batch_texts: list[str], documents: bool = False) -> torch.Tensor:
