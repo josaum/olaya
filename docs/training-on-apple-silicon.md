@@ -14,7 +14,9 @@ uv venv && uv pip install -e '.[dev]'          # torch wheels on macOS ship with
 .venv/bin/python -c "import torch; print(torch.backends.mps.is_available())"   # must print True
 ```
 
-The encoders are downloaded from the Hugging Face Hub on first use (about 2 GB for all seven):
+The encoders are downloaded from the Hugging Face Hub on first use (about 2 GB for all seven). The
+scripts never force offline mode; set `HF_HUB_OFFLINE=1` yourself once everything is cached if you want
+runs to fail fast instead of touching the network. Pre-fetch them in one go:
 
 ```bash
 .venv/bin/python - <<'EOF'
@@ -69,6 +71,14 @@ Each command writes its report under `benchmarks/results/` and its checkpoint un
 
    ```bash
    .venv/bin/python scripts/evaluate_routers.py --encoders bge-small --encoder-checkpoint models/checkpoints/olaya_embed_joint-base.pt
+   ```
+
+5. **Commit the reports** (list the files; zsh rejects an unmatched brace glob):
+
+   ```bash
+   git add benchmarks/results/router-eval-joint-base.json benchmarks/results/router-eval-joint-base.md \
+           benchmarks/results/router-eval-joint-base-classdisjoint.json benchmarks/results/router-eval-joint-base-classdisjoint.md
+   git commit -m "results(router): joint bge-base on Apple Silicon (MPS)"
    ```
 
 ## What to expect
