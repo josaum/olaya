@@ -17,6 +17,7 @@ from olaya.embedding_router import (
     build_class_texts,
     camel_to_words,
     class_context_text,
+    finetune_bi_encoder,
     lexical_rank,
     root_path,
     sibling_curies,
@@ -316,3 +317,75 @@ def test_resolve_device_defaults_to_cpu_and_refuses_unavailable_devices(monkeypa
     fake.backends.mps = types.SimpleNamespace(is_available=lambda: True)
     assert resolve_device("auto", fake) == "mps"
     assert resolve_device("cpu", fake) == "cpu"
+
+
+class _PromptedFake:
+    """Minimal stand-in for SentenceTransformerEncoder: hashed bag-of-tokens through a trainable table."""
+
+    def __init__(self, dim: int = 16):
+        import torch
+
+        torch.manual_seed(0)
+        self.model = torch.nn.EmbeddingBag(512, dim, mode="mean")
+        self.name = "fake-prompted"
+        self.query_prefix = "q: "
+        self.document_prefix = "d: "
+        self.prefix = self.query_prefix
+        self.text_only = True
+        self.truncate_dim = None
+        self.max_length = 32
+        self.dim = dim
+        self.calls: list[tuple[int, bool]] = []
+
+    def _ids(self, texts):
+        import re
+
+        import torch
+
+        ids, offsets = [], []
+        for t in texts:
+            offsets.append(len(ids))
+            toks = re.findall(r"[a-z0-9:]+", t.lower()) or ["empty"]
+            ids += [hash(tok) % 512 for tok in toks]
+        return torch.tensor(ids), torch.tensor(offsets)
+
+    def embed_batch(self, texts, *, documents=False):
+        import torch
+
+        self.calls.append((len(texts), documents))
+        prefix = self.document_prefix if documents else self.query_prefix
+        ids, offsets = self._ids([prefix + t for t in texts])
+        return torch.nn.functional.normalize(self.model(ids, offsets), p=2, dim=1)
+
+    def encode(self, texts):
+        import torch
+
+        with torch.no_grad():
+            return self.embed_batch(list(texts)).numpy()
+
+    def encode_documents(self, texts):
+        import torch
+
+        with torch.no_grad():
+            return self.embed_batch(list(texts), documents=True).numpy()
+
+
+def test_finetune_uses_prompted_embed_batch_and_saves_st_format(onto, tmp_path):
+    import torch
+
+    enc = _PromptedFake()
+    router = EmbeddingRouter(onto, enc)
+    assert any(d for _, d in enc.calls)  # class texts went through the document side
+    pairs = [("the kitty purrs", "T:CAT"), ("a dog barks loudly", "T:DOG"), ("heavy truck hauls cargo", "T:TRUCK")]
+    ckpt = tmp_path / "fake.pt"
+    result = finetune_bi_encoder(
+        enc, onto, pairs, checkpoint=ckpt, max_epochs=2, batch_size=2, lr=1e-2, mine_hard_negatives=1, budget_s=60
+    )
+    assert result.epochs_run == 2 and ckpt.is_file()
+    data = torch.load(ckpt, map_location="cpu", weights_only=True)
+    assert data["format"] == "olaya-st-encoder-v1"
+    assert data["query_prefix"] == "q: " and data["document_prefix"] == "d: "
+    assert set(data["model_state_dict"]) == set(enc.model.state_dict())
+    # Document-side embeddings were requested for the class texts during training as well.
+    assert sum(1 for _, d in enc.calls if d) >= 2
+    assert router.rank("the kitty purrs", "T:ROOT")[0][0] in onto.concepts

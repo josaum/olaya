@@ -36,12 +36,15 @@ os.environ.setdefault("OLAYA_TORCH_THREADS", "4")
 
 import torch
 from scripts.evaluate_routers import (
+    ENCODER_KEYS,
     ENCODERS,
+    ST_ENCODERS,
     THREADS,
     DomainContext,
     _git_commit,
     _rel,
     evaluate_encoder_safely,
+    make_encoder,
     ranking_metrics,
     say,
 )
@@ -53,7 +56,6 @@ from olaya.embedding_router import (
     load_finetuned_encoder,
     sibling_curies,
 )
-from olaya.embeddings import TransformerEncoder
 
 
 def _f(x: Any) -> str:
@@ -85,7 +87,7 @@ def joint_validate(contexts: dict[str, DomainContext]):
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--base", choices=list(ENCODERS), default="bge-small")
+    parser.add_argument("--base", choices=ENCODER_KEYS, default="bge-small")
     parser.add_argument("--corpus-dir", type=Path, default=ROOT / "data" / "corpora")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "benchmarks" / "results")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "models" / "checkpoints")
@@ -103,10 +105,8 @@ def main() -> None:
     t_start = time.perf_counter()
 
     contexts = build_contexts(args)
-    model_name, prefix = ENCODERS[args.base]
-    encoder = TransformerEncoder(
-        model_name, prefix=prefix, threads=THREADS, batch_size=32, max_length=128, use_cache=False
-    )
+    model_name = ST_ENCODERS.get(args.base) or ENCODERS[args.base][0]
+    encoder = make_encoder(args.base, use_cache=False)
     texts: dict[str, str] = {}
     pairs: list[tuple[str, str]] = []
     for ctx in contexts.values():
