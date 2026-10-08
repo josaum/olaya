@@ -134,6 +134,8 @@ Class-disjoint validation (mean full-ontology top-1 over the three domains, 819 
 | LoRA 16, 3e-4 | 0.672 | 0.557 | 0.527 | 0.672 |
 | LoRA 16, 1e-4 | **0.724** | 0.642 | 0.539 | 0.724 |
 | LoRA 16, 3e-5 (default) | 0.670 | **0.722** | 0.714 | 0.722 (0.700 and 0.673 at epochs 4 and 5) |
+| LoRA 8, 3e-5 | 0.655 | 0.693 | 0.711 | 0.723 at epoch 4 (0.719, 0.715, 0.703 after) |
+| LoRA 32, 3e-5 | 0.691 | 0.695 | 0.669 | 0.695 (0.563 and 0.536 at epochs 4 and 5) |
 
 Full fine-tuning memorises the 819 pairs within two epochs at any rate that moves the model: the peak
 is always epoch 1 and a lower rate only raises it and slows the decline. Freezing the 134M-parameter
@@ -142,10 +144,21 @@ plateau rather than a one-epoch spike, which is why it is the default even thoug
 The earlier bf16 full fine-tune that reported 0.676 at epoch 1 was this effect by accident: most of
 its updates rounded to zero.
 
+Rank does not move the ceiling: rank 8 reaches the same 0.72 two epochs later, and rank 32 peaks at
+0.695 and then collapses the way full fine-tuning does. Rank 16 is the smallest adapter that reaches
+the ceiling by epoch 2.
+
 ### Results with the default recipe
 
 - Batch-disjoint (`router-eval-joint-gemma.md`): best epoch 8 of 8, mean validation top-1 0.780 (zero-shot 0.593); test top-1 gs1 0.797, incident 0.812, schemaorg 0.750. The bf16 full fine-tune this replaces scored 0.797 / 0.812 / 0.783, so seen-class accuracy is unchanged within noise and the curve is now monotone instead of a spike at epoch 5.
 - Class-disjoint (`router-eval-joint-gemma-classdisjoint.md`): best epoch 2, stopped on patience after 5, mean validation top-1 0.722 (zero-shot 0.564); test top-1 gs1 0.656, incident 0.826, schemaorg 0.606, against 0.607 / 0.652 / 0.591 for the bf16 full fine-tune and 0.410 / 0.696 / 0.402 for the joint bge-small encoder.
+
+- Per-domain fine-tunes with the same default (`scripts/evaluate_routers.py --finetune-minutes 60`,
+  `router-eval-<domain>.md`): batch-disjoint test top-1 gs1 0.859, incident 0.812, schemaorg 0.642 (the
+  bge-small and MiniLM per-domain references were 0.609 / 0.688 / 0.558); class-disjoint 0.557 / 0.739 / 0.598
+  (were 0.459 / 0.696 / 0.417). gs1 does better per-domain than jointly; the incident class-disjoint
+  fine-tune beats zero-shot on its 14-row validation set and loses to it on the 23-row test set, which is
+  the noise floor of that domain. Each per-domain run takes 1 to 10 minutes on MPS.
 
 Checkpoints are 1.08 GB in float32 and stay gitignored.
 

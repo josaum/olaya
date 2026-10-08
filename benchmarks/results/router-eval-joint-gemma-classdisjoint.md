@@ -15,13 +15,16 @@ routed concept instead of the routed leaves only.
 | domain | test rows | unseen test classes | system | ceiling@8 | top-1 | recall@5 | task top-1 | ECE | engine top-1 | engine top-1 [routed] | engine recall@5 [routed] |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | gs1 | 61 | 9 | lexical | 0.443 | 0.131 | 0.426 | 0.483 | 0.150 | - | - | - |
-| gs1 | 61 | 9 | per-domain fine-tuned | 0.885 | 0.459 | 0.803 | 0.817 | 0.084 | 0.475 | 0.459 | 0.803 |
+| gs1 | 61 | 9 | zero-shot embeddinggemma-2 | 0.754 | 0.410 | 0.656 | 0.800 | 0.105 | 0.410 | 0.410 | 0.656 |
+| gs1 | 61 | 9 | per-domain fine-tuned | 0.869 | 0.557 | 0.820 | 0.917 | 0.081 | 0.574 | 0.557 | 0.787 |
 | gs1 | 61 | 9 | **joint fine-tuned** | 0.902 | 0.656 | 0.820 | 0.883 | 0.056 | 0.672 | 0.656 | 0.820 |
 | incident | 23 | 2 | lexical | 0.870 | 0.478 | 0.826 | 0.783 | 0.217 | - | - | - |
-| incident | 23 | 2 | per-domain fine-tuned | 1.000 | 0.696 | 1.000 | 0.957 | 0.153 | 0.913 | 0.696 | 1.000 |
+| incident | 23 | 2 | zero-shot embeddinggemma-2 | 1.000 | 0.826 | 1.000 | 1.000 | 0.097 | 1.000 | 0.826 | 1.000 |
+| incident | 23 | 2 | per-domain fine-tuned | 1.000 | 0.739 | 1.000 | 0.913 | 0.088 | 0.913 | 0.739 | 1.000 |
 | incident | 23 | 2 | **joint fine-tuned** | 1.000 | 0.826 | 1.000 | 1.000 | 0.066 | 1.000 | 0.826 | 1.000 |
 | schemaorg | 127 | 18 | lexical | 0.394 | 0.205 | 0.386 | 0.548 | 0.086 | - | - | - |
-| schemaorg | 127 | 18 | per-domain fine-tuned | 0.780 | 0.417 | 0.732 | 0.911 | 0.027 | 0.417 | 0.417 | 0.724 |
+| schemaorg | 127 | 18 | zero-shot embeddinggemma-2 | 0.811 | 0.512 | 0.772 | 0.927 | 0.034 | 0.520 | 0.512 | 0.772 |
+| schemaorg | 127 | 18 | per-domain fine-tuned | 0.858 | 0.598 | 0.835 | 0.960 | 0.024 | 0.614 | 0.598 | 0.835 |
 | schemaorg | 127 | 18 | **joint fine-tuned** | 0.874 | 0.606 | 0.827 | 0.968 | 0.038 | 0.622 | 0.606 | 0.827 |
 
 ## History
