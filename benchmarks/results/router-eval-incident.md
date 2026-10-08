@@ -6,7 +6,7 @@ is evaluated once per configuration. The state given to every router is the raw 
 - Corpus `data/corpora/incident.jsonl`: 109 rows, 13 classes used of 13 ontology concepts; split rows {'train': 67, 'validation': 17, 'calibration': 9, 'test': 16}
 - Test classes unseen in training: 1
 - Concept tasks (gold + 5 hard negatives): calibration 9, test 16
-- Commit `5244e2d48933`, runtime 235.4 s
+- Commit `feaca1a5806b`, runtime 73.6 s
 
 ## Candidate ceiling on the test split (gold in top-k over the full ontology)
 
@@ -41,26 +41,31 @@ is evaluated once per configuration. The state given to every router is the raw 
 | bge-large csls | 0.625 | 0.875 | 0.875 | 0.938 | 1.000 | 1.000 | 0.812 | 0.625 | 0.875 | 0.754 |
 | bge-large hybrid-union | 0.562 | 0.750 | 0.875 | 0.938 | 1.000 | 1.000 | 0.812 | 0.562 | 0.875 | 0.693 |
 | bge-large hybrid-rrf | 0.625 | 0.875 | 0.875 | 0.938 | 1.000 | 1.000 | 0.812 | 0.625 | 0.875 | 0.755 |
-| fine-tuned bge-small cosine | 0.688 | 0.875 | 1.000 | 1.000 | 1.000 | 1.000 | 0.812 | 0.688 | 1.000 | 0.806 |
-| fine-tuned bge-small csls | 0.688 | 0.875 | 0.938 | 1.000 | 1.000 | 1.000 | 0.812 | 0.688 | 0.938 | 0.804 |
-| fine-tuned bge-small hybrid-union | 0.562 | 0.875 | 0.938 | 1.000 | 1.000 | 1.000 | 0.812 | 0.562 | 0.938 | 0.745 |
-| fine-tuned bge-small hybrid-rrf | 0.750 | 0.938 | 0.938 | 1.000 | 1.000 | 1.000 | 0.812 | 0.750 | 0.938 | 0.854 |
+| embeddinggemma-2 cosine | 0.688 | 0.938 | 0.938 | 0.938 | 1.000 | 1.000 | 0.812 | 0.688 | 0.938 | 0.809 |
+| embeddinggemma-2 csls | 0.688 | 0.875 | 0.938 | 1.000 | 1.000 | 1.000 | 0.812 | 0.688 | 0.938 | 0.794 |
+| embeddinggemma-2 hybrid-union | 0.562 | 0.875 | 0.938 | 0.938 | 1.000 | 1.000 | 0.812 | 0.562 | 0.938 | 0.741 |
+| embeddinggemma-2 hybrid-rrf | 0.750 | 0.938 | 0.938 | 0.938 | 1.000 | 1.000 | 0.812 | 0.750 | 0.938 | 0.840 |
+| fine-tuned embeddinggemma-2 cosine | 0.812 | 0.938 | 0.938 | 1.000 | 1.000 | 1.000 | 0.812 | 0.812 | 0.938 | 0.875 |
+| fine-tuned embeddinggemma-2 csls | 0.750 | 0.875 | 0.938 | 1.000 | 1.000 | 1.000 | 0.812 | 0.750 | 0.938 | 0.837 |
+| fine-tuned embeddinggemma-2 hybrid-union | 0.562 | 0.875 | 0.938 | 1.000 | 1.000 | 1.000 | 0.812 | 0.562 | 0.938 | 0.743 |
+| fine-tuned embeddinggemma-2 hybrid-rrf | 0.750 | 0.938 | 0.938 | 1.000 | 1.000 | 1.000 | 0.812 | 0.750 | 0.938 | 0.842 |
 
-Validation-split top-1 (cosine) per encoder, the selection signal: e5-small 0.588, bge-small 0.824, minilm 0.647, mpnet 0.647, bge-base 0.941, e5-large 0.824, bge-large 0.765; lexical 0.588; fine-tuned 1.000.
+Validation-split top-1 (cosine) per encoder, the selection signal: e5-small 0.588, bge-small 0.824, minilm 0.647, mpnet 0.647, bge-base 0.941, e5-large 0.824, bge-large 0.765, embeddinggemma-2 0.882; lexical 0.588; fine-tuned 0.941.
 
 ## Concept task on the test split (gold + 5 hard negatives; temperature fitted on the calibration split)
 
 | scorer | temperature | top-1 | top-3 | ECE raw -> scaled | NLL scaled | coverage@0.7 / acc |
 |---|---|---|---|---|---|---|
-| lexical score | 0.0100 (fit saturated) | 0.688 | 0.875 | 0.281 -> 0.316 | 8.648 | 1.00 / 0.688 |
+| lexical score | 0.0100 (fit saturated) | 0.688 | 0.812 | 0.281 -> 0.316 | 8.648 | 1.00 / 0.688 |
 | e5-small cosine | 0.0089 | 0.688 | 1.000 | 0.351 -> 0.245 | 0.589 | 0.56 / 0.889 |
 | bge-small cosine | 0.0005 (fit saturated) | 0.875 | 1.000 | 0.287 -> 0.125 | 3.264 | 1.00 / 0.875 |
 | minilm cosine | 0.0005 (fit saturated) | 0.875 | 1.000 | 0.173 -> 0.125 | 1.157 | 1.00 / 0.875 |
-| mpnet cosine | 0.0005 (fit saturated) | 0.750 | 0.938 | 0.209 -> 0.250 | 5.119 | 1.00 / 0.750 |
+| mpnet cosine | 0.0005 (fit saturated) | 0.750 | 0.875 | 0.209 -> 0.250 | 5.119 | 1.00 / 0.750 |
 | bge-base cosine | 0.0005 (fit saturated) | 1.000 | 1.000 | 0.378 -> 0.000 | 0.000 | 1.00 / 1.000 |
 | e5-large cosine | 0.0005 (fit saturated) | 0.750 | 1.000 | 0.396 -> 0.250 | 5.030 | 1.00 / 0.750 |
 | bge-large cosine | 0.0005 (fit saturated) | 0.875 | 1.000 | 0.274 -> 0.125 | 2.095 | 1.00 / 0.875 |
-| fine-tuned bge-small | 0.0005 (fit saturated) | 0.875 | 1.000 | 0.070 -> 0.125 | 2.777 | 1.00 / 0.875 |
+| embeddinggemma-2 cosine | 0.0005 (fit saturated) | 0.812 | 1.000 | 0.302 -> 0.178 | 2.941 | 1.00 / 0.812 |
+| fine-tuned embeddinggemma-2 | 0.0005 (fit saturated) | 0.938 | 1.000 | 0.351 -> 0.062 | 1.727 | 1.00 / 0.938 |
 | trained decision head (committed, `f8271b8ce947`) | - | 0.438 | 0.750 | - -> 0.261 | - | - |
 
 ## Deployment path on the test split (`OLaya.system_one`, router top-10, leaves scored, axiom projection)
@@ -139,16 +144,26 @@ Validation-split top-1 (cosine) per encoder, the selection signal: e5-small 0.58
 | csls [routed] router + bge-large scorer | 0.625 | 0.875 | 0.875 | 1.000 | 1.000 | 1.00 / 0.625 |
 | hybrid-union [routed] router + bge-large scorer | 0.625 | 0.875 | 0.938 | 1.000 | 1.000 | 1.00 / 0.625 |
 | hybrid-rrf [routed] router + bge-large scorer | 0.688 | 0.875 | 0.938 | 1.000 | 1.000 | 1.00 / 0.688 |
-| lexical router + fine-tuned bge-small scorer | 0.688 | 0.750 | 0.750 | 0.938 | 1.000 | 1.00 / 0.688 |
-| cosine router + fine-tuned bge-small scorer | 0.688 | 0.812 | 0.812 | 1.000 | 1.000 | 1.00 / 0.688 |
-| csls router + fine-tuned bge-small scorer | 0.688 | 0.812 | 0.812 | 1.000 | 1.000 | 1.00 / 0.688 |
-| hybrid-union router + fine-tuned bge-small scorer | 0.688 | 0.812 | 0.812 | 1.000 | 1.000 | 1.00 / 0.688 |
-| hybrid-rrf router + fine-tuned bge-small scorer | 0.688 | 0.812 | 0.812 | 1.000 | 1.000 | 1.00 / 0.688 |
-| lexical [routed] router + fine-tuned bge-small scorer | 0.750 | 0.875 | 0.875 | 0.938 | 1.000 | 1.00 / 0.750 |
-| cosine [routed] router + fine-tuned bge-small scorer | 0.688 | 0.938 | 1.000 | 1.000 | 1.000 | 1.00 / 0.688 |
-| csls [routed] router + fine-tuned bge-small scorer | 0.688 | 0.938 | 1.000 | 1.000 | 1.000 | 1.00 / 0.688 |
-| hybrid-union [routed] router + fine-tuned bge-small scorer | 0.688 | 0.938 | 1.000 | 1.000 | 1.000 | 1.00 / 0.688 |
-| hybrid-rrf [routed] router + fine-tuned bge-small scorer | 0.750 | 0.938 | 1.000 | 1.000 | 1.000 | 1.00 / 0.750 |
+| lexical router + embeddinggemma-2 scorer | 0.625 | 0.750 | 0.750 | 0.938 | 1.000 | 0.94 / 0.667 |
+| cosine router + embeddinggemma-2 scorer | 0.625 | 0.750 | 0.812 | 1.000 | 1.000 | 1.00 / 0.625 |
+| csls router + embeddinggemma-2 scorer | 0.625 | 0.750 | 0.812 | 1.000 | 1.000 | 1.00 / 0.625 |
+| hybrid-union router + embeddinggemma-2 scorer | 0.625 | 0.750 | 0.812 | 1.000 | 1.000 | 1.00 / 0.625 |
+| hybrid-rrf router + embeddinggemma-2 scorer | 0.625 | 0.750 | 0.812 | 1.000 | 1.000 | 1.00 / 0.625 |
+| lexical [routed] router + embeddinggemma-2 scorer | 0.750 | 0.875 | 0.875 | 0.938 | 1.000 | 0.94 / 0.800 |
+| cosine [routed] router + embeddinggemma-2 scorer | 0.688 | 0.938 | 0.938 | 1.000 | 1.000 | 1.00 / 0.688 |
+| csls [routed] router + embeddinggemma-2 scorer | 0.688 | 0.875 | 0.938 | 1.000 | 1.000 | 1.00 / 0.688 |
+| hybrid-union [routed] router + embeddinggemma-2 scorer | 0.688 | 0.938 | 0.938 | 1.000 | 1.000 | 1.00 / 0.688 |
+| hybrid-rrf [routed] router + embeddinggemma-2 scorer | 0.750 | 0.938 | 0.938 | 1.000 | 1.000 | 1.00 / 0.750 |
+| lexical router + fine-tuned embeddinggemma-2 scorer | 0.688 | 0.750 | 0.750 | 0.938 | 1.000 | 1.00 / 0.688 |
+| cosine router + fine-tuned embeddinggemma-2 scorer | 0.750 | 0.812 | 0.812 | 1.000 | 1.000 | 1.00 / 0.750 |
+| csls router + fine-tuned embeddinggemma-2 scorer | 0.750 | 0.812 | 0.812 | 1.000 | 1.000 | 1.00 / 0.750 |
+| hybrid-union router + fine-tuned embeddinggemma-2 scorer | 0.750 | 0.812 | 0.812 | 1.000 | 1.000 | 1.00 / 0.750 |
+| hybrid-rrf router + fine-tuned embeddinggemma-2 scorer | 0.750 | 0.812 | 0.812 | 1.000 | 1.000 | 1.00 / 0.750 |
+| lexical [routed] router + fine-tuned embeddinggemma-2 scorer | 0.812 | 0.875 | 0.875 | 0.938 | 1.000 | 1.00 / 0.812 |
+| cosine [routed] router + fine-tuned embeddinggemma-2 scorer | 0.812 | 0.938 | 1.000 | 1.000 | 1.000 | 0.94 / 0.867 |
+| csls [routed] router + fine-tuned embeddinggemma-2 scorer | 0.812 | 0.938 | 0.938 | 1.000 | 1.000 | 0.94 / 0.867 |
+| hybrid-union [routed] router + fine-tuned embeddinggemma-2 scorer | 0.812 | 0.938 | 0.938 | 1.000 | 1.000 | 0.94 / 0.867 |
+| hybrid-rrf [routed] router + fine-tuned embeddinggemma-2 scorer | 0.875 | 0.938 | 0.938 | 1.000 | 1.000 | 0.94 / 0.933 |
 
 ## Selection (validation split only)
 
@@ -158,11 +173,11 @@ Validation-split top-1 (cosine) per encoder, the selection signal: e5-small 0.58
 
 ## Fine-tuned bi-encoder
 
-- Base `BAAI/bge-small-en-v1.5`, 67 train pairs, 20 epochs in 196.1 s (budget 15.0 min), best epoch 5
+- Base `google/embeddinggemma-2`, 67 train pairs, 6 epochs in 26.8 s (budget 60.0 min), best epoch 3
 - InfoNCE (temperature 0.05) over in-batch gold class texts + one sibling hard negative per query
-- Checkpoint `models/checkpoints/olaya_embed_incident.pt` sha256 `361250ba520f83b5` (133506458 bytes)
-- Validation top-1: fine-tuned 1.000 vs zero-shot base 0.824 vs lexical 0.588 -> recorded in MANIFEST.json
-- History: epoch 1 loss 0.912 val 0.941; epoch 2 loss 0.609 val 0.941; epoch 3 loss 0.314 val 0.941; epoch 4 loss 0.176 val 0.941; epoch 5 loss 0.088 val 1.000; epoch 6 loss 0.056 val 1.000; epoch 7 loss 0.033 val 1.000; epoch 8 loss 0.013 val 1.000; epoch 9 loss 0.006 val 1.000; epoch 10 loss 0.004 val 0.941; epoch 11 loss 0.003 val 0.941; epoch 12 loss 0.002 val 0.941; epoch 13 loss 0.002 val 0.941; epoch 14 loss 0.001 val 0.941; epoch 15 loss 0.001 val 0.941; epoch 16 loss 0.001 val 0.941; epoch 17 loss 0.001 val 0.941; epoch 18 loss 0.001 val 0.941; epoch 19 loss 0.001 val 0.941; epoch 20 loss 0.001 val 0.941
+- Checkpoint `models/checkpoints/olaya_embed_incident.pt` sha256 `e88f9496e3372588` (1084155724 bytes)
+- Validation top-1: fine-tuned 0.941 vs zero-shot base 0.882 vs lexical 0.588 -> recorded in MANIFEST.json
+- History: epoch 1 loss 1.141 val 0.824; epoch 2 loss 1.184 val 0.882; epoch 3 loss 0.927 val 0.941; epoch 4 loss 0.811 val 0.941; epoch 5 loss 0.670 val 0.941; epoch 6 loss 0.609 val 0.941
 
 ## Limitations
 

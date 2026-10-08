@@ -58,6 +58,8 @@ interface CatalogEntry {
   title: string;
   summary: string;
   load: () => OntologyDAG;
+  /** Example observations for demos; empty for most domains. */
+  presets?: string[];
 }
 
 /** Domains available without any files on disk. Keys are the `domain` values the tools accept. */

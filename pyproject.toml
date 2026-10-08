@@ -32,6 +32,7 @@ gemma = [
     # google/embeddinggemma-2 through olaya.embeddings.SentenceTransformerEncoder
     "sentence-transformers[image]>=6.1",
     "transformers>=5.19",
+    "peft>=0.21",
 ]
 
 [project.scripts]

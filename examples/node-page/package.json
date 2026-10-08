@@ -1,0 +1,13 @@
+{
+  "name": "leio-decision-node-page",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Demo page: a Node server that classifies observations with the leio-decision package over the bundled ontologies or a private one passed by path.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "leio-decision": "file:../../packages/olaya-node"
+  }
+}
