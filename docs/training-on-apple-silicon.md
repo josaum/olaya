@@ -81,6 +81,30 @@ Each command writes its report under `benchmarks/results/` and its checkpoint un
    git commit -m "results(router): joint bge-base on Apple Silicon (MPS)"
    ```
 
+## EmbeddingGemma 2 (Google, 270M text backbone)
+
+`google/embeddinggemma-2` is a prompted model served through `sentence-transformers`, so it needs the
+`gemma` extra and a newer `transformers`:
+
+```bash
+uv pip install -e '.[dev,gemma]'      # sentence-transformers[image,audio,video] >= 6.1, transformers >= 5.19
+```
+
+`olaya.embeddings.SentenceTransformerEncoder` loads it text-only (vision and audio encoders dropped,
+271M parameters), applies the `query` prompt to states and the `document` prompt to class texts, and
+exposes the differentiable forward the fine-tune uses. It is registered as `embeddinggemma-2` in
+both scripts:
+
+```bash
+.venv/bin/python scripts/finetune_joint_encoder.py --base embeddinggemma-2 --minutes 60 --epochs 8 --mine 3 --tag joint-gemma
+.venv/bin/python scripts/finetune_joint_encoder.py --base embeddinggemma-2 --minutes 60 --epochs 8 --mine 3 --tag joint-gemma --split class
+```
+
+On the incident corpus on CPU it is the strongest zero-shot encoder tried (full-ontology top-1 0.69
+vs 0.56 for bge-small) and after two fine-tune epochs reaches 0.75 top-1 / 1.00 recall@5 on the 16
+test rows. Checkpoints are about 540 MB and stay gitignored. Validation peaks early for every base
+tried so far (epoch 3 to 5), so `--epochs 8` is enough; the best epoch is what gets saved.
+
 ## What to expect
 
 On the CPU runs the joint bge-small encoder with mined hard negatives reached full-ontology top-1

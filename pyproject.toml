@@ -28,6 +28,11 @@ dev = [
 llm = [
     "anthropic>=0.40",
 ]
+gemma = [
+    # google/embeddinggemma-2 through olaya.embeddings.SentenceTransformerEncoder
+    "sentence-transformers[image,audio,video]>=6.1",
+    "transformers>=5.19",
+]
 
 [project.scripts]
 leio-decision = "olaya.webmcp:main"

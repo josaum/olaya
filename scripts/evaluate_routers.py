@@ -74,6 +74,11 @@ ENCODERS: dict[str, tuple[str, str]] = {
     "e5-large": ("intfloat/e5-large-v2", "query: "),
     "bge-large": ("BAAI/bge-large-en-v1.5", ""),
 }
+#: Prompted checkpoints served by olaya.embeddings.SentenceTransformerEncoder (pip install -e '.[gemma]').
+ST_ENCODERS: dict[str, str] = {
+    "embeddinggemma-2": "google/embeddinggemma-2",
+}
+ENCODER_KEYS = list(ENCODERS) + list(ST_ENCODERS)
 SMALL_ENCODERS = ("e5-small", "bge-small", "minilm")
 CEILING_KS = (1, 3, 5, 8, 16, 32)
 CSLS_K = 10
@@ -393,9 +398,18 @@ class DomainContext:
         return report
 
 
-def load_encoder(key: str) -> TransformerEncoder:
+def make_encoder(key: str, *, use_cache: bool = True):
+    """Build the encoder registered under ``key`` (plain transformers or sentence-transformers)."""
+    if key in ST_ENCODERS:
+        from olaya.embeddings import SentenceTransformerEncoder
+
+        return SentenceTransformerEncoder(ST_ENCODERS[key], threads=THREADS, batch_size=32, max_length=128)
     model, prefix = ENCODERS[key]
-    return TransformerEncoder(model, prefix=prefix, threads=THREADS, batch_size=32, max_length=128)
+    return TransformerEncoder(model, prefix=prefix, threads=THREADS, batch_size=32, max_length=128, use_cache=use_cache)
+
+
+def load_encoder(key: str):
+    return make_encoder(key)
 
 
 def select_by_validation(
@@ -420,8 +434,8 @@ def select_by_validation(
 
 
 def finetune(ctx: DomainContext, base_key: str, args: argparse.Namespace) -> tuple[dict[str, Any], Any]:
-    model, prefix = ENCODERS[base_key]
-    encoder = TransformerEncoder(model, prefix=prefix, threads=THREADS, batch_size=32, max_length=128, use_cache=False)
+    model = ST_ENCODERS.get(base_key) or ENCODERS[base_key][0]
+    encoder = make_encoder(base_key, use_cache=False)
     pairs = [(r.text, r.target_curie) for r in ctx.splits["train"]]
     val_rows = ctx.splits["validation"]
 
@@ -1018,14 +1032,14 @@ def write_summary(results_dir: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--domain", action="append", choices=sorted(ONTOLOGIES), help="repeatable; default: all")
-    parser.add_argument("--encoders", nargs="*", default=list(ENCODERS), choices=list(ENCODERS))
+    parser.add_argument("--encoders", nargs="*", default=list(ENCODERS), choices=ENCODER_KEYS)
     parser.add_argument("--corpus-dir", type=Path, default=ROOT / "data" / "corpora")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "benchmarks" / "results")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "models" / "checkpoints")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--finetune-minutes", type=float, default=0.0, help="0 disables fine-tuning")
     parser.add_argument(
-        "--finetune-base", choices=list(ENCODERS), default=None, help="default: the a-priori small encoder"
+        "--finetune-base", choices=ENCODER_KEYS, default=None, help="default: the a-priori small encoder"
     )
     parser.add_argument("--finetune-epochs", type=int, default=20)
     parser.add_argument("--finetune-batch-size", type=int, default=16)
