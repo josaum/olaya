@@ -14,7 +14,7 @@ lexical router this reports, on the validation and test splits:
 * the deployment path through the real engine (``OLaya(router=..., scorer=EmbeddingScorer(...))``):
   top-1, recall@5, gold-among-scored-leaves and the confidence abstention curve.
 
-``--finetune-minutes N`` fine-tunes the a-priori chosen small encoder contrastively on the train split
+``--finetune-minutes N`` fine-tunes ``--finetune-base`` (default ``embeddinggemma-2``) contrastively on the train split
 (in-batch + sibling hard negatives), selects the epoch on validation top-1 and evaluates it once on
 test; the checkpoint goes to ``models/checkpoints/olaya_embed_<domain>.pt`` (gitignored).
 
@@ -459,6 +459,8 @@ def finetune(ctx: DomainContext, base_key: str, args: argparse.Namespace) -> tup
         lr=args.finetune_lr,
         seed=args.seed,
         class_texts=ctx.class_texts,
+        lora_rank=args.finetune_lora_rank,
+        baseline_validation=zero_shot_val,
         progress=say,
     )
     reloaded = load_finetuned_encoder(checkpoint, threads=THREADS, batch_size=32)
@@ -1039,11 +1041,12 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--finetune-minutes", type=float, default=0.0, help="0 disables fine-tuning")
     parser.add_argument(
-        "--finetune-base", choices=ENCODER_KEYS, default=None, help="default: the a-priori small encoder"
+        "--finetune-base", choices=ENCODER_KEYS, default="embeddinggemma-2", help="base encoder to fine-tune"
     )
     parser.add_argument("--finetune-epochs", type=int, default=20)
     parser.add_argument("--finetune-batch-size", type=int, default=16)
-    parser.add_argument("--finetune-lr", type=float, default=2e-5)
+    parser.add_argument("--finetune-lr", type=float, default=3e-5, help="peak learning rate (3e-5 suits LoRA)")
+    parser.add_argument("--finetune-lora-rank", type=int, default=16, help="LoRA rank; 0 trains the full weights")
     parser.add_argument("--summary", action="store_true", help="only rebuild router-eval-summary.md")
     parser.add_argument(
         "--split",
