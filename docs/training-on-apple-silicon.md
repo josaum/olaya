@@ -108,7 +108,10 @@ tried so far (epoch 3 to 5), so `--epochs 8` is enough; the best epoch is what g
 ## What to expect
 
 On the CPU runs the joint bge-small encoder with mined hard negatives reached full-ontology top-1
-0.75 / 0.66 / 0.63 on incident / GS1 / Schema.org (batch split). The remaining headroom is in the
+0.81 / 0.66 / 0.64 on incident / GS1 / Schema.org (batch split). The first Mac Studio run (joint
+bge-base, MPS, 55 s per epoch, best epoch 3) reached 0.75 / 0.67 / 0.66 and, on the class-disjoint
+split, 0.65 / 0.57 / 0.36: a clear transfer gain on GS1 over the per-domain fine-tune (0.46) and a
+loss on Schema.org (0.42). See `router-eval-joint-base.md` and `router-eval-joint-base-classdisjoint.md`. The remaining headroom is in the
 scorer's parent-versus-child discrimination (the `[routed]` engine rows show recall@5 rising while
 top-1 stays flat), which is what more epochs, more mined negatives and a larger base address. Labels
 are LLM-distilled, not human; see `decision-head-summary.md` for what that does and does not
