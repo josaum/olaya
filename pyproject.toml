@@ -20,8 +20,10 @@ requires-python = ">=3.11"
 #   leio-decision[reasoning]  ontology axioms, calibration arithmetic (numpy, pydantic)
 #   leio-decision[ml]         the trained decision head (torch, transformers, onnxruntime)
 #   leio-decision[llm]        the LLM-judge matcher stage (anthropic)
-#   leio-decision[gemma]      EmbeddingGemma 2 encoder (sentence-transformers, peft)
-#   leio-decision[all]        everything above
+#   leio-decision[gemma]      EmbeddingGemma 2 encoder (sentence-transformers, peft);
+#                             opt-in only, not in all: it pulls torchvision, which must
+#                             match the installed torch build
+#   leio-decision[all]        pii, reasoning, ml and llm
 dependencies = []
 
 [project.optional-dependencies]
@@ -43,7 +45,7 @@ llm = [
 all = [
     # Self-reference by the distribution name. The old import-name form would
     # resolve to the separate, older `olaya` package on PyPI.
-    "leio-decision[reasoning,ml,llm,gemma]",
+    "leio-decision[reasoning,ml,llm]",
 ]
 dev = [
     "pytest>=8.0.0",
