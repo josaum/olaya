@@ -49,5 +49,12 @@ python benchmarks/bench_revops_routing.py \
 - Both subtrees are small (6 + 4 leaves); router recall is near-vacuous at
   this size and the scorer carries the discrimination, as with every small
   ontology. The discriminative test comes with bigger TBoxes.
+- Update (same day): the ontology is now grounded in upper.ttl with real
+  disjointness (revops@760bfa5 + parthood/inverses/scheme anchors). Load the
+  import closure — `convert_ontology` accepts a directory of .ttl files and
+  merges them, so `--ttl <dir>` with upper.ttl + event-core.ttl + revops.ttl
+  resolves the backbone (`Entity > Agent > Person > Pessoa`): 53 concepts,
+  10/10, axioms verified. Single-file loads silently drop cross-namespace
+  parent edges — always benchmark against the closure.
 - The `unsloth` mirror provenance is trusted-but-unverified; for production,
   accept the license on `google/embeddinggemma-300m` and pin a revision.
