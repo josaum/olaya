@@ -1,0 +1,121 @@
+{
+  "encoder": "unsloth/embeddinggemma-300m",
+  "prefix": null,
+  "csls_k": null,
+  "ttl": "/Users/josaum/projects/revops/engines/revops/core/ontologies/revops.ttl",
+  "top1": 10,
+  "n": 10,
+  "axioms_verified_all": true,
+  "rows": [
+    {
+      "text": "Já paguei a mensalidade no PIX dia 02/04, segue o comprovante",
+      "root": "RevOpsEvent",
+      "expected": "PaymentConfirmedEvent",
+      "predicted": "PaymentConfirmedEvent",
+      "hit": true,
+      "p_top": 0.637,
+      "p_runner": 0.189,
+      "confidence": 0.346,
+      "axioms_verified": true
+    },
+    {
+      "text": "O membro entrou na academia às 7h e fez check-in na catraca",
+      "root": "RevOpsEvent",
+      "expected": "MemberCheckinEvent",
+      "predicted": "MemberCheckinEvent",
+      "hit": true,
+      "p_top": 0.731,
+      "p_runner": 0.232,
+      "confidence": 0.546,
+      "axioms_verified": true
+    },
+    {
+      "text": "Quero mudar meu plano do mensal para o anual",
+      "root": "RevOpsEvent",
+      "expected": "ContractChangedEvent",
+      "predicted": "ContractChangedEvent",
+      "hit": true,
+      "p_top": 0.827,
+      "p_runner": 0.056,
+      "confidence": 0.567,
+      "axioms_verified": true
+    },
+    {
+      "text": "A catraca negou o acesso do aluno hoje",
+      "root": "RevOpsEvent",
+      "expected": "AcessoEvent",
+      "predicted": "AcessoEvent",
+      "hit": true,
+      "p_top": 0.745,
+      "p_runner": 0.178,
+      "confidence": 0.5,
+      "axioms_verified": true
+    },
+    {
+      "text": "Recebi uma cobrança indevida da mensalidade",
+      "root": "RevOpsEvent",
+      "expected": "PagamentoEvent",
+      "predicted": "PagamentoEvent",
+      "hit": true,
+      "p_top": 0.61,
+      "p_runner": 0.135,
+      "confidence": 0.256,
+      "axioms_verified": true
+    },
+    {
+      "text": "Quero cancelar meu contrato",
+      "root": "RevOpsEvent",
+      "expected": "ContratoEvent",
+      "predicted": "ContratoEvent",
+      "hit": true,
+      "p_top": 0.665,
+      "p_runner": 0.211,
+      "confidence": 0.387,
+      "axioms_verified": true
+    },
+    {
+      "text": "Qual a taxa de conversão de trial para matrícula este mês?",
+      "root": "BowtieMetricSpec",
+      "expected": "ConversionMetric",
+      "predicted": "ConversionMetric",
+      "hit": true,
+      "p_top": 0.863,
+      "p_runner": 0.073,
+      "confidence": 0.611,
+      "axioms_verified": true
+    },
+    {
+      "text": "Quanto tempo leva do primeiro contato até o fechamento?",
+      "root": "BowtieMetricSpec",
+      "expected": "TimeMetric",
+      "predicted": "TimeMetric",
+      "hit": true,
+      "p_top": 0.817,
+      "p_runner": 0.091,
+      "confidence": 0.521,
+      "axioms_verified": true
+    },
+    {
+      "text": "Quantos leads entraram na etapa de qualificação?",
+      "root": "BowtieMetricSpec",
+      "expected": "VolumeMetric",
+      "predicted": "VolumeMetric",
+      "hit": true,
+      "p_top": 0.5,
+      "p_runner": 0.31,
+      "confidence": 0.172,
+      "axioms_verified": true
+    },
+    {
+      "text": "Qual a frequência média semanal dos alunos?",
+      "root": "BowtieMetricSpec",
+      "expected": "PerformanceMetric",
+      "predicted": "PerformanceMetric",
+      "hit": true,
+      "p_top": 0.509,
+      "p_runner": 0.197,
+      "confidence": 0.121,
+      "axioms_verified": true
+    }
+  ]
+}
