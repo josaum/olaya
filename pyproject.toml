@@ -11,26 +11,47 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [
-    "torch>=2.2.0",
-    "transformers>=4.40.0",
-    "numpy>=1.26.0",
-    "pydantic>=2.5.0",
-    "onnxruntime>=1.17.0",
-]
+# The base install is pure standard library so a consumer can take one capability
+# without the rest. The distribution is leio-decision; the import name stays olaya.
+#   leio-decision[pii]        the PII/MNPI obfuscator
+#   leio-decision[reasoning]  ontology axioms, calibration arithmetic (numpy, pydantic)
+#   leio-decision[ml]         the trained decision head (torch, transformers, onnxruntime)
+#   leio-decision[llm]        the LLM-judge matcher stage (anthropic)
+#   leio-decision[gemma]      EmbeddingGemma 2 encoder (sentence-transformers, peft);
+#                             opt-in only, not in all: it pulls torchvision, which must
+#                             match the installed torch build
+#   leio-decision[all]        reasoning, ml and llm
+dependencies = []
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=8.0.0",
-    "ruff>=0.3.0",
-    "rdflib>=7.0.0",
+pii = [
+    # Standalone olaya[pii] install: PII obfuscation without the full stack.
+    "pydantic>=2.0",
+]
+reasoning = [
+    "numpy>=1.26.0",
+    "pydantic>=2.5.0",
+]
+ml = [
+    "numpy>=1.26.0",
+    "pydantic>=2.5.0",
+    "torch>=2.2.0",
+    "transformers>=4.40.0",
+    "onnxruntime>=1.17.0",
 ]
 llm = [
     "anthropic>=0.40",
 ]
-pii = [
-    # Standalone olaya[pii] install: PII obfuscation without the full stack.
-    "pydantic>=2.0",
+all = [
+    # Self-reference by the distribution name: the import-name form would resolve
+    # to the separate, older `olaya` package on PyPI.
+    "leio-decision[reasoning,ml,llm]",
+]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.3.0",
+    "rdflib>=7.0.0",
+    "leio-decision[all]",
 ]
 gemma = [
     # google/embeddinggemma-2 through olaya.embeddings.SentenceTransformerEncoder
