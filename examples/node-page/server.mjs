@@ -205,7 +205,7 @@ async function run(){
     \${d.selected.description?\`<p class="desc">\${esc(d.selected.description).slice(0,220)}</p>\`:""}
     \${d.abstain?\`<p class="note">No decision. \${d.confidence<${ABSTAIN_BELOW}?"Confidence is below the abstention threshold.":"Nothing in the text matched a class below the root."} Treat this as “don't know”, not as “\${esc(d.selected.label)}”.</p>\`:""}
     <dl class="facts">
-      <div><dt>Confidence</dt><dd>\${d.confidence.toFixed(2)}</dd></div>
+      <div><dt>Confidence</dt><dd>\${d.abstain?"—":d.confidence.toFixed(2)}</dd></div>
       <div><dt>Axioms verified</dt><dd class="\${d.axiomsVerified?"ok":"bad"}">\${d.axiomsVerified?"yes":"no"}</dd></div>
       <div><dt>Depth</dt><dd>\${d.chain.length}</dd></div>
     </dl>
@@ -220,12 +220,18 @@ createServer(async (req, res) => {
     for await (const chunk of req) body += chunk;
     let text = "", domain = defaultDomain;
     try { ({ text = "", domain = defaultDomain } = JSON.parse(body || "{}")); } catch { /* fall through */ }
-    if (!catalog[domain]) domain = defaultDomain;
+    if (!Object.hasOwn(catalog, domain)) domain = defaultDomain;
     text = String(text).slice(0, 2000);
     if (!text.trim()) { res.writeHead(400, { "content-type": "application/json" }); return res.end('{"error":"empty text"}'); }
-    const out = await decide(domain, text);
-    res.writeHead(200, { "content-type": "application/json" });
-    return res.end(JSON.stringify(out));
+    try {
+      const out = await decide(domain, text);
+      res.writeHead(200, { "content-type": "application/json" });
+      return res.end(JSON.stringify(out));
+    } catch (err) {
+      console.error(err);
+      res.writeHead(500, { "content-type": "application/json" });
+      return res.end('{"error":"decision failed"}');
+    }
   }
   res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
   res.end(page);
