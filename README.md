@@ -164,9 +164,9 @@ Until the first registry publish lands, install from a wheel built in this check
 Enterprise Strategy toolkit consumes O-Laya the same way (a hash-pinned vendored wheel).
 
 ```bash
-uv build --wheel --out-dir dist                      # dist/leio_decision-0.5.0-py3-none-any.whl
-uvx --from dist/leio_decision-0.5.0-py3-none-any.whl leio-decision   # MCP server straight from the wheel
-uv pip install dist/leio_decision-0.5.0-py3-none-any.whl             # into a venv: provides `leio-decision`, `leio`, `leio-mcp`, `olaya-mcp`
+uv build --wheel --out-dir dist                      # dist/leio_decision-0.6.0-py3-none-any.whl
+uvx --from dist/leio_decision-0.6.0-py3-none-any.whl leio-decision   # MCP server straight from the wheel
+uv pip install dist/leio_decision-0.6.0-py3-none-any.whl             # into a venv: provides `leio-decision`, `leio`, `leio-mcp`, `olaya-mcp`
 ```
 
 The wheel's base dependencies include torch (about 2 GB); `olaya.pii` alone is standard library.

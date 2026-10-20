@@ -1,6 +1,6 @@
 {
   "name": "leio-decision",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Ontology-Grounded System 1 Decision Model runtime for Node.js and TypeScript",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
