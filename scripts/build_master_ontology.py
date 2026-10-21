@@ -7,7 +7,7 @@ Synthesizes the world's standard formal ontologies into a unified zero-copy latt
 3. GS1 Web Vocabulary (Global Trade Items, Logistics, Perishables, Supply Chain)
 4. DOID Disease Ontology (Medical, Oncology, Pathology, Infectious Agents)
 5. SRE / Cloud Incidents (DevOps, Infrastructure, Security Breaches, Database Outages)
-6. Atlas Supply Chain & Inventory (Fulfillment, Cross-Dock, Transport)
+6. Optional caller-supplied ontologies (OLAYA_EXTRA_ONTOLOGY)
 7. OAEI Conference / Peer Review (Scientific publishing, reviews, events)
 
 Exports:
@@ -19,11 +19,13 @@ Exports:
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any
 
 from olaya.distilled_head import create_zero_shot_head_for_ontology
 from olaya.ontology import Concept, Ontology
+from olaya.ontology_io import load_ontology
 from olaya.owl2_rl import OWL2RLReasoner
 
 DATA_DIR = Path("data")
@@ -180,30 +182,23 @@ def build_master_lattice() -> Ontology:
     print(f"  * SRE / Cloud Incident Ontology integrated: Master now has {len(master.concepts)} nodes")
 
     # ──────────────────────────────────────────────────────────────────────────
-    # Step 6: Ingest Atlas Supply Chain & Inventory
+    # Step 6: Optional caller-supplied ontologies (OLAYA_EXTRA_ONTOLOGY, os.pathsep-separated)
+    # Private domain ontologies stay in their own repositories and are merged only at build time.
     # ──────────────────────────────────────────────────────────────────────────
-    atlas_path = DATA_DIR / "custom_ontology.json"
-    if atlas_path.exists():
-        atlas_data = load_json_onto(atlas_path)
-        concepts = atlas_data.get("concepts", [])
-        if isinstance(concepts, list):
-            for c in concepts:
-                curie = c["curie"]
-                parents = set(c.get("parents", []))
-                if not parents:
-                    parents.add("schema:Product")
-
-                master.add_concept(
-                    Concept(
-                        curie=curie,
-                        label=c.get("label", curie),
-                        description=c.get("description", ""),
-                        synonyms=c.get("synonyms", []),
-                        parents=parents,
-                        disjoint_with=set(c.get("disjoint_with", [])),
-                    )
+    for extra in filter(None, os.environ.get("OLAYA_EXTRA_ONTOLOGY", "").split(os.pathsep)):
+        extra_onto = load_ontology(extra)
+        for c in extra_onto.concepts.values():
+            master.add_concept(
+                Concept(
+                    curie=c.curie,
+                    label=c.label,
+                    description=c.description,
+                    synonyms=list(c.synonyms),
+                    parents=set(c.parents) or {"schema:Thing"},
+                    disjoint_with=set(c.disjoint_with),
                 )
-    print(f"  * Atlas Supply Chain integrated: Master now has {len(master.concepts)} nodes")
+            )
+        print(f"  * Extra ontology {extra_onto.name} integrated: Master now has {len(master.concepts)} nodes")
 
     # ──────────────────────────────────────────────────────────────────────────
     # Step 7: Deductive Closure via W3C OWL 2 RL Reasoner

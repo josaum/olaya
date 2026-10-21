@@ -160,7 +160,7 @@ class PIIObfuscator:
                 for m in pattern.finditer(text):
                     found_spans.append((m.start(), m.end(), "CUSTOM_ENTITY", m.group(0)))
 
-        # 2. Deal Codenames (e.g. Project Helios, Project Titan)
+        # 2. Deal Codenames (e.g. Project Aurora, Project Titan)
         for m in DEAL_CODENAME_REGEX.finditer(text):
             found_spans.append((m.start(), m.end(), "DEAL_CODENAME", m.group(0)))
         if deal_codenames:

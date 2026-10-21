@@ -17,10 +17,11 @@ requires-python = ">=3.11"
 #   leio-decision[reasoning]  ontology axioms, calibration arithmetic (numpy, pydantic)
 #   leio-decision[ml]         the trained decision head (torch, transformers, onnxruntime)
 #   leio-decision[llm]        the LLM-judge matcher stage (anthropic)
+#   leio-decision[rdf]        Turtle / RDF/XML / JSON-LD ontology loading (rdflib)
 #   leio-decision[gemma]      EmbeddingGemma 2 encoder (sentence-transformers, peft);
 #                             opt-in only, not in all: it pulls torchvision, which must
 #                             match the installed torch build
-#   leio-decision[all]        reasoning, ml and llm
+#   leio-decision[all]        reasoning, ml, llm and rdf
 dependencies = []
 
 [project.optional-dependencies]
@@ -42,10 +43,14 @@ ml = [
 llm = [
     "anthropic>=0.40",
 ]
+rdf = [
+    # Turtle / RDF/XML / JSON-LD ontologies through olaya.ontology_io.load_ontology
+    "rdflib>=7.0.0",
+]
 all = [
     # Self-reference by the distribution name: the import-name form would resolve
     # to the separate, older `olaya` package on PyPI.
-    "leio-decision[reasoning,ml,llm]",
+    "leio-decision[reasoning,ml,llm,rdf]",
 ]
 dev = [
     "pytest>=8.0.0",
@@ -69,6 +74,11 @@ olaya-mcp = "olaya.webmcp:main"  # legacy alias
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/olaya"]
+
+# Allow-list the source archive: demos, scripts, outputs, benchmarks and the docs site stay in the
+# repository and never ship to PyPI (a new top-level directory is excluded until listed here).
+[tool.hatch.build.targets.sdist]
+only-include = ["src", "tests", "spec", "README.md", "CHANGELOG.md", "pyproject.toml"]
 
 [tool.ruff]
 target-version = "py311"

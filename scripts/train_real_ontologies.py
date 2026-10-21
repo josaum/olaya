@@ -1,4 +1,4 @@
-"""CLI script to train O-Laya decision model on Atlas, DOID, and Schema.org ontologies."""
+"""CLI script to train the O-Laya decision model on DOID, Schema.org, GS1, or a user-supplied ontology."""
 
 from __future__ import annotations
 
@@ -36,11 +36,22 @@ from olaya.train import (
 )
 
 DATA_PATHS = {
-    "atlas": ROOT / "data" / "custom_ontology.json",
     "doid": ROOT / "data" / "doid_ontology.json",
     "schemaorg": ROOT / "data" / "schemaorg_ontology.json",
     "gs1": ROOT / "data" / "gs1_ontology.json",
 }
+
+
+def _load_evidence(path: Path | None) -> list[tuple[str, str]]:
+    """JSONL evidence rows ``{"target_curie" | "target": ..., "text": ...}`` (e.g. from a private domain pack)."""
+    if path is None:
+        return []
+    rows = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            row = json.loads(line)
+            rows.append((row.get("target_curie") or row["target"], row["text"]))
+    return rows
 
 
 def train_single_domain(
@@ -48,7 +59,7 @@ def train_single_domain(
     ontology_path: Path,
     tokenizer: PreTrainedTokenizerFast | None = None,
     backbone: str = "custom_bert",
-    use_real_abox: bool = True,
+    evidence_path: Path | None = None,
     calibrate: bool = True,
     num_samples: int = 1500,
     epochs: int = 5,
@@ -61,7 +72,7 @@ def train_single_domain(
 ) -> dict[str, Any]:
     print("\n=======================================================")
     print(f"Training O-Laya on Domain: {domain.upper()} ({ontology_path})")
-    print(f"Backbone: {backbone} | Real ABox: {use_real_abox} | Calibrate: {calibrate}")
+    print(f"Backbone: {backbone} | Evidence: {evidence_path or 'none'} | Calibrate: {calibrate}")
     print("=======================================================")
 
     ontology = load_ontology_file(ontology_path)
@@ -102,7 +113,7 @@ def train_single_domain(
         ontology=ontology,
         domain=domain,
         num_samples=num_samples,
-        use_real_abox=use_real_abox,
+        evidence=_load_evidence(evidence_path),
         seed=seed,
     )
     source_splits = split_observations(observations, seed=seed)
@@ -359,7 +370,7 @@ def train_single_domain(
             "learning_rate": lr,
             "requested_sample_budget": num_samples,
             "calibrate": calibrate,
-            "use_real_abox": use_real_abox,
+            "evidence_sha256": hashlib.sha256(evidence_path.read_bytes()).hexdigest() if evidence_path else None,
         },
         "environment": {
             "python": platform.python_version(),
@@ -428,11 +439,13 @@ def train_single_domain(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Train O-Laya on real ontologies: Atlas, DOID, Schema.org, GS1")
+    parser = argparse.ArgumentParser(
+        description="Train O-Laya on real ontologies: DOID, Schema.org, GS1, or your own (--domain generic --ontology-path)"
+    )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--ontology-path", type=Path, help="Override ontology file for one explicit domain")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "models")
-    parser.add_argument("--domain", choices=["atlas", "doid", "schemaorg", "gs1", "all"], default="all")
+    parser.add_argument("--domain", choices=["generic", "doid", "schemaorg", "gs1", "all"], default="all")
     parser.add_argument("--backbone", default="custom_bert", help="Backbone model name or 'custom_bert'")
     parser.add_argument("--samples", "--num-samples", dest="samples", type=int, default=3000)
     parser.add_argument("--epochs", type=int, default=8)
@@ -444,12 +457,16 @@ def main():
     )
     parser.add_argument("--no-export-onnx", action="store_true", help="Explicitly disable legacy export")
     parser.add_argument("--no-calibrate", action="store_true", help="Skip temperature calibration")
-    parser.add_argument("--no-real-abox", action="store_true", help="Skip real ABox evidence ingestion")
+    parser.add_argument(
+        "--evidence", type=Path, default=None, help="JSONL of real (target_curie, text) observations to mix in"
+    )
     args = parser.parse_args()
 
     if args.ontology_path and args.domain == "all":
         parser.error("--ontology-path requires a single --domain")
-    domains = ["atlas", "doid", "schemaorg", "gs1"] if args.domain == "all" else [args.domain]
+    if args.domain == "generic" and not args.ontology_path:
+        parser.error("--domain generic requires --ontology-path")
+    domains = ["doid", "schemaorg", "gs1"] if args.domain == "all" else [args.domain]
 
     results = {}
 
@@ -459,7 +476,7 @@ def main():
             domain=d,
             ontology_path=path,
             backbone=args.backbone,
-            use_real_abox=not args.no_real_abox,
+            evidence_path=args.evidence,
             calibrate=not args.no_calibrate,
             num_samples=args.samples,
             epochs=args.epochs,

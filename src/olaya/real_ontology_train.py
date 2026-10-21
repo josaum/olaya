@@ -1,7 +1,7 @@
 """Multi-domain training pipeline for real-world ontologies in O-Laya.
 
 Supports training the ModernBERT / BERT decision head on real ontologies:
-- Atlas Brain Ontology (commerce, inventory, supply chain, execution)
+- any user-supplied ontology (``domain="generic"``, ontology-agnostic templates)
 - Human Disease Ontology (DOID - clinical diagnosis, oncology, pathology)
 - Schema.org (web entities, products, actions, organizations, media)
 """
@@ -10,7 +10,8 @@ from __future__ import annotations
 
 import json
 import random
-import subprocess
+import warnings
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
@@ -18,7 +19,6 @@ from olaya.engine import _flat_subgraph
 from olaya.evaluation import SourceObservation, normalized_text, stable_id
 from olaya.hard_negative_sampler import HardNegativeSampler
 from olaya.ontology import Concept, Ontology
-from olaya.real_abox import load_custom_abox
 from olaya.sequence import QTYPE_IDS, build_ontology_sequence
 from olaya.train import TrainingSample
 
@@ -27,17 +27,16 @@ from olaya.train import TrainingSample
 # Property-based templates (no {term}) describe observable characteristics directly,
 # forcing the model to learn discriminative features rather than label memorisation.
 DOMAIN_QUERY_TEMPLATES: dict[str, list[str]] = {
-    "atlas": [
-        "Inventory snapshot observed for SKU with {term} status at central fulfillment facility.",
-        "Operational telemetry alert: {term} detected in Databricks commerce streaming pipeline.",
-        "Catalog record update: manufacturer published new {term} specifications for retail distribution.",
-        "Fulfillment orchestration: carrier dispatched order matching {term} requirements.",
-        "Evidence analysis: verified {term} claim from SharePoint documentation and commercial feeds.",
-        "Commerce event stream recorded state transition consistent with {term} entity classification.",
-        "Master data registry flagged product record as conforming to {term} trade item category.",
-        "Warehouse management system generated pick-list referencing {term} location assignment.",
-        "Cross-dock routing decision triggered by detection of {term} classification on inbound shipment.",
-        "Supplier portal sync: vendor catalogue entry categorised under {term} attribute hierarchy.",
+    # Ontology-agnostic templates for any user-supplied ontology (the default domain).
+    "generic": [
+        "Observation classified as {term}.",
+        "Record received matching the definition of {term}.",
+        "Event log entry describing an instance of {term}.",
+        "Data payload whose attributes conform to {term}.",
+        "Operational report: the observed entity is a {term}.",
+        "Analyst note: evidence points to {term}.",
+        "Catalogue entry categorised under {term}.",
+        "Inbound message referencing a {term}.",
     ],
     "doid": [
         "Patient biopsy and histopathology report confirms clinical diagnosis of {term}.",
@@ -107,7 +106,7 @@ DOMAIN_QUERY_TEMPLATES: dict[str, list[str]] = {
 
 
 def load_ontology_file(path_or_onto: str | Path | Ontology, name: str | None = None) -> Ontology:
-    """Load an ontology from JSON, Turtle, or OWL using the Rust converter if needed."""
+    """Load an ontology from O-Laya JSON, Turtle, OWL/RDF or JSON-LD (see :mod:`olaya.ontology_io`)."""
     if isinstance(path_or_onto, Ontology):
         return path_or_onto
 
@@ -120,27 +119,11 @@ def load_ontology_file(path_or_onto: str | Path | Ontology, name: str | None = N
         data = json.loads(path.read_text(encoding="utf-8"))
         return Ontology.from_json(data)
 
-    # If Turtle or OWL, convert using Rust convert_ontology binary
-    json_out = path.with_suffix(".json")
-    conv_cmd = [
-        "cargo",
-        "run",
-        "--release",
-        "-p",
-        "olaya-core",
-        "--bin",
-        "convert_ontology",
-        "--",
-        str(path),
-        str(json_out),
-    ]
-    if name:
-        conv_cmd.append(name)
+    # Turtle / OWL / RDF / JSON-LD: pure-Python extraction with the Rust converter's CURIE scheme,
+    # so files converted earlier with ``convert_ontology`` keep the same CURIEs.
+    from olaya.ontology_io import load_ontology
 
-    print(f"Running owl-fast-core converter on {path}...")
-    subprocess.check_call(conv_cmd)
-    data = json.loads(json_out.read_text(encoding="utf-8"))
-    return Ontology.from_json(data)
+    return load_ontology(path, name=name, curie_style="local")
 
 
 def _specificity_depth(ontology: Ontology, target_curie: str) -> int:
@@ -378,35 +361,64 @@ def _eligible_pool(ontology: Ontology) -> list[str]:
     return hierarchical if len(hierarchical) >= 8 else labelled
 
 
+def _evidence_pairs(evidence: Iterable[Any] | bool | None) -> list[tuple[str, str]]:
+    """Normalise caller-supplied evidence to ``(target_curie, text)`` pairs.
+
+    Accepts ``(curie, text)`` tuples or objects with ``target_curie`` and ``text`` attributes (an
+    ABox harvester in a private domain pack, for example). ``True`` / ``False`` are the legacy
+    ``use_real_abox`` flag: the host-specific harvester it enabled no longer ships with O-Laya.
+    """
+    if evidence is None or evidence is False:
+        return []
+    if evidence is True:
+        warnings.warn(
+            "use_real_abox=True is deprecated and ignored: pass evidence=[(curie, text), ...] from your domain pack",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+        return []
+    pairs = []
+    for item in evidence:
+        if isinstance(item, tuple) and len(item) == 2:
+            pairs.append((str(item[0]), str(item[1])))
+        else:
+            pairs.append((str(item.target_curie), str(item.text)))
+    return pairs
+
+
 def generate_real_ontology_observations(
     ontology: Ontology,
-    domain: str = "atlas",
+    domain: str = "generic",
     num_samples: int = 1500,
-    use_real_abox: bool = True,
+    evidence: Iterable[Any] | bool | None = None,
     seed: int = 42,
     synonym_aug_prob: float = 0.3,
+    *,
+    use_real_abox: bool | None = None,
 ) -> list[SourceObservation]:
     """Generate source records before task expansion or dataset partitioning.
 
     Synthetic template families stay together across targets and synonyms.
     Unlabelled property templates are ineligible: they cannot justify arbitrary targets.
+    ``evidence`` (real ``(target_curie, text)`` observations) fills up to a fifth of the budget
+    before the templates; targets absent from ``ontology`` are skipped.
     """
+    if use_real_abox is not None:
+        evidence = use_real_abox if evidence is None else evidence
     rng = random.Random(seed)
     pool = _eligible_pool(ontology)
-    templates = [t for t in DOMAIN_QUERY_TEMPLATES.get(domain, DOMAIN_QUERY_TEMPLATES["atlas"]) if "{term}" in t]
+    templates = [t for t in DOMAIN_QUERY_TEMPLATES.get(domain, DOMAIN_QUERY_TEMPLATES["generic"]) if "{term}" in t]
     budget = max(0, num_samples // 5)
     rows: list[SourceObservation] = []
     seen: set[str] = set()
-    if domain == "atlas" and use_real_abox:
-        facts = [fact for fact in load_custom_abox() if fact.target_curie in ontology.concepts]
+    facts = [(curie, text) for curie, text in _evidence_pairs(evidence) if curie in ontology.concepts]
+    if facts:
         rng.shuffle(facts)
-        for fact in facts:
-            source = stable_id(domain, fact.target_curie, normalized_text(fact.text))
+        for curie, text in facts:
+            source = stable_id(domain, curie, normalized_text(text))
             if source not in seen and len(rows) < budget:
                 rows.append(
-                    SourceObservation(
-                        source, stable_id("abox", normalized_text(fact.text)), fact.target_curie, fact.text, "real_abox"
-                    )
+                    SourceObservation(source, stable_id("abox", normalized_text(text)), curie, text, "real_abox")
                 )
                 seen.add(source)
     # Bounded attempts avoid infinite loops when the finite template space is exhausted.
@@ -460,17 +472,19 @@ def expand_observations(
 
 def generate_real_ontology_samples(
     ontology: Ontology,
-    domain: str = "atlas",
+    domain: str = "generic",
     num_samples: int = 1500,
     tokenizer_encode: Any = None,
     special_ids: dict[str, int] | None = None,
-    use_real_abox: bool = True,
+    evidence: Iterable[Any] | bool | None = None,
     seed: int = 42,
     synonym_aug_prob: float = 0.3,
+    *,
+    use_real_abox: bool | None = None,
 ) -> list[TrainingSample]:
     """Legacy unsplit expansion; evaluation callers must split observations first."""
-    observations = generate_real_ontology_observations(
-        ontology, domain, num_samples, use_real_abox, seed, synonym_aug_prob
-    )
+    if use_real_abox is not None and evidence is None:
+        evidence = use_real_abox
+    observations = generate_real_ontology_observations(ontology, domain, num_samples, evidence, seed, synonym_aug_prob)
     special = special_ids or {"cls": 50281, "sep": 50282, "mask": 50284, "pad": 50283}
     return expand_observations(ontology, observations, domain, tokenizer_encode, special, seed)[:num_samples]

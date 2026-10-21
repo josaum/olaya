@@ -1381,7 +1381,6 @@
         <div class="apple-segmented-wrap">
           <select id="domainSelect" class="domain-mobile-select" onchange="switchDomain(this.value)">
             <option value="leio" selected>⚡ Leio Model &amp; Pricing</option>
-            <option value="enterprise_strategy">🏛️ Enterprise Strategy Strategy</option>
             <option value="gs1">📦 GS1 Supply Chain (Trade Items)</option>
             <option value="doid">🧬 Disease Ontology (DOID)</option>
             <option value="schemaorg">🌐 Schema.org (Google SEO)</option>
@@ -1391,7 +1390,6 @@
           </select>
           <div class="apple-segmented-control">
             <button id="tab-leio" class="segmented-item active" onclick="switchDomain('leio')">⚡ Leio Model &amp; Pricing</button>
-            <button id="tab-enterprise_strategy" class="segmented-item" onclick="switchDomain('enterprise_strategy')">🏛️ Enterprise Strategy</button>
             <button id="tab-gs1" class="segmented-item" onclick="switchDomain('gs1')">📦 GS1 Supply Chain</button>
             <button id="tab-doid" class="segmented-item" onclick="switchDomain('doid')">🧬 Disease (DOID)</button>
             <button id="tab-schemaorg" class="segmented-item" onclick="switchDomain('schemaorg')">🌐 Schema.org</button>
@@ -1598,7 +1596,7 @@
           <!-- Presets Row -->
           <div class="presets-row" style="margin-top: 0; margin-bottom: 1rem;">
             <span style="font-size: 0.74rem; color: var(--text-muted); font-weight: 500;">Presets:</span>
-            <button class="preset-chip active" id="piiPreset-falcon" onclick="loadPIIPreset('falcon')">🏛️ Project Helios M&amp;A Memo</button>
+            <button class="preset-chip active" id="piiPreset-aurora" onclick="loadPIIPreset('aurora')">🏛️ Project Aurora M&amp;A Memo</button>
             <button class="preset-chip" id="piiPreset-clinical" onclick="loadPIIPreset('clinical')">🧬 Clinical PHI / Patient Triage</button>
             <button class="preset-chip" id="piiPreset-sec" onclick="loadPIIPreset('sec')">⚖️ Executive SEC / Board MNPI</button>
             <button class="preset-chip" id="piiPreset-clear" onclick="loadPIIPreset('clear')">Clear Input</button>
@@ -1618,7 +1616,7 @@
                 <div class="panel-header-row" style="margin-bottom: 0.35rem;">
                   <span class="panel-kicker" style="font-size: 0.7rem;">Custom Entities / Codename Whitelist (comma-separated)</span>
                 </div>
-                <input type="text" id="piiCustomEntities" class="studio-textarea" style="min-height: auto; height: 36px; padding: 0.35rem 0.65rem; font-size: 0.78rem;" placeholder="Northwind, Project Helios, John Doe, 192.168.1.100" oninput="runPIIShield()">
+                <input type="text" id="piiCustomEntities" class="studio-textarea" style="min-height: auto; height: 36px; padding: 0.35rem 0.65rem; font-size: 0.78rem;" placeholder="Northwind Labs, Project Aurora, John Doe, 192.168.1.100" oninput="runPIIShield()">
               </div>
             </div>
 
@@ -1773,22 +1771,6 @@ import { OLaya, OntologyDAG, DEFAULT_K, obfuscatePII, deanonymizePII } from './o
           { id: "vpc", label: "Dedicated Enterprise VPC", text: "Air-gapped on-premise installation with private custom ontology fine-tuning and 99.999% SLA." }
         ]
       },
-      enterprise_strategy: {
-        name: "Enterprise Strategy Strategy & Hurdles",
-        badge: "🏛️ Enterprise Strategy Strategy",
-        title: "Interactive Live Demo: Acme Holdings Corporate Development Hurdles",
-        inputLabel: "Input Acquisition Candidate / Deal Memo / Financial Telemetry",
-        url: "./ontologies/enterprise_strategy_ontology.json",
-        downsetTarget: "cent:ConsumableRepeatVelocity",
-        downsetLabel: "satisfies_repeat_velocity_hurdle",
-        presets: [
-          { id: "northwind", label: "Northwind Labs (Falcon)", text: "Northwind Labs canine functional digestive probiotic chewables, 56.4% Gross Margin, 23.8% EBITDA Margin, 74.2% Repeat Purchase Rate, Category Rank #1." },
-          { id: "biogarden", label: "BioGarden Organic Soil", text: "Organic microbial soil inoculants and regenerative lawn bio-stimulants, 51.2% Gross Margin, 21.5% EBITDA Margin, 68.0% Repeat Purchase Rate." },
-          { id: "provet", label: "ProVet Equine Mobility", text: "High-performance equine joint mobility formulas and veterinary hoof care topicals, 49.0% Gross Margin, 19.2% EBITDA Margin, 62.5% Repeat Rate." },
-          { id: "canineomega", label: "CanineOmega Wild Salmon", text: "Wild Alaskan salmon oil and cold-pressed marine lipid liquid pumps for dogs and cats, 54.0% Gross Margin, 22.6% EBITDA Margin, 76.0% Repeat Rate." },
-          { id: "ecopest", label: "EcoPest Essential Oils", text: "Botanical essential oil pest repellents and organic mosquito barrier solutions, 53.5% Gross Margin, 24.0% EBITDA Margin, 65.0% Repeat Rate." }
-        ]
-      },
       gs1: {
         name: "GS1 Supply Chain",
         badge: "📦 GS1 Supply Chain",
@@ -1802,7 +1784,7 @@ import { OLaya, OntologyDAG, DEFAULT_K, obfuscatePII, deanonymizePII } from './o
           { id: "pallet", label: "Returnable Euro Pallet", text: "Returnable heavy-duty wooden euro pallet 1200x800mm with RFID tag and security seal. Packaging container return." },
           { id: "meat", label: "Frozen Poultry Cuts", text: "Frozen chicken breast cuts 10kg corrugated master box, vacuum sealed poultry meat. Keep frozen below 0 F." },
           { id: "apparel", label: "Safety Footwear", text: "Slip-resistant steel-toe safety footwear, warehouse worker protective boots with oil-resistant rubber sole." },
-          { id: "nylabone", label: "Nylabone Dog Toy", text: "Nylabone Power Chew Original Bone Dog Chew Toy — Small, Original Flavor. Nylabone durable nylon dog chew toy." },
+          { id: "chewtoy", label: "Nylon Dog Chew Toy", text: "Power chew original bone dog chew toy — small, original flavor. Durable nylon dog chew toy." },
           { id: "pharma", label: "mRNA Cold Vaccine", text: "Sterile mRNA suspension vaccine vials, 10-dose multi-puncture medical product. Store in ultra-low deep freeze at -80 C to -60 C." },
           { id: "battery", label: "UN3480 Lithium Pack", text: "High-capacity 48V 100Ah lithium-ion battery energy storage module. Classified as UN3480 Class 9 Miscellaneous Dangerous Goods." },
         { id: "adversarial", label: "⚠️ Ambiguous Hazmat Dairy", text: "Grade A organic whole milk carton containing UN3480 lithium ion battery backup sensor pack." }
@@ -1899,7 +1881,7 @@ import { OLaya, OntologyDAG, DEFAULT_K, obfuscatePII, deanonymizePII } from './o
         sel.value = domainKey;
       }
 
-      ['leio', 'enterprise_strategy', 'gs1', 'schemaorg', 'bfo', 'skos', 'incident', 'doid'].forEach(k => {
+      ['leio', 'gs1', 'schemaorg', 'bfo', 'skos', 'incident', 'doid'].forEach(k => {
         const btn = document.getElementById(`tab-${k}`);
         if (!btn) return;
         if (k === domainKey) {
@@ -2656,16 +2638,16 @@ import { OLaya, OntologyDAG, DEFAULT_K, obfuscatePII, deanonymizePII } from './o
   }
 
   const PII_PRESETS = {
-    falcon: {
-      raw: `CONFIDENTIAL - PROJECT HELIOS ACQUISITION MEMO\nDate: October 5, 2026\nAuthor: CEO Michael Harrison (michael.harrison@acme-corp.example, direct: (925) 948-4000)\nSubject: Acquisition of Northwind Labs LLC by Acme Holdings Corp\n\nInvestment Committee:\nWe are pleased to submit Project Helios for formal Phase 2 due diligence. Northwind Labs generated $48.2M trailing twelve month revenue with 56.4% Gross Margin and $11.5M EBITDA (23.8% margin).\nKey contact: Dr. Sarah Jenkins (MD, Chief Science Officer, SSN: 123-45-6789, sarah.jenkins@northwind-labs.example).\nThe target's primary AWS production cluster is located at 192.168.1.45 under Operation Helios.\nProposed valuation: $135,000,000 via corporate debt facility #4532-8891-2309-8812.`,
-      custom: "Northwind Labs, Project Helios, Operation Helios, Acme Holdings"
+    aurora: {
+      raw: `CONFIDENTIAL - PROJECT AURORA ACQUISITION MEMO\nDate: October 5, 2026\nAuthor: CEO Jordan Example (jordan.example@acme-holdings.example, direct: (555) 010-4000)\nSubject: Acquisition of Northwind Labs LLC by Acme Holdings Inc.\n\nInvestment Committee:\nWe are pleased to submit Project Aurora for formal Phase 2 due diligence. Northwind Labs generated $48.2M trailing twelve month revenue with 56.4% Gross Margin and $11.5M EBITDA (23.8% margin).\nKey contact: Dr. Sarah Jenkins (MD, Chief Science Officer, SSN: 123-45-6789, sarah.jenkins@northwind.example).\nThe target's primary AWS production cluster is located at 192.168.1.45 under Operation Aurora.\nProposed valuation: $135,000,000 via corporate debt facility #4532-8891-2309-8812.`,
+      custom: "Northwind Labs, Project Aurora, Operation Aurora, Acme Holdings"
     },
     clinical: {
       raw: `PATIENT CLINICAL TRIAGE RECORD\nPatient: Johnathan Edward Vance\nDOB: 1984-03-12 | SSN: 987-65-4321 | Mobile: (415) 890-1234\nEmail: jvance84@gmail.com\nAttending Physician: Dr. Elena Rostova, MD (elena.rostova@ucsf.health)\nClinical Notes: Patient admitted with stage 3 angiosarcoma presenting high vascular endothelial swelling.\nInsurance Billing ID: CC #4111-2222-3333-4444. Hospital Node IP: 10.0.4.15.`,
       custom: "Johnathan Edward Vance"
     },
     sec: {
-      raw: `STRICTLY CONFIDENTIAL - EXECUTIVE AUDIT & MNPI MEMO\nTo: Board of Directors\nFrom: CFO Robert Sterling (robert.sterling@acme-corp.example, +1-408-555-0199)\nNotice: Material Non-Public Information under SEC Rule 10b-5.\nRegarding Project Titan and unannounced Q3 earnings beat of $0.48 vs $0.32 consensus.\nWire transfer authorization to escrow account 5500-1234-5678-9012 authorized by President Linda Zhao.`,
+      raw: `STRICTLY CONFIDENTIAL - EXECUTIVE AUDIT & MNPI MEMO\nTo: Board of Directors\nFrom: CFO Robert Sterling (robert.sterling@acme-holdings.example, +1-408-555-0199)\nNotice: Material Non-Public Information under SEC Rule 10b-5.\nRegarding Project Titan and unannounced Q3 earnings beat of $0.48 vs $0.32 consensus.\nWire transfer authorization to escrow account 5500-1234-5678-9012 authorized by President Linda Zhao.`,
       custom: "Project Titan, Linda Zhao, Robert Sterling"
     },
     clear: {
@@ -2692,7 +2674,7 @@ import { OLaya, OntologyDAG, DEFAULT_K, obfuscatePII, deanonymizePII } from './o
   }
 
   function loadPIIPreset(presetKey) {
-    ['falcon', 'clinical', 'sec', 'clear'].forEach(k => {
+    ['aurora', 'clinical', 'sec', 'clear'].forEach(k => {
       const btn = document.getElementById(`piiPreset-${k}`);
       if (btn) {
         if (k === presetKey) btn.classList.add('active');
@@ -2700,7 +2682,7 @@ import { OLaya, OntologyDAG, DEFAULT_K, obfuscatePII, deanonymizePII } from './o
       }
     });
 
-    const preset = PII_PRESETS[presetKey] || PII_PRESETS.falcon;
+    const preset = PII_PRESETS[presetKey] || PII_PRESETS.aurora;
     const rawInput = document.getElementById('piiRawInput');
     const customInput = document.getElementById('piiCustomEntities');
     if (rawInput) rawInput.value = preset.raw;
@@ -2833,7 +2815,7 @@ import { OLaya, OntologyDAG, DEFAULT_K, obfuscatePII, deanonymizePII } from './o
     initSpotlights();
     updateSliderTrack(1000000);
     switchDomain('leio');
-    loadPIIPreset('falcon');
+    loadPIIPreset('aurora');
   }
 
   if (document.readyState === 'loading') {

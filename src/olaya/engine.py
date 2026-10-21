@@ -236,6 +236,117 @@ class OLaya:
             "pad": _token_id_or(self.tokenizer.pad_token_id, 0),
         }
 
+    @classmethod
+    def from_ontology(
+        cls,
+        ontology: Ontology | dict[str, Any] | str | Path,
+        *,
+        encoder: Any | str | None = None,
+        checkpoint: str | Path | None = None,
+        checkpoint_sha256: str | None = None,
+        expected_fingerprint: str | None = None,
+        router: str = "hybrid",
+        temperature: float | None = None,
+        candidate_policy: str = "routed",
+        max_candidates: int = 12,
+        device: str | None = None,
+        tokenizer: Any | None = None,
+        encoder_kwargs: dict[str, Any] | None = None,
+        **engine_kwargs: Any,
+    ) -> OLaya:
+        """Build an engine conditioned on a user-supplied ontology (no client data ships with O-Laya).
+
+        ``ontology`` is anything :func:`olaya.ontology_io.load_ontology` accepts: an
+        :class:`Ontology`, an O-Laya JSON / JSON-LD ``dict``, or a path to ``.ttl`` / ``.owl`` /
+        ``.rdf`` / ``.jsonld`` / ``.json`` (or a directory of RDF files). Every class is embedded once
+        with path-context text; ``concept`` questions are routed (``router="hybrid"``: lexical +
+        embedding reciprocal-rank fusion, or ``"embedding"``) and scored zero-shot by the encoder,
+        then projected through the verified axiom kernel over this ontology's DAG.
+
+        ``encoder`` is an :class:`~olaya.embeddings.Encoder` instance or a Hugging Face model id
+        (``google/embeddinggemma-*`` loads through sentence-transformers; anything else through
+        :class:`~olaya.embeddings.TransformerEncoder`); default
+        :data:`olaya.embeddings.DEFAULT_MODEL`. ``checkpoint`` is a fine-tuned bi-encoder from
+        :func:`~olaya.embedding_router.finetune_bi_encoder` and replaces ``encoder``;
+        ``checkpoint_sha256`` and ``expected_fingerprint``
+        (:func:`~olaya.ontology_io.ontology_fingerprint`) are verified when given, so a checkpoint is
+        never silently paired with a different ontology. Remaining keyword arguments go to
+        :class:`OLaya` (the decision head defaults to untrained, ``weights_path=False``: it only
+        serves the non-``concept`` question types).
+        """
+        from olaya.candidate_router import CandidateRouter
+        from olaya.domain_pack import ROUTERS, file_sha256
+        from olaya.embedding_router import DEFAULT_SCORER_TEMPERATURE, EmbeddingRouter, EmbeddingScorer, HybridRouter
+        from olaya.ontology_io import load_ontology, ontology_fingerprint
+
+        if router not in ROUTERS:
+            raise ValueError(f"router must be one of {sorted(ROUTERS)}, got {router!r}")
+        onto = load_ontology(ontology)
+        if expected_fingerprint is not None:
+            actual = ontology_fingerprint(onto)
+            if actual != expected_fingerprint:
+                raise ValueError(
+                    f"ontology fingerprint {actual[:16]}... does not match the expected {expected_fingerprint[:16]}...; "
+                    "the checkpoint / pack was built for a different ontology"
+                )
+
+        enc_kwargs = dict(encoder_kwargs or {})
+        if checkpoint is not None:
+            from olaya.embedding_router import load_finetuned_encoder
+
+            ckpt = Path(checkpoint)
+            if not ckpt.is_file():
+                raise FileNotFoundError(f"encoder checkpoint not found: {ckpt}")
+            if checkpoint_sha256 is not None and file_sha256(ckpt) != checkpoint_sha256:
+                raise ValueError(f"checkpoint {ckpt} sha256 does not match {checkpoint_sha256[:16]}...")
+            enc = load_finetuned_encoder(ckpt, **enc_kwargs)
+        elif encoder is None or isinstance(encoder, str):
+            from olaya.embeddings import DEFAULT_MODEL, SentenceTransformerEncoder, TransformerEncoder
+
+            model_id = encoder or DEFAULT_MODEL
+            if "embeddinggemma" in model_id.lower():
+                enc = SentenceTransformerEncoder(model_id, **enc_kwargs)
+            else:
+                enc = TransformerEncoder(model_id, **enc_kwargs)
+        else:
+            enc = encoder
+
+        emb = EmbeddingRouter(onto, enc, max_candidates=max_candidates)
+        routing: Any = emb
+        if router == "hybrid":
+            routing = HybridRouter(
+                CandidateRouter(onto, max_candidates=max_candidates), emb, max_candidates=max_candidates
+            )
+        scorer = EmbeddingScorer(
+            emb, temperature=temperature if temperature is not None else DEFAULT_SCORER_TEMPERATURE
+        )
+
+        if tokenizer is None:
+            from olaya.tokenizer import TOKENIZER_FILE, load_local_tokenizer
+
+            if Path(TOKENIZER_FILE).is_file():
+                tokenizer = load_local_tokenizer()
+        engine_kwargs.setdefault("weights_path", False)
+        return cls(
+            ontology=onto,
+            tokenizer=tokenizer,
+            device=device,
+            router=routing,
+            scorer=scorer,
+            candidate_policy=candidate_policy,
+            **engine_kwargs,
+        )
+
+    @classmethod
+    def from_pack(cls, path: str | Path, **overrides: Any) -> OLaya:
+        """Build an engine from a domain pack directory (see :mod:`olaya.domain_pack`)."""
+        from olaya.domain_pack import load_domain_pack
+
+        pack = load_domain_pack(path)
+        kwargs = pack.engine_kwargs()
+        kwargs.update(overrides)
+        return cls.from_ontology(pack.ontology, **kwargs)
+
     def _build_model(self, cfg_dict: dict[str, Any]) -> OntologyDecisionModel:
         """Instantiate the decision model from a checkpoint ``config`` block (or defaults)."""
         bb = cfg_dict.get("backbone")

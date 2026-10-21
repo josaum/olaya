@@ -1,4 +1,4 @@
-"""Unit tests for Real ABox evidence ingestion and Temperature/ECE Calibration."""
+"""Unit tests for Temperature/ECE Calibration and checkpoint loading."""
 
 import numpy as np
 import pytest
@@ -8,30 +8,7 @@ from olaya.calibration import compute_ece, fit_temperature
 from olaya.engine import OLaya
 from olaya.model import OntologyDecisionModel
 from olaya.ontology import create_incident_ontology
-from olaya.real_abox import find_custom_root, load_custom_abox
 from olaya.train import create_trainable_model
-
-
-def test_real_abox_harvesting():
-    root = find_custom_root()
-    if root is None:
-        pytest.skip("Atlas repository root not found in standard paths.")
-
-    facts = load_custom_abox(root)
-    assert len(facts) >= 500, f"Expected at least 500 real facts, got {len(facts)}"
-
-    # Check key types are present
-    source_types = {f.source_type for f in facts}
-    assert "nylabone_sku" in source_types
-    assert "nylabone_model" in source_types
-    assert "sharepoint_fact" in source_types or "sharepoint_page" in source_types
-    assert "web_fact" in source_types
-
-    # Check target CURIEs
-    target_curies = {f.target_curie for f in facts}
-    assert "ManufacturerSKU" in target_curies
-    assert "VariantListing" in target_curies
-    assert any(c in target_curies for c in ["OralCareProduct", "ProductModel"])
 
 
 def test_compute_ece_perfect_calibration():

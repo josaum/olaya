@@ -105,6 +105,7 @@ def evaluate_observations(ontology: Ontology, observations: list[SourceObservati
 
 def main() -> None:
     from olaya.evaluation import dataset_manifest, split_observations
+    from olaya.ontology_io import load_ontology
     from olaya.real_ontology_train import generate_real_ontology_observations
 
     parser = argparse.ArgumentParser(description=__doc__)
@@ -112,14 +113,14 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--num-samples", type=int, default=500)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--domain", default="atlas")
+    parser.add_argument("--domain", default="generic", help="template family (generic, doid, schemaorg, gs1)")
     args = parser.parse_args()
     if args.num_samples <= 0:
         parser.error("--num-samples must be positive")
     ontology_bytes = args.ontology.read_bytes()
-    ontology = Ontology.from_json(ontology_bytes.decode("utf-8"))
+    ontology = load_ontology(args.ontology)
     observations = generate_real_ontology_observations(
-        ontology, domain=args.domain, num_samples=args.num_samples, seed=args.seed, use_real_abox=False
+        ontology, domain=args.domain, num_samples=args.num_samples, seed=args.seed
     )
     splits = split_observations(observations, seed=args.seed)
     test_observations = splits["test"]

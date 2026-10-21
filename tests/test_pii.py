@@ -41,22 +41,22 @@ def test_referential_integrity(pii_engine: PIIObfuscator):
 
 def test_reversible_deanonymization(pii_engine: PIIObfuscator):
     original = (
-        "CONFIDENTIAL: Project Helios target company is NorthwindBio, led by Dr. Robert Miller. "
-        "SSN: 321-54-9876. Email: robert.miller@petarmor.com. Address: 742 Evergreen Terrace. "
+        "CONFIDENTIAL: Project Aurora target company is Northwind Labs, led by Dr. Robert Miller. "
+        "SSN: 321-54-9876. Email: robert.miller@northwind.example. Address: 742 Evergreen Terrace. "
         "Card: 4532-0151-1283-0366."
     )
     res = pii_engine.obfuscate(
         original,
         mode=ObfuscationMode.PSEUDONYMIZE,
-        custom_entities=["NorthwindBio"],
-        deal_codenames=["Project Helios"],
+        custom_entities=["Northwind Labs"],
+        deal_codenames=["Project Aurora"],
     )
 
     # Ensure none of the sensitive values exist in sanitized output
-    assert "Project Helios" not in res.sanitized_text
-    assert "NorthwindBio" not in res.sanitized_text
+    assert "Project Aurora" not in res.sanitized_text
+    assert "Northwind Labs" not in res.sanitized_text
     assert "321-54-9876" not in res.sanitized_text
-    assert "robert.miller@petarmor.com" not in res.sanitized_text
+    assert "robert.miller@northwind.example" not in res.sanitized_text
     assert "742 Evergreen Terrace" not in res.sanitized_text
 
     # Reversible de-anonymization using the local vault

@@ -104,10 +104,8 @@ def main():
                     target.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(source, target)
         shutil.copytree(ROOT / "src/olaya", stage / "src/olaya", ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
-        # The extension surface does not expose host-specific ABox harvesters or training imports.
         # Keep public runtime imports focused and avoid loading optional tooling at startup.
         (stage / "src/olaya/__init__.py").write_text('"""Bundled O-Laya runtime."""\n')
-        (stage / "src/olaya/real_abox.py").unlink()
         shutil.copytree(ROOT / "extensions/claude-desktop/skills", stage / "skills")
         shutil.copy2(ROOT / "extensions/claude-desktop/README.md", stage / "README.md")
         (stage / "server").mkdir()
@@ -144,7 +142,6 @@ def main():
             ),
             "packaging_transformations": [
                 "Focused runtime package __init__",
-                "Host-specific real_abox harvester excluded",
             ],
             "source_files_sha256": {p.name: sha(p) for p in sorted((stage / "src/olaya").glob("*.py"))},
             "server_sha256": sha(stage / "server/complete.py"),

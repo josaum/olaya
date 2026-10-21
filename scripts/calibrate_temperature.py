@@ -21,7 +21,6 @@ from olaya.real_ontology_train import generate_real_ontology_samples, load_ontol
 from olaya.train import DecisionDataset, collate_decision_batch
 
 DOMAIN_ONTOLOGIES = {
-    "atlas": ROOT / "data" / "custom_ontology.json",
     "doid": ROOT / "data" / "doid_ontology.json",
     "schemaorg": ROOT / "data" / "schemaorg_ontology.json",
     "gs1": ROOT / "data" / "gs1_ontology.json",
@@ -62,11 +61,12 @@ def print_reliability_diagram(metrics: CalibrationMetrics, title: str = "Reliabi
 
 def calibrate_checkpoint(
     checkpoint_path: Path,
-    domain: str = "atlas",
+    domain: str = "gs1",
     samples: int = 800,
     bins: int = 10,
     save: bool = True,
     device: str | None = None,
+    ontology_path: Path | None = None,
 ):
     print(f"Loading checkpoint: {checkpoint_path}...")
     if not checkpoint_path.exists():
@@ -77,11 +77,14 @@ def calibrate_checkpoint(
     backbone = cfg.get("backbone", "custom_bert")
 
     # Load ontology
-    if domain == "incident":
+    if ontology_path is not None:
+        # Any user-supplied ontology (.ttl / .owl / .jsonld / .json); generic templates.
+        ontology = load_ontology_file(ontology_path)
+        domain = "generic"
+    elif domain == "incident":
         ontology = create_incident_ontology()
     else:
-        onto_file = DOMAIN_ONTOLOGIES.get(domain, DOMAIN_ONTOLOGIES["atlas"])
-        ontology = load_ontology_file(onto_file)
+        ontology = load_ontology_file(DOMAIN_ONTOLOGIES[domain])
 
     engine = OLaya(
         ontology=ontology,
@@ -101,7 +104,6 @@ def calibrate_checkpoint(
         num_samples=samples,
         tokenizer_encode=lambda t: tokenizer.encode(t, add_special_tokens=False),
         special_ids=special_ids,
-        use_real_abox=True,
         seed=1337,
     )
 
@@ -154,8 +156,11 @@ def calibrate_checkpoint(
 
 def main():
     parser = argparse.ArgumentParser(description="Calibrate temperature and evaluate ECE on O-Laya checkpoints")
-    parser.add_argument("--checkpoint", default="models/olaya_atlas.pt", help="Path to .pt checkpoint")
-    parser.add_argument("--domain", choices=["atlas", "doid", "schemaorg", "incident"], default="atlas")
+    parser.add_argument("--checkpoint", default="models/olaya_gs1.pt", help="Path to .pt checkpoint")
+    parser.add_argument("--domain", choices=["doid", "schemaorg", "gs1", "incident"], default="gs1")
+    parser.add_argument(
+        "--ontology", type=Path, default=None, help="Calibrate on your own ontology file instead of --domain"
+    )
     parser.add_argument("--samples", type=int, default=600)
     parser.add_argument("--bins", type=int, default=10)
     parser.add_argument(
@@ -171,6 +176,7 @@ def main():
         bins=args.bins,
         save=not args.no_save,
         device=args.device,
+        ontology_path=args.ontology,
     )
 
 

@@ -304,7 +304,7 @@ TOOLS = [
                 "deal_codenames": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Optional list of sensitive project code names (e.g. ['Project Helios', 'Project Titan']).",
+                    "description": "Optional list of sensitive project code names (e.g. ['Project Aurora', 'Project Titan']).",
                 },
             },
             "required": ["text"],

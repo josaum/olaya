@@ -4,6 +4,22 @@ All notable changes to **O-Laya** (`leio-decision`) are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Bring-your-own ontology (`olaya.ontology_io`):** `load_ontology` reads Turtle, RDF/XML, N-Triples, JSON-LD or O-Laya JSON (or a directory of RDF files) in pure Python, with no Rust toolchain needed; `ontology_fingerprint` hashes the canonical TBox so checkpoints can be bound to the ontology they were trained on. New `rdf` extra (`rdflib`), included in `all`.
+- **`OLaya.from_ontology(...)`:** builds an engine conditioned on a user-supplied ontology at instantiation: class texts are embedded once, `concept` questions are routed (hybrid lexical + embedding RRF, or embedding only) and scored zero-shot, then projected through the verified axiom kernel. Optional fine-tuned checkpoint with SHA-256 and ontology-fingerprint checks.
+- **Domain packs (`olaya.domain_pack`, `OLaya.from_pack(path)`):** a `pack.json` manifest (ontology, fingerprint, encoder / checkpoint pin, router, candidate policy) that lives in the consumer's own repository.
+- **Caller-supplied evidence:** `generate_real_ontology_observations(..., evidence=[(curie, text), ...])`, a generic `"generic"` template family, `--ontology` / `--evidence` flags on the training and calibration scripts, and `OLAYA_EXTRA_ONTOLOGY` for `build_master_ontology.py`.
+
+### Removed
+- **Host- and client-specific code:** `olaya.real_abox` (`RealABoxFact`, `load_custom_abox`, `find_custom_root`), the host-specific training domain, the M&A deal scenario script, its outputs and ontology, and the corresponding playground demo. Feed your own evidence via `evidence=` and your own ontology via `load_ontology` / domain packs instead.
+
+### Changed
+- **`use_real_abox` is deprecated:** `use_real_abox=True` is ignored with a `DeprecationWarning`; the default domain of the observation generators is now `"generic"`.
+- **Turtle/OWL loading in `load_ontology_file`:** no longer shells out to `cargo run`; it uses `olaya.ontology_io` with the Rust converter's CURIE scheme.
+- **Source archive allow-list:** the sdist now ships only `src/`, `tests/`, `spec/`, `README.md`, `CHANGELOG.md` and `pyproject.toml`; scripts, benchmarks, outputs and the docs site stay in the repository.
+
 ## [0.6.0] - 2026-10-20
 
 ### Added
@@ -58,7 +74,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 - **OWL 2 RL instance reasoning & ABox individuals:** Exported `Individual`, `ObjectProperty`, `OWL2RLReasoner`, and `abox_consistency_report` with per-rule conformance specifications (#11).
 - **OAEI Conference `ra1` benchmark suite:** Vendored upstream OAEI Conference track ontologies and reference alignments with lexical, hybrid embedding, structural propagation, cross-encoder reranker, and learned pairwise matchers under nested leave-one-pair-out cross-validation.
-- **Sovereign PII/MNPI shield & Enterprise Strategy deal scenario:** Added deterministic reversible PII tokenization (`olaya.pii`), Acme Holdings M&A formal ontology (`data/enterprise_strategy_ontology.json`), and air-gapped deal evaluation harness (`scripts/live_e2e_deal_scenario.py`).
+- **Sovereign PII/MNPI shield:** Added deterministic reversible PII tokenization (`olaya.pii`).
 - **Cross-runtime decision parity (`spec/decision_parity.json`):** Unified confidence calculation and verified identical concept selection across Rust, WASM, Python, and Node runtimes.
 
 ## [0.2.0] - 2026-10-03
