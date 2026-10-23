@@ -1,0 +1,460 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+\definecolor{codebg}{RGB}{248,249,250}
+\definecolor{codeframe}{RGB}{220,224,230}
+\definecolor{keywordcolor}{RGB}{0,92,197}
+\definecolor{commentcolor}{RGB}{106,115,125}
+\definecolor{stringcolor}{RGB}{3,47,98}
+
+\lstdefinestyle{olayacode}{
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{codeframe},
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{keywordcolor}\bfseries,
+  commentstyle=\color{commentcolor}\itshape,
+  stringstyle=\color{stringcolor},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  aboveskip=0.75em,
+  belowskip=0.75em
+}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{\textbf{O-Laya: Fast, Ontology-Grounded System 1 Decisions\\with a Lean 4-Verified Axiom Projection Kernel and\\Inference-Free W3C PROV-O Workflow Replay}}
+
+\author{
+  \textbf{Dionisio Chiuratto Agourakis}\\
+  \texttt{dionisio@jquant.com.br}\\
+  \url{https://github.com/josaum/olaya}
+}
+
+\date{October 2026 \quad$\cdot$\quad Version 0.7.0 (\texttt{leio-decision})}
+
+\begin{document}
+\sloppy
+
+\maketitle
+
+\begin{abstract}
+\noindent
+Software pipelines and autonomous AI agents routinely execute high-frequency \emph{System~1 decisions}: routing operational incidents, grounding messy product descriptions into standardized taxonomies (e.g., GS1 GPC, Schema.org, OBO Foundry), gating workflow branches, and aligning enterprise schemas. Existing approaches force an unsatisfactory trade-off between (i)~autoregressive Large Language Models (LLMs), which incur $500\,\text{ms--}3\,\text{s}$ latency, non-deterministic sampling, out-of-vocabulary class hallucinations, and zero formal consistency guarantees, and (ii)~flat vector retrieval or unconstrained neural classifiers, which routinely violate class-hierarchy monotonicity ($P(\text{child}) > P(\text{parent})$) and mutual exclusion (\texttt{owl:disjointWith}).
+
+We present \textbf{O-Laya} (\texttt{leio-decision}), a neuro-symbolic System~1 decision engine that conditions inference directly on an OWL~2~RL / RDF / SKOS TBox at runtime. Given an unstructured or structured observation, O-Laya retrieves an active subgraph via hybrid lexical IDF and path-context bi-encoder Reciprocal Rank Fusion (\texttt{google/embeddinggemma-2}), scores candidate concepts in $8\text{--}180\,\text{ms}$ on CPU, and projects the resulting distribution through a \textbf{formally verified axiom projection kernel} whose core monotonicity and disjointness invariants are machine-checked in \textbf{Lean~4} (\texttt{project\_verified}, 16 theorems, zero \texttt{sorry}). Furthermore, O-Laya introduces a declarative \textbf{TBox-bound workflow compiler} that cryptographically binds multi-step decision state machines to the SHA-256 digest of the governing ontology, emitting W3C PROV-O JSON-LD provenance traces that can be deterministically replayed and audited offline without loading a neural model. Evaluated on the external \textbf{OAEI 2023 Conference (\texttt{ra1})} benchmark across 21 ontology pairs, O-Laya achieves \textbf{0.73 M1 F1} using zero-dependency lexical scoring, \textbf{0.75 M1 F1} with zero-shot \texttt{google/embeddinggemma-2} path-context embeddings (outperforming \texttt{LogMap} and \texttt{Matcha} at $0.72$), and \textbf{0.80 M1 F1} ($0.76$ M3 F1) with cascade LLM-judge verification. Across Python, Rust (\texttt{olaya-core} / WebAssembly), and zero-dependency TypeScript/Node.js runtimes, O-Laya guarantees a \textbf{0.0\% runtime axiom violation rate}.
+
+\vspace{0.6em}
+\noindent\textbf{Keywords:} Neuro-Symbolic AI $\cdot$ Ontology Grounding $\cdot$ OWL 2 RL Reasoning $\cdot$ Formal Verification $\cdot$ Lean 4 $\cdot$ Ontology Alignment $\cdot$ Provenance \& Replay $\cdot$ System 1 Decision Making
+\end{abstract}
+
+\vspace{0.5em}
+\hrule
+\vspace{1em}
+
+\section{Introduction}
+
+Production software systems and tool-using AI agents execute thousands of rapid, bounded classification and routing decisions before---or instead of---invoking expensive deliberative reasoning (``System~2''). Following the dual-process framing of cognitive architectures~\cite{kahneman2011thinking}, these fast, automatic classifications constitute \textbf{System~1 decisions}:
+\begin{itemize}[leftmargin=1.8em,itemsep=0.25em]
+  \item \textbf{Taxonomy and Catalog Grounding:} Mapping noisy merchant SKUs, clinical findings, or documents to specific leaf concepts in large hierarchies (\texttt{GS1}, \texttt{Schema.org}, \texttt{OBO}, or enterprise OWL ontologies) while preserving ancestor rollups.
+  \item \textbf{Operational Triage and Funnel Routing:} Assigning alerts, logs, or customer utterances to incident trees or RevOps stages with explicit abstention margins.
+  \item \textbf{Deterministic Agent Guardrails:} Controlling branch transitions in multi-step workflows where every option and terminal intent must conform to a formal domain schema.
+\end{itemize}
+
+In practice, engineering teams currently rely on two brittle paradigms:
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.25em]
+  \item \textbf{Autoregressive LLM Prompting:} Prompting a generative LLM for every classification incurs high latency ($0.5\text{--}3.0\,\text{s}$), substantial token cost at scale, sensitivity to prompt perturbations, and closed-world violations (hallucinating CURIEs or class names absent from the governing ontology).
+  \item \textbf{Unconstrained Vector Search and Flat Classifiers:} Embedding class labels and computing cosine similarity or flat softmax probabilities ignores the algebraic structure of the ontology. Specifically, flat scorers frequently assign higher probability to a subclass than to its superclass ($P(\text{ChilledYogurt}) > P(\text{Perishable})$) or assign simultaneous high probability mass to mutually exclusive classes ($A \sqcap B \sqsubseteq \bot$).
+\end{enumerate}
+
+\textbf{O-Laya} resolves this tension by treating an OWL/RDF/SKOS ontology not as static documentation, but as an executable \textbf{domain constraints kernel}. O-Laya separates \emph{candidate scoring} (which may be lexical, bi-encoder embedding-based, or neural) from \emph{formal axiom projection} and \emph{deterministic workflow replay}.
+
+\subsection{Contributions}
+
+This work makes five primary contributions:
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.25em]
+  \item \textbf{Lean 4-Verified Axiom Projection Kernel (Section~\ref{sec:kernel}):} We specify a deterministic calibrate-and-project operator over finite ontology subgraphs that enforces subsumption monotonicity ($P(c) \le P(p)$ for all $c \sqsubseteq p$) and disjointness exclusion ($\min(P(a), P(b)) = 0 \lor \max(P(a), P(b)) < \tau$ for all $a \sqcap b \sqsubseteq \bot$). We formalize the core lifting and child-closed disjointness operators in Lean~4 (\texttt{lean/OlayaAxioms/}) with 16 machine-checked theorems and zero \texttt{sorry} axioms.
+  \item \textbf{Fixpoint W3C OWL 2 RL Schema \& Instance Closure (Section~\ref{sec:owl2rl}):} Prior to candidate routing and projection, O-Laya materializes the deductive closure of the input ontology---including transitive \texttt{rdfs:subClassOf}, \texttt{owl:equivalentClass}, \texttt{owl:disjointWith}, \texttt{owl:AllDisjointClasses}, \texttt{owl:disjointUnionOf}, \texttt{owl:intersectionOf} (\texttt{scm-int}), \texttt{owl:unionOf} (\texttt{scm-uni}), and \texttt{owl:propertyChainAxiom} (\texttt{prp-spo2})---so implicit hierarchy and exclusion constraints are enforced identically to explicit assertions.
+  \item \textbf{Bring-Your-Own-Ontology (\texttt{OLaya.from\_ontology}) \& Five System 1 Primitives (Section~\ref{sec:arch}):} A unified API supporting five typed primitives (\texttt{concept}, \texttt{subsumes}, \texttt{choice}, \texttt{score}, \texttt{noul}) over any \texttt{.ttl}, \texttt{.owl}, \texttt{.rdf}, \texttt{.nt}, \texttt{.jsonld}, or \texttt{.json} ontology, combining lexical IDF and \texttt{google/embeddinggemma-2} root-to-leaf path embeddings via Reciprocal Rank Fusion (RRF).
+  \item \textbf{TBox-Bound Workflows \& Inference-Free W3C PROV-O Replay (Section~\ref{sec:workflows}):} A declarative workflow compiler (\texttt{olaya.workflow}) that type-checks decision graphs against the TBox, binds execution traces to SHA-256 digests of both the workflow and the ontology, and verifies historical traces offline (\texttt{olaya.workflow\_replay}) without invoking any model or tokenizer.
+  \item \textbf{Tri-Runtime Parity \& Reproducible Benchmarks (Sections~\ref{sec:eval}--\ref{sec:limits}):} Shared golden test vectors (\texttt{spec/axioms\_golden.json}, \texttt{spec/decision\_parity.json}) enforce mathematical parity across Python, Rust (\texttt{olaya-core} + \texttt{owl-fast-core} + \texttt{wasm32}), and zero-dependency TypeScript/Node.js, validated on OAEI 2023 Conference (\texttt{ra1}) and four domain routing benchmarks.
+\end{enumerate}
+
+\section{Formal Model and W3C OWL 2 RL Closure}
+\label{sec:owl2rl}
+
+\begin{definition}[Ontology TBox]
+An ontology TBox is a tuple
+\[
+  \mathcal{T} = (\mathcal{C}, \mathcal{R}, \sqsubseteq, \equiv, \perp, \mathrm{dom}, \mathrm{rng}, \mathcal{A}_{\mathrm{int}}, \mathcal{A}_{\mathrm{uni}}, \mathcal{A}_{\mathrm{chain}})
+\]
+where $\mathcal{C}$ is a finite set of named classes (identified by compact URIs / CURIEs), $\mathcal{R}$ is a finite set of object properties, $\sqsubseteq \;\subseteq (\mathcal{C} \times \mathcal{C}) \cup (\mathcal{R} \times \mathcal{R})$ is the directed subsumption relation, $\equiv$ is equivalence, and $\perp \;\subseteq \mathcal{C} \times \mathcal{C}$ is the symmetric irreflexive disjointness relation.
+\end{definition}
+
+\subsection{Deductive Closure Materialization}
+
+Before serving queries or compiling workflows, O-Laya's forward-chaining reasoner (\texttt{OWL2RLReasoner} in Python; \texttt{owl-fast-core} in Rust) computes the least fixpoint $\mathrm{Cl}(\mathcal{T})$ under the W3C OWL~2~RL rule set~\cite{motik2012owl2profiles}:
+\begin{itemize}[leftmargin=1.8em,itemsep=0.25em]
+  \item \textbf{Class Hierarchy and Equivalence (\texttt{scm-cls}, \texttt{scm-sco}, \texttt{scm-eqc1}, \texttt{scm-eqc2}):} Reflexive-transitive closure of $\sqsubseteq$ over $\mathcal{C}$, mutual subsumption for $C_1 \equiv C_2$, and cycle collapse into equivalence classes.
+  \item \textbf{Intersection and Union Decompositions (\texttt{scm-int}, \texttt{scm-uni}, \texttt{owl:disjointUnionOf}):}
+  \begin{itemize}[leftmargin=1.4em,itemsep=0.15em]
+    \item If $C \sqsubseteq C_1 \sqcap \dots \sqcap C_n$ (or $C \equiv C_1 \sqcap \dots \sqcap C_n$), then $C \sqsubseteq C_i$ for all $1 \le i \le n$.
+    \item If $C \equiv C_1 \sqcup \dots \sqcup C_n$, then $C_i \sqsubseteq C$ for all $1 \le i \le n$.
+    \item If $C$ is an \texttt{owl:disjointUnionOf} $(C_1, \dots, C_n)$, then $C_i \sqsubseteq C$ for all $i$ and $(C_i, C_j) \in \perp$ for all $i \ne j$.
+  \end{itemize}
+  \item \textbf{Disjointness Downward Propagation (\texttt{scm-dco}, \texttt{owl:AllDisjointClasses}):}
+  If $(A, B) \in \perp$ and $A' \sqsubseteq A$, $B' \sqsubseteq B$, then $(A', B') \in \perp$. Any class $C$ with $(C, C) \in \perp$ or $C \sqsubseteq \texttt{owl:Nothing}$ is recorded in $\texttt{unsatisfiable\_classes}$, flagging $\mathrm{Cl}(\mathcal{T})$ as deductively inconsistent when non-empty.
+  \item \textbf{Property Hierarchy, Domains, Ranges, and Chains (\texttt{scm-spo}, \texttt{scm-dom1/2}, \texttt{scm-rng1/2}, \texttt{prp-spo2}, \texttt{prp-fp}, \texttt{prp-ifp}, \texttt{prp-pdw}, \texttt{prp-asyp}, \texttt{prp-irp}):} Propagates domain and range class constraints across super-properties and evaluates multi-hop property chains $P_1 \circ \dots \circ P_k \sqsubseteq P$ over ABox assertions.
+\end{itemize}
+
+Furthermore, $\mathcal{T}$ is assigned a format- and order-independent cryptographic digest:
+\begin{equation}
+  \mathrm{fp}(\mathcal{T}) = \mathrm{SHA\text{-}256}\bigl(\mathrm{CanonicalJSON}(\mathcal{T})\bigr),
+\end{equation}
+which cryptographically binds checkpoints, domain packs, and workflow execution traces to the exact TBox topology.
+
+\section{The Verified Axiom Projection Kernel}
+\label{sec:kernel}
+
+Given an observation $x$ and a routed active subgraph $\mathcal{G}_K = (V_K, E_{\sqsubseteq}, E_{\perp})$ of $K = |V_K|$ candidate concepts with raw model or similarity logits $\mathbf{l} = (l_0, \dots, l_{K-1}) \in \mathbb{R}^K$, O-Laya transforms $\mathbf{l}$ into an axiom-compliant assignment $\mathbf{q} \in [0, 1]^K$.
+
+\subsection{Five-Step Calibrate-and-Project Operator}
+
+The normative specification (\texttt{spec/AXIOMS.md}) defines five deterministic steps:
+
+\paragraph{Step 1: Cardinality-Aware (or Fitted) Temperature Scaling.}
+Without a fitted checkpoint temperature, the heuristic temperature is determined by candidate cardinality $K$:
+\begin{equation}
+  T_{\mathrm{card}}(K) = \begin{cases}
+    0.85 & \text{if } K \le 2, \\
+    0.95 & \text{if } 2 < K \le 5, \\
+    1.10 & \text{if } 5 < K \le 10, \\
+    1.25 & \text{if } K > 10.
+  \end{cases}
+\end{equation}
+When a checkpoint supplies an empirically calibrated temperature $T_{\mathrm{fit}} > 0$ (fit via negative log-likelihood minimization on a held-out calibration split), logits are pre-scaled by $T_{\mathrm{card}}(K) / T_{\mathrm{fit}}$ so the effective softmax temperature is exactly $T_{\mathrm{fit}}$.
+
+\paragraph{Step 2: Temperature Softmax.}
+\begin{equation}
+  p_i = \frac{\exp\bigl((l_i - \max_j l_j) / T\bigr)}{\sum_{j=0}^{K-1} \exp\bigl((l_j - \max_m l_m) / T\bigr)}, \qquad i \in \{0, \dots, K-1\}.
+\end{equation}
+
+\paragraph{Step 3: Subsumption Monotonicity Lifting (\texttt{lift}).}
+We compute the least monotone function $\mathbf{u} \ge \mathbf{p}$ over the poset $(V_K, E_{\sqsubseteq})$ by iterating until convergence:
+\begin{equation}
+  \forall (c, p) \in E_{\sqsubseteq}: \qquad u_p \leftarrow \max(u_p, u_c).
+\end{equation}
+For \texttt{concept} questions in the Python engine (\texttt{project\_hierarchical\_distribution}), only the specific leaf concepts $L_K \subseteq V_K$ (or routed concepts under \texttt{candidate\_policy="routed"}) enter the softmax distribution $\mathbf{p}$, and each ancestor's marginal probability is derived by downward mass aggregation:
+\begin{equation}
+  u_a = \sum_{c \in \mathrm{desc}^*(a) \cap L_K} p_c,
+\end{equation}
+ensuring $u_p \ge u_c$ holds by construction while $\sum_{c \in L_K} p_c = 1$.
+
+\paragraph{Step 4: Child-Closed Disjointness Exclusion (\texttt{disjointAll}).}
+With exclusion threshold $\tau = 0.6$, for each ordered disjoint pair $(a, b) \in E_{\perp}$ ($a < b$):
+\begin{itemize}[leftmargin=1.8em,itemsep=0.2em]
+  \item If $\max(u_a, u_b) \ge \tau$, let the losing concept be $w = b$ if $u_a \ge u_b$ (ties broken deterministically by slot index) and $w = a$ if $u_b > u_a$.
+  \item Set $q_v \leftarrow 0$ for every $v \in \mathrm{desc}^*(w) = \{v \in V_K \mid v \sqsubseteq^* w\}$.
+\end{itemize}
+Because zeroing is \emph{child-closed} (every descendant of $w$ is zeroed simultaneously), zeroing never creates a child $c$ with $q_c > q_p$, preserving the subsumption monotonicity established in Step~3.
+
+\paragraph{Step 5: Pre-Lift, Post-Disjointness Normalized-Entropy Confidence.}
+Measuring Shannon entropy directly on the lifted scores $\mathbf{u}$ would artificially penalize deep hierarchies (since a leaf's mass is copied to all its ancestors, making a high-certainty leaf appear uniform across its lineage). Instead, O-Laya masks the pre-lift distribution $\mathbf{p}$ by the surviving support of $\mathbf{q}$:
+\begin{equation}
+  \tilde{p}_i = \begin{cases} p_i & \text{if } q_i > 0, \\ 0 & \text{otherwise}, \end{cases}
+  \qquad
+  \hat{p}_i = \frac{\tilde{p}_i}{\sum_j \tilde{p}_j},
+\end{equation}
+\begin{equation}
+  \mathrm{confidence}(\mathbf{p}, \mathbf{q}) = \mathrm{clip}_{[0,1]}\!\left(1 - \frac{-\sum_{i:\, \hat{p}_i > 0} \hat{p}_i \ln \hat{p}_i}{\ln K}\right).
+\end{equation}
+
+\subsection{Machine-Checked Formal Proof in Lean 4}
+
+Steps~3 and~4 and the runtime verifier \texttt{verify\_axioms} are formalized over arbitrary non-negative integer scores in core Lean~4 (\texttt{lean/OlayaAxioms/Basic.lean}, zero external dependencies, zero \texttt{sorry}). Table~\ref{tab:lean} summarizes the verified theorems.
+
+\begin{table}[ht!]
+\centering
+\caption{Core machine-checked theorems in \texttt{lean/OlayaAxioms/Basic.lean} (Lean~4, zero \texttt{sorry}).}
+\label{tab:lean}
+\vspace{0.4em}
+\small
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Theorem Identifier} & \textbf{Formal Property Established} \\
+\midrule
+\texttt{lift\_monotone} & For any edge list \texttt{edges} with sufficient fuel, \texttt{lift edges fuel s} satisfies $s'(c) \le s'(p)$ for all $(c, p) \in \texttt{edges}$. \\
+\addlinespace[0.25em]
+\texttt{le\_lift} \& \texttt{lift\_least} & \texttt{lift} dominates the input ($s \le \mathrm{lift}(s)$) and is the \emph{least} monotone upper bound: for any monotone $m \ge s$, $\mathrm{lift}(s) \le m$. \\
+\addlinespace[0.25em]
+\texttt{lift\_idempotent\_of\_monotone} & Any already-monotone assignment is a fixed point of \texttt{lift}. \\
+\addlinespace[0.25em]
+\texttt{zeroSubtree\_preserves\_monotone} & Zeroing the downward closure $\mathrm{desc}^*(w)$ of any node $w$ preserves monotonicity across all edges $(c, p) \in E_{\sqsubseteq}$. \\
+\addlinespace[0.25em]
+\texttt{disjointAll\_preserves\_monotone} & Sequential application of child-closed disjointness exclusion over all $(a, b) \in E_{\perp}$ preserves subsumption monotonicity. \\
+\addlinespace[0.25em]
+\texttt{disjointAll\_resolves\_pairs} & After \texttt{disjointAll}, every pair $(a, b) \in E_{\perp}$ satisfies $\min(q_a, q_b) = 0 \lor \max(q_a, q_b) < \tau$. \\
+\addlinespace[0.25em]
+\textbf{\texttt{project\_verified}} & \textbf{End-to-End Soundness:} For any non-negative score vector $\mathbf{s}$, $\mathrm{verifyAxioms}(\mathrm{project}(\mathbf{s})) = \texttt{true}$. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{theorem}[Soundness of Axiom Projection --- \texttt{project\_verified}]
+Let $E_{\sqsubseteq}$ and $E_{\perp}$ be finite lists of subsumption and disjointness edges over $K$ concept slots, and let $\mathbf{s} : \mathbb{N} \to \mathbb{N}$ be any non-negative score assignment. When $\mathrm{lift}$ reaches its fixed point $\mathbf{u} = \mathrm{lift}(E_{\sqsubseteq}, \mathbf{s})$, the projected assignment $\mathbf{q} = \mathrm{disjointAll}(E_{\sqsubseteq}, E_{\perp}, \tau, \mathbf{u})$ satisfies both:
+\begin{enumerate}[label=(\roman*),itemsep=0.15em]
+  \item $\forall (c, p) \in E_{\sqsubseteq},\; q_c \le q_p$ \quad (subsumption monotonicity), and
+  \item $\forall (a, b) \in E_{\perp},\; \min(q_a, q_b) = 0 \;\lor\; \max(q_a, q_b) < \tau$ \quad (disjointness exclusion).
+\end{enumerate}
+\end{theorem}
+
+In continuous integration, \texttt{lean4checker} audits the compiled environment to verify that \texttt{project\_verified} depends only on Lean's standard foundational axioms (\texttt{propext}, \texttt{Quot.sound}), and \texttt{tests/test\_lean\_oracle.py} cross-checks the Python floating-point kernel against the compiled Lean~4 executable oracle.
+
+\section{System Architecture and The Five System 1 Primitives}
+\label{sec:arch}
+
+\subsection{Hybrid Candidate Routing and Path-Context Bi-Encoder Scoring}
+
+Real-world ontologies contain hundreds to tens of thousands of classes (\texttt{Schema.org} $\approx 800$, \texttt{GS1} $\approx 4{,}000$, \texttt{MONDO}/\texttt{ChEBI} $> 20{,}000$). Scoring all classes with a cross-encoder on every call is prohibitive; scoring bare class labels ignores taxonomic context (e.g., a class labeled \texttt{"Standard"} under \texttt{ShippingMethod} versus \texttt{RoomCategory}).
+
+When instantiated via \texttt{OLaya.from\_ontology(path)}, O-Laya constructs a \textbf{path-context representation} for every class $c \in \mathcal{C}$:
+\begin{equation}
+  \mathrm{ctx}(c) = \mathrm{label}(a_0) \;\texttt{ > }\; \mathrm{label}(a_1) \;\texttt{ > }\; \dots \;\texttt{ > }\; \mathrm{label}(c) \;[\mathrm{synonyms}(c)] \;\texttt{: }\; \mathrm{description}(c),
+\end{equation}
+where $(a_0, a_1, \dots, c)$ is the canonical root-to-leaf lineage in $\mathcal{T}$. At initialization, all $\mathrm{ctx}(c)$ strings are embedded once using \texttt{google/embeddinggemma-2} (or a deterministic hash/lexical fallback in air-gapped environments). At query time:
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.2em]
+  \item \textbf{Lexical Inverted Index:} Computes smoothed IDF token overlap over labels (weight $3.0$), synonyms ($2.5$), and descriptions ($1.5$).
+  \item \textbf{Dense Bi-Encoder Retrieval:} Computes cosine similarity between the query embedding and pre-computed path-context embeddings.
+  \item \textbf{Reciprocal Rank Fusion (RRF) and Ancestor Closure:} Merges lexical and dense rankings via RRF ($k_{\mathrm{rrf}} = 60$) to select the top-$K$ candidates and adds their ancestor closure up to the requested \texttt{root} CURIE to form the active subgraph $\mathcal{G}_K$.
+\end{enumerate}
+
+\subsection{The Five Unified \texttt{system\_one} Primitives}
+
+A single \texttt{engine.system\_one(state, questions)} call evaluates arbitrary combinations of five typed decision primitives (Table~\ref{tab:primitives}).
+
+\begin{table}[ht!]
+\centering
+\caption{The five typed System~1 decision primitives exposed by \texttt{engine.system\_one}.}
+\label{tab:primitives}
+\vspace{0.4em}
+\small
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Primitive} & \textbf{TBox Binding} & \textbf{Mathematical Semantics \& Output Contract} \\
+\midrule
+\texttt{concept} & \texttt{root} $\in \mathcal{C}$ & Grounds \texttt{state} to the most specific leaf \texttt{curie} under \texttt{root}, returning root-to-leaf \texttt{lineage}, leaf distribution \texttt{candidate\_probabilities}, ancestor marginals \texttt{probabilities}, \texttt{confidence}, and \texttt{axioms\_verified}. \\
+\addlinespace[0.25em]
+\texttt{subsumes} & \texttt{concept} $C \in \mathcal{C}$ & Bernoulli probability $P(x \in \mathrm{desc}^*(C))$ that the observation is an instance of class $C$ or any of its descendants. \\
+\addlinespace[0.25em]
+\texttt{choice} & \texttt{options} $\subseteq \mathrm{desc}^*(r)$ & Selects one mutually exclusive option from a discrete set with normalized probabilities and tie/margin abstention. \\
+\addlinespace[0.25em]
+\texttt{score} & \texttt{criteria} $(c_0, \dots, c_{M-1})$ & Expected continuous level $\mathbb{E}[Y] = \sum_{m=0}^{M-1} m \cdot P(Y = m)$ across an ordered rubric of $M$ classes or criteria levels. \\
+\addlinespace[0.25em]
+\texttt{noul} & \texttt{concept} / \texttt{root} & Binary proposition probability $P(\text{true}) \in [0, 1]$ with explicit negation and out-of-domain abstention semantics. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Declarative TBox-Bound Workflows and Inference-Free Replay}
+\label{sec:workflows}
+
+Prompt chains and imperative agent routers intertwine domain schemas, model inference, and branching logic, making post-hoc compliance auditing impossible without re-running (often non-deterministic) models. O-Laya's workflow subsystem (\texttt{olaya.workflow} and \texttt{olaya.workflow\_replay}) enforces a strict three-phase separation between \textbf{static TBox compilation}, \textbf{bounded live execution}, and \textbf{inference-free replay}:
+
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.3em]
+  \item \textbf{Static TBox Type-Checking (\texttt{compile\_workflow}):}
+  A workflow document is a bounded directed acyclic graph ($1\text{--}128$ nodes; cycles and unreachable nodes are rejected at compile time). Every decision node's bound \texttt{root}, \texttt{concept}, \texttt{options}, \texttt{criteria}, categorical route keys, and terminal \texttt{emit} resource types and properties are validated against $\mathrm{Cl}(\mathcal{T})$:
+  \begin{itemize}[leftmargin=1.4em,itemsep=0.15em]
+    \item Option and route classes must be subclasses of the node's declared \texttt{root} ($c \in \mathrm{desc}^*(r)$).
+    \item Emitted properties must satisfy \texttt{rdfs:domain} and \texttt{rdfs:range} subsumption constraints over $\mathcal{T}$.
+    \item Numeric routes (\texttt{subsumes}, \texttt{score}, \texttt{noul}) are checked for non-empty, non-overlapping interval partitions.
+    \item The compiler outputs an immutable \texttt{CompiledWorkflow} containing the canonical workflow SHA-256 (\texttt{workflow\_hash}) and TBox SHA-256 (\texttt{tbox\_hash}).
+  \end{itemize}
+
+  \item \textbf{Safe Execution and Abstention Gating (\texttt{run\_workflow}):}
+  At each step, the interpreter verifies that the engine's live TBox digest matches \texttt{tbox\_hash} (preventing mid-flight schema drift), invokes \texttt{system\_one}, and applies acceptance gates (\texttt{min\_confidence}, \texttt{min\_margin}, \texttt{require\_axioms}). If a decision violates an acceptance threshold, ties at the argmax, or encounters a backend error, execution deterministically transitions to the node's declared \texttt{on\_abstain} or \texttt{on\_error} branch. Terminal nodes emit typed \texttt{wf:ActionIntent} records rather than executing side effects.
+
+  \item \textbf{W3C PROV-O JSON-LD Emission and Offline Replay (\texttt{replay\_workflow}):}
+  Every execution emits a self-contained JSON-LD~1.1 \texttt{@graph} typed with W3C \texttt{prov:Activity}, \texttt{prov:Entity}, \texttt{wf:WorkflowRun}, \texttt{wf:DecisionActivity}, \texttt{wf:DecisionRecord}, and \texttt{wf:ActionIntent}---recording the decision distributions and statuses \emph{without} persisting sensitive raw input state. Given only $(\texttt{compiled\_workflow}, \texttt{trace\_jsonld})$, \texttt{replay\_workflow} constructs a zero-model \texttt{\_ReplayEngine}, re-runs the compiled transition policy, and mathematically verifies that the recorded distributions, acceptance gates, and branch transitions reproduce the exact trace and terminal intent.
+\end{enumerate}
+
+\section{Empirical Evaluation}
+\label{sec:eval}
+
+\subsection{External Benchmark: OAEI 2023 Conference Track (\texttt{ra1})}
+
+We evaluate O-Laya on the standard \textbf{Ontology Alignment Evaluation Initiative (OAEI) Conference Track}~\cite{pour2023oaei} using reference alignment \texttt{ra1} across all \textbf{21 ontology pairs} (7 OntoFarm ontologies: \texttt{cmt}, \texttt{conference}, \texttt{confOf}, \texttt{edas}, \texttt{ekaw}, \texttt{iasted}, \texttt{sigkdd}; \textbf{259 class correspondences} and \textbf{46 property correspondences}, 305 total). Following the official OAEI protocol, mutual-best $1{:}1$ correspondences above a threshold fixed \emph{a priori} ($\tau = 0.50$) or selected via Leave-One-Pair-Out Cross-Validation (LOPO-CV) are micro-averaged across all 21 pairs for classes (\textbf{M1}), properties (\textbf{M2}), and combined (\textbf{M3}).
+
+\begin{table}[ht!]
+\centering
+\caption{Micro-averaged Precision, Recall, and F1 on the OAEI 2023 Conference benchmark (\texttt{ra1}, 21 ontology pairs, 259 class + 46 property correspondences). O-Laya configurations are shown in bold.}
+\label{tab:oaei}
+\vspace{0.4em}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l c c c c c c}
+\toprule
+\textbf{System / Configuration} & \textbf{M1 P} & \textbf{M1 R} & \textbf{M1 F1 (Classes)} & \textbf{M3 P} & \textbf{M3 R} & \textbf{M3 F1 (All)} \\
+\midrule
+\emph{GraphMatcher} (OAEI 2023 SOTA) & 0.78 & 0.89 & \textbf{0.83} & 0.76 & 0.80 & \textbf{0.78} \\
+\textbf{O-Laya Hybrid + LLM Judge (\texttt{qwen3.8-max}, LOPO-CV)} & \textbf{0.79} & \textbf{0.82} & \textbf{0.80} & \textbf{0.73} & \textbf{0.79} & \textbf{0.76} \\
+\emph{SORBETMtch} (OAEI 2023) & 0.78 & 0.75 & 0.76 & 0.78 & 0.64 & 0.70 \\
+\textbf{O-Laya Hybrid (\texttt{embeddinggemma-2}, path text, $\tau=0.50$)} & \textbf{0.82} & \textbf{0.69} & \textbf{0.75} & \textbf{0.72} & \textbf{0.66} & \textbf{0.69} \\
+\textbf{O-Laya Hybrid (\texttt{intfloat/e5-small-v2}, LOPO-CV)} & \textbf{0.81} & \textbf{0.69} & \textbf{0.75} & \textbf{0.69} & \textbf{0.66} & \textbf{0.68} \\
+\textbf{O-Laya Hybrid + Structure (\texttt{embeddinggemma-2}, LOPO-CV)} & \textbf{0.80} & \textbf{0.71} & \textbf{0.75} & \textbf{0.69} & \textbf{0.67} & \textbf{0.68} \\
+\textbf{O-Laya Lexical ($\tau=0.50$, zero ML dependencies)} & \textbf{0.83} & \textbf{0.64} & \textbf{0.73} & \textbf{0.73} & \textbf{0.60} & \textbf{0.66} \\
+\emph{LogMap} (OAEI 2023) & 0.84 & 0.63 & 0.72 & 0.81 & 0.58 & 0.68 \\
+\emph{Matcha} (OAEI 2023) & 0.76 & 0.68 & 0.72 & 0.70 & 0.64 & 0.67 \\
+\emph{edna} (OAEI baseline) & 0.88 & 0.54 & 0.67 & 0.79 & 0.47 & 0.59 \\
+\emph{StringEquiv} (OAEI baseline) & 0.88 & 0.50 & 0.64 & 0.80 & 0.43 & 0.56 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+Table~\ref{tab:oaei} highlights three results:
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.2em]
+  \item Even with \textbf{zero ML dependencies}, \texttt{olaya-lexical} achieves \textbf{0.73 M1 F1}, outperforming \texttt{StringEquiv} ($0.64$) and \texttt{edna} ($0.67$) and edging past \texttt{LogMap} and \texttt{Matcha} ($0.72$) on class alignment via token normalization, CamelCase/snake\_case decompounding, and inverted-index IDF weighting.
+  \item Conditioning \texttt{google/embeddinggemma-2} on root-to-leaf \textbf{path-context strings} (\texttt{olaya-hybrid}) lifts M1 F1 to \textbf{0.75} ($P = 0.82, R = 0.69$) at the \emph{a priori} $\tau = 0.50$ threshold without task-specific training.
+  \item Adding a second-stage LLM verification pass over ambiguous candidate pairs (\texttt{olaya-hybrid + LLM judge}) reaches \textbf{0.80 M1 F1} and \textbf{0.76 M3 F1}, ranking second only to the supervised GNN \texttt{GraphMatcher} ($0.83$).
+\end{enumerate}
+
+\subsection{Full-Ontology Concept Grounding and Unseen-Class Generalization}
+
+To evaluate System~1 concept grounding across diverse hierarchies, we benchmark \texttt{OLaya.from\_ontology} on four ontologies under both \textbf{batch-disjoint} splits (test observations drawn from held-out generation batches) and strict \textbf{class-disjoint} splits (where \textbf{0\% of test target classes} appear in training, testing true zero-shot compositional generalization over the TBox hierarchy).
+
+\begin{table}[ht!]
+\centering
+\caption{Full-ontology Top-1 accuracy and runtime axiom violation rate across batch-disjoint and unseen class-disjoint splits.}
+\label{tab:grounding}
+\vspace{0.4em}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l l c c c c}
+\toprule
+\textbf{Domain Ontology} & \textbf{Split Regime} & \textbf{Lexical IDF} & \textbf{Zero-Shot \texttt{bge-small}} & \textbf{LoRA \texttt{EmbeddingGemma 2}} & \textbf{Axiom Violations} \\
+\midrule
+Incident Triage & Batch-Disjoint & 0.562 & 0.562 & \textbf{0.812} & \textbf{0.0\%} \\
+Incident Triage & Class-Disjoint (Unseen) & 0.562 & 0.562 & \textbf{0.826} & \textbf{0.0\%} \\
+GS1 GPC Taxonomy & Per-Domain / Batch & 0.281 & 0.375 & \textbf{0.859} & \textbf{0.0\%} \\
+GS1 GPC Taxonomy & Class-Disjoint (Unseen) & 0.281 & 0.375 & \textbf{0.656} & \textbf{0.0\%} \\
+Schema.org & Joint / Batch & 0.100 & 0.308 & \textbf{0.750} & \textbf{0.0\%} \\
+Schema.org & Class-Disjoint (Unseen) & 0.100 & 0.308 & \textbf{0.606} & \textbf{0.0\%} \\
+RevOps Bowtie (\texttt{pt-BR}) & Cross-Lingual Zero-Shot & 0.600 & --- & \textbf{1.000} (10/10) & \textbf{0.0\%} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+As shown in Table~\ref{tab:grounding}, LoRA fine-tuning of \texttt{google/embeddinggemma-2} ($\mathrm{rank} = 16$, merged into base weights in 26~minutes on a single Apple Silicon GPU) improves full-ontology Top-1 accuracy by \textbf{+25.0 to +65.0 percentage points} over lexical routing while transferring \textbf{0.606--0.826 Top-1 accuracy} to completely unseen ontology classes via their root-to-leaf path embeddings.
+
+\subsection{Runtime Latency and Cross-Language Parity}
+
+Table~\ref{tab:latency} reports CPU latency on a standard 4-vCPU container without GPU acceleration (\texttt{benchmarks/results/router-latency.md}) alongside golden-vector parity across all four kernel targets.
+
+\begin{table}[ht!]
+\centering
+\caption{CPU latency profile (4-vCPU container) and cross-runtime golden vector parity (\texttt{spec/axioms\_golden.json}).}
+\label{tab:latency}
+\vspace{0.4em}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l c c c c}
+\toprule
+\textbf{Runtime \& Scoring Backend} & \textbf{p50 Latency} & \textbf{p95 Latency} & \textbf{Memory} & \textbf{Golden Parity ($\epsilon = 10^{-6}$)} \\
+\midrule
+Rust \texttt{olaya-core} / WASM / Node (Lexical IDF) & \textbf{1--4 ms} & \textbf{6 ms} & $< 15\,\text{MB}$ & 100\% \\
+Python \texttt{olaya} (Lexical IDF, zero-Torch) & \textbf{8--12 ms} & \textbf{16 ms} & $< 40\,\text{MB}$ & 100\% \\
+Python \texttt{olaya} (\texttt{BAAI/bge-small-en-v1.5}, CPU) & \textbf{28 ms} & \textbf{36 ms} & $\approx 180\,\text{MB}$ & 100\% \\
+Python \texttt{olaya} (\texttt{google/embeddinggemma-2}, CPU) & \textbf{115 ms} & \textbf{180 ms} & $\approx 1.2\,\text{GB}$ & 100\% \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\section{Scope Boundaries, Limitations, and Future Work}
+\label{sec:limits}
+
+To maintain scientific and engineering transparency, we explicitly state what O-Laya guarantees and what remains outside its current formal scope:
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.25em]
+  \item \textbf{Boundary of the Lean 4 Formalization:} The Lean~4 proof core (\texttt{lean/OlayaAxioms/}) proves the exact correctness, monotonicity, least upper-bound optimality, and disjointness resolution of Steps~3 (\texttt{lift}) and~4 (\texttt{disjointAll}) and the verifier (\texttt{verifyAxioms}) over non-negative integer scores. Floating-point softmax (Step~2), Shannon entropy confidence (Step~5), and neural encoder representations lie outside the theorem prover's scope and are validated empirically via property-based tests (\texttt{hypothesis}) and cross-runtime golden vectors.
+  \item \textbf{Empirical Calibration:} Normalized-entropy confidence is an information-theoretic concentration measure over the post-disjointness simplex. It becomes an empirically calibrated probability only when paired with a held-out temperature fit (\texttt{olaya.calibration}).
+  \item \textbf{Marker-Pooling Neural Head vs.\ Path-Context Bi-Encoder:} While O-Laya includes a trainable marker-pooling sequence head (\texttt{olaya.model.OntologyDecisionModel}), our ablation studies (\texttt{benchmarks/results/decision-head-summary.md}) show that path-context bi-encoder scoring (\texttt{OLaya.from\_ontology}) substantially outperforms from-scratch marker heads in data-scarce regimes. Both positive and negative ablation results are archived in the repository.
+\end{enumerate}
+
+\section{Reproducibility and Software Availability}
+
+O-Laya (\texttt{leio-decision} \texttt{v0.7.0}) is released under the MIT License at \url{https://github.com/josaum/olaya} and published to PyPI and npm as \texttt{leio-decision}. All benchmarks, formal proofs, and cross-runtime parity checks can be reproduced directly from the repository:
+
+\begin{lstlisting}[style=olayacode,language=bash]
+# 1. Run Python test suite (460+ tests: OWL 2 RL, axiom golden vectors, workflows, replay, PII)
+.venv/bin/python -m pytest -q
+
+# 2. Verify the Lean 4 proof core (zero sorry, standard axioms via lean4checker)
+cd lean && lake build && lake exe olaya-oracle
+
+# 3. Run Rust workspace tests (olaya-core, owl-fast-core, FCA, WASM kernel)
+cargo test --workspace
+
+# 4. Run zero-dependency TypeScript / Node.js test suite
+cd packages/olaya-node && bun test
+
+# 5. Reproduce OAEI 2023 Conference (ra1) benchmark
+.venv/bin/python scripts/benchmark_oaei.py
+\end{lstlisting}
+
+\begin{thebibliography}{9}
+
+\bibitem{kahneman2011thinking}
+D.~Kahneman.
+\newblock \emph{Thinking, Fast and Slow}.
+\newblock Farrar, Straus and Giroux, 2011.
+
+\bibitem{motik2012owl2profiles}
+B.~Motik, B.~Cuenca~Grau, I.~Horrocks, Z.~Wu, A.~Fokoue, and C.~Lutz.
+\newblock {OWL 2 Web Ontology Language Profiles (Second Edition)}.
+\newblock W3C Recommendation, December 2012. \url{https://www.w3.org/TR/owl2-profiles/}.
+
+\bibitem{moreau2013prov}
+L.~Moreau and P.~Missier.
+\newblock {PROV-DM: The PROV Data Model}.
+\newblock W3C Recommendation, April 2013. \url{https://www.w3.org/TR/prov-dm/}.
+
+\bibitem{pour2023oaei}
+M.~A.~N.~Pour, A.~Algergawy, P.~Buche, L.~J.~Castro, J.~M.~Chen, H.~Coulibaly, et~al.
+\newblock {Results of the Ontology Alignment Evaluation Initiative 2023}.
+\newblock In \emph{Proceedings of the 18th International Workshop on Ontology Matching (OM 2023)}, CEUR Workshop Proceedings, Vol.~3591, pp.~97--139, 2023.
+
+\bibitem{jimenez2011logmap}
+E.~Jim{\'e}nez-Ruiz and B.~Cuenca~Grau.
+\newblock {LogMap: Logic-Based and Scalable Ontology Matching}.
+\newblock In \emph{Proceedings of the 10th International Semantic Web Conference (ISWC 2011)}, pp.~273--288. Springer, 2011.
+
+\bibitem{faria2023matcha}
+D.~Faria, M.~C.~Silva, P.~Cotovio, L.~Ferraz, L.~Balbi, and C.~Pesquita.
+\newblock {Results for Matcha and Matcha-DL in OAEI 2023}.
+\newblock In \emph{Proceedings of the 18th International Workshop on Ontology Matching (OM 2023)}, CEUR Workshop Proceedings, Vol.~3591, pp.~164--170, 2023.
+
+\bibitem{demoura2021lean4}
+L.~de~Moura and S.~Ullrich.
+\newblock {The Lean 4 Theorem Prover and Programming Language}.
+\newblock In \emph{Automated Deduction -- CADE 28}, Lecture Notes in Computer Science, Vol.~12699, pp.~625--635. Springer, 2021.
+
+\end{thebibliography}
+
+\end{document}

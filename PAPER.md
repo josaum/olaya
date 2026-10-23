@@ -1,8 +1,9 @@
 # O-Laya: Fast, Ontology-Grounded System 1 Decisions with a Lean 4-Verified Axiom Projection Kernel and Inference-Free PROV-O Workflow Replay
 
-**Authors:** Josaum (`github.com/josaum/olaya`)  
+**Author:** Dionisio Chiuratto Agourakis (`dionisio@jquant.com.br`, `github.com/josaum/olaya`)  
 **Version:** `0.7.0` (`leio-decision`)  
 **Repository:** [https://github.com/josaum/olaya](https://github.com/josaum/olaya)  
+**PDF Manuscript:** [`PAPER.pdf`](PAPER.pdf)  
 **License:** MIT  
 
 ---
@@ -260,12 +261,12 @@ cd packages/olaya-node && bun test
 If you use O-Laya (`leio-decision`) in your research or production systems, please cite:
 
 ```bibtex
-@software{olaya2026,
-  author       = {Josaum},
+@software{agourakis2026olaya,
+  author       = {Agourakis, Dionisio Chiuratto},
   title        = {{O-Laya}: Fast, Ontology-Grounded System 1 Decisions with a Lean 4-Verified Axiom Projection Kernel},
   year         = {2026},
   version      = {0.7.0},
-  publisher    = {GitHub},
+  publisher    = {Zenodo},
   url          = {https://github.com/josaum/olaya}
 }
 ```

@@ -1,0 +1,31 @@
+{
+  "title": "O-Laya: Fast, Ontology-Grounded System 1 Decisions with a Lean 4-Verified Axiom Projection Kernel and Inference-Free W3C PROV-O Workflow Replay",
+  "version": "0.7.0",
+  "upload_type": "publication",
+  "publication_type": "article",
+  "description": "O-Laya (leio-decision) is a neuro-symbolic System 1 decision engine that conditions inference directly on an OWL 2 RL / RDF / SKOS ontology (TBox) at runtime. It combines hybrid lexical IDF and path-context bi-encoder Reciprocal Rank Fusion (google/embeddinggemma-2) with a Lean 4-verified axiom projection kernel (16 machine-checked theorems, zero sorry) that enforces subsumption monotonicity and child-closed disjointness exclusion, plus a declarative TBox-bound workflow compiler with inference-free W3C PROV-O JSON-LD replay across Python, Rust/WASM, and TypeScript/Node.js.",
+  "creators": [
+    {
+      "name": "Agourakis, Dionisio Chiuratto"
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "Neuro-Symbolic AI",
+    "Ontology Grounding",
+    "OWL 2 RL Reasoning",
+    "Formal Verification",
+    "Lean 4",
+    "Ontology Alignment",
+    "OAEI",
+    "W3C PROV-O",
+    "System 1 Decision Making"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/josaum/olaya",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
