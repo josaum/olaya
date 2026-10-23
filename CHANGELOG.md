@@ -4,7 +4,7 @@ All notable changes to **O-Laya** (`leio-decision`) are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.7.0] - 2026-10-23
 
 Breaking: the default encoder of the ontology-conditioned engine is EmbeddingGemma 2 (installed by `ml`), and client-specific modules were removed from the package. See *Changed* and *Removed*.
 
@@ -102,6 +102,7 @@ Breaking: the default encoder of the ontology-conditioned engine is EmbeddingGem
 - **TBox-bound workflows & inference-free JSON-LD replay:** Workflow compiler, executor (`olaya.workflow`), and deterministic JSON-LD trace replay (`olaya.workflow_replay`) (#6).
 - **Complete macOS ARM64 Claude Desktop bundle (`.mcpb`):** Offline self-contained CPython/PyTorch runtime, neural checkpoint, MCP server, and three native skills (`olaya-model-decisions`, `olaya-tbox-workflows`, `olaya-evidence-review`).
 
+[0.7.0]: https://github.com/josaum/olaya/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/josaum/olaya/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/josaum/olaya/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/josaum/olaya/compare/v0.3.2...v0.4.0
