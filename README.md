@@ -23,13 +23,14 @@ Read this before anything else.
 | Formal Concept Analysis engine (`owl-fast-core::fca`) | Implemented and tested |
 | Lean 4 proof core (`lean/`) | Steps 3–4 of the axiom kernel and the verifier are formalised over integer scores; `project_verified` and 15 supporting theorems, no `sorry`, axioms audited in CI. Softmax, confidence, and the `K`-sweep convergence bound are **not** proven. See [`spec/AXIOMS.md`](spec/AXIOMS.md). |
 | TBox-bound workflow compiler, interpreter, JSON-LD traces, inference-free replay | Implemented and tested |
+| Bring-your-own ontology (`load_ontology`, `OLaya.from_ontology`, domain packs) | Implemented and tested. Turtle / RDF/XML / N-Triples / JSON-LD / O-Laya JSON load in pure Python; the engine is conditioned on the supplied TBox at instantiation (EmbeddingGemma 2 routing and zero-shot scoring, verified projection). No client ontologies, evidence or checkpoints ship with the package. |
 | Lexical scoring (label / synonym / description overlap with IDF) | Implemented in every runtime. **This is what every shipped runtime uses to score.** |
 | Neural scoring head (Python, PyTorch) | Implemented and trainable. **No trained weights are committed.** `OLaya()` without a checkpoint is a randomly initialised encoder; its scores are not meaningful. A head can be trained on the committed LLM-distilled corpora (`scripts/train_from_corpus.py`, `data/corpora/`); on all three domains it **does not beat the lexical router** on full-ontology retrieval, see [`benchmarks/results/decision-head-summary.md`](benchmarks/results/decision-head-summary.md). |
 | ONNX path in Rust (`onnx` feature) | Compiles. No model to load, no end-to-end test. |
-| Embedding candidate router and bi-encoder scorer (Python, `olaya.embedding_router`) | Implemented, injectable into `OLaya(router=..., scorer=...)`; the axiom projection, lineage and `axioms_verified` are unchanged. On the LLM-distilled test rows a zero-shot `bge-small` over path-context class texts beats the lexical router on full-ontology top-1 on gs1 (0.375 vs 0.281) and Schema.org (0.308 vs 0.100) and ties on incident (0.562). One encoder fine-tuned jointly on the three corpora with InfoNCE, sibling and mined hard negatives: with `google/embeddinggemma-2` (prompted, 270M text backbone, `gemma` extra; the default base of both fine-tune scripts, LoRA rank 16 merged into the weights, 26 minutes on a Mac Studio GPU) full-ontology top-1 is **0.81 / 0.80 / 0.75** (incident / gs1 / Schema.org, batch-disjoint split; test classes were seen in training through other batches), against 0.81 / 0.86 / 0.64 for per-domain fine-tunes of the same base and recipe (gs1 does better alone than jointly) and 0.75 / 0.67 / 0.66 for joint `bge-base`. On a **class-disjoint** split, where no test class has a training row, the same recipe reaches **0.83 / 0.66 / 0.61** against 0.74 / 0.56 / 0.60 per-domain with the same recipe and 0.65 / 0.61 / 0.59 for full fine-tuning of the same base, which memorises the training classes within two epochs at any learning rate; the recipe sweep is in `docs/training-on-apple-silicon.md`. Through the engine with the routed candidate policy both checkpoints score the same top-1 as the router; the leaf policy loses 0.05 on Schema.org. `OLaya(candidate_policy="routed")` scores every routed concept instead of the leaves only: it raises engine recall@5 (Schema.org 0.73 to 0.83) and leaves top-1 flat. Not used by any shipped runtime; checkpoints are not committed (`models/checkpoints/MANIFEST.json` records hashes). See [`benchmarks/results/router-eval-summary.md`](benchmarks/results/router-eval-summary.md), [`router-eval-joint60.md`](benchmarks/results/router-eval-joint60.md) and [`docs/training-on-apple-silicon.md`](docs/training-on-apple-silicon.md). Cost per decision on a 4-core CPU container: lexical 8 to 16 ms, bge-small 28 to 36 ms, EmbeddingGemma 2 100 to 180 ms median ([`benchmarks/results/router-latency.md`](benchmarks/results/router-latency.md), `benchmarks/bench_router_latency.py`). |
+| Embedding candidate router and bi-encoder scorer (Python, `olaya.embedding_router`) | Implemented, injectable into `OLaya(router=..., scorer=...)`; the axiom projection, lineage and `axioms_verified` are unchanged. On the LLM-distilled test rows a zero-shot `bge-small` over path-context class texts beats the lexical router on full-ontology top-1 on gs1 (0.375 vs 0.281) and Schema.org (0.308 vs 0.100) and ties on incident (0.562). One encoder fine-tuned jointly on the three corpora with InfoNCE, sibling and mined hard negatives: with `google/embeddinggemma-2` (prompted, 270M text backbone, `ml` extra; the default encoder of `OLaya.from_ontology` and of both fine-tune scripts, LoRA rank 16 merged into the weights, 26 minutes on a Mac Studio GPU) full-ontology top-1 is **0.81 / 0.80 / 0.75** (incident / gs1 / Schema.org, batch-disjoint split; test classes were seen in training through other batches), against 0.81 / 0.86 / 0.64 for per-domain fine-tunes of the same base and recipe (gs1 does better alone than jointly) and 0.75 / 0.67 / 0.66 for joint `bge-base`. On a **class-disjoint** split, where no test class has a training row, the same recipe reaches **0.83 / 0.66 / 0.61** against 0.74 / 0.56 / 0.60 per-domain with the same recipe and 0.65 / 0.61 / 0.59 for full fine-tuning of the same base, which memorises the training classes within two epochs at any learning rate; the recipe sweep is in `docs/training-on-apple-silicon.md`. Through the engine with the routed candidate policy both checkpoints score the same top-1 as the router; the leaf policy loses 0.05 on Schema.org. `OLaya(candidate_policy="routed")` scores every routed concept instead of the leaves only: it raises engine recall@5 (Schema.org 0.73 to 0.83) and leaves top-1 flat. Not used by any shipped runtime; checkpoints are not committed (`models/checkpoints/MANIFEST.json` records hashes). See [`benchmarks/results/router-eval-summary.md`](benchmarks/results/router-eval-summary.md), [`router-eval-joint60.md`](benchmarks/results/router-eval-joint60.md) and [`docs/training-on-apple-silicon.md`](docs/training-on-apple-silicon.md). Cost per decision on a 4-core CPU container: lexical 8 to 16 ms, bge-small 28 to 36 ms, EmbeddingGemma 2 100 to 180 ms median ([`benchmarks/results/router-latency.md`](benchmarks/results/router-latency.md), `benchmarks/bench_router_latency.py`). |
 | WebAssembly build | Builds in CI for `wasm32-unknown-unknown`; kernel unit-tested. |
 | Calibration | Temperature fitting (`calibration.py`) is implemented and used at inference when a checkpoint carries a fitted temperature. Without one, confidence is normalised entropy with a fixed cardinality temperature and is **not** an empirically calibrated probability. |
-| Published packages | `leio-decision` on PyPI and npm (part of the leio suite with `leio-code`), published by `release.yml` from the tagged commit; `olaya` 0.3.1 on PyPI is the same code under its previous name. Until the first `leio-decision` publish, install from a locally built wheel (see Installation). |
+| Published packages | `leio-decision` on PyPI and npm (part of the leio suite with `leio-code`), published by `release.yml` from the tagged commit; npm releases are staged and go live after 2FA approval. `olaya` 0.3.1 on PyPI is the same code under its previous name. |
 | HTTP edge demo (`/api/systemone`) | Live, lexical only, no ontology DAG. See [the edge contract](spec/systemone-reliability.md). |
 
 No trained neural model is committed. The only numbers for a trained head are the
@@ -160,25 +161,33 @@ returns a bounded negation-aware lexical score with explicit abstention.
 
 ## Installation
 
-Until the first registry publish lands, install from a wheel built in this checkout. The
-Enterprise Strategy toolkit consumes O-Laya the same way (a hash-pinned vendored wheel).
-
-```bash
-uv build --wheel --out-dir dist                      # dist/leio_decision-0.6.0-py3-none-any.whl
-uvx --from dist/leio_decision-0.6.0-py3-none-any.whl leio-decision   # MCP server straight from the wheel
-uv pip install dist/leio_decision-0.6.0-py3-none-any.whl             # into a venv: provides `leio-decision`, `leio`, `leio-mcp`, `olaya-mcp`
-```
-
-The wheel's base dependencies include torch (about 2 GB); `olaya.pii` alone is standard library.
-
-Registry installs, live once the release workflow has published `leio-decision` to PyPI and
-`leio-decision` to npm (wired in `release.yml`; first publish pending):
-
 ```bash
 uvx leio-decision            # Python MCP server, no install step
 npx leio-decision            # Node MCP server, zero dependencies
-pip install leio-decision    # Python SDK
+pip install leio-decision    # Python SDK (standard library only)
 ```
+
+The base install is standard library only; capabilities are extras:
+
+| Extra | Adds | For |
+|---|---|---|
+| `pii` | pydantic | `olaya.pii` obfuscator on its own |
+| `reasoning` | numpy, pydantic | axiom projection, calibration arithmetic |
+| `rdf` | rdflib | Turtle / RDF/XML / JSON-LD ontologies (`load_ontology`) |
+| `ml` | torch, transformers, sentence-transformers, peft, onnxruntime | the engine: EmbeddingGemma 2 encoder (default), fine-tuning, decision head |
+| `llm` | anthropic | LLM-judge matcher stage |
+| `all` | reasoning, ml, llm, rdf | everything (`gemma` is a deprecated alias of `ml`) |
+
+`sentence-transformers[image]` pulls torchvision, which must match the installed torch build.
+Install both from the same index first, then the extras:
+
+```bash
+pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision   # or a CUDA build
+pip install "leio-decision[all]"
+```
+
+A local wheel works the same way: `uv build --wheel --out-dir dist`, then
+`uv pip install "dist/leio_decision-<version>-py3-none-any.whl[all]"`.
 
 From source (no pre-built artefacts are committed):
 
@@ -186,7 +195,7 @@ From source (no pre-built artefacts are committed):
 
 ```bash
 uv venv
-uv pip install --index-url https://download.pytorch.org/whl/cpu torch   # or a CUDA/MPS build
+uv pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision   # or a CUDA/MPS build
 uv pip install -e ".[dev]"
 .venv/bin/python -m pytest -q
 ```
@@ -219,11 +228,56 @@ result.model                    # provenance: checkpoint hash, or "untrained-ran
 Unknown `root` / `subsumes` concepts and malformed `choice` criteria raise `ValueError`. `choice`
 accepts either a list of option names or a `{name: description}` dict.
 
-To train a head on your own ontology and get a checkpoint the engine will load:
+### Bring your own ontology
+
+The engine is ontology-agnostic: pass your TBox at instantiation and every class is embedded
+once with its path-context text, `concept` questions are routed and scored against it, and the
+verified projection runs on its DAG. No training is needed; a fine-tuned checkpoint only
+improves ranking.
+
+```python
+from olaya import OLaya, load_ontology, ontology_fingerprint
+
+engine = OLaya.from_ontology("my_ontology.ttl")   # .ttl / .owl / .rdf / .nt / .jsonld / .json, or a dir of RDF files
+engine.system_one("Pallet of chilled yoghurt at dock 4", {"q": {"type": "concept", "root": "ex:Product"}})
+
+onto = load_ontology("my_ontology.jsonld")        # olaya.Ontology; CURIEs from the graph's prefixes
+ontology_fingerprint(onto)                        # SHA-256 of the canonical TBox, format-independent
+```
+
+`from_ontology` defaults to `google/embeddinggemma-2` with hybrid (lexical + embedding) routing;
+pass `encoder=` (an encoder object or model id), `router="embedding"`, `temperature=`, or
+`checkpoint=` (a `finetune_bi_encoder` output) with `checkpoint_sha256=` and
+`expected_fingerprint=`, which are verified so a checkpoint is never paired with a different
+ontology.
+
+For private deployments, keep the ontology, evidence and checkpoint in your own repository as a
+**domain pack**: a directory with a `pack.json`.
+
+```json
+{
+  "format": "olaya-domain-pack-v1",
+  "name": "acme-orders",
+  "ontology": "ontology.ttl",
+  "ontology_fingerprint": "<sha256>",
+  "encoder": {"model": "google/embeddinggemma-2", "checkpoint": "checkpoints/acme.pt",
+              "checkpoint_sha256": "<sha256>", "temperature": 0.05},
+  "router": "hybrid",
+  "candidate_policy": "routed"
+}
+```
+
+```python
+engine = OLaya.from_pack("path/to/acme-pack")
+```
+
+To train the decision head on your own ontology (optionally mixing in real observations as
+JSONL `{"target_curie": ..., "text": ...}`). The training loader keeps the Rust converter's CURIE
+scheme for RDF files, so evidence names classes by local name (`Dairy`, not `ex:Dairy`):
 
 ```bash
-.venv/bin/python scripts/train_real_ontologies.py --domain schemaorg \
-  --ontology-path docs/public/ontologies/schemaorg_ontology.json --epochs 5 --device cpu
+.venv/bin/python scripts/train_real_ontologies.py --domain generic \
+  --ontology-path my_ontology.ttl --evidence observations.jsonl --epochs 5 --device cpu
 ```
 
 Training splits source observations into disjoint train / validation /
@@ -303,7 +357,7 @@ to a private ontology JSON to add it as a domain.
 ### MCP servers
 
 Both the Python and Node packages expose a Model Context Protocol server over
-stdio. Neither is published to a registry yet; run them from a checkout:
+stdio (`uvx leio-decision`, `npx leio-decision`), or from a checkout:
 
 ```bash
 .venv/bin/olaya-mcp                       # Python runtime

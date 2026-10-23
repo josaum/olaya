@@ -6,20 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-### Added
-- **Bring-your-own ontology (`olaya.ontology_io`):** `load_ontology` reads Turtle, RDF/XML, N-Triples, JSON-LD or O-Laya JSON (or a directory of RDF files) in pure Python, with no Rust toolchain needed; `ontology_fingerprint` hashes the canonical TBox so checkpoints can be bound to the ontology they were trained on. New `rdf` extra (`rdflib`), included in `all`.
-- **`OLaya.from_ontology(...)`:** builds an engine conditioned on a user-supplied ontology at instantiation: class texts are embedded once, `concept` questions are routed (hybrid lexical + embedding RRF, or embedding only) and scored zero-shot, then projected through the verified axiom kernel. Optional fine-tuned checkpoint with SHA-256 and ontology-fingerprint checks.
-- **Domain packs (`olaya.domain_pack`, `OLaya.from_pack(path)`):** a `pack.json` manifest (ontology, fingerprint, encoder / checkpoint pin, router, candidate policy) that lives in the consumer's own repository.
-- **Caller-supplied evidence:** `generate_real_ontology_observations(..., evidence=[(curie, text), ...])`, a generic `"generic"` template family, `--ontology` / `--evidence` flags on the training and calibration scripts, and `OLAYA_EXTRA_ONTOLOGY` for `build_master_ontology.py`.
+Breaking: the default encoder of the ontology-conditioned engine is EmbeddingGemma 2 (installed by `ml`), and client-specific modules were removed from the package. See *Changed* and *Removed*.
 
-### Removed
-- **Host- and client-specific code:** `olaya.real_abox` (`RealABoxFact`, `load_custom_abox`, `find_custom_root`), the host-specific training domain, the M&A deal scenario script, its outputs and ontology, and the corresponding playground demo. Feed your own evidence via `evidence=` and your own ontology via `load_ontology` / domain packs instead.
+### Added
+- **Bring-your-own ontology (`olaya.ontology_io`):** `load_ontology` reads Turtle, RDF/XML, N-Triples, JSON-LD or O-Laya JSON (or a directory of RDF files) in pure Python, with no Rust toolchain; `ontology_fingerprint` hashes the canonical TBox (format- and order-independent) so a checkpoint can be bound to the ontology it was trained on. New `rdf` extra (`rdflib`), included in `all`.
+- **`OLaya.from_ontology(...)`:** builds an engine conditioned on a user-supplied ontology at instantiation: class texts are embedded once, `concept` questions are routed (hybrid lexical + embedding RRF, or embedding only) and scored zero-shot, then projected through the verified axiom kernel. An optional fine-tuned checkpoint is verified against its SHA-256 and the ontology fingerprint.
+- **Domain packs (`olaya.domain_pack`, `OLaya.from_pack(path)`):** a `pack.json` manifest (ontology, fingerprint, encoder / checkpoint pin, router, candidate policy) kept in the consumer's own repository.
+- **Caller-supplied evidence:** `generate_real_ontology_observations(..., evidence=[(curie, text), ...])`, a `"generic"` template family for any ontology, `--ontology` / `--evidence` flags on the training and calibration scripts, and `OLAYA_EXTRA_ONTOLOGY` for `build_master_ontology.py`.
+- **Hermetic tests for the model-backed paths:** tiny randomly initialised BERT and prompted sentence-transformers models stand in for Hugging Face checkpoints (encoders, full and LoRA fine-tuning, checkpoint reload, cross-encoder reranker, decision-head training), plus table-driven workflow, replay and ontology validation tests; line coverage 83% → 90% without downloads.
 
 ### Changed
-- **EmbeddingGemma 2 is the default and ships with `ml`:** `OLaya.from_ontology()` (and domain packs without an explicit model) default to `google/embeddinggemma-2` (`olaya.embeddings.DEFAULT_ENCODER`); `sentence-transformers[image]`, `peft` and `transformers>=5.19` move into the `ml` extra (and therefore `all` / `dev`). `leio-decision[gemma]` remains as a deprecated alias of `ml`. Install `torch` and `torchvision` from the same index (CI and the release workflow now do). `TransformerEncoder` keeps `DEFAULT_MODEL` (MiniLM) as its own default.
-- **`use_real_abox` is deprecated:** `use_real_abox=True` is ignored with a `DeprecationWarning`; the default domain of the observation generators is now `"generic"`.
+- **BREAKING — EmbeddingGemma 2 is the default and ships with `ml`:** `OLaya.from_ontology()` (and domain packs without an explicit model) default to `google/embeddinggemma-2` (`olaya.embeddings.DEFAULT_ENCODER`); `sentence-transformers[image]`, `peft` and `transformers>=5.19` move into the `ml` extra (and therefore `all` / `dev`). Install `torch` and `torchvision` from the same index (CI and the release workflow now do). `TransformerEncoder` keeps `DEFAULT_MODEL` (MiniLM) as its own default.
 - **Turtle/OWL loading in `load_ontology_file`:** no longer shells out to `cargo run`; it uses `olaya.ontology_io` with the Rust converter's CURIE scheme.
-- **Source archive allow-list:** the sdist now ships only `src/`, `tests/`, `spec/`, `README.md`, `CHANGELOG.md` and `pyproject.toml`; scripts, benchmarks, outputs and the docs site stay in the repository.
+- **Observation generators default to the `"generic"` domain** instead of a host-specific one.
+- **Source archive allow-list:** the sdist ships only `src/`, `tests/`, `spec/`, `README.md`, `CHANGELOG.md` and `pyproject.toml`; scripts, benchmarks, outputs and the docs site stay in the repository.
+
+### Deprecated
+- **`use_real_abox`:** `use_real_abox=True` is ignored with a `DeprecationWarning`; pass `evidence=` instead.
+- **`leio-decision[gemma]`:** an alias of `ml`, kept so existing installs resolve.
+
+### Removed
+- **BREAKING — host- and client-specific code:** the `olaya.real_abox` module and its package exports (a host-specific evidence harvester), its training domain, the M&A deal-scenario script with its outputs and ontology, and the corresponding playground demo. Supply your own ontology via `load_ontology` / domain packs and your own observations via `evidence=`.
 
 ## [0.6.0] - 2026-10-20
 
