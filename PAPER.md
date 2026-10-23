@@ -2,6 +2,8 @@
 
 **Author:** Dionisio Chiuratto Agourakis (`dionisio@jquant.com.br`, `github.com/josaum/olaya`)  
 **Version:** `0.7.0` (`leio-decision`)  
+**DOI (All Versions):** [10.5281/zenodo.23588930](https://doi.org/10.5281/zenodo.23588930)  
+**DOI (v0.7.0 Record):** [10.5281/zenodo.23588931](https://zenodo.org/records/23588931)  
 **Repository:** [https://github.com/josaum/olaya](https://github.com/josaum/olaya)  
 **PDF Manuscript:** [`PAPER.pdf`](PAPER.pdf)  
 **License:** MIT  
@@ -263,10 +265,11 @@ If you use O-Laya (`leio-decision`) in your research or production systems, plea
 ```bibtex
 @software{agourakis2026olaya,
   author       = {Agourakis, Dionisio Chiuratto},
-  title        = {{O-Laya}: Fast, Ontology-Grounded System 1 Decisions with a Lean 4-Verified Axiom Projection Kernel},
+  title        = {{O-Laya}: Fast, Ontology-Grounded System 1 Decisions with a Lean 4-Verified Axiom Projection Kernel and Inference-Free W3C PROV-O Workflow Replay},
   year         = {2026},
   version      = {0.7.0},
   publisher    = {Zenodo},
-  url          = {https://github.com/josaum/olaya}
+  doi          = {10.5281/zenodo.23588930},
+  url          = {https://doi.org/10.5281/zenodo.23588930}
 }
 ```

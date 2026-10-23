@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use O-Laya (leio-decision) in your research or software systems, please cite it using the metadata below."
+type: software
+title: "O-Laya: Fast, Ontology-Grounded System 1 Decisions with a Lean 4-Verified Axiom Projection Kernel and Inference-Free W3C PROV-O Workflow Replay"
+version: 0.7.0
+doi: 10.5281/zenodo.23588930
+date-released: "2026-10-23"
+license: MIT
+repository-code: "https://github.com/josaum/olaya"
+url: "https://zenodo.org/records/23588931"
+authors:
+  - family-names: "Agourakis"
+    given-names: "Dionisio Chiuratto"
+    email: "dionisio@jquant.com.br"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23588930
+    description: "Concept DOI (resolves to the latest version)"
+  - type: doi
+    value: 10.5281/zenodo.23588931
+    description: "Zenodo v0.7.0 Record DOI"
+keywords:
+  - neuro-symbolic-ai
+  - ontology-grounding
+  - owl2-rl
+  - lean4
+  - formal-verification
+  - ontology-alignment
+  - oaei
+  - prov-o

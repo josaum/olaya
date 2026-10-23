@@ -1,5 +1,8 @@
 # O-Laya (`leio-decision`)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23588930.svg)](https://doi.org/10.5281/zenodo.23588930)
+[![Zenodo v0.7.0](https://zenodo.org/badge/DOI/10.5281/zenodo.23588931.svg)](https://zenodo.org/records/23588931)
+
 **Fast, ontology-grounded System 1 decisions for software and AI agents — backed by a Lean 4-verified axiom kernel.**
 
 ```bash
@@ -8,7 +11,7 @@ uvx leio-decision                  # Python MCP server (zero install)
 npx leio-decision                  # Node.js MCP server (zero dependencies)
 ```
 
-📄 **[Read the Technical Paper (`PAPER.md`)](PAPER.md)** · 🔬 **[Formal Axiom Spec (`spec/AXIOMS.md`)](spec/AXIOMS.md)** · 📐 **[OWL 2 RL Conformance (`spec/OWL2RL.md`)](spec/OWL2RL.md)**
+📄 **[Paper (`PAPER.pdf`)](PAPER.pdf)** · 📘 **[Markdown Paper (`PAPER.md`)](PAPER.md)** · 🏛️ **[Zenodo DOI (`10.5281/zenodo.23588930`)](https://doi.org/10.5281/zenodo.23588930)** · 🔬 **[Formal Axiom Spec (`spec/AXIOMS.md`)](spec/AXIOMS.md)** · 📐 **[OWL 2 RL Conformance (`spec/OWL2RL.md`)](spec/OWL2RL.md)**
 
 ---
 
@@ -404,6 +407,22 @@ uv pip install -e ".[dev]"
 ```
 
 CI (`.github/workflows/ci.yml`) enforces `cargo fmt`, `cargo clippy -D warnings`, `cargo test`, `wasm32` build, `lean4checker` (zero `sorry`), `ruff check`, `ruff format --check`, `pytest` (460+ tests, 90% coverage), golden vector parity, `tsc --noEmit`, `bun test`, and edge regression tests on every push.
+
+## Citation
+
+If you use O-Laya (`leio-decision`) in your research or production systems, please cite ([`PAPER.pdf`](PAPER.pdf) · [Zenodo Record](https://zenodo.org/records/23588931)):
+
+```bibtex
+@software{agourakis2026olaya,
+  author       = {Agourakis, Dionisio Chiuratto},
+  title        = {{O-Laya}: Fast, Ontology-Grounded System 1 Decisions with a Lean 4-Verified Axiom Projection Kernel and Inference-Free W3C PROV-O Workflow Replay},
+  year         = {2026},
+  version      = {0.7.0},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.23588930},
+  url          = {https://doi.org/10.5281/zenodo.23588930}
+}
+```
 
 ## License
 
