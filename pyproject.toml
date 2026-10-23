@@ -15,12 +15,14 @@ requires-python = ">=3.11"
 # without the rest. The distribution is leio-decision; the import name stays olaya.
 #   leio-decision[pii]        the PII/MNPI obfuscator
 #   leio-decision[reasoning]  ontology axioms, calibration arithmetic (numpy, pydantic)
-#   leio-decision[ml]         the trained decision head (torch, transformers, onnxruntime)
+#   leio-decision[ml]         the neural stack: EmbeddingGemma 2 encoder (the default for
+#                             OLaya.from_ontology and fine-tuning), the decision head
+#                             (torch, transformers, sentence-transformers, peft, onnxruntime);
+#                             sentence-transformers[image] pulls torchvision, which must match
+#                             the installed torch build (install both from the same index)
 #   leio-decision[llm]        the LLM-judge matcher stage (anthropic)
 #   leio-decision[rdf]        Turtle / RDF/XML / JSON-LD ontology loading (rdflib)
-#   leio-decision[gemma]      EmbeddingGemma 2 encoder (sentence-transformers, peft);
-#                             opt-in only, not in all: it pulls torchvision, which must
-#                             match the installed torch build
+#   leio-decision[gemma]      deprecated alias of ml (kept so existing installs resolve)
 #   leio-decision[all]        reasoning, ml, llm and rdf
 dependencies = []
 
@@ -37,7 +39,10 @@ ml = [
     "numpy>=1.26.0",
     "pydantic>=2.5.0",
     "torch>=2.2.0",
-    "transformers>=4.40.0",
+    # google/embeddinggemma-2 through olaya.embeddings.SentenceTransformerEncoder
+    "transformers>=5.19",
+    "sentence-transformers[image]>=6.1",
+    "peft>=0.21",
     "onnxruntime>=1.17.0",
 ]
 llm = [
@@ -59,10 +64,8 @@ dev = [
     "leio-decision[all]",
 ]
 gemma = [
-    # google/embeddinggemma-2 through olaya.embeddings.SentenceTransformerEncoder
-    "sentence-transformers[image]>=6.1",
-    "transformers>=5.19",
-    "peft>=0.21",
+    # Deprecated: EmbeddingGemma 2 is part of ml now.
+    "leio-decision[ml]",
 ]
 
 [project.scripts]

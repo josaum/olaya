@@ -500,7 +500,7 @@ def finetune_bi_encoder(
         try:
             from peft import LoraConfig, get_peft_model
         except ImportError as exc:  # pragma: no cover
-            raise ImportError("lora_rank requires peft (pip install -e '.[gemma]')") from exc
+            raise ImportError("lora_rank requires peft (pip install 'leio-decision[ml]')") from exc
         targets = sorted({n.rsplit(".", 1)[-1] for n, m in hf.named_modules() if isinstance(m, torch.nn.Linear)})
         targets = [t for t in targets if t in _LORA_TARGETS] or targets
         hf = get_peft_model(

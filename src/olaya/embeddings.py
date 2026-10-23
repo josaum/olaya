@@ -31,7 +31,11 @@ from typing import Any, Protocol, runtime_checkable
 
 import numpy as np
 
-DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"  # default of the mean-pooling TransformerEncoder
+
+#: Default encoder of the ontology-conditioned engine (``OLaya.from_ontology``) and of fine-tuning:
+#: EmbeddingGemma 2 through :class:`SentenceTransformerEncoder` (installed by ``leio-decision[ml]``).
+DEFAULT_ENCODER = "google/embeddinggemma-2"
 
 #: Checkpoints that expect an instruction prefix.  Both symmetric-similarity models
 #: (``bge``) and ``e5`` recommend ``"query: "`` for symmetric tasks; MiniLM uses none.
@@ -276,7 +280,7 @@ class SentenceTransformerEncoder:
     the ``document_prompt`` (class texts; :class:`~olaya.embedding_router.EmbeddingRouter` uses it
     when present). ``text_only`` drops the vision and audio encoders of multimodal checkpoints
     (EmbeddingGemma 2: 744M -> 271M parameters). ``embed_batch`` is the differentiable forward used
-    by :func:`~olaya.embedding_router.finetune_bi_encoder`. Requires ``pip install -e '.[gemma]'``.
+    by :func:`~olaya.embedding_router.finetune_bi_encoder`. Installed by ``leio-decision[ml]``.
     """
 
     def __init__(
@@ -298,7 +302,7 @@ class SentenceTransformerEncoder:
             from sentence_transformers import SentenceTransformer
         except Exception as exc:  # noqa: BLE001
             raise EncoderUnavailable(
-                f"sentence-transformers not importable ({exc}); install with pip install -e '.[gemma]'"
+                f"sentence-transformers not importable ({exc}); install with pip install 'leio-decision[ml]'"
             ) from exc
         self._torch = torch
         torch.manual_seed(0)
@@ -468,6 +472,7 @@ class HashEncoder:
 
 
 __all__ = [
+    "DEFAULT_ENCODER",
     "DEFAULT_MODEL",
     "EmbeddingCache",
     "Encoder",

@@ -10,7 +10,7 @@ Protocol (same as ``scripts/evaluate_routers.py``, which this script imports):
 * recipe (``olaya.embedding_router.finetune_bi_encoder``): LoRA rank 16 on the attention and MLP
   projections (merged into the saved weights), float32, AdamW 3e-5 with linear warmup then linear
   decay, early stopping on the validation metric, the zero-shot weights as the baseline to beat;
-  default base ``embeddinggemma-2`` (``pip install -e '.[dev,gemma]'``), device ``auto``;
+  default base ``embeddinggemma-2`` (``pip install -e '.[dev]'``; EmbeddingGemma 2 is part of ``ml``), device ``auto``;
 * model selection = the *mean* over domains of the validation-split full-ontology top-1 of the
   cosine router; the best epoch is kept;
 * reporting = ``DomainContext.evaluate_encoder`` per domain on the test split, once, written to

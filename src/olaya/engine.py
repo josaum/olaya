@@ -266,7 +266,7 @@ class OLaya:
         ``encoder`` is an :class:`~olaya.embeddings.Encoder` instance or a Hugging Face model id
         (``google/embeddinggemma-*`` loads through sentence-transformers; anything else through
         :class:`~olaya.embeddings.TransformerEncoder`); default
-        :data:`olaya.embeddings.DEFAULT_MODEL`. ``checkpoint`` is a fine-tuned bi-encoder from
+        :data:`olaya.embeddings.DEFAULT_ENCODER` (EmbeddingGemma 2, ``leio-decision[ml]``). ``checkpoint`` is a fine-tuned bi-encoder from
         :func:`~olaya.embedding_router.finetune_bi_encoder` and replaces ``encoder``;
         ``checkpoint_sha256`` and ``expected_fingerprint``
         (:func:`~olaya.ontology_io.ontology_fingerprint`) are verified when given, so a checkpoint is
@@ -301,9 +301,9 @@ class OLaya:
                 raise ValueError(f"checkpoint {ckpt} sha256 does not match {checkpoint_sha256[:16]}...")
             enc = load_finetuned_encoder(ckpt, **enc_kwargs)
         elif encoder is None or isinstance(encoder, str):
-            from olaya.embeddings import DEFAULT_MODEL, SentenceTransformerEncoder, TransformerEncoder
+            from olaya.embeddings import DEFAULT_ENCODER, SentenceTransformerEncoder, TransformerEncoder
 
-            model_id = encoder or DEFAULT_MODEL
+            model_id = encoder or DEFAULT_ENCODER
             if "embeddinggemma" in model_id.lower():
                 enc = SentenceTransformerEncoder(model_id, **enc_kwargs)
             else:

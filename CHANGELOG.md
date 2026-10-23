@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Host- and client-specific code:** `olaya.real_abox` (`RealABoxFact`, `load_custom_abox`, `find_custom_root`), the host-specific training domain, the M&A deal scenario script, its outputs and ontology, and the corresponding playground demo. Feed your own evidence via `evidence=` and your own ontology via `load_ontology` / domain packs instead.
 
 ### Changed
+- **EmbeddingGemma 2 is the default and ships with `ml`:** `OLaya.from_ontology()` (and domain packs without an explicit model) default to `google/embeddinggemma-2` (`olaya.embeddings.DEFAULT_ENCODER`); `sentence-transformers[image]`, `peft` and `transformers>=5.19` move into the `ml` extra (and therefore `all` / `dev`). `leio-decision[gemma]` remains as a deprecated alias of `ml`. Install `torch` and `torchvision` from the same index (CI and the release workflow now do). `TransformerEncoder` keeps `DEFAULT_MODEL` (MiniLM) as its own default.
 - **`use_real_abox` is deprecated:** `use_real_abox=True` is ignored with a `DeprecationWarning`; the default domain of the observation generators is now `"generic"`.
 - **Turtle/OWL loading in `load_ontology_file`:** no longer shells out to `cargo run`; it uses `olaya.ontology_io` with the Rust converter's CURIE scheme.
 - **Source archive allow-list:** the sdist now ships only `src/`, `tests/`, `spec/`, `README.md`, `CHANGELOG.md` and `pyproject.toml`; scripts, benchmarks, outputs and the docs site stay in the repository.

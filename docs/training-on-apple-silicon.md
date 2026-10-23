@@ -10,7 +10,7 @@ CUDA-only and targets decoder LLMs, not BERT-style encoders.
 
 ```bash
 git clone https://github.com/josaum/olaya && cd olaya
-uv venv && uv pip install -e '.[dev,gemma]'    # torch wheels on macOS ship with MPS; gemma = the default fine-tune base
+uv venv && uv pip install -e '.[dev]'          # torch wheels on macOS ship with MPS; dev -> all -> ml includes EmbeddingGemma 2
 .venv/bin/python -c "import torch; print(torch.backends.mps.is_available())"   # must print True
 ```
 
@@ -87,7 +87,7 @@ Each command writes its report under `benchmarks/results/` and its checkpoint un
 `gemma` extra and a newer `transformers`:
 
 ```bash
-uv pip install -e '.[dev,gemma]'      # sentence-transformers[image] >= 6.1, transformers >= 5.19, peft >= 0.21 (the audio extra pulls kenlm, which does not build on Python 3.14)
+uv pip install -e '.[dev]'            # sentence-transformers[image] >= 6.1, transformers >= 5.19, peft >= 0.21 (the audio extra pulls kenlm, which does not build on Python 3.14)
 ```
 
 `olaya.embeddings.SentenceTransformerEncoder` loads it text-only (vision and audio encoders dropped,

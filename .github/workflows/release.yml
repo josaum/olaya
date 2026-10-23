@@ -57,7 +57,8 @@ jobs:
       - name: Install package verification dependencies
         run: |
           uv venv --clear
-          uv pip install --index-url https://download.pytorch.org/whl/cpu torch
+          # torch and torchvision from the same CPU index (EmbeddingGemma 2 needs a matching pair).
+          uv pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision
           uv pip install -e '.[dev]'
       - name: Build and pack the Node package
         working-directory: packages/olaya-node

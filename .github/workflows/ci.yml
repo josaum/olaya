@@ -68,7 +68,9 @@ jobs:
         # makes this step work whether or not that happens.
         run: |
           uv venv --clear
-          uv pip install --index-url https://download.pytorch.org/whl/cpu torch
+          # torchvision (pulled by sentence-transformers[image] for EmbeddingGemma 2) must match the
+          # torch build: install both from the CPU index first so .[dev] keeps them.
+          uv pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision
           uv pip install -e ".[dev]"
       - run: .venv/bin/ruff check src tests scripts benchmarks extensions/claude-desktop/server/complete.py
       - run: .venv/bin/ruff format --check src tests scripts benchmarks extensions/claude-desktop/server/complete.py

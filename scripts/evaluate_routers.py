@@ -74,7 +74,7 @@ ENCODERS: dict[str, tuple[str, str]] = {
     "e5-large": ("intfloat/e5-large-v2", "query: "),
     "bge-large": ("BAAI/bge-large-en-v1.5", ""),
 }
-#: Prompted checkpoints served by olaya.embeddings.SentenceTransformerEncoder (pip install -e '.[gemma]').
+#: Prompted checkpoints served by olaya.embeddings.SentenceTransformerEncoder (installed by leio-decision[ml]).
 ST_ENCODERS: dict[str, str] = {
     "embeddinggemma-2": "google/embeddinggemma-2",
 }
