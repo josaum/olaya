@@ -15,11 +15,6 @@ from olaya.workflow_replay import replay_workflow
 
 try:
     from olaya.axioms import calibrate_and_project_distribution, enforce_subsumption_monotonicity
-except ImportError:  # olaya[reasoning] not installed
-    pass
-
-try:
-    from olaya.calibration import CalibrationMetrics, compute_ece, fit_temperature
     from olaya.engine import (
         ChoiceAnswer,
         ConceptAnswer,
@@ -29,6 +24,11 @@ try:
         SubsumesAnswer,
         SystemOneResult,
     )
+except ImportError:  # olaya[reasoning] not installed
+    pass
+
+try:
+    from olaya.calibration import CalibrationMetrics, compute_ece, fit_temperature
     from olaya.model import OntologyDecisionHead, OntologyDecisionModel
     from olaya.train import train_olaya
 except ImportError:

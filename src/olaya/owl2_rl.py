@@ -93,6 +93,10 @@ class OWL2RLReasoner:
     def __init__(self, ontology: Ontology):
         self.ontology = ontology
 
+    def materialize(self) -> OWL2RLClosure:
+        """Alias for ``compute_closure()`` returning the materialized OWL 2 RL deductive closure."""
+        return self.compute_closure()
+
     def compute_closure(self) -> OWL2RLClosure:
         """Run fixpoint forward-chaining over all OWL 2 RL inference rules."""
         closure = OWL2RLClosure()

@@ -8,6 +8,8 @@ uvx leio-decision                  # Python MCP server (zero install)
 npx leio-decision                  # Node.js MCP server (zero dependencies)
 ```
 
+📄 **[Read the Technical Paper (`PAPER.md`)](PAPER.md)** · 🔬 **[Formal Axiom Spec (`spec/AXIOMS.md`)](spec/AXIOMS.md)** · 📐 **[OWL 2 RL Conformance (`spec/OWL2RL.md`)](spec/OWL2RL.md)**
+
 ---
 
 ## Why O-Laya?

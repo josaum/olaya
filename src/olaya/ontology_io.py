@@ -344,7 +344,11 @@ def _curie_map(graph: Any, classes: set[Any], curie_style: str) -> dict[Any, str
             prefix, _ns_uri, local = graph.namespace_manager.compute_qname(iri, generate=False)
         except Exception:  # no bound prefix covers this IRI
             prefix, local = "", ""
-        proposals[c] = f"{prefix}:{local}" if prefix and local else _rust_curie(iri)
+        if prefix and local:
+            proposals[c] = f"{prefix}:{local}"
+        else:
+            rc = _rust_curie(iri)
+            proposals[c] = rc if ":" in rc else iri
     counts: dict[str, int] = {}
     for curie in proposals.values():
         counts[curie] = counts.get(curie, 0) + 1

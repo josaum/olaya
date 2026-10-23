@@ -31,8 +31,16 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-import torch
-from transformers import AutoTokenizer
+
+try:
+    import torch
+except ImportError:  # pragma: no cover - zero-Torch installation
+    torch = None  # type: ignore[assignment]
+
+try:
+    from transformers import AutoTokenizer
+except ImportError:  # pragma: no cover - zero-Torch installation
+    AutoTokenizer = None  # type: ignore[assignment]
 
 from olaya.axioms import (
     calibrate_and_project_distribution,
@@ -41,10 +49,42 @@ from olaya.axioms import (
     verify_axioms,
 )
 from olaya.candidate_router import CandidateRouter
-from olaya.category_theory import extract_morphism_matrices
-from olaya.model import OntologyDecisionModel
+
+try:
+    from olaya.category_theory import extract_morphism_matrices
+except ImportError:  # pragma: no cover - zero-Torch installation
+    extract_morphism_matrices = None  # type: ignore[assignment]
+
+try:
+    from olaya.model import OntologyDecisionModel
+except ImportError:  # pragma: no cover - zero-Torch installation
+    OntologyDecisionModel = None  # type: ignore[assignment,misc]
+
 from olaya.ontology import Concept, Ontology, create_incident_ontology
 from olaya.sequence import QTYPE_IDS, SequenceBundle, build_ontology_sequence, serialize_state
+
+
+class _DeterministicHashTokenizer:
+    """Zero-dependency tokenizer fallback when `transformers` / `tokenizer.json` is unavailable."""
+
+    cls_token_id: int = 101
+    sep_token_id: int = 102
+    mask_token_id: int = 103
+    pad_token_id: int = 0
+    vocab_size: int = 30522
+
+    def __len__(self) -> int:
+        return self.vocab_size
+
+    def encode(self, text: str, add_special_tokens: bool = False) -> list[int]:
+        tokens = [
+            1000 + (int(hashlib.blake2b(tok.encode("utf-8"), digest_size=4).hexdigest(), 16) % 29000)
+            for tok in text.split()
+        ]
+        if add_special_tokens:
+            return [self.cls_token_id, *tokens, self.sep_token_id]
+        return tokens or [self.pad_token_id]
+
 
 DEFAULT_SCORE_LEVELS = ["level 0", "level 1", "level 2", "level 3"]
 
@@ -149,6 +189,9 @@ class OLaya:
         candidate_policy: str = "leaves",
     ):
         self.ontology = ontology or create_incident_ontology()
+        from olaya.ontology_io import ontology_fingerprint as _onto_fp
+
+        self.tbox_fingerprint = _onto_fp(self.ontology)
         # ``candidate_policy`` decides which routed concepts compete in a ``concept`` question.
         # ``"leaves"`` (default, shared with the Rust / Node runtimes and the golden vectors) scores
         # only the most specific concepts of the routed subgraph; ``"routed"`` scores the routed
@@ -174,7 +217,9 @@ class OLaya:
             _validated_temperature(getattr(scorer, "temperature", None), Path("<scorer>"))
         self.scorer = scorer
 
-        if device is None:
+        if torch is None:
+            self.device = "cpu"
+        elif device is None:
             if torch.backends.mps.is_available():
                 self.device = torch.device("mps")
             elif torch.cuda.is_available():
@@ -186,10 +231,16 @@ class OLaya:
 
         # Tokenizer setup
         if tokenizer is None:
-            try:
-                self.tokenizer = AutoTokenizer.from_pretrained("answerdotai/ModernBERT-base")
-            except Exception:
-                self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+            if AutoTokenizer is not None:
+                try:
+                    self.tokenizer = AutoTokenizer.from_pretrained("answerdotai/ModernBERT-base")
+                except Exception:
+                    try:
+                        self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+                    except Exception:
+                        self.tokenizer = _DeterministicHashTokenizer()
+            else:
+                self.tokenizer = _DeterministicHashTokenizer()
         else:
             self.tokenizer = tokenizer
 
@@ -198,24 +249,31 @@ class OLaya:
         self.calibrated_temperature: float | None = None
         self.model_id: str = UNTRAINED_MODEL_ID
         if model is None:
-            ckpt = None
-            ckpt_file: Path | None = None
-            if weights_path is not False and weights_path != "":
-                ckpt_file = Path(weights_path) if weights_path is not None else Path("models/olaya_decision_model.pt")
-                if ckpt_file.is_file():
-                    ckpt = torch.load(ckpt_file, map_location=self.device)
-                    if isinstance(ckpt, dict) and "temperature" in ckpt:
-                        self.calibrated_temperature = _validated_temperature(ckpt["temperature"], ckpt_file)
-                else:
-                    ckpt_file = None
+            if torch is None or OntologyDecisionModel is None:
+                self.model = None
+            else:
+                ckpt = None
+                ckpt_file: Path | None = None
+                if weights_path is not False and weights_path != "":
+                    ckpt_file = (
+                        Path(weights_path) if weights_path is not None else Path("models/olaya_decision_model.pt")
+                    )
+                    if ckpt_file.is_file():
+                        ckpt = torch.load(ckpt_file, map_location=self.device)
+                        if isinstance(ckpt, dict) and "temperature" in ckpt:
+                            self.calibrated_temperature = _validated_temperature(ckpt["temperature"], ckpt_file)
+                    else:
+                        ckpt_file = None
 
-            cfg_dict = ckpt.get("config", {}) if isinstance(ckpt, dict) else {}
-            self.model = self._build_model(cfg_dict)
+                cfg_dict = ckpt.get("config", {}) if isinstance(ckpt, dict) else {}
+                self.model = self._build_model(cfg_dict)
 
-            if ckpt is not None:
-                state_dict = ckpt["model_state_dict"] if isinstance(ckpt, dict) and "model_state_dict" in ckpt else ckpt
-                _load_state_dict_strict(self.model, state_dict, ckpt_file)
-                self.model_id = f"checkpoint-sha256:{_file_sha256(ckpt_file)[:12]}"
+                if ckpt is not None:
+                    state_dict = (
+                        ckpt["model_state_dict"] if isinstance(ckpt, dict) and "model_state_dict" in ckpt else ckpt
+                    )
+                    _load_state_dict_strict(self.model, state_dict, ckpt_file)
+                    self.model_id = f"checkpoint-sha256:{_file_sha256(ckpt_file)[:12]}"
         else:
             self.model = model
             self.model_id = INJECTED_MODEL_ID
@@ -225,8 +283,9 @@ class OLaya:
         if self.candidate_policy != "leaves":
             self.model_id = f"{self.model_id}+candidates:{self.candidate_policy}"
 
-        self.model.to(self.device)
-        self.model.eval()
+        if self.model is not None and torch is not None:
+            self.model.to(self.device)
+            self.model.eval()
 
         # Special token IDs (``is None`` checks: 0 is a valid token id)
         self.special_ids = {
@@ -322,10 +381,13 @@ class OLaya:
         )
 
         if tokenizer is None:
-            from olaya.tokenizer import TOKENIZER_FILE, load_local_tokenizer
+            try:
+                from olaya.tokenizer import TOKENIZER_FILE, load_local_tokenizer
 
-            if Path(TOKENIZER_FILE).is_file():
-                tokenizer = load_local_tokenizer()
+                if Path(TOKENIZER_FILE).is_file():
+                    tokenizer = load_local_tokenizer()
+            except ImportError:
+                tokenizer = _DeterministicHashTokenizer()
         engine_kwargs.setdefault("weights_path", False)
         return cls(
             ontology=onto,
@@ -504,56 +566,79 @@ class OLaya:
         max_seq_len = max(len(b.input_ids) for b in bundles)
         max_markers = max(len(b.marker_positions) for b in bundles)
 
-        pad_id = self.special_ids["pad"]
-        input_ids = torch.full((n, max_seq_len), pad_id, dtype=torch.long)
-        attention_mask = torch.zeros((n, max_seq_len), dtype=torch.long)
-        marker_pos = torch.zeros((n, max_markers), dtype=torch.long)
-        marker_mask = torch.zeros((n, max_markers), dtype=torch.bool)
-        qtypes = torch.zeros((n,), dtype=torch.long)
-        # Morphism adjacency over candidate slots, built exactly as the training collate does.
-        parent_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
-        child_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
-        disjoint_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
+        if self.model is not None and torch is not None:
+            pad_id = self.special_ids["pad"]
+            input_ids = torch.full((n, max_seq_len), pad_id, dtype=torch.long)
+            attention_mask = torch.zeros((n, max_seq_len), dtype=torch.long)
+            marker_pos = torch.zeros((n, max_markers), dtype=torch.long)
+            marker_mask = torch.zeros((n, max_markers), dtype=torch.bool)
+            qtypes = torch.zeros((n,), dtype=torch.long)
+            # Morphism adjacency over candidate slots, built exactly as the training collate does.
+            parent_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
+            child_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
+            disjoint_adj = torch.zeros((n, max_markers, max_markers), dtype=torch.float32)
 
-        for i, b in enumerate(bundles):
-            seq_len = len(b.input_ids)
-            input_ids[i, :seq_len] = torch.tensor(b.input_ids, dtype=torch.long)
-            attention_mask[i, :seq_len] = 1
-            num_m = len(b.marker_positions)
-            if num_m > 0:
-                marker_pos[i, :num_m] = torch.tensor(b.marker_positions, dtype=torch.long)
-                marker_mask[i, :num_m] = True
-                if morphism_ontologies[i] is not None and b.candidate_curies:
-                    _, p_m, c_m, d_m = extract_morphism_matrices(
-                        b.candidate_curies, morphism_ontologies[i], max_k=num_m
-                    )
-                    parent_adj[i, :num_m, :num_m] = torch.from_numpy(p_m)
-                    child_adj[i, :num_m, :num_m] = torch.from_numpy(c_m)
-                    disjoint_adj[i, :num_m, :num_m] = torch.from_numpy(d_m)
-            qtypes[i] = b.qtype
-            total_tokens += seq_len
+            for i, b in enumerate(bundles):
+                seq_len = len(b.input_ids)
+                input_ids[i, :seq_len] = torch.tensor(b.input_ids, dtype=torch.long)
+                attention_mask[i, :seq_len] = 1
+                num_m = len(b.marker_positions)
+                if num_m > 0:
+                    marker_pos[i, :num_m] = torch.tensor(b.marker_positions, dtype=torch.long)
+                    marker_mask[i, :num_m] = True
+                    if morphism_ontologies[i] is not None and b.candidate_curies:
+                        _, p_m, c_m, d_m = extract_morphism_matrices(
+                            b.candidate_curies, morphism_ontologies[i], max_k=num_m
+                        )
+                        parent_adj[i, :num_m, :num_m] = torch.from_numpy(p_m)
+                        child_adj[i, :num_m, :num_m] = torch.from_numpy(c_m)
+                        disjoint_adj[i, :num_m, :num_m] = torch.from_numpy(d_m)
+                qtypes[i] = b.qtype
+                total_tokens += seq_len
 
-        # Execute single forward pass
-        input_ids = input_ids.to(self.device)
-        attention_mask = attention_mask.to(self.device)
-        marker_pos = marker_pos.to(self.device)
-        marker_mask = marker_mask.to(self.device)
-        qtypes = qtypes.to(self.device)
+            # Execute single forward pass
+            input_ids = input_ids.to(self.device)
+            attention_mask = attention_mask.to(self.device)
+            marker_pos = marker_pos.to(self.device)
+            marker_mask = marker_mask.to(self.device)
+            qtypes = qtypes.to(self.device)
 
-        with torch.no_grad():
-            logits, act_probs = self.model(
-                input_ids,
-                attention_mask,
-                marker_pos,
-                marker_mask,
-                qtypes,
-                parent_adj=parent_adj.to(self.device),
-                child_adj=child_adj.to(self.device),
-                disjoint_adj=disjoint_adj.to(self.device),
-            )
+            with torch.no_grad():
+                logits, act_probs = self.model(
+                    input_ids,
+                    attention_mask,
+                    marker_pos,
+                    marker_mask,
+                    qtypes,
+                    parent_adj=parent_adj.to(self.device),
+                    child_adj=child_adj.to(self.device),
+                    disjoint_adj=disjoint_adj.to(self.device),
+                )
 
-        logits_np = logits.cpu().numpy()
-        act_np = act_probs.cpu().numpy()
+            logits_np = logits.cpu().numpy()
+            act_np = act_probs.cpu().numpy()
+        else:
+            from olaya.embeddings import HashEncoder
+
+            fallback_enc = getattr(getattr(self.scorer, "router", None), "encoder", None) or HashEncoder()
+            logits_np = np.zeros((n, max_markers), dtype=np.float64)
+            act_np = np.full((n, 2), 0.5, dtype=np.float64)
+            state_vec = np.asarray(fallback_enc.encode([state_text]), dtype=np.float64)[0]
+            s_norm = float(np.linalg.norm(state_vec)) or 1.0
+            for i, b in enumerate(bundles):
+                total_tokens += len(b.input_ids)
+                num_m = len(b.marker_positions)
+                if num_m > 0:
+                    opt_texts = [
+                        f"{subgraph.concepts[c].label} {subgraph.concepts[c].description}"
+                        if c in (subgraph := subgraphs[i]).concepts
+                        else c
+                        for c in b.candidate_curies[:num_m]
+                    ]
+                    opt_vecs = np.asarray(fallback_enc.encode(opt_texts), dtype=np.float64)
+                    norms = np.linalg.norm(opt_vecs, axis=1)
+                    norms = np.where(norms == 0, 1.0, norms)
+                    logits_np[i, :num_m] = (opt_vecs @ state_vec) / (norms * s_norm)
         answers: dict[str, Any] = {}
         act_probabilities: dict[str, float] = {}
 
