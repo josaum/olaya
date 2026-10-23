@@ -296,6 +296,8 @@ class SentenceTransformerEncoder:
         device: str | None = None,
         truncate_dim: int | None = None,
         dtype: str | None = None,
+        cache_root: Path | None = None,
+        use_cache: bool = False,
     ):
         try:
             import torch
@@ -335,7 +337,9 @@ class SentenceTransformerEncoder:
         self.commit_sha = _resolve_commit(model, "main")
         get_dim = getattr(self.st, "get_embedding_dimension", None) or self.st.get_sentence_embedding_dimension
         self.dim = int(truncate_dim or get_dim())
-        self.cache = None
+        self.cache = (
+            EmbeddingCache(model, f"{self.commit_sha or self.revision}-{self.dim}", cache_root) if use_cache else None
+        )
         self.calls = 0
 
     @property
@@ -365,17 +369,35 @@ class SentenceTransformerEncoder:
         texts = [t if t else " " for t in texts]
         if not texts:
             return np.zeros((0, self.dim), dtype=np.float32)
-        with self._torch.no_grad():
-            out = self.st.encode(
-                [prefix + t for t in texts],
-                batch_size=self.batch_size,
-                normalize_embeddings=True,
-                convert_to_numpy=True,
-                truncate_dim=self.truncate_dim,
-                show_progress_bar=False,
-            )
-        self.calls += len(texts)
-        return np.asarray(out, dtype=np.float32)
+        result = np.zeros((len(texts), self.dim), dtype=np.float32)
+        missing: dict[str, list[int]] = {}
+        for i, t in enumerate(texts):
+            key = text_key(prefix + t)
+            cached = self.cache.get(key) if self.cache is not None else None
+            if cached is not None:
+                result[i] = cached
+            else:
+                missing.setdefault(t, []).append(i)
+        if missing:
+            uniq = sorted(missing)
+            with self._torch.no_grad():
+                out = self.st.encode(
+                    [prefix + t for t in uniq],
+                    batch_size=self.batch_size,
+                    normalize_embeddings=True,
+                    convert_to_numpy=True,
+                    truncate_dim=self.truncate_dim,
+                    show_progress_bar=False,
+                )
+            vecs = np.asarray(out, dtype=np.float32)
+            self.calls += len(uniq)
+            for t, v in zip(uniq, vecs, strict=True):
+                for i in missing[t]:
+                    result[i] = v
+            if self.cache is not None:
+                self.cache.put_many([text_key(prefix + t) for t in uniq], vecs)
+                self.cache.flush()
+        return result
 
     def encode(self, texts: Sequence[str]) -> np.ndarray:
         """Query-side embeddings (states)."""
@@ -433,8 +455,11 @@ def _resolve_commit(model: str, revision: str) -> str:
     return ""
 
 
-def load_encoder(model: str = DEFAULT_MODEL, **kwargs: Any) -> TransformerEncoder:
-    """Load a :class:`TransformerEncoder`, raising :class:`EncoderUnavailable` on failure."""
+def load_encoder(model: str = DEFAULT_MODEL, **kwargs: Any) -> TransformerEncoder | SentenceTransformerEncoder:
+    """Load a :class:`SentenceTransformerEncoder` (for EmbeddingGemma) or :class:`TransformerEncoder`."""
+    if "embeddinggemma" in model.lower():
+        kwargs.setdefault("use_cache", True)
+        return SentenceTransformerEncoder(model, **kwargs)
     return TransformerEncoder(model, **kwargs)
 
 

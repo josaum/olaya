@@ -699,6 +699,7 @@ def load_finetuned_encoder(checkpoint: Path, **encoder_kwargs: Any) -> Any:
         enc.query_prefix = data.get("query_prefix", "")
         enc.document_prefix = data.get("document_prefix", "")
         enc.prefix = enc.query_prefix
+        enc.cache = None
     elif fmt == "olaya-bi-encoder-v1":
         kwargs = {"max_length": data.get("max_length", 128), "prefix": data.get("prefix", ""), **encoder_kwargs}
         kwargs["use_cache"] = False

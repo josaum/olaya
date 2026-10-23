@@ -1,6 +1,6 @@
 # OAEI Conference track (ra1) — honest evaluation
 
-Date: 2026-10-04  ·  Commit: `954a65894888`  ·  Runtime: 613.6 s (lexical 20.9 s; embeddings 592.7 s including model loading, encoding, the configuration grid and the cross-validation; 4-thread CPU)
+Date: 2026-10-23  ·  Commit: `0bb685f4a71c`  ·  Runtime: 590.6 s (lexical 10.9 s; embeddings 579.7 s including model loading, encoding, the configuration grid and the cross-validation; 4-thread CPU)
 
 Protocol: standard OAEI alignment evaluation.  For each of the 21 OntoFarm pairs the matcher scores every
 class/class and property/property cross pair, keeps the mutual-best 1:1 correspondences, applies a confidence
@@ -125,6 +125,7 @@ and M3 for the cascade and is kept as a tunable knob; its benefit is within nois
 | encoder | commit | embedding only @0.50 | embedding only, best th | cascade alpha 0 @0.50 | cascade alpha 0.2 @0.50 | cascade, best th (optimistic) | cascade + neighbour w=0.3 @0.50 | cascade, path text @0.50 | cascade, path text, best th (optimistic) |
 |---|---|---|---|---|---|---|---|---|---|
 | `intfloat/e5-small-v2` | `ffb93f3b` | 0.711 / 0.638 | 0.721 / 0.643 (th 0.46) | 0.744 / 0.668 | 0.755 / 0.684 | 0.743 / 0.670 (th 0.43) | 0.741 / 0.681 | 0.749 / 0.680 | 0.764 / 0.693 (th 0.40) |
+| `google/embeddinggemma-2` | `914f7f89` | 0.710 / 0.642 | 0.736 / 0.655 (th 0.43) | 0.741 / 0.669 | 0.752 / 0.683 | 0.763 / 0.681 (th 0.43) | 0.736 / 0.679 | 0.753 / 0.692 | 0.755 / 0.696 (th 0.46) |
 | `sentence-transformers/all-MiniLM-L6-v2` | `1110a243` | 0.690 / 0.624 | 0.699 / 0.634 (th 0.52) | 0.734 / 0.666 | 0.740 / 0.671 | 0.739 / 0.672 (th 0.52) | 0.740 / 0.678 | 0.744 / 0.680 | 0.749 / 0.685 (th 0.52) |
 | `BAAI/bge-small-en-v1.5` | `5c38ec7c` | 0.696 / 0.631 | 0.722 / 0.646 (th 0.39) | 0.731 / 0.668 | 0.736 / 0.669 | 0.739 / 0.677 (th 0.49) | 0.738 / 0.679 | 0.741 / 0.677 | 0.744 / 0.683 (th 0.52) |
 

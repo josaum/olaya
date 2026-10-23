@@ -216,9 +216,11 @@ Reproduce with `.venv/bin/python scripts/benchmark_oaei.py` (~10 min with encode
 | GraphMatcher | 0.78 / 0.89 / **0.83** | 0.76 / 0.80 / **0.78** |
 | **olaya-hybrid + LLM judge (`qwen3.8-max`), leave-one-pair-out CV** | 0.79 / 0.82 / **0.80** | 0.73 / 0.79 / **0.76** |
 | SORBETMtch | 0.78 / 0.75 / 0.76 | 0.78 / 0.64 / 0.70 |
-| **olaya-hybrid (this repo, leave-one-pair-out CV)** | 0.81 / 0.69 / **0.75** | 0.69 / 0.66 / **0.68** |
-| **olaya-hybrid + structure (this repo, leave-one-pair-out CV)** | 0.81 / 0.69 / 0.75 | 0.69 / 0.66 / 0.68 |
-| **olaya-lexical (this repo, threshold 0.50, zero dependencies)** | 0.83 / 0.64 / **0.73** | 0.73 / 0.60 / **0.66** |
+| **olaya-hybrid (`google/embeddinggemma-2`, path text, a-priori @ 0.50)** | 0.82 / 0.69 / **0.75** | 0.72 / 0.66 / **0.69** |
+| **olaya-hybrid (`intfloat/e5-small-v2`, leave-one-pair-out CV)** | 0.81 / 0.69 / **0.75** | 0.69 / 0.66 / **0.68** |
+| **olaya-hybrid (`google/embeddinggemma-2`, leave-one-pair-out CV)** | 0.79 / 0.70 / **0.74** | 0.69 / 0.67 / **0.68** |
+| **olaya-hybrid + structure (`google/embeddinggemma-2`, LOPO-CV)** | 0.80 / 0.71 / **0.75** | 0.69 / 0.67 / **0.68** |
+| **olaya-lexical (threshold 0.50, zero dependencies)** | 0.83 / 0.64 / **0.73** | 0.73 / 0.60 / **0.66** |
 | LogMap | 0.84 / 0.63 / 0.72 | 0.81 / 0.58 / 0.68 |
 | Matcha | 0.76 / 0.68 / 0.72 | 0.70 / 0.64 / 0.67 |
 | edna (baseline) | 0.88 / 0.54 / 0.67 | 0.79 / 0.47 / 0.59 |

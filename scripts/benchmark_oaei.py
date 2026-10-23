@@ -74,7 +74,12 @@ SWEEP_THRESHOLDS = [round(i / 100, 2) for i in range(0, 101)]
 # primary encoder: it gets the full configuration grid and the cross-validation.
 # It was chosen on ra1 among the three (and two base-size models, see the report),
 # which is itself a (mild) test-set selection and is stated as such in the report.
-ENCODERS = ["intfloat/e5-small-v2", "sentence-transformers/all-MiniLM-L6-v2", "BAAI/bge-small-en-v1.5"]
+ENCODERS = [
+    "intfloat/e5-small-v2",
+    "google/embeddinggemma-2",
+    "sentence-transformers/all-MiniLM-L6-v2",
+    "BAAI/bge-small-en-v1.5",
+]
 
 # A-priori hybrid configuration, fixed before the grid below was swept:
 #   * cascade: the lexical matcher decides first (threshold 0.5, same rule as above) and
