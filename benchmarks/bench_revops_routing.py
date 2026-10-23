@@ -59,7 +59,8 @@ def main() -> int:
     parser.add_argument("--json", default=None, help="Write results JSON here")
     args = parser.parse_args()
 
-    onto = load_ontology_file(args.ttl, "revops")
+    # The expected CURIEs below are local names, as produced by the Rust converter.
+    onto = load_ontology_file(args.ttl, "revops", curie_style="local")
     encoder = TransformerEncoder(args.encoder, prefix=args.prefix)
     router = EmbeddingRouter(onto, encoder, max_candidates=12, csls_k=args.csls_k)
     engine = OLaya(onto, router=router, scorer=EmbeddingScorer(router), weights_path=False, device="cpu")

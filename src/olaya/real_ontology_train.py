@@ -105,8 +105,16 @@ DOMAIN_QUERY_TEMPLATES: dict[str, list[str]] = {
 }
 
 
-def load_ontology_file(path_or_onto: str | Path | Ontology, name: str | None = None) -> Ontology:
-    """Load an ontology from O-Laya JSON, Turtle, OWL/RDF or JSON-LD (see :mod:`olaya.ontology_io`)."""
+def load_ontology_file(
+    path_or_onto: str | Path | Ontology, name: str | None = None, *, curie_style: str = "prefixed"
+) -> Ontology:
+    """Load an ontology from O-Laya JSON, Turtle, OWL/RDF or JSON-LD (see :mod:`olaya.ontology_io`).
+
+    RDF classes get the same CURIEs as :meth:`olaya.engine.OLaya.from_ontology` (``prefix:Local``
+    from the graph's bound prefixes), so evidence, corpora and engine answers name classes alike.
+    ``curie_style="local"`` reproduces the Rust ``convert_ontology`` scheme (bare local names) for
+    data keyed that way. O-Laya JSON keeps the CURIEs it stores.
+    """
     if isinstance(path_or_onto, Ontology):
         return path_or_onto
 
@@ -114,16 +122,14 @@ def load_ontology_file(path_or_onto: str | Path | Ontology, name: str | None = N
     if not path.exists():
         raise FileNotFoundError(f"Ontology file not found: {path}")
 
-    # If already a JSON ontology
     if path.suffix.lower() == ".json":
         data = json.loads(path.read_text(encoding="utf-8"))
-        return Ontology.from_json(data)
+        if isinstance(data, dict) and isinstance(data.get("concepts"), list) and "@context" not in data:
+            return Ontology.from_json(data)
 
-    # Turtle / OWL / RDF / JSON-LD: pure-Python extraction with the Rust converter's CURIE scheme,
-    # so files converted earlier with ``convert_ontology`` keep the same CURIEs.
     from olaya.ontology_io import load_ontology
 
-    return load_ontology(path, name=name, curie_style="local")
+    return load_ontology(path, name=name, curie_style=curie_style)
 
 
 def _specificity_depth(ontology: Ontology, target_curie: str) -> int:

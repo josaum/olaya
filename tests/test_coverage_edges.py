@@ -125,7 +125,33 @@ def test_load_ontology_file_paths(tmp_path):
         "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n<https://e.org/OBO_1> rdfs:subClassOf <https://e.org/OBO_2> .\n"
     )
     loaded = load_ontology_file(ttl, name="obo")
-    assert loaded.name == "obo" and loaded.concepts["OBO:1"].parents == {"OBO:2"}  # Rust CURIE scheme
+    assert loaded.name == "obo" and loaded.concepts["OBO:1"].parents == {"OBO:2"}  # no bound prefix: OBO split
+
+
+def test_training_loader_and_engine_name_classes_alike(tmp_path):
+    from olaya.real_ontology_train import load_ontology_file
+
+    ttl = tmp_path / "shop.ttl"
+    ttl.write_text(
+        "@prefix ex: <https://example.org/shop#> .\n"
+        "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n"
+        "ex:Dairy rdfs:subClassOf ex:Food .\n",
+        encoding="utf-8",
+    )
+    assert set(load_ontology_file(ttl).concepts) == set(load_ontology(ttl).concepts) == {"ex:Dairy", "ex:Food"}
+    assert set(load_ontology_file(ttl, curie_style="local").concepts) == {"Dairy", "Food"}  # Rust converter scheme
+
+    jsonld = tmp_path / "shop.json"
+    jsonld.write_text(
+        json.dumps(
+            {
+                "@context": {"ex": "https://example.org/shop#"},
+                "@id": "ex:Dairy",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+            }
+        )
+    )
+    assert "ex:Dairy" in load_ontology_file(jsonld).concepts  # JSON-LD in a .json file goes through rdflib
 
 
 def test_evidence_objects_and_legacy_samples(tokenizer):

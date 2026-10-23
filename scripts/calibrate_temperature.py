@@ -67,6 +67,7 @@ def calibrate_checkpoint(
     save: bool = True,
     device: str | None = None,
     ontology_path: Path | None = None,
+    curie_style: str = "prefixed",
 ):
     print(f"Loading checkpoint: {checkpoint_path}...")
     if not checkpoint_path.exists():
@@ -79,7 +80,7 @@ def calibrate_checkpoint(
     # Load ontology
     if ontology_path is not None:
         # Any user-supplied ontology (.ttl / .owl / .jsonld / .json); generic templates.
-        ontology = load_ontology_file(ontology_path)
+        ontology = load_ontology_file(ontology_path, curie_style=curie_style)
         domain = "generic"
     elif domain == "incident":
         ontology = create_incident_ontology()
@@ -161,6 +162,7 @@ def main():
     parser.add_argument(
         "--ontology", type=Path, default=None, help="Calibrate on your own ontology file instead of --domain"
     )
+    parser.add_argument("--curie-style", choices=["prefixed", "local"], default="prefixed")
     parser.add_argument("--samples", type=int, default=600)
     parser.add_argument("--bins", type=int, default=10)
     parser.add_argument(
@@ -177,6 +179,7 @@ def main():
         save=not args.no_save,
         device=args.device,
         ontology_path=args.ontology,
+        curie_style=args.curie_style,
     )
 
 

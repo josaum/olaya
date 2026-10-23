@@ -60,6 +60,7 @@ def train_single_domain(
     tokenizer: PreTrainedTokenizerFast | None = None,
     backbone: str = "custom_bert",
     evidence_path: Path | None = None,
+    curie_style: str = "prefixed",
     calibrate: bool = True,
     num_samples: int = 1500,
     epochs: int = 5,
@@ -75,7 +76,7 @@ def train_single_domain(
     print(f"Backbone: {backbone} | Evidence: {evidence_path or 'none'} | Calibrate: {calibrate}")
     print("=======================================================")
 
-    ontology = load_ontology_file(ontology_path)
+    ontology = load_ontology_file(ontology_path, curie_style=curie_style)
     print(f"Loaded {ontology.name} with {len(ontology.concepts)} concepts.")
 
     # Determine device
@@ -460,6 +461,12 @@ def main():
     parser.add_argument(
         "--evidence", type=Path, default=None, help="JSONL of real (target_curie, text) observations to mix in"
     )
+    parser.add_argument(
+        "--curie-style",
+        choices=["prefixed", "local"],
+        default="prefixed",
+        help="CURIEs for RDF ontologies: prefix:Local like OLaya.from_ontology, or the Rust converter's local names",
+    )
     args = parser.parse_args()
 
     if args.ontology_path and args.domain == "all":
@@ -477,6 +484,7 @@ def main():
             ontology_path=path,
             backbone=args.backbone,
             evidence_path=args.evidence,
+            curie_style=args.curie_style,
             calibrate=not args.no_calibrate,
             num_samples=args.samples,
             epochs=args.epochs,

@@ -31,7 +31,7 @@ Read this before anything else.
 | WebAssembly build | Builds in CI for `wasm32-unknown-unknown`; kernel unit-tested. |
 | Calibration | Temperature fitting (`calibration.py`) is implemented and used at inference when a checkpoint carries a fitted temperature. Without one, confidence is normalised entropy with a fixed cardinality temperature and is **not** an empirically calibrated probability. |
 | Published packages | `leio-decision` on PyPI and npm (part of the leio suite with `leio-code`), published by `release.yml` from the tagged commit; npm releases are staged and go live after 2FA approval. `olaya` 0.3.1 on PyPI is the same code under its previous name. |
-| HTTP edge demo (`/api/systemone`) | Live, lexical only, no ontology DAG. See [the edge contract](spec/systemone-reliability.md). |
+| HTTP edge demo (`/api/systemone`) | Lexical only, no ontology DAG; deployed from `docs/public`. See [the edge contract](spec/systemone-reliability.md). |
 
 No trained neural model is committed. The only numbers for a trained head are the
 negative results in `benchmarks/results/decision-head-*.md` (LLM-distilled labels, not
@@ -272,8 +272,9 @@ engine = OLaya.from_pack("path/to/acme-pack")
 ```
 
 To train the decision head on your own ontology (optionally mixing in real observations as
-JSONL `{"target_curie": ..., "text": ...}`). The training loader keeps the Rust converter's CURIE
-scheme for RDF files, so evidence names classes by local name (`Dairy`, not `ex:Dairy`):
+JSONL `{"target_curie": ..., "text": ...}`). Training names RDF classes exactly as
+`from_ontology` does (`ex:Dairy`); `--curie-style local` reproduces the Rust converter's bare
+local names (`Dairy`) for data keyed that way:
 
 ```bash
 .venv/bin/python scripts/train_real_ontologies.py --domain generic \
@@ -392,8 +393,9 @@ are not signatures.
 
 ## HTTP edge demo
 
-`POST /api/systemone` at <https://public-nine-jade-58.vercel.app/api/systemone>
-runs [docs/public/api/systemone.js](docs/public/api/systemone.js): bounded
+`POST /api/systemone`, deployed from `docs/public` to Vercel
+(<https://public-nine-jade-58.vercel.app/api/systemone> when the deployment is up), runs
+[docs/public/api/systemone.js](docs/public/api/systemone.js): bounded
 lexical matching over `choice`, `score` and `noul` with explicit abstention.
 It does not load an ontology DAG, trained weights, or the projection kernel.
 The contract and its 34 regression cases are in

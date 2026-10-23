@@ -17,7 +17,7 @@ Breaking: the default encoder of the ontology-conditioned engine is EmbeddingGem
 
 ### Changed
 - **BREAKING — EmbeddingGemma 2 is the default and ships with `ml`:** `OLaya.from_ontology()` (and domain packs without an explicit model) default to `google/embeddinggemma-2` (`olaya.embeddings.DEFAULT_ENCODER`); `sentence-transformers[image]`, `peft` and `transformers>=5.19` move into the `ml` extra (and therefore `all` / `dev`). Install `torch` and `torchvision` from the same index (CI and the release workflow now do). `TransformerEncoder` keeps `DEFAULT_MODEL` (MiniLM) as its own default.
-- **Turtle/OWL loading in `load_ontology_file`:** no longer shells out to `cargo run`; it uses `olaya.ontology_io` with the Rust converter's CURIE scheme.
+- **Turtle/OWL loading in `load_ontology_file`:** no longer shells out to `cargo run`; it uses `olaya.ontology_io` and names RDF classes like `OLaya.from_ontology` (`prefix:Local`), so evidence, corpora and engine answers agree. `curie_style="local"` (`--curie-style local` on the scripts) reproduces the Rust converter's bare local names; O-Laya JSON is unchanged.
 - **Observation generators default to the `"generic"` domain** instead of a host-specific one.
 - **Source archive allow-list:** the sdist ships only `src/`, `tests/`, `spec/`, `README.md`, `CHANGELOG.md` and `pyproject.toml`; scripts, benchmarks, outputs and the docs site stay in the repository.
 

@@ -114,11 +114,12 @@ def main() -> None:
     parser.add_argument("--num-samples", type=int, default=500)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--domain", default="generic", help="template family (generic, doid, schemaorg, gs1)")
+    parser.add_argument("--curie-style", choices=["prefixed", "local"], default="prefixed")
     args = parser.parse_args()
     if args.num_samples <= 0:
         parser.error("--num-samples must be positive")
     ontology_bytes = args.ontology.read_bytes()
-    ontology = load_ontology(args.ontology)
+    ontology = load_ontology(args.ontology, curie_style=args.curie_style)
     observations = generate_real_ontology_observations(
         ontology, domain=args.domain, num_samples=args.num_samples, seed=args.seed
     )
